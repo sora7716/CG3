@@ -11,14 +11,23 @@
 void ParticleEmit::Initialize(DirectXBase* directXBase) {
 	//DirectXの基盤部分を記録する
 	directXBase_ = directXBase;
-	//トランスフォームの初期化
-	for (uint32_t i = 0; i < kNumInstanceCount; i++) {
-		transforms_[i] = {
-			.scale = {1.0f,1.0f,1.0f},
-			.rotate = {0.0f,180.0f * rad,0.0f},
-			.translate = {static_cast<float>(i) * 0.1f,static_cast<float>(i) * 0.1f,static_cast<float>(i) * 0.1f}
-		};
+
+	//パーティクルの共通部分の初期化
+	ParticleCommon::GetInstance()->Initialize(directXBase_);
+	//ライトを生成
+	ParticleCommon::GetInstance()->CreateDirectionLight();
+
+	//カメラを設定
+	camera_ = ParticleCommon::GetInstance()->GetDefaultCamera();
+
+	//乱数エンジンの初期化
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine_; (seedGenerator);
+	//パーティクルの初期化
+	for (uint32_t i = 0; i < kParticleCount; i++) {
+		particles_[i] = MakeNewParticle(randomEngine_);
 	}
+
 	//ワールドトランスフォームのリソースの生成
 	CreateWorldTransformResource();
 	//頂点リソースの生成
@@ -27,26 +36,16 @@ void ParticleEmit::Initialize(DirectXBase* directXBase) {
 	CreateMaterialResource();
 	//ストラクチャバッファの生成
 	CreateStructuredBuffer();
-	//パーティクルの共通部分の初期化
-	ParticleCommon::GetInstance()->Initialize(directXBase_);
-	//ライトを生成
-	ParticleCommon::GetInstance()->CreateDirectionLight();
-	//カメラを設定
-	camera_ = ParticleCommon::GetInstance()->GetDefaultCamera();
 }
 
 //更新
 void ParticleEmit::Update() {
+	//パーティクルの全体的に更新
+	for (uint32_t i = 0; i < kParticleCount; i++) {
+		particles_[i].transform.translate += particles_[i].velocity * deltaTime;
+	}
 	//ワールドトランスフォームの更新
 	UpdateWorldTransform();
-#ifdef USE_IMGUI
-	ImGui::Begin("parthicleEmit");
-	ImGui::DragFloat3("scale", &transforms_[0].scale.x, 0.1f);
-	ImGui::DragFloat3("rotate", &transforms_[0].rotate.x, 0.1f);
-	ImGui::DragFloat3("translate", &transforms_[0].translate.x, 0.1f);
-	ImGui::End();
-#endif // USE_IMGUI
-
 }
 
 //描画
@@ -66,7 +65,7 @@ void ParticleEmit::Draw() {
 	//SRVのDescriptorTableの先頭を設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVHandleGPU(modelData_.material.textureFilePath));
 	//描画(DrwaCall/ドローコール)
-	directXBase_->GetCommandList()->DrawInstanced(static_cast<UINT>(modelData_.vertices.size()), kNumInstanceCount, 0, 0);
+	directXBase_->GetCommandList()->DrawInstanced(static_cast<UINT>(modelData_.vertices.size()), kParticleCount, 0, 0);
 }
 
 //終了
@@ -128,22 +127,23 @@ void ParticleEmit::CreateMaterialResource() {
 //ワールドトランスフォームのリソースの生成
 void ParticleEmit::CreateWorldTransformResource() {
 	//座標変換行列リソースを作成する	
-	wvpResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * kNumInstanceCount);
+	wvpResource_ = directXBase_->CreateBufferResource(sizeof(ParticleForGPU) * kParticleCount);
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
 	//書き込むためのアドレス
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&instanceData_));
-	for (uint32_t i = 0; i < kNumInstanceCount; i++) {
+	for (uint32_t i = 0; i < kParticleCount; i++) {
 		//単位行列を書き込んでおく
 		instanceData_[i].WVP = Math::MakeIdentity4x4();
 		instanceData_[i].World = Math::MakeIdentity4x4();
+		instanceData_[i].color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 初期色を白に設定
 	}
 }
 
 //ワールドトランスフォームの更新
 void ParticleEmit::UpdateWorldTransform() {
-	for (uint32_t i = 0; i < kNumInstanceCount; i++) {
+	for (uint32_t i = 0; i < kParticleCount; i++) {
 		//TransformからWorldMatrixを作る
-		worldMatrix_ = Rendering::MakeAffineMatrix(transforms_[i].scale, transforms_[i].rotate, transforms_[i].translate);
+		worldMatrix_ = Rendering::MakeAffineMatrix(particles_[i].transform.scale, particles_[i].transform.rotate, particles_[i].transform.translate);
 		/*if (parent_) {
 			worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;
 		}*/
@@ -170,7 +170,26 @@ void ParticleEmit::CreateStructuredBuffer() {
 	SRVManager::GetInstance()->CreateSRVforStructuredBuffer(
 		srvIndex_,
 		wvpResource_.Get(),
-		kNumInstanceCount,
-		sizeof(TransformationMatrix)
+		kParticleCount,
+		sizeof(ParticleForGPU)
 	);
+}
+
+//パーティクルの生成
+Particle ParticleEmit::MakeNewParticle(std::mt19937& randomEngine) {
+	//位置と速度を[-1.0f,1.0f]でランダムに設定
+	std::uniform_real_distribution<float>distribution(-1.0f, 1.0f);
+	//パーティクルの初期化
+	Particle particle;
+	//拡縮
+	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
+	//回転
+	particle.transform.rotate = { 0.0f, 180.0f * rad, 0.0f };
+	//位置
+	particle.transform.translate = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+	//速度
+	particle.velocity = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+	//色
+	particle.color = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+	return particle;
 }

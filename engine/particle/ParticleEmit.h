@@ -4,11 +4,26 @@
 #include "engine/blend/BlendMode.h"
 #include <d3d12.h>
 #include <wrl.h>
-#include <array>
-#include <memory>
+#include <random>
+
 //前方宣言
 class DirectXBase;
 class Camera;
+
+//構造体
+//パーティクル単体のデータ
+typedef struct Particle {
+	Transform transform;//SRVの情報
+	Vector3 velocity;//速度
+	Vector4 color;//色
+}Particle;
+
+//パーティクルの情報をGPUに送るための構造体
+typedef struct ParticleForGPU {
+	Matrix4x4 WVP;
+	Matrix4x4 World;
+	Vector4 color;
+}ParticleForGPU;
 
 /// <summary>
 /// パーティクルのエミット
@@ -82,9 +97,16 @@ private://メンバ関数
 	/// ストラクチャバッファの生成
 	/// </summary>
 	void CreateStructuredBuffer();
+
+	/// <summary>
+	/// パーティクルの生成
+	/// </summary>
+	/// <param name="randomEngine">ランダムエンジン</param>
+	/// <returns>新しいパーティクル</returns>
+	Particle MakeNewParticle(std::mt19937& randomEngine);
 private://静的メンバ変数
 	//パーティクルの数
-	static const uint32_t kNumInstanceCount = 10;
+	static const uint32_t kParticleCount = 10;
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
@@ -93,9 +115,9 @@ private://メンバ変数
 	//ワールドビュープロジェクションのリソース
 	ComPtr<ID3D12Resource>wvpResource_ = nullptr;
 	//ワールドビュープロジェクションのデータ
-	TransformationMatrix* instanceData_ = {};
-	//トランスフォーム
-	Transform transforms_[kNumInstanceCount] = {};
+	ParticleForGPU* instanceData_ = {};
+	//パーティクルのデータ
+	Particle particles_[kParticleCount] = {};
 	//ワールドマトリックス
 	Matrix4x4 worldMatrix_ = {};
 	//モデルデータ
@@ -109,8 +131,6 @@ private://メンバ変数
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
-
-	//ストラクチャバッファの生成に使用
 	//SRVインデックス
 	uint32_t srvIndex_ = 0;
 };

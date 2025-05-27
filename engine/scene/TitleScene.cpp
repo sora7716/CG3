@@ -113,7 +113,7 @@ void TitleScene::Update() {
 	}*/
 	const char* blendModes2d[] = { "None", "Normal", "Add", "Subtract", "Multiply", "Screen" };
 	if (ImGui::Combo("2dMode", &blendMode_, blendModes2d, IM_ARRAYSIZE(blendModes2d))) {
-		object2d_->SetBlendMode((BlendMode)blendMode_);
+		object3d_->SetBlendMode((BlendMode)blendMode_);
 	}
 	ImGui::End();
 #endif // USE_IMGUI
@@ -123,8 +123,8 @@ void TitleScene::Update() {
 
 //描画
 void TitleScene::Draw() {
-	object3d_->Draw();
-	object2d_->Draw();
+	//object3d_->Draw();
+	//object2d_->Draw();
 	for (int i = 0; i < 2; i++) {
 		//plane_[i]->Draw();
 	}
