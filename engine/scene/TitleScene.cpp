@@ -128,7 +128,7 @@ void TitleScene::Draw() {
 		//plane_[i]->Draw();
 	}
 	particleEmit_->Draw();
-	object3d_->Draw();
+	//object3d_->Draw();
 }
 
 //終了

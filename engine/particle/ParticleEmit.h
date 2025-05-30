@@ -17,7 +17,8 @@ typedef struct Particle {
 	Vector3 velocity;//速度
 	Vector4 color;//色
 	float lifeTime;//生存時間
-	float currentTime;//発生してからの経過時間
+	float currentTime;//発生してからの
+	int32_t isAlive;//生存フラグ
 }Particle;
 
 //パーティクルの情報をGPUに送るための構造体
@@ -108,9 +109,9 @@ private://メンバ関数
 	Particle MakeNewParticle(std::mt19937& randomEngine);
 private://静的メンバ変数
 	//パーティクルの数
-	static const uint32_t kNumMaxInstance = 10;
+	static const uint32_t kNumMaxInstance = 100;
 private://メンバ変数
-	//DirectXの基盤部分
+	//DirectXの基盤部分	
 	DirectXBase* directXBase_ = nullptr;
 	//カメラ
 	Camera* camera_ = nullptr;
@@ -136,5 +137,7 @@ private://メンバ変数
 	//SRVインデックス
 	uint32_t srvIndex_ = 0;
 	//生存しているパーティクルの数
-	uint32_t numInstance = 0;
+	uint32_t numInstance_ = 0;
+	//ランダムエンジン
+	std::mt19937 randomEngine_;
 };

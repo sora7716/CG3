@@ -28,7 +28,7 @@ void ParticleEmit::Initialize(DirectXBase* directXBase) {
 
 	//乱数エンジンの初期化
 	std::random_device seedGenerator;
-	std::mt19937 randomEngine_; (seedGenerator);
+	randomEngine_.seed(seedGenerator());
 	//パーティクルの初期化
 	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
 		particles_[i] = MakeNewParticle(randomEngine_);
@@ -39,9 +39,15 @@ void ParticleEmit::Initialize(DirectXBase* directXBase) {
 //更新
 void ParticleEmit::Update() {
 	//生存しているパーティクルの数を0に初期化
-	numInstance = 0;
+	numInstance_ = 0;
+
 	//パーティクルの全体的に更新
 	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
+		//生存しているかどうか
+		if (particles_[i].currentTime > particles_[i].lifeTime) {
+			particles_[i].isAlive = false;
+			continue; // 生存していなければスキップ
+		}
 		//移動
 		particles_[i].transform.translate += particles_[i].velocity * deltaTime;
 		//経過時間を足す
@@ -49,8 +55,28 @@ void ParticleEmit::Update() {
 		float alpha = 1.0f - (particles_[i].currentTime / particles_[i].lifeTime);
 		instancingData_[i].color.w = alpha;
 		//生きているパーティクルの数を記録
-		numInstance++;
+		numInstance_++;
 	}
+
+#ifdef  USE_IMGUI
+	/*static bool isSpawn = false;
+	ImGui::Begin("particle");
+	if (ImGui::Button("spawn")) {
+		isSpawn ^= true;
+	}
+	ImGui::End();*/
+#endif //USE_IMGUI
+
+	//パーティクルが消えたら新しいパーティクルを生成
+	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
+		if (!particles_[i].isAlive) {
+			//パーティクルの初期化
+			particles_[i] = MakeNewParticle(randomEngine_);
+			instancingData_[i].color = particles_[i].color;
+			break;
+		}
+	}
+
 	//ワールドトランスフォームの更新
 	UpdateWorldTransform();
 }
@@ -71,8 +97,8 @@ void ParticleEmit::Draw() {
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, SRVManager::GetInstance()->GetGPUDescriptorHandle(srvIndex_));
 	//SRVのDescriptorTableの先頭を設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVHandleGPU(modelData_.material.textureFilePath));
-	//描画(DrwaCall/ドローコール)
-	directXBase_->GetCommandList()->DrawInstanced(static_cast<UINT>(modelData_.vertices.size()), numInstance, 0, 0);
+	//描画(DrawCall/ドローコール)
+	directXBase_->GetCommandList()->DrawInstanced(static_cast<UINT>(modelData_.vertices.size()), numInstance_, 0, 0);
 }
 
 //終了
@@ -158,8 +184,7 @@ void ParticleEmit::UpdateWorldTransform() {
 		if (camera_) {
 			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
 			instancingData_[i].WVP = worldMatrix_ * viewProjectionMatrix;
-		}
-		else {
+		} else {
 			instancingData_[i].WVP = worldMatrix_;
 		}
 		//ワールド行列を送信
@@ -189,7 +214,7 @@ Particle ParticleEmit::MakeNewParticle(std::mt19937& randomEngine) {
 	//パーティクルの初期化
 	Particle particle;
 	//拡縮
-	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
+	particle.transform.scale = { 0.1f, 0.1f, 0.1f };
 	//回転
 	particle.transform.rotate = { 0.0f, 180.0f * rad, 0.0f };
 	//位置
@@ -206,5 +231,8 @@ Particle ParticleEmit::MakeNewParticle(std::mt19937& randomEngine) {
 	std::uniform_real_distribution<float>distTime(1.0f, 3.0f);
 	particle.lifeTime = distTime(randomEngine);
 	particle.currentTime = 0.0f;
+
+	//生存フラグ
+	particle.isAlive = true;
 	return particle;
 }
