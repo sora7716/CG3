@@ -31,6 +31,8 @@ void Framework::Initialize() {
 	Object2dCommon::GetInstance()->Initialize(directXBase_.get());
 	//3Dオブジェクトの共通部分
 	Object3dCommon::GetInstance()->Initialize(directXBase_.get());
+	//パーティクルの共通部分の初期化
+	ParticleCommon::GetInstance()->Initialize(directXBase_.get());
 	//ゲームオブジェクトのリスト
 	GameObjectList::GetInstance()->Initialize();
 	//カメラの設定

@@ -16,6 +16,8 @@ typedef struct Particle {
 	Transform transform;//SRVの情報
 	Vector3 velocity;//速度
 	Vector4 color;//色
+	float lifeTime;//生存時間
+	float currentTime;//発生してからの経過時間
 }Particle;
 
 //パーティクルの情報をGPUに送るための構造体
@@ -106,18 +108,18 @@ private://メンバ関数
 	Particle MakeNewParticle(std::mt19937& randomEngine);
 private://静的メンバ変数
 	//パーティクルの数
-	static const uint32_t kParticleCount = 10;
+	static const uint32_t kNumMaxInstance = 10;
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
 	//カメラ
 	Camera* camera_ = nullptr;
 	//ワールドビュープロジェクションのリソース
-	ComPtr<ID3D12Resource>wvpResource_ = nullptr;
+	ComPtr<ID3D12Resource>instancingResource_ = nullptr;
 	//ワールドビュープロジェクションのデータ
-	ParticleForGPU* instanceData_ = {};
+	ParticleForGPU* instancingData_ = {};
 	//パーティクルのデータ
-	Particle particles_[kParticleCount] = {};
+	Particle particles_[kNumMaxInstance] = {};
 	//ワールドマトリックス
 	Matrix4x4 worldMatrix_ = {};
 	//モデルデータ
@@ -130,7 +132,9 @@ private://メンバ変数
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
 	//ブレンドモード
-	BlendMode blendMode_ = BlendMode::kNone;
+	BlendMode blendMode_ = BlendMode::kAdd;
 	//SRVインデックス
 	uint32_t srvIndex_ = 0;
+	//生存しているパーティクルの数
+	uint32_t numInstance = 0;
 };

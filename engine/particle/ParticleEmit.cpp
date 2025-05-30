@@ -11,22 +11,11 @@
 void ParticleEmit::Initialize(DirectXBase* directXBase) {
 	//DirectXの基盤部分を記録する
 	directXBase_ = directXBase;
-
-	//パーティクルの共通部分の初期化
-	ParticleCommon::GetInstance()->Initialize(directXBase_);
 	//ライトを生成
 	ParticleCommon::GetInstance()->CreateDirectionLight();
 
 	//カメラを設定
 	camera_ = ParticleCommon::GetInstance()->GetDefaultCamera();
-
-	//乱数エンジンの初期化
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine_; (seedGenerator);
-	//パーティクルの初期化
-	for (uint32_t i = 0; i < kParticleCount; i++) {
-		particles_[i] = MakeNewParticle(randomEngine_);
-	}
 
 	//ワールドトランスフォームのリソースの生成
 	CreateWorldTransformResource();
@@ -36,13 +25,31 @@ void ParticleEmit::Initialize(DirectXBase* directXBase) {
 	CreateMaterialResource();
 	//ストラクチャバッファの生成
 	CreateStructuredBuffer();
+
+	//乱数エンジンの初期化
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine_; (seedGenerator);
+	//パーティクルの初期化
+	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
+		particles_[i] = MakeNewParticle(randomEngine_);
+		instancingData_[i].color = particles_[i].color;
+	}
 }
 
 //更新
 void ParticleEmit::Update() {
+	//生存しているパーティクルの数を0に初期化
+	numInstance = 0;
 	//パーティクルの全体的に更新
-	for (uint32_t i = 0; i < kParticleCount; i++) {
+	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
+		//移動
 		particles_[i].transform.translate += particles_[i].velocity * deltaTime;
+		//経過時間を足す
+		particles_[i].currentTime += deltaTime;
+		float alpha = 1.0f - (particles_[i].currentTime / particles_[i].lifeTime);
+		instancingData_[i].color.w = alpha;
+		//生きているパーティクルの数を記録
+		numInstance++;
 	}
 	//ワールドトランスフォームの更新
 	UpdateWorldTransform();
@@ -65,7 +72,7 @@ void ParticleEmit::Draw() {
 	//SRVのDescriptorTableの先頭を設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVHandleGPU(modelData_.material.textureFilePath));
 	//描画(DrwaCall/ドローコール)
-	directXBase_->GetCommandList()->DrawInstanced(static_cast<UINT>(modelData_.vertices.size()), kParticleCount, 0, 0);
+	directXBase_->GetCommandList()->DrawInstanced(static_cast<UINT>(modelData_.vertices.size()), numInstance, 0, 0);
 }
 
 //終了
@@ -127,21 +134,21 @@ void ParticleEmit::CreateMaterialResource() {
 //ワールドトランスフォームのリソースの生成
 void ParticleEmit::CreateWorldTransformResource() {
 	//座標変換行列リソースを作成する	
-	wvpResource_ = directXBase_->CreateBufferResource(sizeof(ParticleForGPU) * kParticleCount);
+	instancingResource_ = directXBase_->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
 	//書き込むためのアドレス
-	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&instanceData_));
-	for (uint32_t i = 0; i < kParticleCount; i++) {
+	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
+	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
 		//単位行列を書き込んでおく
-		instanceData_[i].WVP = Math::MakeIdentity4x4();
-		instanceData_[i].World = Math::MakeIdentity4x4();
-		instanceData_[i].color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 初期色を白に設定
+		instancingData_[i].WVP = Math::MakeIdentity4x4();
+		instancingData_[i].World = Math::MakeIdentity4x4();
+		instancingData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 初期色を白に設定
 	}
 }
 
 //ワールドトランスフォームの更新
 void ParticleEmit::UpdateWorldTransform() {
-	for (uint32_t i = 0; i < kParticleCount; i++) {
+	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
 		//TransformからWorldMatrixを作る
 		worldMatrix_ = Rendering::MakeAffineMatrix(particles_[i].transform.scale, particles_[i].transform.rotate, particles_[i].transform.translate);
 		/*if (parent_) {
@@ -150,13 +157,13 @@ void ParticleEmit::UpdateWorldTransform() {
 		//wvpの書き込み
 		if (camera_) {
 			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
-			instanceData_[i].WVP = worldMatrix_ * viewProjectionMatrix;
+			instancingData_[i].WVP = worldMatrix_ * viewProjectionMatrix;
 		}
 		else {
-			instanceData_[i].WVP = worldMatrix_;
+			instancingData_[i].WVP = worldMatrix_;
 		}
 		//ワールド行列を送信
-		instanceData_[i].World = worldMatrix_;
+		instancingData_[i].World = worldMatrix_;
 	}
 }
 
@@ -169,8 +176,8 @@ void ParticleEmit::CreateStructuredBuffer() {
 	srvIndex_ = SRVManager::GetInstance()->Allocate();
 	SRVManager::GetInstance()->CreateSRVforStructuredBuffer(
 		srvIndex_,
-		wvpResource_.Get(),
-		kParticleCount,
+		instancingResource_.Get(),
+		kNumMaxInstance,
 		sizeof(ParticleForGPU)
 	);
 }
@@ -189,7 +196,15 @@ Particle ParticleEmit::MakeNewParticle(std::mt19937& randomEngine) {
 	particle.transform.translate = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
 	//速度
 	particle.velocity = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+
+	//色の値を[0.0f,1.0f]でランダムに設定
+	std::uniform_real_distribution<float>distColor(0.0f, 1.0f);
 	//色
-	particle.color = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+	particle.color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine),1.0f };
+
+	//生存時間
+	std::uniform_real_distribution<float>distTime(1.0f, 3.0f);
+	particle.lifeTime = distTime(randomEngine);
+	particle.currentTime = 0.0f;
 	return particle;
 }

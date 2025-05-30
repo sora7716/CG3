@@ -41,6 +41,8 @@ void Object2d::Update() {
 
 //描画
 void Object2d::Draw() {
+	//2Dオブジェクトの共通部分
+	Object2dCommon::GetInstance()->DrawSetting();
 	//PSOの設定
 	auto pso = Object2dCommon::GetInstance()->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
 	//グラフィックスパイプラインをセットするコマンド

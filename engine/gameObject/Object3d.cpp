@@ -32,6 +32,8 @@ void Object3d::Update() {
 
 //描画
 void Object3d::Draw() {
+	//3Dオブジェクトの共通部分
+	Object3dCommon::GetInstance()->DrawSetting();
 	//PSOの設定
 	auto pso = Object3dCommon::GetInstance()->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
 	//グラフィックスパイプラインをセットするコマンド
