@@ -109,7 +109,7 @@ private://メンバ関数
 	Particle MakeNewParticle(std::mt19937& randomEngine);
 private://静的メンバ変数
 	//パーティクルの数
-	static const uint32_t kNumMaxInstance = 100;
+	static const uint32_t kNumMaxInstance = 1024;
 private://メンバ変数
 	//DirectXの基盤部分	
 	DirectXBase* directXBase_ = nullptr;
@@ -121,6 +121,8 @@ private://メンバ変数
 	ParticleForGPU* instancingData_ = {};
 	//パーティクルのデータ
 	Particle particles_[kNumMaxInstance] = {};
+	//パーティクルの生成数
+	uint32_t particleCount_ = 1;
 	//ワールドマトリックス
 	Matrix4x4 worldMatrix_ = {};
 	//モデルデータ

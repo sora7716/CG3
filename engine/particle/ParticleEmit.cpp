@@ -42,7 +42,7 @@ void ParticleEmit::Update() {
 	numInstance_ = 0;
 
 	//パーティクルの全体的に更新
-	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
+	for (uint32_t i = 0; i < particleCount_; i++) {
 		//生存しているかどうか
 		if (particles_[i].currentTime > particles_[i].lifeTime) {
 			particles_[i].isAlive = false;
@@ -59,16 +59,13 @@ void ParticleEmit::Update() {
 	}
 
 #ifdef  USE_IMGUI
-	/*static bool isSpawn = false;
 	ImGui::Begin("particle");
-	if (ImGui::Button("spawn")) {
-		isSpawn ^= true;
-	}
-	ImGui::End();*/
+	ImGui::DragScalar("instance", ImGuiDataType_U32, &particleCount_);
+	ImGui::End();
 #endif //USE_IMGUI
 
 	//パーティクルが消えたら新しいパーティクルを生成
-	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
+	for (uint32_t i = 0; i < particleCount_; i++) {
 		if (!particles_[i].isAlive) {
 			//パーティクルの初期化
 			particles_[i] = MakeNewParticle(randomEngine_);
