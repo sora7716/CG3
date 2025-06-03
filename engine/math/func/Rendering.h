@@ -73,13 +73,11 @@ public://メンバ関数
 	static Matrix4x4 MakeOBBWorldMatrix(const Vector3* orientations, const Vector3 center);
 
 	/// <summary>
-	/// アフィン関数
+	/// アフィン行列の作成
 	/// </summary>
-	/// <param name="scale">倍率</param>
-	/// <param name="rotate">回転</param>
-	/// <param name="translate">移動</param>
+	/// <param name="transform">トランスフォーム</param>
 	/// <returns>アフィン行列</returns>
-	static Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+	static Matrix4x4 MakeAffineMatrix(const Transform& transform);
 
 	/// <summary>
 	/// STRの変換
@@ -97,7 +95,7 @@ public://メンバ関数
 	/// <param name="rotate">回転</param>
 	/// <param name="translate">移動</param>
 	/// <returns></returns>
-	static Matrix4x4 MakeUVAffineMatrix(const Vector3& scale,float rotate,const Vector3&translate);
+	static Matrix4x4 MakeUVAffineMatrix(const Vector3& scale, float rotate, const Vector3& translate);
 
 	/// <summary>
 	/// 正射影行列
@@ -139,7 +137,7 @@ public://メンバ関数
 	/// <param name="cameraWorldMatrix">カメラのワールド行列</param>
 	/// <param name="rotate">回転</param>
 	/// <returns>ビルボード行列</returns>
-	static Matrix4x4 MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix,const Vector3& rotate);
+	static Matrix4x4 MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, const Vector3& rotate);
 
 	/// <summary>
 	/// ビルボード行列を含んだアフィン行列の作成

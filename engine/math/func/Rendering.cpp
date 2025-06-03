@@ -111,8 +111,8 @@ Matrix4x4 Rendering::MakeOBBWorldMatrix(const Vector3* orientations, const Vecto
 }
 
 //アフィン関数
-Matrix4x4 Rendering::MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
-	return (MakeScaleMatrix(scale) * MakeRotateXYZMatrix(rotate)) * MakeTranslateMatrix(translate);
+Matrix4x4 Rendering::MakeAffineMatrix(const Transform& transform) {
+	return (MakeScaleMatrix(transform.scale) * MakeRotateXYZMatrix(transform.rotate)) * MakeTranslateMatrix(transform.translate);
 }
 
 //STRの変換

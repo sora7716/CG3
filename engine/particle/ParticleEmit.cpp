@@ -31,8 +31,11 @@ void ParticleEmit::Initialize(DirectXBase* directXBase) {
 	randomEngine_.seed(seedGenerator());
 	//パーティクルの初期化
 	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
-		particles_[i] = MakeNewParticle(randomEngine_);
-		instancingData_[i].color = particles_[i].color;
+		particles_.push_back(MakeNewParticle(randomEngine_));
+	}
+	//色の初期化
+	for (auto it = particles_.begin(); it != particles_.end(); it++) {
+		instancingData_->color = it->color;
 	}
 }
 
@@ -41,39 +44,54 @@ void ParticleEmit::Update() {
 	//生存しているパーティクルの数を0に初期化
 	numInstance_ = 0;
 
-	//パーティクルの全体的に更新
-	for (uint32_t i = 0; i < particleCount_; i++) {
-		//生存しているかどうか
-		if (particles_[i].currentTime > particles_[i].lifeTime) {
-			particles_[i].isAlive = false;
-			continue; // 生存していなければスキップ
+	for (auto it = particles_.begin(); it != particles_.end();) {
+		if ((*it).lifeTime <= (*it).currentTime) {
+			it = particles_.erase(it); //生存期間を過ぎたらパーティクルをlistから削除
+			continue;//削除したので次のループへ
 		}
 		//移動
-		particles_[i].transform.translate += particles_[i].velocity * deltaTime;
+		(*it).transform.translate += (*it).velocity * deltaTime;
 		//経過時間を足す
-		particles_[i].currentTime += deltaTime;
-		float alpha = 1.0f - (particles_[i].currentTime / particles_[i].lifeTime);
-		instancingData_[i].color.w = alpha;
+		(*it).currentTime += deltaTime;
+		float alpha = 1.0f - ((*it).currentTime / (*it).lifeTime);
+		instancingData_->color.w = alpha;
 		//生きているパーティクルの数を記録
 		numInstance_++;
+		it++;//次のイテレータに進める
 	}
+	////パーティクルの全体的に更新
+	//for (uint32_t i = 0; i < particleCount_; i++) {
+	//	//生存しているかどうか
+	//	if (particles_[i].currentTime > particles_[i].lifeTime) {
+	//		particles_[i].isAlive = false;
+	//		continue; // 生存していなければスキップ
+	//	}
+	//	//移動
+	//	particles_[i].transform.translate += particles_[i].velocity * deltaTime;
+	//	//経過時間を足す
+	//	particles_[i].currentTime += deltaTime;
+	//	float alpha = 1.0f - (particles_[i].currentTime / particles_[i].lifeTime);
+	//	instancingData_[i].color.w = alpha;
+	//	//生きているパーティクルの数を記録
+	//	numInstance_++;
+	//}
 
 #ifdef  USE_IMGUI
-	ImGui::Begin("particle");
+	/*ImGui::Begin("particle");
 	ImGui::DragScalar("instance", ImGuiDataType_U32, &particleCount_);
 	ImGui::DragFloat3("rotate", &particles_[0].transform.rotate.x, 0.1f);
-	ImGui::End();
+	ImGui::End();*/
 #endif //USE_IMGUI
 
 	//パーティクルが消えたら新しいパーティクルを生成
-	for (uint32_t i = 0; i < particleCount_; i++) {
-		if (!particles_[i].isAlive) {
-			//パーティクルの初期化
-			particles_[i] = MakeNewParticle(randomEngine_);
-			instancingData_[i].color = particles_[i].color;
-			break;
-		}
-	}
+	//for (uint32_t i = 0; i < particleCount_; i++) {
+	//	if (!particles_[i].isAlive) {
+	//		//パーティクルの初期化
+	//		particles_[i] = MakeNewParticle(randomEngine_);
+	//		instancingData_[i].color = particles_[i].color;
+	//		break;
+	//	}
+	//}
 
 	//ワールドトランスフォームの更新
 	UpdateWorldTransform();

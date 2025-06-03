@@ -5,6 +5,7 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include <random>
+#include <list>
 
 //前方宣言
 class DirectXBase;
@@ -120,9 +121,9 @@ private://メンバ変数
 	//ワールドビュープロジェクションのデータ
 	ParticleForGPU* instancingData_ = {};
 	//パーティクルのデータ
-	Particle particles_[kNumMaxInstance] = {};
+	std::list<Particle> particles_ = {};
 	//パーティクルの生成数
-	uint32_t particleCount_ = 1;
+	uint32_t particleCount_ = 3;
 	//ワールドマトリックス
 	Matrix4x4 worldMatrix_ = {};
 	//モデルデータ
