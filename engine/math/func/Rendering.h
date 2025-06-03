@@ -141,5 +141,12 @@ public://メンバ関数
 	/// <returns>ViewportMatrix</returns>
 	static Matrix4x4 MakeViewportMatrix(const float& left, const float& top, const float& width, const float& height, const float& minDepth, const float& maxDepth);
 
+	/// <summary>
+	/// ビルボード行列の作成
+	/// </summary>
+	/// <param name="cameraWorldMatrix">カメラのワールド行列</param>
+	/// <param name="rotate">回転</param>
+	/// <returns>ビルボード行列</returns>
+	static Matrix4x4 MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix,const Vector3& rotate);
 };
 

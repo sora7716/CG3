@@ -116,6 +116,11 @@ void TitleScene::Update() {
 		object3d_->SetBlendMode((BlendMode)blendMode_);
 	}
 	ImGui::End();
+
+	/*ImGui::Begin("camera");
+	ImGui::DragFloat3("cameraPos", &cameraRotate_.x, 0.1f);
+	ImGui::End();
+	CameraManager::GetInstance()->FindCamera("defaultCamera")->SetRotate(cameraRotate_);*/
 #endif // USE_IMGUI
 	//ImGuiの受付終了
 	ImGuiManager::GetInstance()->End();

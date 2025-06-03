@@ -165,18 +165,21 @@ Matrix4x4 Rendering::MakeViewportMatrix(const float& left, const float& top, con
 	return result;
 }
 
-//乗算
-Transform Transform::operator*(const Transform transform) {
-	Transform result;
-	result.scale = this->scale * transform.scale;
-	result.rotate = this->rotate * transform.rotate;
-	result.translate = this->translate * transform.translate;
-	return result;
+//ビルボード行列を作成
+Matrix4x4 Rendering::MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, const Vector3& rotate){
+	//正面に向けるY軸回転の行列を作成
+	Matrix4x4 backToFrontMatrix = Rendering::MakeRotateXYZMatrix(rotate);
+	//ビルボード行列を作成
+	Matrix4x4 billboardMatrix = backToFrontMatrix * cameraWorldMatrix;
+	billboardMatrix.m[3][0] = 0.0f; // X座標を0に設定
+	billboardMatrix.m[3][1] = 0.0f; // Y座標を0に設定
+	billboardMatrix.m[3][2] = 0.0f; // Z座標を0に設定
+	return billboardMatrix;
 }
 
 //乗算
-Transform2d Transform2d::operator*(const Transform2d transform) {
-	Transform2d result;
+Transform Transform::operator*(const Transform transform) {
+	Transform result;
 	result.scale = this->scale * transform.scale;
 	result.rotate = this->rotate * transform.rotate;
 	result.translate = this->translate * transform.translate;

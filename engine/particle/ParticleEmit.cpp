@@ -61,6 +61,7 @@ void ParticleEmit::Update() {
 #ifdef  USE_IMGUI
 	ImGui::Begin("particle");
 	ImGui::DragScalar("instance", ImGuiDataType_U32, &particleCount_);
+	ImGui::DragFloat3("rotate", &particles_[0].transform.rotate.x, 0.1f);
 	ImGui::End();
 #endif //USE_IMGUI
 
@@ -172,11 +173,10 @@ void ParticleEmit::CreateWorldTransformResource() {
 //ワールドトランスフォームの更新
 void ParticleEmit::UpdateWorldTransform() {
 	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
-		//TransformからWorldMatrixを作る
-		worldMatrix_ = Rendering::MakeAffineMatrix(particles_[i].transform.scale, particles_[i].transform.rotate, particles_[i].transform.translate);
-		/*if (parent_) {
-			worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;
-		}*/
+		//ビルボード行列
+		Matrix4x4 billboardMatrix = Rendering::MakeBillboardMatrix(camera_->GetWorldMatrix(), particles_[i].transform.rotate);
+		//TransformからWorldMatrixを作る(ビルボード行列を入れた)
+		worldMatrix_ = Rendering::MakeScaleMatrix(particles_[i].transform.scale) * billboardMatrix * Rendering::MakeTranslateMatrix(particles_[i].transform.translate);
 		//wvpの書き込み
 		if (camera_) {
 			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
@@ -213,7 +213,7 @@ Particle ParticleEmit::MakeNewParticle(std::mt19937& randomEngine) {
 	//拡縮
 	particle.transform.scale = { 0.1f, 0.1f, 0.1f };
 	//回転
-	particle.transform.rotate = { 0.0f, 180.0f * rad, 0.0f };
+	particle.transform.rotate = { 0.0f, pi_f, 0.0f };
 	//位置
 	particle.transform.translate = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
 	//速度
