@@ -173,10 +173,8 @@ void ParticleEmit::CreateWorldTransformResource() {
 //ワールドトランスフォームの更新
 void ParticleEmit::UpdateWorldTransform() {
 	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
-		//ビルボード行列
-		Matrix4x4 billboardMatrix = Rendering::MakeBillboardMatrix(camera_->GetWorldMatrix(), particles_[i].transform.rotate);
 		//TransformからWorldMatrixを作る(ビルボード行列を入れた)
-		worldMatrix_ = Rendering::MakeScaleMatrix(particles_[i].transform.scale) * billboardMatrix * Rendering::MakeTranslateMatrix(particles_[i].transform.translate);
+		worldMatrix_ = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), particles_[i].transform);
 		//wvpの書き込み
 		if (camera_) {
 			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
