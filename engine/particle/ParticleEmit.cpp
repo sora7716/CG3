@@ -33,9 +33,12 @@ void ParticleEmit::Initialize(DirectXBase* directXBase) {
 	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
 		particles_.push_back(MakeNewParticle(randomEngine_));
 	}
+
+	//インスタンシングデータの検索
+	size_t index = 0;
 	//色の初期化
-	for (auto it = particles_.begin(); it != particles_.end(); it++) {
-		instancingData_->color = it->color;
+	for (auto it = particles_.begin(); it != particles_.end(); it++,index++) {
+		instancingData_[index].color = it->color;
 	}
 }
 
@@ -44,7 +47,9 @@ void ParticleEmit::Update() {
 	//生存しているパーティクルの数を0に初期化
 	numInstance_ = 0;
 
-	for (auto it = particles_.begin(); it != particles_.end();) {
+	//インスタンシングデータの検索
+	size_t index = 0;
+	for (auto it = particles_.begin(); it != particles_.end();index++) {
 		if ((*it).lifeTime <= (*it).currentTime) {
 			it = particles_.erase(it); //生存期間を過ぎたらパーティクルをlistから削除
 			continue;//削除したので次のループへ
@@ -54,7 +59,7 @@ void ParticleEmit::Update() {
 		//経過時間を足す
 		(*it).currentTime += deltaTime;
 		float alpha = 1.0f - ((*it).currentTime / (*it).lifeTime);
-		instancingData_->color.w = alpha;
+		instancingData_[index].color.w = alpha;
 		//生きているパーティクルの数を記録
 		numInstance_++;
 		it++;//次のイテレータに進める
@@ -77,10 +82,15 @@ void ParticleEmit::Update() {
 	//}
 
 #ifdef  USE_IMGUI
-	/*ImGui::Begin("particle");
-	ImGui::DragScalar("instance", ImGuiDataType_U32, &particleCount_);
-	ImGui::DragFloat3("rotate", &particles_[0].transform.rotate.x, 0.1f);
-	ImGui::End();*/
+	ImGui::Begin("particle");
+	if (ImGui::Button("Add particle")) {
+		for (uint32_t i = 0; i < kNumMaxInstance; i++) {
+			particles_.push_back(MakeNewParticle(randomEngine_));
+		}
+	}
+	ImGui::Text("size:%d", particles_.size());
+	ImGui::Text("instance:%d", numInstance_);
+	ImGui::End();
 #endif //USE_IMGUI
 
 	//パーティクルが消えたら新しいパーティクルを生成
@@ -190,18 +200,20 @@ void ParticleEmit::CreateWorldTransformResource() {
 
 //ワールドトランスフォームの更新
 void ParticleEmit::UpdateWorldTransform() {
-	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
-		//TransformからWorldMatrixを作る(ビルボード行列を入れた)
-		worldMatrix_ = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), particles_[i].transform);
+	//インスタンシングデータの検索
+	size_t index = 0;
+	for (auto it = particles_.begin(); it != particles_.end(); it++,index++) {
 		//wvpの書き込み
 		if (camera_) {
+			//TransformからWorldMatrixを作る(ビルボード行列を入れた)
+			worldMatrix_ = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), (*it).transform);
 			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
-			instancingData_[i].WVP = worldMatrix_ * viewProjectionMatrix;
+			instancingData_[index].WVP = worldMatrix_ * viewProjectionMatrix;
 		} else {
-			instancingData_[i].WVP = worldMatrix_;
+			instancingData_[index].WVP = worldMatrix_;
 		}
 		//ワールド行列を送信
-		instancingData_[i].World = worldMatrix_;
+		instancingData_[index].World = worldMatrix_;
 	}
 }
 
@@ -227,7 +239,7 @@ Particle ParticleEmit::MakeNewParticle(std::mt19937& randomEngine) {
 	//パーティクルの初期化
 	Particle particle;
 	//拡縮
-	particle.transform.scale = { 0.1f, 0.1f, 0.1f };
+	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
 	//回転
 	particle.transform.rotate = { 0.0f, pi_f, 0.0f };
 	//位置
@@ -245,7 +257,5 @@ Particle ParticleEmit::MakeNewParticle(std::mt19937& randomEngine) {
 	particle.lifeTime = distTime(randomEngine);
 	particle.currentTime = 0.0f;
 
-	//生存フラグ
-	particle.isAlive = true;
 	return particle;
 }

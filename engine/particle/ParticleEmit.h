@@ -19,7 +19,6 @@ typedef struct Particle {
 	Vector4 color;//色
 	float lifeTime;//生存時間
 	float currentTime;//発生してからの
-	int32_t isAlive;//生存フラグ
 }Particle;
 
 //パーティクルの情報をGPUに送るための構造体
@@ -110,7 +109,7 @@ private://メンバ関数
 	Particle MakeNewParticle(std::mt19937& randomEngine);
 private://静的メンバ変数
 	//パーティクルの数
-	static const uint32_t kNumMaxInstance = 1024;
+	static const uint32_t kNumMaxInstance = 3;
 private://メンバ変数
 	//DirectXの基盤部分	
 	DirectXBase* directXBase_ = nullptr;
@@ -122,8 +121,6 @@ private://メンバ変数
 	ParticleForGPU* instancingData_ = {};
 	//パーティクルのデータ
 	std::list<Particle> particles_ = {};
-	//パーティクルの生成数
-	uint32_t particleCount_ = 3;
 	//ワールドマトリックス
 	Matrix4x4 worldMatrix_ = {};
 	//モデルデータ
