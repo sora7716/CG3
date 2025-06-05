@@ -109,7 +109,7 @@ private://メンバ関数
 	Particle MakeNewParticle(std::mt19937& randomEngine);
 private://静的メンバ変数
 	//パーティクルの数
-	static const uint32_t kNumMaxInstance = 3;
+	static const uint32_t kNumMaxInstance = 20;
 private://メンバ変数
 	//DirectXの基盤部分	
 	DirectXBase* directXBase_ = nullptr;
