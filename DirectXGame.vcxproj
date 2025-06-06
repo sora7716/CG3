@@ -53,7 +53,7 @@
     <ClCompile Include="engine\objectCommon\Object2dCommon.cpp" />
     <ClCompile Include="engine\objectCommon\Object3dCommon.cpp" />
     <ClCompile Include="engine\objectCommon\ParticleCommon.cpp" />
-    <ClCompile Include="engine\particle\ParticleEmit.cpp" />
+    <ClCompile Include="engine\particle\ParticleSystem.cpp" />
     <ClCompile Include="engine\scene\AbstractSceneFactory.cpp" />
     <ClCompile Include="engine\scene\GameScene.cpp" />
     <ClCompile Include="engine\scene\IScene.cpp" />
@@ -107,7 +107,7 @@
     <ClInclude Include="engine\objectCommon\Object2dCommon.h" />
     <ClInclude Include="engine\objectCommon\Object3dCommon.h" />
     <ClInclude Include="engine\objectCommon\ParticleCommon.h" />
-    <ClInclude Include="engine\particle\ParticleEmit.h" />
+    <ClInclude Include="engine\particle\ParticleSystem.h" />
     <ClInclude Include="engine\scene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\scene\GameScene.h" />
     <ClInclude Include="engine\scene\IScene.h" />

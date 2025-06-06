@@ -57,13 +57,13 @@ void Model::SetTexture(const std::string& filePath){
 	modelData_.material.textureFilePath = filePath;
 }
 
-// 色を取得
+//色を取得
 const Vector4& Model::GetColor() const {
 	// TODO: return ステートメントをここに挿入します
 	return materialData_->color;
 }
 
-// .mtlファイルの読み取り	
+//.mtlファイルの読み取り	
 MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
 	//1.中で必要となる変数の宣言
 	MaterialData materialData;//構築するMaterialData
@@ -88,7 +88,7 @@ MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, c
 	return materialData;
 }
 
-// .objファイル読み取り
+//.objファイル読み取り
 ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename) {
 	//1.中で必要な変数を宣言
 	ModelData modelData;//構築するModelData

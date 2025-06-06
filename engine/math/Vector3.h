@@ -3,7 +3,9 @@
 /// 3次元ベクトル
 /// </summary>
 typedef struct Vector3 final {
-	float x, y, z;
+	float x;
+	float y;
+	float z;
 
 	//長さ(ノルム)
 	float Length();

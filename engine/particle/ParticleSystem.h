@@ -28,22 +28,30 @@ typedef struct ParticleForGPU {
 	Vector4 color;
 }ParticleForGPU;
 
+//発生源
+typedef struct Emitter {
+	Transform transform;//エミッターのTransform
+	uint32_t count;//発生数
+	float frequency;//発生頻度
+	float frequencyTime;//頻度用時刻
+}Emitter;
+
 /// <summary>
 /// パーティクルのエミット
 /// </summary>
-class ParticleEmit {
+class ParticleSystem {
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	ParticleEmit() = default;
+	ParticleSystem() = default;
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~ParticleEmit() = default;
+	~ParticleSystem() = default;
 
 	/// <summary>
 	/// 初期化
@@ -87,14 +95,21 @@ private://メンバ関数
 	void CreateMaterialResource();
 
 	/// <summary>
+	/// インデックスリソースの生成
+	/// </summary>
+	void CreateIndexResource();
+
+	/// <summary>
 	/// ワールドトランスフォームのリソースの生成
 	/// </summary>
 	void CreateWorldTransformResource();
-
+	
 	/// <summary>
 	/// ワールドトランスフォームの更新
 	/// </summary>
-	void UpdateWorldTransform();
+	/// <param name="numInstance">インスタンス数</param>
+	/// <param name="iterator"イテレータ></param>
+	void UpdateWorldTransform(uint32_t numInstance,auto iterator);
 
 	/// <summary>
 	/// ストラクチャバッファの生成
@@ -109,7 +124,7 @@ private://メンバ関数
 	Particle MakeNewParticle(std::mt19937& randomEngine);
 private://静的メンバ変数
 	//パーティクルの数
-	static const uint32_t kNumMaxInstance = 20;
+	static const uint32_t kNumMaxInstance = 100;
 private://メンバ変数
 	//DirectXの基盤部分	
 	DirectXBase* directXBase_ = nullptr;
@@ -127,11 +142,15 @@ private://メンバ変数
 	ModelData modelData_ = {};
 	//マテリアルデータ
 	Material* materialData_ = nullptr;
+	//インデックスデータ
+	uint32_t* indexData_ = nullptr;
 	//バッファリソース
 	ComPtr<ID3D12Resource>vertexResource_ = nullptr;//頂点
 	ComPtr<ID3D12Resource>materialResource_ = nullptr;//マテリアル
+	ComPtr<ID3D12Resource>indexResource_ = nullptr;//インデックス
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス	
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kAdd;
 	//SRVインデックス

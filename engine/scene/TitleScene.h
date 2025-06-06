@@ -1,6 +1,6 @@
 #pragma once
 #include "IScene.h"
-#include "engine/particle/ParticleEmit.h"
+#include "engine/particle/ParticleSystem.h"
 
 /// <summary>
 /// タイトルシーン
@@ -53,8 +53,8 @@ private://メンバ変数
 	//ライト
 	DirectionalLight directionalLight_ = {};
 	//ブレンドモード
-	int blendMode_ = BlendMode::kNone;
-	std::unique_ptr<ParticleEmit>particleEmit_ = nullptr;
+	int32_t blendMode_ = static_cast<int32_t>(BlendMode::kNone);
+	std::unique_ptr<ParticleSystem>particleEmit_ = nullptr;
 
 	Vector3 cameraRotate_ = {};
 };

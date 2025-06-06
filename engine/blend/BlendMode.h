@@ -1,6 +1,6 @@
 #pragma once
 
-enum BlendMode {
+enum class BlendMode {
 	//ブレンドなし
 	kNone,
 	//通常のαブレンド Src * SrcA + Dest * (1 - SrcA)

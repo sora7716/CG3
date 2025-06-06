@@ -38,7 +38,7 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 	directionalLight_.color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLight_.intensity = 1.0f;
 
-	particleEmit_ = std::make_unique<ParticleEmit>();
+	particleEmit_ = std::make_unique<ParticleSystem>();
 	particleEmit_->Initialize(directXBase);
 }
 

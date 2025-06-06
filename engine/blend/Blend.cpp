@@ -1,4 +1,5 @@
 #include "Blend.h"
+#include <cstdint>
 #pragma comment(lib,"d3d12.lib")
 //ブレンドモードのテーブルの初期化
 D3D12_BLEND_DESC(Blend::* Blend::BlendModeTable[])() = {
@@ -12,7 +13,7 @@ D3D12_BLEND_DESC(Blend::* Blend::BlendModeTable[])() = {
 
 //ブレンドデスクをセット
 D3D12_BLEND_DESC Blend::SetBlendDesc(BlendMode blendMode) {
-	return (this->*BlendModeTable[(int)blendMode])();
+	return (this->*BlendModeTable[(int32_t)blendMode])();
 }
 
 //ブレンドを開始するときの共通部分
