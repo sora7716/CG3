@@ -11,10 +11,10 @@ void BaseObjectCommon::Initialize(DirectXBase* directXBase) {
 	blend_ = std::make_unique<Blend>();
 	//グラフィックスパイプラインの生成と初期化
 	makeGraphicsPipeline_ = std::make_unique<GraphicsPipeline>();
-	makeGraphicsPipeline_->Initialize(directXBase_);
 	//シェーダを設定
 	makeGraphicsPipeline_->SetVertexShaderFileName(L"Object3d.VS.hlsl");
 	makeGraphicsPipeline_->SetPixelShaderFileName(L"Object3d.PS.hlsl");
+	makeGraphicsPipeline_->Initialize(directXBase_);
 	//ルートシグネイチャの記録
 	rootSignature_ = makeGraphicsPipeline_->GetRootSignature();
 	//グラフィックスパイプラインステートの記録
