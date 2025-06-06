@@ -29,11 +29,6 @@ void ParticleSystem::Initialize(DirectXBase* directXBase) {
 	//乱数エンジンの初期化
 	std::random_device seedGenerator;
 	randomEngine_.seed(seedGenerator());
-
-	//パーティクルの初期化
-	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
-		particles_.push_back(MakeNewParticle(randomEngine_));
-	}
 }
 
 //更新
@@ -65,14 +60,18 @@ void ParticleSystem::Update() {
 		it++;
 	}
 
+	//Emitterの更新
+	emitter_.frequencyTime += deltaTime;
+	if(emitter_.frequency<=emitter_.frequencyTime){
+		particles_.splice(particles_.end(), Emit());
+		emitter_.frequencyTime -= emitter_.frequency;//余計に過ぎた時間も加味して頻度を計算する
+	}
+
 #ifdef  USE_IMGUI
 	ImGui::Begin("particle");
-	if (ImGui::Button("Add particle")) {
-		particles_.push_back(MakeNewParticle(randomEngine_));
-
-	}
 	ImGui::Text("size:%d", particles_.size());
 	ImGui::Text("instance:%d", numInstance_);
+	ImGui::DragFloat3("translate", &emitter_.transform.translate.x, 0.1f);
 	ImGui::End();
 #endif //USE_IMGUI
 }
@@ -219,7 +218,7 @@ void ParticleSystem::CreateStructuredBuffer() {
 }
 
 //パーティクルの生成
-Particle ParticleSystem::MakeNewParticle(std::mt19937& randomEngine) {
+Particle ParticleSystem::MakeNewParticle() {
 	//位置と速度を[-1.0f,1.0f]でランダムに設定
 	std::uniform_real_distribution<float>distribution(-1.0f, 1.0f);
 	//パーティクルの初期化
@@ -229,19 +228,30 @@ Particle ParticleSystem::MakeNewParticle(std::mt19937& randomEngine) {
 	//回転
 	particle.transform.rotate = { 0.0f, pi_f, 0.0f };
 	//位置
-	particle.transform.translate = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+	Vector3 randomTranslate = { distribution(randomEngine_), distribution(randomEngine_), distribution(randomEngine_) };
+	//パーティクルの位置を発生源を中心に設定
+	particle.transform.translate = emitter_.transform.translate + randomTranslate;
 	//速度
-	particle.velocity = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+	particle.velocity = { distribution(randomEngine_), distribution(randomEngine_), distribution(randomEngine_) };
 
 	//色の値を[0.0f,1.0f]でランダムに設定
 	std::uniform_real_distribution<float>distColor(0.0f, 1.0f);
 	//色
-	particle.color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine),1.0f };
+	particle.color = { distColor(randomEngine_), distColor(randomEngine_), distColor(randomEngine_),1.0f };
 
 	//生存時間
 	std::uniform_real_distribution<float>distTime(1.0f, 3.0f);
-	particle.lifeTime = distTime(randomEngine);
+	particle.lifeTime = distTime(randomEngine_);
 	particle.currentTime = 0.0f;
 
 	return particle;
+}
+
+//パーティクルの発生
+std::list<Particle> ParticleSystem::Emit(){
+	std::list<Particle>particles;
+	for (uint32_t i = 0; i < emitter_.count; i++) {
+		particles.push_back(MakeNewParticle());
+	}
+	return particles;
 }

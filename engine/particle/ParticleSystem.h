@@ -119,12 +119,17 @@ private://メンバ関数
 	/// <summary>
 	/// パーティクルの生成
 	/// </summary>
-	/// <param name="randomEngine">ランダムエンジン</param>
 	/// <returns>新しいパーティクル</returns>
-	Particle MakeNewParticle(std::mt19937& randomEngine);
+	Particle MakeNewParticle();
+
+	/// <summary>
+	/// パーティクルの発生
+	/// </summary>
+	/// <returns>パーティクル</returns>
+	std::list<Particle>Emit();
 private://静的メンバ変数
 	//パーティクルの数
-	static const uint32_t kNumMaxInstance = 100;
+	static const uint32_t kNumMaxInstance = 1024;
 private://メンバ変数
 	//DirectXの基盤部分	
 	DirectXBase* directXBase_ = nullptr;
@@ -134,10 +139,6 @@ private://メンバ変数
 	ComPtr<ID3D12Resource>instancingResource_ = nullptr;
 	//ワールドビュープロジェクションのデータ
 	ParticleForGPU* instancingData_ = {};
-	//パーティクルのデータ
-	std::list<Particle> particles_ = {};
-	//ワールドマトリックス
-	Matrix4x4 worldMatrix_ = {};
 	//モデルデータ
 	ModelData modelData_ = {};
 	//マテリアルデータ
@@ -151,12 +152,23 @@ private://メンバ変数
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス	
-	//ブレンドモード
-	BlendMode blendMode_ = BlendMode::kAdd;
 	//SRVインデックス
 	uint32_t srvIndex_ = 0;
-	//生存しているパーティクルの数
-	uint32_t numInstance_ = 0;
+	//ブレンドモード
+	BlendMode blendMode_ = BlendMode::kAdd;
 	//ランダムエンジン
 	std::mt19937 randomEngine_;
+	//パーティクルのデータ
+	std::list<Particle> particles_ = {};
+	//ワールドマトリックス
+	Matrix4x4 worldMatrix_ = {};
+	//生存しているパーティクルの数
+	uint32_t numInstance_ = 0;
+	//発生源
+	Emitter emitter_ = {
+		.transform = {{1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}},
+		.count = 10,
+		.frequency = 0.1f,//発生頻度
+		.frequencyTime = 0.0f//発生頻度用の時刻,0.0fで初期化
+	};
 };
