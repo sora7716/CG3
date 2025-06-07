@@ -11,6 +11,11 @@
 class DirectXBase;
 class Camera;
 
+typedef struct AABB {
+	Vector3 min;//最小値
+	Vector3 max;//最大値
+}AABB;
+
 //構造体
 //パーティクル単体のデータ
 typedef struct Particle {
@@ -35,6 +40,12 @@ typedef struct Emitter {
 	float frequency;//発生頻度
 	float frequencyTime;//頻度用時刻
 }Emitter;
+
+//フィールドの加速度
+typedef struct AccelerationField {
+	Vector3 acceleration;//加速度
+	AABB area;//範囲
+}AccelerationField;
 
 /// <summary>
 /// パーティクルのエミット
@@ -103,13 +114,13 @@ private://メンバ関数
 	/// ワールドトランスフォームのリソースの生成
 	/// </summary>
 	void CreateWorldTransformResource();
-	
+
 	/// <summary>
 	/// ワールドトランスフォームの更新
 	/// </summary>
 	/// <param name="numInstance">インスタンス数</param>
 	/// <param name="iterator"イテレータ></param>
-	void UpdateWorldTransform(uint32_t numInstance,auto iterator);
+	void UpdateWorldTransform(uint32_t numInstance, auto iterator);
 
 	/// <summary>
 	/// ストラクチャバッファの生成
@@ -127,6 +138,14 @@ private://メンバ関数
 	/// </summary>
 	/// <returns>パーティクル</returns>
 	std::list<Particle>Emit();
+
+	/// <summary>
+	/// 衝突判定
+	/// </summary>
+	/// <param name="aabb">AABB</param>
+	/// <param name="point">point</param>
+	/// <returns>衝突判定</returns>
+	bool IsCollision(const AABB& aabb, const Vector3& point);
 private://静的メンバ変数
 	//パーティクルの数
 	static const uint32_t kNumMaxInstance = 1024;
@@ -170,5 +189,10 @@ private://メンバ変数
 		.count = 10,
 		.frequency = 0.1f,//発生頻度
 		.frequencyTime = 0.0f//発生頻度用の時刻,0.0fで初期化
+	};
+	//フィールドの加速度
+	AccelerationField accelerationField_ = {
+		.acceleration = {15.0f,0.0f,0.0f},
+		.area = {{-1.0f,-1.0f,-1.0f},1.0f,1.0f,1.0f}
 	};
 };

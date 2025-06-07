@@ -1,3 +1,5 @@
+#define NOMINMAX
+#include <algorithm>
 #include "ParticleSystem.h"
 #include "engine/base/DirectXBase.h"
 #include "engine/objectCommon/ParticleCommon.h"
@@ -45,6 +47,10 @@ void ParticleSystem::Update() {
 			}
 			// パーティクルの色を設定
 			instancingData_[numInstance_].color.SetRGB((*it).color.GetRGB());
+			//Fieldの歯に内のParticleには加速度を適用する
+			if (IsCollision(accelerationField_.area, (*it).transform.translate)) {
+				(*it).velocity += accelerationField_.acceleration * deltaTime;
+			}
 			//移動
 			(*it).transform.translate += (*it).velocity * deltaTime;
 			//経過時間を足す
@@ -55,6 +61,7 @@ void ParticleSystem::Update() {
 			UpdateWorldTransform(numInstance_, it);
 			//生きているパーティクルの数を記録
 			numInstance_++;
+			
 		}
 		//次のイテレータに進める
 		it++;
@@ -66,6 +73,7 @@ void ParticleSystem::Update() {
 		particles_.splice(particles_.end(), Emit());
 		emitter_.frequencyTime -= emitter_.frequency;//余計に過ぎた時間も加味して頻度を計算する
 	}
+
 
 #ifdef  USE_IMGUI
 	ImGui::Begin("particle");
@@ -254,4 +262,44 @@ std::list<Particle> ParticleSystem::Emit(){
 		particles.push_back(MakeNewParticle());
 	}
 	return particles;
+}
+
+//衝突判定
+bool ParticleSystem::IsCollision(const AABB& aabb, const Vector3& point){
+	AABB temp = aabb;
+	Vector3 tNear;
+	Vector3 tFar;
+
+	temp.min.x = (aabb.min.x - point.x);
+	temp.max.x = (aabb.max.x - point.x);
+
+	temp.min.y = (aabb.min.y - point.y);
+	temp.max.y = (aabb.max.y - point.y);
+
+	temp.min.z = (aabb.min.z - point.z);
+	temp.max.z = (aabb.max.z - point.z);
+
+	tNear.x = std::min(temp.min.x, temp.max.x);
+	tFar.x = std::max(temp.min.x, temp.max.x);
+
+	tNear.y = std::min(temp.min.y, temp.max.y);
+	tFar.y = std::max(temp.min.y, temp.max.y);
+
+	tNear.z = std::min(temp.min.z, temp.max.z);
+	tFar.z = std::max(temp.min.z, temp.max.z);
+
+	float tMin = std::max(tNear.x, std::max(tNear.z, tNear.y));
+	float tMax = std::min(tFar.x, std::min(tFar.z, tFar.y));
+	bool isCollision = false;
+	if (tMin <= tMax) {
+		if (tMin * tMax < 0.0f) {
+			isCollision = true;
+		}
+		if (0.0f <= tMin && tMin <= 1.0f || 0.0f <= tMax && tMax <= 1.0f) {
+			isCollision = true;
+		}
+	} else {
+		isCollision = false;
+	}
+	return isCollision;
 }
