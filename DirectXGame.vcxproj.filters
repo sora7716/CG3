@@ -207,9 +207,6 @@
     <ClCompile Include="engine\2d\Object2d.cpp">
       <Filter>engine\2d</Filter>
     </ClCompile>
-    <ClCompile Include="engine\2d\PlaneObject.cpp">
-      <Filter>engine\2d</Filter>
-    </ClCompile>
     <ClCompile Include="engine\camera\Camera.cpp">
       <Filter>engine\camera</Filter>
     </ClCompile>
@@ -363,9 +360,6 @@
       <Filter>engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\2d\Object2d.h">
-      <Filter>engine\2d</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\2d\PlaneObject.h">
       <Filter>engine\2d</Filter>
     </ClInclude>
     <ClInclude Include="engine\camera\Camera.h">

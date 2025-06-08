@@ -13,7 +13,6 @@
   <ItemGroup>
     <ClCompile Include="engine\2d\Object2d.cpp" />
     <ClCompile Include="engine\2d\Object2dCommon.cpp" />
-    <ClCompile Include="engine\2d\PlaneObject.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
     <ClCompile Include="engine\2d\SpriteCommon.cpp" />
     <ClCompile Include="engine\2d\SpriteManager.cpp" />
@@ -63,7 +62,6 @@
   <ItemGroup>
     <ClInclude Include="engine\2d\Object2d.h" />
     <ClInclude Include="engine\2d\Object2dCommon.h" />
-    <ClInclude Include="engine\2d\PlaneObject.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\2d\SpriteCommon.h" />
     <ClInclude Include="engine\2d\SpriteManager.h" />
