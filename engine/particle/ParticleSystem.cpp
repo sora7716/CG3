@@ -235,7 +235,7 @@ Particle ParticleSystem::MakeNewParticle() {
 	//拡縮
 	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
 	//回転
-	particle.transform.rotate = { 0.0f, pi_f, 0.0f };
+	particle.transform.rotate = { 0.0f, Math::kPi, 0.0f };
 	//位置
 	Vector3 randomTranslate = { distribution(randomEngine_), distribution(randomEngine_), distribution(randomEngine_) };
 	//パーティクルの位置を発生源を中心に設定

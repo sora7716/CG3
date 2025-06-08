@@ -129,6 +129,16 @@ Vector3 Vector3::operator/(float n)const {
 }
 
 //加法(float)
+Vector3 Vector3::operator+(float n){
+	Vector3 result = {
+		x + n,
+		y + n,
+		z + n
+	};
+	return result;
+}
+
+//加法(float)
 Vector3& Vector3::operator+=(float n) {
 	// TODO: return ステートメントをここに挿入します
 	x -= n;

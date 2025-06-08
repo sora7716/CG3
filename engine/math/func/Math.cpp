@@ -110,13 +110,6 @@ Vector3 Math::Lerp(const Vector3& v1, const Vector3& v2, float t) {
 	return result;
 }
 
-// 線形補間
-float Math::Lerp(const float& num1, const float& num2, float t) {
-	float result;
-	result = num1 + t * (num2 - num1);
-	return result;
-}
-
 // 球面線形補間
 Vector3 Math::SLerp(const Vector3& v1, const Vector3& v2, float t) {
 	Vector3 nv1 = Normalize(v1); // v1 の正規化ベクトル
@@ -134,8 +127,7 @@ Vector3 Math::SLerp(const Vector3& v1, const Vector3& v2, float t) {
 	// ゼロ除算を防ぐ
 	if (sinTheta < 1.0e-5) {
 		normalizeVector = nv1;
-	}
-	else {
+	} else {
 		// 球面線形補間したベクトル(単位ベクトル)
 		float sinThetaFrom = std::sin((1 - t) * theta);
 		float sinThetaTo = std::sin(t * theta);
@@ -146,7 +138,7 @@ Vector3 Math::SLerp(const Vector3& v1, const Vector3& v2, float t) {
 	float length1 = Length(v1);
 	float length2 = Length(v2);
 	// Lerpで補間ベクトルの長さを求める
-	float length = Lerp(length1, length2, t);
+	float length = std::lerp(length1, length2, t);
 
 	return normalizeVector * length;
 }
@@ -260,7 +252,7 @@ void Math::Hooklaw(const Spring& spring, Ball& ball, bool isGravityOn) {
 
 // 円運動XY
 void Math::CircularMoveXY(const Vector3& centerPos, Vector3& ballPos, const Vector2& radius) {
-	float angularVelocity = pi_f;//角速度
+	float angularVelocity = kPi;//角速度
 	static float angle = 0.0f;//角度
 	angle += angularVelocity * kDeltaTime;//現在の角度の計算
 	//円運動させる
@@ -271,7 +263,7 @@ void Math::CircularMoveXY(const Vector3& centerPos, Vector3& ballPos, const Vect
 
 // 円運動XZ
 void Math::CircularMoveXZ(const Vector3& centerPos, Vector3& ballPos, const Vector2& radius) {
-	float angularVelocity = pi_f;//角速度
+	float angularVelocity = kPi;//角速度
 	static float angle = 0.0f;//角度
 	angle += angularVelocity * kDeltaTime;//現在の角度の計算
 	//円運動させる
@@ -282,7 +274,7 @@ void Math::CircularMoveXZ(const Vector3& centerPos, Vector3& ballPos, const Vect
 
 // 円運動ZY
 void Math::CircularMoveZY(const Vector3& centerPos, Vector3& ballPos, const Vector2& radius) {
-	float angularVelocity = pi_f;//角速度
+	float angularVelocity = kPi;//角速度
 	static float angle = 0.0f;//角度
 	angle += angularVelocity * kDeltaTime;//現在の角度の計算
 	//円運動させる
@@ -293,7 +285,7 @@ void Math::CircularMoveZY(const Vector3& centerPos, Vector3& ballPos, const Vect
 
 //振り子の作成
 void Math::MakePendulum(Pendulum& pendulum, Vector3& ballPos) {
-	pendulum.angularaAcceleration = -(abs(kGravity.y) / pendulum.length) * sin(pendulum.angle);
+	pendulum.angularaAcceleration = -(abs(Math::kGravity) / pendulum.length) * sin(pendulum.angle);
 	pendulum.angularVelocity += pendulum.angularaAcceleration * kDeltaTime;
 	pendulum.angle += pendulum.angularVelocity * kDeltaTime;
 	//振り子の先端
@@ -356,7 +348,7 @@ Vector3 Math::AirResistance(const Vector3& velocity, float mass, float k) {
 		Vector3 airResistanceAcceleration = airResistance / mass;
 
 		// 総合加速度に空気抵抗と重力を加算
-		acceleration = kGravity + airResistanceAcceleration;
+		acceleration = airResistanceAcceleration + kGravity;
 	}
 	return acceleration;
 }
@@ -367,7 +359,7 @@ Vector3 Math::Friction(Vector3& velocity, float mass, float miu) {
 	// 動いていたら
 	if (fabs(velocity.x) > 0.01f || fabs(velocity.y) > 0.01f || fabs(velocity.z) > 0.01f) {
 		// 摩擦力の大きさを計算
-		float magnitude = miu * Math::Length(-mass * kGravity.y);
+		float magnitude = miu * Math::Length(-mass * kGravity);
 
 		// 摩擦力の向き（速度の逆方向）
 		Vector3 direction = Normalize(-velocity);
@@ -395,4 +387,9 @@ Vector3 Math::LissajousCurve(const Vector3& theta, const Vector3& center, const 
 	result.y = scalar.y * sin(theta.y) + center.y;
 	result.z = scalar.z * sin(theta.z) + center.z;
 	return result;
+}
+
+//逆正接関数のcotangent
+float Math::Cont(float theta) {
+	return (1.0f / tanf(theta));
 }
