@@ -1,7 +1,6 @@
 #pragma once
 #include "engine/math/ResourceData.h"
-#include "engine/math/func/Rendering.h"
-#include "engine/gameObject/WorldTransform.h"
+#include "engine/math/RenderingData.h"
 #include "engine/blend/BlendMode.h"
 #include <string>
 #include <wrl.h>
@@ -9,6 +8,9 @@
 #include <memory>
 //前方宣言
 class Sprite;
+class WorldTransform;
+class Camera;
+class DirectXBase;
 
 /// <summary>
 /// 2Dオブジェクト
@@ -25,7 +27,7 @@ public://メンバ関数
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Object2d() = default;
+	~Object2d();
 
 	/// <summary>
 	/// 初期化
@@ -179,7 +181,7 @@ private://メンバ変数
 	//スプライト
 	Sprite* sprite_ = nullptr;
 	//ワールドトランスフォーム
-	std::unique_ptr<WorldTransform> worldTransform_ = nullptr;
+	WorldTransform* worldTransform_ = nullptr;
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
 };

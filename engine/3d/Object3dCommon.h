@@ -1,46 +1,49 @@
-
 #pragma once
 #include "engine/math/ResourceData.h"
-#include "engine/base/DirectXBase.h"
-#include "engine/base/GraphicsPipeline.h"
-#include "engine/gameObject/Camera.h"
+#include "engine/blend/blendMode.h"
 #include <wrl.h>
 #include <d3d12.h>
-#include <memory>
+#include <array>
+//前方宣言
+class DirectXBase;
+class Camera;
+class GraphicsPipeline;
+class Blend;
 
 /// <summary>
-/// オブジェクトの管理する基底クラス
+/// 3Dオブジェクトの共通部分
 /// </summary>
-class BaseObjectCommon {
+class Object3dCommon {
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
 	/// <summary>
-	/// コンストラクタ
+	/// インスタンスのゲッター
 	/// </summary>
-	BaseObjectCommon() = default;
-
-	/// <summary>
-	/// デストラクタ
-	/// </summary>
-	virtual~BaseObjectCommon() = default;
+	/// <returns></returns>
+	static Object3dCommon* GetInstance();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤</param>
 	/// <param name="directionalLightData">directionalLightのデータ</param>
-	virtual void Initialize(DirectXBase* directXBase);
+	void Initialize(DirectXBase* directXBase);
 
 	/// <summary>
 	/// 共通描画設定
 	/// </summary>
-	virtual void DrawSetting();
+	void DrawSetting();
 
 	/// <summary>
 	/// 光源の生成
 	/// </summary>
 	void CreateDirectionLight();
+
+	/// <summary>
+	/// 終了
+	/// </summary>
+	void Finalize();
 
 	/// <summary>
 	/// DirectionalLightのセッター
@@ -55,7 +58,7 @@ public://メンバ関数
 	ID3D12Resource* GetDirectionalLightResource()const;
 
 	/// <summary>
-	/// DirectXの基盤のゲッター.
+	/// DirectXの基盤のゲッター
 	/// </summary>
 	/// <returns>DirectXの基盤</returns>
 	DirectXBase* GetDirectXBase()const;
@@ -77,7 +80,21 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>デフォルトカメラ</returns>
 	Camera* GetDefaultCamera()const;
-protected://メンバ変数
+private://メンバ関数
+	//コンストラクタの封印
+	Object3dCommon() = default;
+	//デストラクタの封印
+	~Object3dCommon() = default;
+	//コピーコンストラクタ禁止
+	Object3dCommon(const Object3dCommon&) = delete;
+	//代入演算子の禁止
+	Object3dCommon operator=(const Object3dCommon&) = delete;
+private://静的メンバ変数
+	//インスタンス
+	static inline Object3dCommon* instance = nullptr;
+	//Finalizeをしたかどうかのフラグ
+	static inline bool isFinalize = false;
+private://メンバ変数
 	//DirectXの基盤
 	DirectXBase* directXBase_ = nullptr;
 	//ルートシグネイチャ
@@ -85,13 +102,13 @@ protected://メンバ変数
 	//グラフィックスパイプライン(PSO)
 	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> graphicsPipelineStates_ = { nullptr };
 	//グラフィックスパイプライン
-	std::unique_ptr<GraphicsPipeline>makeGraphicsPipeline_ = nullptr;
+	GraphicsPipeline* makeGraphicsPipeline_ = nullptr;
 	//バッファリソース
 	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//光源
 	//バッファリソース内のデータを指すポインタ
 	DirectionalLight* directionalLightData_ = nullptr;//光源
 	//ブレンド
-	std::unique_ptr<Blend>blend_ = nullptr;
+	Blend* blend_ = nullptr;
 	BlendMode blendMode_ = BlendMode::kNone;
 	//デフォルトカメラ
 	Camera* defaultCamera_ = nullptr;

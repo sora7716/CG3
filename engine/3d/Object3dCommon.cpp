@@ -1,16 +1,27 @@
-#include "BaseObjectCommon.h"
+#include "Object3dCommon.h"
 #include "engine/base/DirectXBase.h"
+#include "engine/gameObject/Camera.h"
+#include "engine/base/GraphicsPipeline.h"
 #include <cassert>
 using namespace Microsoft::WRL;
 
+//インスタンスのゲッター
+Object3dCommon* Object3dCommon::GetInstance() {
+	assert(!isFinalize && "GetInstance() called after Finalize()");
+	if (instance == nullptr) {
+		instance = new Object3dCommon();
+	}
+	return instance;
+}
+
 //初期化
-void BaseObjectCommon::Initialize(DirectXBase* directXBase) {
+void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	assert(directXBase);//Nullチェック
 	directXBase_ = directXBase;//DirectXの基盤を受け取る
 	//ブレンド
-	blend_ = std::make_unique<Blend>();
+	blend_ = new Blend();
 	//グラフィックスパイプラインの生成と初期化
-	makeGraphicsPipeline_ = std::make_unique<GraphicsPipeline>();
+	makeGraphicsPipeline_ = new GraphicsPipeline();
 	//シェーダを設定
 	makeGraphicsPipeline_->SetVertexShaderFileName(L"Object3d.VS.hlsl");
 	makeGraphicsPipeline_->SetPixelShaderFileName(L"Object3d.PS.hlsl");
@@ -19,10 +30,11 @@ void BaseObjectCommon::Initialize(DirectXBase* directXBase) {
 	rootSignature_ = makeGraphicsPipeline_->GetRootSignature();
 	//グラフィックスパイプラインステートの記録
 	graphicsPipelineStates_ = makeGraphicsPipeline_->GetGraphicsPipelines();
+
 }
 
 //共通描画設定
-void BaseObjectCommon::DrawSetting() {
+void Object3dCommon::DrawSetting() {
 	//ルートシグネイチャをセットするコマンド
 	directXBase_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 	//プリミティブトポロジーをセットするコマンド
@@ -30,7 +42,7 @@ void BaseObjectCommon::DrawSetting() {
 }
 
 //光源の生成
-void BaseObjectCommon::CreateDirectionLight() {
+void Object3dCommon::CreateDirectionLight() {
 	//光源のリソースを作成
 	directionalLightResource_ = directXBase_->CreateBufferResource(sizeof(DirectionalLight));
 	//光源データの書きこみ
@@ -41,33 +53,41 @@ void BaseObjectCommon::CreateDirectionLight() {
 }
 
 //DirectionalLightのセッター
-void BaseObjectCommon::SetDirectionalLightData(const DirectionalLight& directionalLightData) {
+void Object3dCommon::SetDirectionalLightData(const DirectionalLight& directionalLightData) {
 	directionalLightData_->color = directionalLightData.color;
 	directionalLightData_->direction = directionalLightData.direction;
 	directionalLightData_->intensity = directionalLightData.intensity;
 }
 
 //DirectionalLightのリソースのゲッター
-ID3D12Resource* BaseObjectCommon::GetDirectionalLightResource()const {
+ID3D12Resource* Object3dCommon::GetDirectionalLightResource()const {
 	return directionalLightResource_.Get();
 }
 
 //DirectXの基盤のゲッター
-DirectXBase* BaseObjectCommon::GetDirectXBase() const {
+DirectXBase* Object3dCommon::GetDirectXBase() const {
 	return directXBase_;
 }
 
 //グラフィックパイプラインのゲッター
-std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> BaseObjectCommon::GetGraphicsPipelineStates() const {
+std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> Object3dCommon::GetGraphicsPipelineStates() const {
 	return graphicsPipelineStates_;
+}
+//終了
+void Object3dCommon::Finalize() {
+	delete blend_;
+	delete makeGraphicsPipeline_;
+	delete instance;
+	instance = nullptr;
+	isFinalize = true;
 }
 
 // デフォルトカメラのセッター
-void BaseObjectCommon::SetDefaultCamera(Camera* camera) {
+void Object3dCommon::SetDefaultCamera(Camera* camera) {
 	defaultCamera_ = camera;
 }
 
 // デフォルトカメラのゲッター
-Camera* BaseObjectCommon::GetDefaultCamera() const {
+Camera* Object3dCommon::GetDefaultCamera() const {
 	return defaultCamera_;
 }

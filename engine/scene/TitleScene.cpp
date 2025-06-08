@@ -3,8 +3,7 @@
 #include "SceneManager.h"
 #include "SceneFactory.h"
 #include "engine/3d/ModelManager.h"
-#include "engine/objectCommon/Object3dCommon.h"
-
+#include "engine/3d/Object3dCommon.h"
 //初期化
 void TitleScene::Initialize(DirectXBase* directXBase) {
 	object2d_ = std::make_unique<Object2d>();
@@ -22,18 +21,6 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 	object3d_->Initialize();
 	object3d_->SetModel("cube");
 	object3d_->SetTexture("uvChecker");
-
-	for (int i = 0; i < 2; i++) {
-		plane_[i] = std::make_unique<PlaneObject>();
-		plane_[i]->Initialize();
-		plane_[i]->SetTexture("block");
-	}
-	planeTransform_[0].scale = { 100.0f,100.0f };
-	planeTransform_[0].rotate = 0.0f;
-	planeTransform_[0].translate = { 100.0f,100.0f };
-	planeTransform_[1].scale = { 1.0f,1.0f };
-	planeTransform_[1].rotate = 0.0f;
-	planeTransform_[1].translate = { 2.0f,0.0f };
 
 	directionalLight_.color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLight_.intensity = 1.0f;
@@ -57,19 +44,6 @@ void TitleScene::Update() {
 	Object3dCommon::GetInstance()->SetDirectionalLightData(directionalLight_);
 	object3d_->Update();
 
-	for (int i = 0; i < 2; i++) {
-		plane_[i]->SetTransform(planeTransform_[i]);
-
-	}
-	plane_[0]->Update();
-	plane_[1]->Update();
-	if (Input::GetInstance()->TriggerKey(DIK_W)) {
-		plane_[1]->SetParent(plane_[0]->GetWorldTransform());
-	}
-	else if (Input::GetInstance()->TriggerKey(DIK_S)) {
-		plane_[1]->SetParent(nullptr);
-	}
-
 	particleEmit_->Update();
 
 #ifdef USE_IMGUI
@@ -78,15 +52,6 @@ void TitleScene::Update() {
 	ImGui::DragFloat("rotate", &worldTransform_.rotate, 0.1f);
 	ImGui::DragFloat2("translate", &worldTransform_.translate.x, 0.1f);
 	ImGui::ColorEdit4("color", &color.x);
-	ImGui::End();
-
-	ImGui::Begin("quad");
-	ImGui::DragFloat2("scale[0]", &planeTransform_[0].scale.x, 0.1f);
-	ImGui::DragFloat("rotate[0]", &planeTransform_[0].rotate, 0.1f);
-	ImGui::DragFloat2("translate[0]", &planeTransform_[0].translate.x, 0.1f);
-	ImGui::DragFloat2("scale[1]", &planeTransform_[1].scale.x, 0.1f);
-	ImGui::DragFloat("rotate[1]", &planeTransform_[1].rotate, 0.1f);
-	ImGui::DragFloat2("translate[1]", &planeTransform_[1].translate.x, 0.1f);
 	ImGui::End();
 
 	ImGui::Begin("3dModel");
@@ -129,9 +94,6 @@ void TitleScene::Update() {
 //描画
 void TitleScene::Draw() {
 	//object2d_->Draw();
-	for (int i = 0; i < 2; i++) {
-		//plane_[i]->Draw();
-	}
 	particleEmit_->Draw();
 	//object3d_->Draw();
 }

@@ -43,9 +43,6 @@
     <Filter Include="application">
       <UniqueIdentifier>{b779c107-e531-4844-9928-b705d07604ff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\objectCommon">
-      <UniqueIdentifier>{bcf43617-959a-4a3d-92a0-f33aac9bba70}</UniqueIdentifier>
-    </Filter>
     <Filter Include="engine\particle">
       <UniqueIdentifier>{74a5fc19-3416-4892-aa63-de0e504292bc}</UniqueIdentifier>
     </Filter>
@@ -61,11 +58,17 @@
     <Filter Include="engine\gameObject">
       <UniqueIdentifier>{fe8994bd-0b9a-44df-b447-7f1938d187b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\blend">
+      <UniqueIdentifier>{05db597a-c161-4c9e-8086-648f850d3793}</UniqueIdentifier>
+    </Filter>
     <Filter Include="engine\3d">
       <UniqueIdentifier>{79d8f6c8-0826-4916-b23e-c709776c8173}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\blend">
-      <UniqueIdentifier>{05db597a-c161-4c9e-8086-648f850d3793}</UniqueIdentifier>
+    <Filter Include="engine\camera">
+      <UniqueIdentifier>{8f993481-635a-49e1-ad52-504c01cab954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\worldTransform">
+      <UniqueIdentifier>{6b108ed3-207f-4093-80c2-6739f3530329}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -123,12 +126,6 @@
     <ClCompile Include="engine\3d\ModelCommon.cpp">
       <Filter>engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="engine\objectCommon\Object3dCommon.cpp">
-      <Filter>engine\objectCommon</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\objectCommon\BaseObjectCommon.cpp">
-      <Filter>engine\objectCommon</Filter>
-    </ClCompile>
     <ClCompile Include="engine\3d\ModelManager.cpp">
       <Filter>engine\3d</Filter>
     </ClCompile>
@@ -174,32 +171,11 @@
     <ClCompile Include="engine\scene\TitleScene.cpp">
       <Filter>application\scene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\objectCommon\Object2dCommon.cpp">
-      <Filter>engine\objectCommon</Filter>
-    </ClCompile>
     <ClCompile Include="engine\2d\SpriteManager.cpp">
       <Filter>engine\2d</Filter>
     </ClCompile>
     <ClCompile Include="engine\framework\GameObjectList.cpp">
       <Filter>application</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\gameObject\Camera.cpp">
-      <Filter>engine\gameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\gameObject\CameraManager.cpp">
-      <Filter>engine\gameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\gameObject\Object2d.cpp">
-      <Filter>engine\gameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\gameObject\Object3d.cpp">
-      <Filter>engine\gameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\gameObject\WorldTransform.cpp">
-      <Filter>engine\gameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\gameObject\PlaneObject.cpp">
-      <Filter>engine\gameObject</Filter>
     </ClCompile>
     <ClCompile Include="engine\2d\SpriteCommon.cpp">
       <Filter>engine\2d</Filter>
@@ -207,17 +183,41 @@
     <ClCompile Include="engine\blend\Blend.cpp">
       <Filter>engine\blend</Filter>
     </ClCompile>
-    <ClCompile Include="engine\particle\ParticleSystem.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="engine\math\Vector4.cpp">
       <Filter>engine\math</Filter>
     </ClCompile>
-    <ClCompile Include="engine\base\GraphicsPipeline.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="engine\3d\Object3dCommon.cpp">
+      <Filter>engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="engine\objectCommon\ParticleCommon.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="engine\2d\Object2dCommon.cpp">
+      <Filter>engine\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\particle\ParticleCommon.cpp">
+      <Filter>engine\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\particle\ParticleSystem.cpp">
+      <Filter>engine\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\base\GraphicsPipeline.cpp">
+      <Filter>engine\base</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\Object3d.cpp">
+      <Filter>engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\2d\Object2d.cpp">
+      <Filter>engine\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\2d\PlaneObject.cpp">
+      <Filter>engine\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\camera\Camera.cpp">
+      <Filter>engine\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\camera\CameraManager.cpp">
+      <Filter>engine\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\worldTransform\WorldTransform.cpp">
+      <Filter>engine\worldTransform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -281,12 +281,6 @@
     <ClInclude Include="engine\3d\Model.h">
       <Filter>engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="engine\objectCommon\BaseObjectCommon.h">
-      <Filter>engine\objectCommon</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\objectCommon\Object3dCommon.h">
-      <Filter>engine\objectCommon</Filter>
-    </ClInclude>
     <ClInclude Include="engine\3d\ModelManager.h">
       <Filter>engine\3d</Filter>
     </ClInclude>
@@ -332,32 +326,11 @@
     <ClInclude Include="engine\scene\SceneManager.h">
       <Filter>engine\scene</Filter>
     </ClInclude>
-    <ClInclude Include="engine\objectCommon\Object2dCommon.h">
-      <Filter>engine\objectCommon</Filter>
-    </ClInclude>
     <ClInclude Include="engine\2d\SpriteManager.h">
       <Filter>engine\2d</Filter>
     </ClInclude>
     <ClInclude Include="engine\framework\GameObjectList.h">
       <Filter>application</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gameObject\Camera.h">
-      <Filter>engine\gameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gameObject\CameraManager.h">
-      <Filter>engine\gameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gameObject\Object2d.h">
-      <Filter>engine\gameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gameObject\Object3d.h">
-      <Filter>engine\gameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gameObject\PlaneObject.h">
-      <Filter>engine\gameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\gameObject\WorldTransform.h">
-      <Filter>engine\gameObject</Filter>
     </ClInclude>
     <ClInclude Include="engine\2d\SpriteCommon.h">
       <Filter>engine\2d</Filter>
@@ -368,17 +341,41 @@
     <ClInclude Include="engine\blend\BlendMode.h">
       <Filter>engine\blend</Filter>
     </ClInclude>
-    <ClInclude Include="engine\particle\ParticleSystem.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="engine\math\RenderingData.h">
       <Filter>engine\math\func</Filter>
     </ClInclude>
-    <ClInclude Include="engine\base\GraphicsPipeline.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="engine\3d\Object3dCommon.h">
+      <Filter>engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="engine\objectCommon\ParticleCommon.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="engine\2d\Object2dCommon.h">
+      <Filter>engine\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\particle\ParticleCommon.h">
+      <Filter>engine\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\particle\ParticleSystem.h">
+      <Filter>engine\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\GraphicsPipeline.h">
+      <Filter>engine\base</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\Object3d.h">
+      <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\2d\Object2d.h">
+      <Filter>engine\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\2d\PlaneObject.h">
+      <Filter>engine\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\camera\Camera.h">
+      <Filter>engine\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\camera\CameraManager.h">
+      <Filter>engine\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\worldTransform\WorldTransform.h">
+      <Filter>engine\worldTransform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,8 @@
 #include "ParticleCommon.h"
+#include "engine/base/DirectXBase.h"
+#include "engine/gameObject/Camera.h"
+#include "engine/base/GraphicsPipeline.h"
+#include <cassert>
 using namespace Microsoft::WRL;
 
 //インスタンスのゲッター
@@ -15,9 +19,9 @@ void ParticleCommon::Initialize(DirectXBase* directXBase) {
 	assert(directXBase);//Nullチェック
 	directXBase_ = directXBase;//DirectXの基盤を受け取る
 	//ブレンド
-	blend_ = std::make_unique<Blend>();
+	blend_ = new Blend();
 	//グラフィックスパイプラインの生成と初期化
-	makeGraphicsPipeline_ = std::make_unique<GraphicsPipeline>();
+	makeGraphicsPipeline_ = new GraphicsPipeline();
 	//DirectXの基盤部分をセットする
 	makeGraphicsPipeline_->SetDirectXBase(directXBase_);
 	makeGraphicsPipeline_->SetVertexShaderFileName(L"Particle.VS.hlsl");
@@ -42,13 +46,40 @@ void ParticleCommon::Initialize(DirectXBase* directXBase) {
 		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline();
 	}	//ルートシグネイチャの記録
 	rootSignature_ = makeGraphicsPipeline_->GetRootSignature();
-	//グラフィックスパイプラインステートの記録
-	//graphicsPipelineStates_ = makeGraphicsPipeline_->GetGraphicsPipelines();
 }
 
+//共通描画設定
+void ParticleCommon::DrawSetting() {
+	//ルートシグネイチャをセットするコマンド
+	directXBase_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
+	//プリミティブトポロジーをセットするコマンド
+	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+//DirectXの基盤のゲッター
+DirectXBase* ParticleCommon::GetDirectXBase() const {
+	return directXBase_;
+}
+
+//グラフィックパイプラインのゲッター
+std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> ParticleCommon::GetGraphicsPipelineStates() const {
+	return graphicsPipelineStates_;
+}
 //終了
 void ParticleCommon::Finalize() {
+	delete blend_;
+	delete makeGraphicsPipeline_;
 	delete instance;
 	instance = nullptr;
 	isFinalize = true;
+}
+
+// デフォルトカメラのセッター
+void ParticleCommon::SetDefaultCamera(Camera* camera) {
+	defaultCamera_ = camera;
+}
+
+// デフォルトカメラのゲッター
+Camera* ParticleCommon::GetDefaultCamera() const {
+	return defaultCamera_;
 }

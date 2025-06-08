@@ -186,7 +186,7 @@ private://メンバ変数
 	//発生源
 	Emitter emitter_ = {
 		.transform = {{1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}},
-		.count = 10,
+		.count = 1	,
 		.frequency = 0.1f,//発生頻度
 		.frequencyTime = 0.0f//発生頻度用の時刻,0.0fで初期化
 	};

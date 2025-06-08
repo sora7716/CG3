@@ -68,9 +68,12 @@ public://静的メンバ関数
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 public://定数
-	static inline const int32_t kClientWidth = 1280;//画面の横幅
-	static inline const int32_t kClientHeight = 720;//画面の縦幅
-	static inline const std::wstring label = L"CG2";//タイトル名
+	//画面の横幅
+	static inline const int32_t kClientWidth = 1280;
+	//画面の縦幅
+	static inline const int32_t kClientHeight = 720;
+	//タイトル名
+	static inline const std::wstring label = L"CG3";
 private://静的メンバ変数
 	//インスタンス
 	static inline WinApi* instance = nullptr;

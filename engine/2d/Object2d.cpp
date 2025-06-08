@@ -1,11 +1,17 @@
 #include "Object2d.h"
-#include "engine/objectCommon/Object2dCommon.h"
+#include "Object2dCommon.h"
+#include "engine/worldTransform/WorldTransform.h"
 #include "engine/base/DirectXBase.h"
 #include "engine/base/WinApi.h"
-#include "engine/math/func/Math.h"
-#include "engine/gameObject/Camera.h"
+#include "engine/math/func/Rendering.h"
+#include "engine/camera/Camera.h"
 #include "SpriteManager.h"
 #include "Sprite.h"
+
+//デストラクタ
+Object2d::~Object2d(){
+	delete worldTransform_;
+}
 //初期化
 void Object2d::Initialize() {
 	//DirectXの基盤部分を記録する
@@ -15,7 +21,7 @@ void Object2d::Initialize() {
 	//uvTransform変数を作る
 	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
 	//ワールドトランスフォームの生成と初期化
-	worldTransform_ = std::make_unique<WorldTransform>();
+	worldTransform_ = new WorldTransform();
 	worldTransform_->Initialize(directXBase_, TransformMode::k2d);
 	//カメラにデフォルトカメラを代入
 	worldTransform_->SetCamera(Object2dCommon::GetInstance()->GetDefaultCamera());
@@ -119,7 +125,7 @@ const Vector4& Object2d::GetColor() const {
 
 //ワールドトランスフォームのゲッター
 WorldTransform* Object2d::GetWorldTransform() {
-	return worldTransform_.get();
+	return worldTransform_;
 }
 
 
