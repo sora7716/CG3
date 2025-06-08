@@ -2,7 +2,7 @@
 #include "engine/base/DirectXBase.h"
 #include "engine/math/func/Rendering.h"
 #include "engine/math/func/Math.h"
-#include "engine/gameObject/Camera.h"
+#include "engine/camera/Camera.h"
 ////メンバ関数テーブルの初期化
 void(WorldTransform::* WorldTransform::UpdateTransformTable[])() = {
 	&UpdateTransform,

@@ -2,8 +2,8 @@
 #include <algorithm>
 #include "ParticleSystem.h"
 #include "engine/base/DirectXBase.h"
-#include "engine/objectCommon/ParticleCommon.h"
-#include "engine/gameObject/Camera.h"
+#include "engine/particle/ParticleCommon.h"
+#include "engine/camera/Camera.h"
 #include "engine/debug/ImGuiManager.h"
 #include "engine/2d/TextureManager.h"
 #include "engine/math/func/Math.h"
