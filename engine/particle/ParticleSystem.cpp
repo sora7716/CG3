@@ -47,29 +47,29 @@ void ParticleSystem::Update() {
 			}
 			// パーティクルの色を設定
 			instancingData_[numInstance_].color.SetRGB((*it).color.GetRGB());
-			//Fieldの歯に内のParticleには加速度を適用する
+			//Field内のParticleには加速度を適用する
 			if (IsCollision(accelerationField_.area, (*it).transform.translate)) {
-				(*it).velocity += accelerationField_.acceleration * deltaTime;
+				(*it).velocity += accelerationField_.acceleration * Math::kDeltaTime;
 			}
 			//移動
-			(*it).transform.translate += (*it).velocity * deltaTime;
+			(*it).transform.translate += (*it).velocity * Math::kDeltaTime;
 			//経過時間を足す
-			(*it).currentTime += deltaTime;
+			(*it).currentTime += Math::kDeltaTime;
 			float alpha = 1.0f - ((*it).currentTime / (*it).lifeTime);
 			instancingData_[numInstance_].color.w = alpha;
 			//ワールドトランスフォームの更新
 			UpdateWorldTransform(numInstance_, it);
 			//生きているパーティクルの数を記録
 			numInstance_++;
-			
+
 		}
 		//次のイテレータに進める
 		it++;
 	}
 
 	//Emitterの更新
-	emitter_.frequencyTime += deltaTime;
-	if(emitter_.frequency<=emitter_.frequencyTime){
+	emitter_.frequencyTime += Math::kDeltaTime;
+	if (emitter_.frequency <= emitter_.frequencyTime) {
 		particles_.splice(particles_.end(), Emit());
 		emitter_.frequencyTime -= emitter_.frequency;//余計に過ぎた時間も加味して頻度を計算する
 	}
@@ -79,6 +79,7 @@ void ParticleSystem::Update() {
 	ImGui::Begin("particle");
 	ImGui::Text("size:%d", particles_.size());
 	ImGui::Text("instance:%d", numInstance_);
+	ImGui::DragFloat3("acceleration", &accelerationField_.acceleration.x, 0.1f);
 	ImGui::DragFloat3("translate", &emitter_.transform.translate.x, 0.1f);
 	ImGui::End();
 #endif //USE_IMGUI
@@ -256,7 +257,7 @@ Particle ParticleSystem::MakeNewParticle() {
 }
 
 //パーティクルの発生
-std::list<Particle> ParticleSystem::Emit(){
+std::list<Particle> ParticleSystem::Emit() {
 	std::list<Particle>particles;
 	for (uint32_t i = 0; i < emitter_.count; i++) {
 		particles.push_back(MakeNewParticle());
@@ -265,7 +266,7 @@ std::list<Particle> ParticleSystem::Emit(){
 }
 
 //衝突判定
-bool ParticleSystem::IsCollision(const AABB& aabb, const Vector3& point){
+bool ParticleSystem::IsCollision(const AABB& aabb, const Vector3& point) {
 	AABB temp = aabb;
 	Vector3 tNear;
 	Vector3 tFar;

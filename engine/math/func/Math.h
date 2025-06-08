@@ -5,7 +5,6 @@
 #include <numbers>
 #include <algorithm>
 #define cont(theta) (1.0f/tanf(theta)) 
-#define deltaTime 1.0f/60.0f
 #define kGravity Vector3(0.0f,-9.8f,0.0f)
 #define pi_f std::numbers::pi_v<float>
 #define rad pi_f/180.0f
@@ -306,6 +305,9 @@ public:
 	/// <returns>閉曲線</returns>
 	static Vector3 LissajousCurve(const Vector3& theta, const Vector3& center, const Vector3& scalar = { 1.0f,1.0f,1.0f });
 
+public://定数
+	//デルタタイム
+	static inline const float kDeltaTime = 1.0f / 60.0f;
 private://メンバ変数
 	static inline bool defaultFall_ = true;
 };
