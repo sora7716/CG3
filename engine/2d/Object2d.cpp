@@ -5,7 +5,6 @@
 #include "engine/base/WinApi.h"
 #include "engine/math/func/Rendering.h"
 #include "engine/camera/Camera.h"
-#include "SpriteManager.h"
 #include "Sprite.h"
 
 //デストラクタ
@@ -61,11 +60,6 @@ void Object2d::Draw() {
 	if (sprite_) {
 		sprite_->Draw();
 	}
-}
-
-//スプライトのセッター
-void Object2d::SetSprite(const std::string& name) {
-	sprite_ = SpriteManager::GetInstance()->FindSprite(name);
 }
 
 //テクスチャの変更

@@ -1,6 +1,7 @@
 #pragma once
 #include "engine/math/ResourceData.h"
 #include "engine/math/func/Rendering.h"
+#include "engine/blend/BlendMode.h"
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <dxgidebug.h>
@@ -10,6 +11,7 @@
 
 //前方宣言
 class DirectXBase;
+class WorldTransform;
 
 /// <summary>
 /// スプライト
@@ -26,13 +28,18 @@ public://メンバ関数
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Sprite() = default;
+	~Sprite();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="spriteName">スプライト名</param>
 	void Initialize(std::string spriteName);
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update();
 
 	/// <summary>
 	/// 描画処理
@@ -71,7 +78,7 @@ private://メンバ関数
 	/// <summary>
 	/// 頂点リソースの生成
 	/// </summary>
-	void CreateVertexResorce();
+	void CreateVertexResource();
 
 	/// <summary>
 	/// インデックスデータの初期化
@@ -81,7 +88,7 @@ private://メンバ関数
 	/// <summary>
 	/// インデックスリソースの生成
 	/// </summary>
-	void CreateIndexResorce();
+	void CreateIndexResource();
 
 	/// <summary>
 	/// マテリアルデータの初期化
@@ -91,11 +98,11 @@ private://メンバ関数
 	/// <summary>
 	/// マテリアルリソースの生成
 	/// </summary>
-	void CreateMaterialResorce();
+	void CreateMaterialResource();
 private://メンバ変数
 	//テクスチャ番号
 	std::string spriteName_ = {};
-	Transform transform_ = {};//トランスフォームの情報
+	Transform transform_ = { {100.0f,100.0f ,1.0f},{},{} };//トランスフォームの情報
 	DirectXBase* directXBase_ = nullptr;//DirectXの基盤
 	//バッファリソース
 	ComPtr<ID3D12Resource>vertexResource_ = nullptr;//頂点
@@ -108,5 +115,8 @@ private://メンバ変数
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス
+	//ワールドトランスフォーム
+	WorldTransform* worldTransform_ = nullptr;
+	//ブレンドモード
+	BlendMode blendMode_ = BlendMode::kNone;
 };
-

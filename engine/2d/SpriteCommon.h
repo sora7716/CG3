@@ -1,9 +1,14 @@
 #pragma once
+#include "engine/math/ResourceData.h"
+#include "engine/blend/blendMode.h"
 #include <wrl.h>
 #include <d3d12.h>
+#include <array>
 #include <string>
 //前方宣言
 class DirectXBase;
+class Blend;
+class GraphicsPipeline;
 
 /// <summary>
 /// スプライトの共通部分
@@ -19,10 +24,15 @@ public://メンバ関数
 	static SpriteCommon* GetInstance();
 
 	/// <summary>
-    /// 初期化
-    /// </summary>
-    /// <param name="directXBase">DirectXの基盤部分</param>
+	/// 初期化
+	/// </summary>
+	/// <param name="directXBase">DirectXの基盤部分</param>
 	void Initialize(DirectXBase* directXBase);
+
+	/// <summary>
+	/// 共通描画設定
+	/// </summary>
+	void DrawSetting();
 
 	/// <summary>
 	/// テクスチャの読み込み
@@ -31,10 +41,33 @@ public://メンバ関数
 	void LoadTexture(const std::string& filename);
 
 	/// <summary>
+	/// 光源の生成
+	/// </summary>
+	void CreateDirectionLight();
+
+	/// <summary>
+	/// DirectionalLightのセッター
+	/// </summary>
+	/// <param name="directionalLightData">DirectionalLightデータ</param>
+	void SetDirectionalLightData(const DirectionalLight& directionalLightData);
+
+	/// <summary>
+	/// DirectionalLightのリソースのゲッター
+	/// </summary>
+	/// <returns>DirectionalLightのリソース</returns>
+	ID3D12Resource* GetDirectionalLightResource()const;
+
+	/// <summary>
 	/// DirectXの基盤部分のゲッター
 	/// </summary>
 	/// <returns></returns>
 	DirectXBase* GetDirectXBase();
+
+	/// <summary>
+	/// グラフィックパイプラインのゲッター
+	/// </summary>
+	/// <returns>グラフィックパイプライン</returns>
+	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)>GetGraphicsPipelineStates()const;
 
 	/// <summary>
 	/// 終了
@@ -55,6 +88,18 @@ private://静的メンバ変数
 	//Finalizeしたかどうかのフラグ
 	static inline bool isFinalize = false;
 private://メンバ変数
+	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
+	//ルートシグネイチャ
+	ComPtr<ID3D12RootSignature>rootSignature_ = nullptr;
+	//グラフィックスパイプライン(PSO)
+	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> graphicsPipelineStates_ = { nullptr };
+	//グラフィックスパイプライン
+	GraphicsPipeline* makeGraphicsPipeline_ = nullptr;
+	//バッファリソース
+	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//光源
+	//バッファリソース内のデータを指すポインタ
+	DirectionalLight* directionalLightData_ = nullptr;//光源
+	//ブレンド
+	Blend* blend_ = nullptr;
 };
-

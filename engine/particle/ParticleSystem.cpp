@@ -21,6 +21,8 @@ void ParticleSystem::Initialize(DirectXBase* directXBase) {
 	CreateWorldTransformResource();
 	//頂点リソースの生成
 	CreateVertexResource();
+	//テクスチャの読み込み
+	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
 	//マテリアルリソースの生成
 	CreateMaterialResource();
 	//インデックスリソースの生成
@@ -112,6 +114,10 @@ void ParticleSystem::Finalize() {
 
 }
 
+std::string ParticleSystem::GetTextureName(){
+	return modelData_.material.textureFilePath;
+}
+
 //モデルデータの初期化
 void ParticleSystem::InitializeModelData() {
 	modelData_.vertices.push_back({ 
@@ -144,7 +150,7 @@ void ParticleSystem::InitializeModelData() {
 		.texcoord = {1.0f,1.0f},
 		.normal = {0.0f,0.0f,1.0f} 
 	});//右下
-	modelData_.material.textureFilePath = "engine/resources/textures/uvChecker.png";
+	modelData_.material.textureFilePath = "engine/resources/textures/monsterBall.png";
 }
 
 //マテリアルデータの初期化
@@ -237,9 +243,6 @@ void ParticleSystem::UpdateWorldTransform(uint32_t numInstance, auto iterator) {
 
 //ストラクチャバッファの生成
 void ParticleSystem::CreateStructuredBuffer() {
-	//テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
-
 	//ストラクチャバッファを生成
 	srvIndex_ = SRVManager::GetInstance()->Allocate();
 	SRVManager::GetInstance()->CreateSRVforStructuredBuffer(

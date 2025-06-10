@@ -45,12 +45,6 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// スプライトのセッター
-	/// </summary>
-	/// <param name="name">スプライトの名前</param>
-	void SetSprite(const std::string& name);
-
-	/// <summary>
 	/// テクスチャの変更
 	/// </summary>
 	/// <param name="spriteName">スプライトの名前</param>

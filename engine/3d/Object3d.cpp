@@ -116,7 +116,7 @@ void Object3d::SetParent(const WorldTransform* parent) {
 //テクスチャの変更
 void Object3d::SetTexture(const std::string& filePath) {
 	if (model_) {
-		model_->SetTexture("engine/resources/textures/" + filePath + ".png");
+		model_->SetTexture("engine/resources/textures/" + filePath);
 	}
 }
 

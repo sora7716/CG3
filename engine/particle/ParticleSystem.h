@@ -84,6 +84,9 @@ public://メンバ関数
 	/// 終了
 	/// </summary>
 	void Finalize();
+
+
+	std::string GetTextureName();
 private://メンバ関数
 	/// <summary>
 	/// モデルデータの初期化

@@ -4,38 +4,32 @@
 #include "SceneFactory.h"
 #include "engine/3d/ModelManager.h"
 #include "engine/3d/Object3dCommon.h"
+#include "engine/2d/TextureManager.h"
 //初期化
 void TitleScene::Initialize(DirectXBase* directXBase) {
-	object2d_ = std::make_unique<Object2d>();
-	object2d_->Initialize();
-	object2d_->SetSprite("block");
-	worldTransform_.scale = { 100.0f,100.0f };
-	worldTransform_.rotate = 0.0f;
-	worldTransform_.translate = { 100.0f,100.0f };
-	color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-
 	object3d_ = std::make_unique<Object3d>();
 	worldTransform3d_.scale = { 1.0f,1.0f,1.0f };
 	worldTransform3d_.rotate = {};
 	worldTransform3d_.translate = { 0.0f,0.0f,0.0f };
 	object3d_->Initialize();
 	object3d_->SetModel("cube");
-	object3d_->SetTexture("uvChecker");
+	//object3d_->SetTexture("uvChecker");
 
 	directionalLight_.color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLight_.intensity = 1.0f;
 
-	particleEmit_ = std::make_unique<ParticleSystem>();
-	particleEmit_->Initialize(directXBase);
+	particleSystem_ = std::make_unique<ParticleSystem>();
+	//TextureManager::GetInstance()->LoadTexture("engine/resources/textures/monsterBall.png");
+	particleSystem_->Initialize(directXBase);
+
+	sprite_ = std::make_unique<Sprite>();
+	sprite_->Initialize("engine/resources/textures/sample.png");
 }
 
 //更新
 void TitleScene::Update() {
 	//ImGuiの受付開始
 	ImGuiManager::GetInstance()->Begin();
-	object2d_->SetTransform(worldTransform_);
-	object2d_->SetColor(color);
-	object2d_->Update();
 
 	object3d_->SetScale(worldTransform3d_.scale);
 	object3d_->SetRotate(worldTransform3d_.rotate);
@@ -44,16 +38,10 @@ void TitleScene::Update() {
 	Object3dCommon::GetInstance()->SetDirectionalLightData(directionalLight_);
 	object3d_->Update();
 
-	particleEmit_->Update();
+	particleSystem_->Update();
 
+	sprite_->Update();
 #ifdef USE_IMGUI
-	ImGui::Begin("sprite");
-	ImGui::DragFloat2("scale", &worldTransform_.scale.x, 0.1f);
-	ImGui::DragFloat("rotate", &worldTransform_.rotate, 0.1f);
-	ImGui::DragFloat2("translate", &worldTransform_.translate.x, 0.1f);
-	ImGui::ColorEdit4("color", &color.x);
-	ImGui::End();
-
 	ImGui::Begin("3dModel");
 	ImGui::DragFloat3("scale", &worldTransform3d_.scale.x, 0.1f);
 	ImGui::DragFloat3("rotate", &worldTransform3d_.rotate.x, 0.1f);
@@ -68,7 +56,7 @@ void TitleScene::Update() {
 	ImGui::Begin("light");
 	ImGui::ColorEdit4("color", &directionalLight_.color.x);
 	ImGui::DragFloat3("direction", &directionalLight_.direction.x, 0.1f);
-	ImGui::DragFloat("intensity", &directionalLight_.intensity,0.1f,0.0f,10.0f);
+	ImGui::DragFloat("intensity", &directionalLight_.intensity, 0.1f, 0.0f, 10.0f);
 	ImGui::End();
 
 	ImGui::Begin("blend");
@@ -93,12 +81,12 @@ void TitleScene::Update() {
 
 //描画
 void TitleScene::Draw() {
-	object2d_->Draw();
-	particleEmit_->Draw();
+	particleSystem_->Draw();
 	object3d_->Draw();
+	sprite_->Draw();
 }
 
 //終了
 void TitleScene::Finalize() {
-	particleEmit_->Finalize();
+	particleSystem_->Finalize();
 }

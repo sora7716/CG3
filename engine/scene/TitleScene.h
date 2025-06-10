@@ -1,5 +1,7 @@
+
 #pragma once
 #include "IScene.h"
+#include "engine/2d/Sprite.h"
 
 /// <summary>
 /// タイトルシーン
@@ -38,10 +40,6 @@ public://メンバ関数
 	void Finalize()override;
 
 private://メンバ変数
-	//2Dモデル
-	std::unique_ptr<Object2d>object2d_ = nullptr;
-	Transform2d worldTransform_ = {};
-	Vector4 color = {};
 	//3Dモデル
 	std::unique_ptr<Object3d>object3d_ = nullptr;
 	Transform worldTransform3d_ = {};
@@ -50,9 +48,9 @@ private://メンバ変数
 	DirectionalLight directionalLight_ = {};
 	//ブレンドモード
 	int32_t blendMode_ = static_cast<int32_t>(BlendMode::kNone);
-	std::unique_ptr<ParticleSystem>particleEmit_ = nullptr;
+	std::unique_ptr<ParticleSystem>particleSystem_ = nullptr;
 
 	Vector3 cameraRotate_ = {};
+
+	std::unique_ptr<Sprite>sprite_ = nullptr;
 };
-
-
