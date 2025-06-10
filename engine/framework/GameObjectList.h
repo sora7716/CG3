@@ -59,14 +59,5 @@ private://静的メンバ変数
 	static inline GameObjectList* instance = nullptr;
 	//Finalizeをしたかどうか
 	static inline bool isFinalize = false;
-private://メンバ変数
-	//オーディオの管理
-	AudioManager* audioManager_ = nullptr;
-	//スプライトの管理
-	SpriteManager* spriteManager_ = nullptr;
-	//モデルの管理
-	ModelManager* modelManager_ = nullptr;
-	//カメラの管理
-	CameraManager* cameraManager_ = nullptr;
 };
 

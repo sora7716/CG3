@@ -12,11 +12,6 @@ GameObjectList* GameObjectList::GetInstance() {
 
 //初期化
 void GameObjectList::Initialize() {
-	//管理を記録する
-	audioManager_ = AudioManager::GetInstance();//オーディオ
-	spriteManager_ = SpriteManager::GetInstance();//スプライト
-	modelManager_ = ModelManager::GetInstance();//モデル
-	cameraManager_ = CameraManager::GetInstance();//カメラ
 	//オーディオの読み込み
 	LoadAudio();
 	//スプライトの読み込み
