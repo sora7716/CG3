@@ -139,15 +139,16 @@ void WorldTransform::UpdateTransform2d(){
 		worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;
 	}
 	//ProjectionMatrixを作って平行投影行列を書き込む
-	const Matrix4x4& projectionMatrix = Rendering::MakeOrthographicMatrix(screenArea_.left, screenArea_.top, screenArea_.right, screenArea_.bottom, camera_->GetNearClip(), camera_->GetFarClip());
+	const Matrix4x4& projectionMatrix = Rendering::MakeOrthographicMatrix(screenArea_.left, screenArea_.top, screenArea_.right, screenArea_.bottom, 0.1f, 100.0f);
 	//wvpの書き込み
-	if (camera_) {
-		const Matrix4x4& viewProjectionMatrix = camera_->GetViewMatrix() * projectionMatrix;
-		wvpData_->WVP = worldMatrix_ * viewProjectionMatrix;
+	const Matrix4x4& viewProjectionMatrix = Math::MakeIdentity4x4() * projectionMatrix;
+	wvpData_->WVP = worldMatrix_ * viewProjectionMatrix;
+	/*if (camera_) {
+		
 	}
 	else {
 		wvpData_->WVP = worldMatrix_ * projectionMatrix;
-	}
+	}*/
 	//ワールド行列を送信
 	wvpData_->World = worldMatrix_;
 }
