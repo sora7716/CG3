@@ -6,7 +6,7 @@
 /// コンストラクタ
 /// </summary>
 Camera::Camera() {
-	transform_ = { {1.0f,1.0f,1.0f},{Math::kPi / 3.0f,Math::kPi,0.0f },{0.0f,23.0f,10.0f} };
+	transform_ = { {1.0f,1.0f,1.0f},{},{0.0f,0.0f,-10.0f} };
 	fovY_ = 0.45f;
 	aspectRation_ = float(WinApi::kClientWidth) / float(WinApi::kClientHeight);
 	nearClip_ = 0.1f;
