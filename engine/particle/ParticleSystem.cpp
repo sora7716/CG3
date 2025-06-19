@@ -150,7 +150,7 @@ void ParticleSystem::InitializeModelData() {
 		.texcoord = {1.0f,1.0f},
 		.normal = {0.0f,0.0f,1.0f} 
 	});//右下
-	modelData_.material.textureFilePath = "engine/resources/textures/monsterBall.png";
+	modelData_.material.textureFilePath = "engine/resources/textures/uvChecker.png";
 }
 
 //マテリアルデータの初期化
@@ -245,7 +245,7 @@ void ParticleSystem::UpdateWorldTransform(uint32_t numInstance, auto iterator) {
 void ParticleSystem::CreateStructuredBuffer() {
 	//ストラクチャバッファを生成
 	srvIndex_ = SRVManager::GetInstance()->Allocate();
-	SRVManager::GetInstance()->CreateSRVforStructuredBuffer(
+	SRVManager::GetInstance()->CreateSRVForStructuredBuffer(
 		srvIndex_,
 		instancingResource_.Get(),
 		kNumMaxInstance,

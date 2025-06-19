@@ -45,7 +45,7 @@ public://メンバ関数
 	/// <param name="resource">リソース</param>
 	/// <param name="format">フォーマット</param>
 	/// <param name="mipLevels">ミップレベル</param>
-	void CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* resource, DXGI_FORMAT format, UINT mipLevels);
+	void CreateSRVForTexture2D(uint32_t srvIndex, ID3D12Resource* resource, DXGI_FORMAT format, UINT mipLevels);
 
 	/// <summary>
 	/// SRV生成(Structured Buffer用)
@@ -54,7 +54,7 @@ public://メンバ関数
 	/// <param name="resource">リソース</param>
 	/// <param name="numElements">要素数</param>
 	/// <param name="structureByteStride"></param>
-	void CreateSRVforStructuredBuffer(uint32_t srvIndex, ID3D12Resource* resource, UINT numElements, UINT structureByteStride);
+	void CreateSRVForStructuredBuffer(uint32_t srvIndex, ID3D12Resource* resource, UINT numElements, UINT structureByteStride);
 
 	/// <summary>
 	/// 描画開始位置
@@ -71,7 +71,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="rootParameterIndex">rootParameterのインデックス</param>
 	/// <param name="srvIndex">srvインデックス</param>
-	void SetGrahicsRootDescriptorTable(UINT rootParameterIndex, uint32_t srvIndex);
+	void SetGraphicsRootDescriptorTable(UINT rootParameterIndex, uint32_t srvIndex);
 
 	/// <summary>
 	/// 最大テクスチャを超えて読み込もうとしてるかチェック
