@@ -13,7 +13,7 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 	worldTransform3d_.translate = { 0.0f,0.0f,0.0f };
 	object3d_->Initialize();
 	object3d_->SetModel("cube");
-	object3d_->SetTexture("engine/resources/textures/sample.png");
+	//object3d_->SetTexture("engine/resources/textures/sample.png");
 
 	directionalLight_.color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLight_.intensity = 1.0f;
