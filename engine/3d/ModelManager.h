@@ -25,9 +25,9 @@ public://メンバ関数
 	/// objモデルの読み込み
 	/// </summary>
 	/// <param name="name">名前</param>
-    /// <param name="storedFilePath">保管しているファイル名("/"は書かなくていい)</param>
+    /// <param name="storedFileName">保管しているファイル名("/"は書かなくていい)</param>
 	/// <param name="filePath">ファイル名("/"と".obj"は書かなくていい)</param>
-	void LoadOBJModel(const std::string& name, const std::string& storedFilePath, const std::string& filePath);
+	void LoadOBJModel(const std::string& name, const std::string& storedFileName, const std::string& filePath);
 
 	/// <summary>
 	/// モデルの検索(.objはいらない)

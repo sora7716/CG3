@@ -34,7 +34,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="spriteName">スプライト名</param>
-	void Initialize(std::string spriteName);
+	void Initialize(const std::string& spriteName);
 
 	/// <summary>
 	/// 更新

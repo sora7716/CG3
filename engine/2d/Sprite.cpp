@@ -14,7 +14,7 @@ Sprite::~Sprite() {
 }
 
 //初期化
-void Sprite::Initialize(std::string spriteName) {
+void Sprite::Initialize(const std::string& spriteName) {
 	directXBase_ = SpriteCommon::GetInstance()->GetDirectXBase();//DirectXの基盤部分を受け取る
 	//頂点データの生成
 	CreateVertexResource();
@@ -22,10 +22,10 @@ void Sprite::Initialize(std::string spriteName) {
 	CreateIndexResource();
 	//マテリアルデータの生成
 	CreateMaterialResource();
+	//スプライトファイルパスを記録
+	spriteName_ = "engine/resources/textures/"+spriteName;
 	//スプライトの共通部分
-	SpriteCommon::GetInstance()->LoadTexture(spriteName);
-	//スプライトのファイル名
-	spriteName_ = spriteName;
+	SpriteCommon::GetInstance()->LoadTexture(spriteName_);
 	//DirectXの基盤部分を記録
 	directXBase_ = SpriteCommon::GetInstance()->GetDirectXBase();
 	//ライトの生成

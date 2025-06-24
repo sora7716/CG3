@@ -19,7 +19,7 @@ typedef struct Transform2d {
 	Vector2 translate;
 	//乗算
 	Transform2d operator*(const Transform2d transform);
-}Transform2D;
+}Transform2d;
 
 //TransformationMatrix
 typedef struct TransformationMatrix {

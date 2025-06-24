@@ -53,4 +53,7 @@ private://メンバ変数
 	Vector3 cameraRotate_ = {};
 
 	std::unique_ptr<Sprite>sprite_ = nullptr;
+
+	std::unique_ptr <Object2d> object2d_ = nullptr;
+	Transform2d worldTransform2d_ = {};
 };

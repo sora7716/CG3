@@ -5,6 +5,7 @@
 #include "engine/3d/ModelManager.h"
 #include "engine/3d/Object3dCommon.h"
 #include "engine/2d/TextureManager.h"
+#include "engine/math/func/Math.h"
 //初期化
 void TitleScene::Initialize(DirectXBase* directXBase) {
 	object3d_ = std::make_unique<Object3d>();
@@ -23,7 +24,15 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 	particleSystem_->Initialize(directXBase);
 
 	sprite_ = std::make_unique<Sprite>();
-	sprite_->Initialize("engine/resources/textures/sample.png");
+	sprite_->Initialize("sample.png");
+
+	object2d_ = std::make_unique<Object2d>();
+	object2d_->Initialize("monsterBall.png");
+	worldTransform2d_ = {
+		{100.0f,100.0f},
+		Math::kPi,
+		{}
+	};
 }
 
 //更新
@@ -41,6 +50,9 @@ void TitleScene::Update() {
 	particleSystem_->Update();
 
 	sprite_->Update();
+
+	object2d_->Update();
+	object2d_->SetTransform(worldTransform2d_);
 #ifdef USE_IMGUI
 	ImGui::Begin("3dModel");
 	ImGui::DragFloat3("scale", &worldTransform3d_.scale.x, 0.1f);
@@ -48,9 +60,6 @@ void TitleScene::Update() {
 	ImGui::DragFloat3("translate", &worldTransform3d_.translate.x, 0.1f);
 	ImGui::DragFloat4("color", &object3dColor_.x, 0.1f);
 	ImGui::ColorEdit4("color", &object3dColor_.x);
-	ImGui::End();
-
-	ImGui::Begin("suji");
 	ImGui::End();
 
 	ImGui::Begin("light");
@@ -74,6 +83,12 @@ void TitleScene::Update() {
 	ImGui::DragFloat3("cameraPos", &cameraRotate_.x, 0.1f);
 	ImGui::End();
 	CameraManager::GetInstance()->FindCamera("defaultCamera")->SetRotate(cameraRotate_);*/
+
+	ImGui::Begin("2dModel");
+	ImGui::DragFloat2("scale", &worldTransform2d_.scale.x, 0.1f);
+	ImGui::DragFloat("rotate", &worldTransform2d_.rotate, 0.1f);
+	ImGui::DragFloat2("translate", &worldTransform2d_.translate.x, 0.1f);
+	ImGui::End();
 #endif // USE_IMGUI
 	//ImGuiの受付終了
 	ImGuiManager::GetInstance()->End();
@@ -84,6 +99,7 @@ void TitleScene::Draw() {
 	particleSystem_->Draw();
 	object3d_->Draw();
 	sprite_->Draw();
+	object2d_->Draw();
 }
 
 //終了

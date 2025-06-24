@@ -19,7 +19,7 @@ void ModelManager::Initialize(DirectXBase* directXBase) {
 }
 
 // objモデルの読み込み
-void ModelManager::LoadOBJModel(const std::string& name, const std::string& storedFilePath, const std::string& filePath) {
+void ModelManager::LoadOBJModel(const std::string& name, const std::string& storedFileName, const std::string& filePath) {
 	//読み込み済みならモデルを検索
 	if (models_.contains(name)) {
 		//読み込み済みなら早期return
@@ -27,7 +27,7 @@ void ModelManager::LoadOBJModel(const std::string& name, const std::string& stor
 	}
 	//モデルの生成とファイル読み込み、初期化
 	std::unique_ptr<Model>model = std::make_unique<Model>();
-	model->Initialize(modelCommon_, "engine/resources/models", storedFilePath, filePath+".obj");
+	model->Initialize(modelCommon_, "engine/resources/models", storedFileName, filePath+".obj");
 
 	//モデルをmapコンテナに格納する
 	models_.insert(std::make_pair(name, std::move(model)));
