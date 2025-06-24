@@ -21,7 +21,7 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 
 	particleSystem_ = std::make_unique<ParticleSystem>();
 	//TextureManager::GetInstance()->LoadTexture("engine/resources/textures/monsterBall.png");
-	particleSystem_->Initialize(directXBase);
+	particleSystem_->Initialize(directXBase,"uvChecker.png");
 
 	sprite_ = std::make_unique<Sprite>();
 	sprite_->Initialize("sample.png");

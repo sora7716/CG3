@@ -68,7 +68,8 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	void Initialize(DirectXBase* directXBase);
+	/// <param name="textureName">テクスチャ名</param>
+	void Initialize(DirectXBase* directXBase,const std::string& textureName);
 
 	/// <summary>
 	/// 更新

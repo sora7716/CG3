@@ -10,17 +10,17 @@
 #include "engine/base/SRVManager.h"
 
 //初期化
-void ParticleSystem::Initialize(DirectXBase* directXBase) {
+void ParticleSystem::Initialize(DirectXBase* directXBase, const std::string& textureName) {
 	//DirectXの基盤部分を記録する
 	directXBase_ = directXBase;
-
 	//カメラを設定
 	camera_ = ParticleCommon::GetInstance()->GetDefaultCamera();
-
 	//ワールドトランスフォームのリソースの生成
 	CreateWorldTransformResource();
 	//頂点リソースの生成
 	CreateVertexResource();
+	//テクスチャファイルの記録
+	modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
 	//テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
 	//マテリアルリソースの生成
@@ -114,43 +114,42 @@ void ParticleSystem::Finalize() {
 
 }
 
-std::string ParticleSystem::GetTextureName(){
+std::string ParticleSystem::GetTextureName() {
 	return modelData_.material.textureFilePath;
 }
 
 //モデルデータの初期化
 void ParticleSystem::InitializeModelData() {
-	modelData_.vertices.push_back({ 
+	modelData_.vertices.push_back({
 		.position = {1.0f,1.0f,0.0f,1.0f},
 		.texcoord = {0.0f,0.0f},
-		.normal = {0.0f,0.0f,1.0f} 
-	});//左上
-	modelData_.vertices.push_back({ 
+		.normal = {0.0f,0.0f,1.0f}
+		});//左上
+	modelData_.vertices.push_back({
 		.position = {-1.0f,1.0f,0.0f,1.0f},
 		.texcoord = {1.0f,0.0f},
-		.normal = {0.0f,0.0f,1.0f} 
-	});//右上
-	modelData_.vertices.push_back({ 
-		.position = {1.0f,-1.0f,0.0f,1.0f},
-		.texcoord = {0.0f,1.0f},
-		.normal = {0.0f,0.0f,1.0f} 
-	});//左下
-	modelData_.vertices.push_back({ 
+		.normal = {0.0f,0.0f,1.0f}
+		});//右上
+	modelData_.vertices.push_back({
 		.position = {1.0f,-1.0f,0.0f,1.0f},
 		.texcoord = {0.0f,1.0f},
 		.normal = {0.0f,0.0f,1.0f}
-	});//左下
-	modelData_.vertices.push_back({ 
+		});//左下
+	modelData_.vertices.push_back({
+		.position = {1.0f,-1.0f,0.0f,1.0f},
+		.texcoord = {0.0f,1.0f},
+		.normal = {0.0f,0.0f,1.0f}
+		});//左下
+	modelData_.vertices.push_back({
 		.position = {-1.0f,1.0f,0.0f,1.0f},
 		.texcoord = {1.0f,0.0f},
-		.normal = {0.0f,0.0f,1.0f} 
-	});//右上
+		.normal = {0.0f,0.0f,1.0f}
+		});//右上
 	modelData_.vertices.push_back({
 		.position = {-1.0f,-1.0f,0.0f,1.0f},
 		.texcoord = {1.0f,1.0f},
-		.normal = {0.0f,0.0f,1.0f} 
-	});//右下
-	modelData_.material.textureFilePath = "engine/resources/textures/uvChecker.png";
+		.normal = {0.0f,0.0f,1.0f}
+		});//右下
 }
 
 //マテリアルデータの初期化
