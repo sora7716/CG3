@@ -17,10 +17,8 @@ SpriteCommon* SpriteCommon::GetInstance() {
 
 //初期化
 void SpriteCommon::Initialize(DirectXBase* directXBase) {
-	//Nullチェック
-	assert(directXBase);
-	//引数を受け取ってメンバ変数に記録する
-	directXBase_ = directXBase;
+	assert(directXBase);//Nullチェック
+	directXBase_ = directXBase;//DirectXの基盤を受け取る
 	//ブレンド
 	blend_ = new Blend();
 	//グラフィックスパイプラインの生成と初期化
