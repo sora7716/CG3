@@ -94,8 +94,8 @@ void TitleScene::Update() {
 //描画
 void TitleScene::Draw() {
 	object2d_->Draw();
-	/*particleEmit_->Draw();
-	object3d_->Draw();*/
+	particleEmit_->Draw();
+	object3d_->Draw();
 }
 
 //終了
