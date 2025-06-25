@@ -54,6 +54,8 @@ void GameObjectList::LoadModel() {
 	ModelManager::GetInstance()->LoadOBJModel("cube", "cube", "cube");
 	//平面
 	ModelManager::GetInstance()->LoadOBJModel("plane", "plane", "plane");
+	//軸
+	ModelManager::GetInstance()->LoadOBJModel("axis", "base", "axis");
 }
 
 //カメラの生成
