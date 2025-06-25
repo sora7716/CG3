@@ -19,7 +19,7 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 	worldTransform3d_.rotate = {};
 	worldTransform3d_.translate = { 0.0f,0.0f,0.0f };
 	object3d_->Initialize();
-	object3d_->SetModel("cube");
+	object3d_->SetModel("axis");
 	object3d_->SetTexture("uvChecker");
 
 	directionalLight_.color = { 1.0f,1.0f,1.0f,1.0f };
@@ -94,8 +94,8 @@ void TitleScene::Update() {
 //描画
 void TitleScene::Draw() {
 	object2d_->Draw();
-	particleEmit_->Draw();
-	object3d_->Draw();
+	/*particleEmit_->Draw();
+	object3d_->Draw();*/
 }
 
 //終了
