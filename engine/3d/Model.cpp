@@ -23,7 +23,7 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directoryPat
 	//マテリアルデータの生成
 	CreateMaterialResource();
 	//テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath );
+	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
 }
 
 //描画
@@ -50,9 +50,9 @@ void Model::SetColor(const Vector4& color) {
 }
 
 //テクスチャの変更
-void Model::SetTexture(const std::string& filePath){
-	TextureManager::GetInstance()->LoadTexture(filePath);
-	modelData_.material.textureFilePath = filePath;
+void Model::SetTexture(const std::string& filePath) {
+	modelData_.material.textureFilePath = "engine/resources/textures/" + filePath;
+	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
 }
 
 //色を取得
@@ -109,20 +109,17 @@ ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string
 			position.x *= -1.0f;
 			position.w = 1.0f;
 			positions.push_back(position);
-		}
-		else if (identifier == "vt") {
+		} else if (identifier == "vt") {
 			Vector2 texcoord;
 			s >> texcoord.x >> texcoord.y;
 			texcoord.y = 1.0f - texcoord.y;
 			texcoords.push_back(texcoord);
-		}
-		else if (identifier == "vn") {
+		} else if (identifier == "vn") {
 			Vector3 normal;
 			s >> normal.x >> normal.y >> normal.z;
 			normal.x *= -1.0f;
 			normals.push_back(normal);
-		}
-		else if (identifier == "f") {
+		} else if (identifier == "f") {
 			VertexData triangle[3];
 			//面は三角形限定。そのほかは未対応
 			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
@@ -148,8 +145,7 @@ ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string
 			modelData.vertices.push_back(triangle[2]);
 			modelData.vertices.push_back(triangle[1]);
 			modelData.vertices.push_back(triangle[0]);
-		}
-		else if (identifier == "mtllib") {
+		} else if (identifier == "mtllib") {
 			//materialTemplateLibraryファイルの名前を取得する
 			std::string materialFilename;
 			s >> materialFilename;

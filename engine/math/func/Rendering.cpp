@@ -176,22 +176,3 @@ Matrix4x4 Rendering::MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, con
 Matrix4x4 Rendering::MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const Transform& transform) {
 	return (MakeScaleMatrix(transform.scale) * MakeBillboardMatrix(cameraWorldMatrix, transform.rotate)) * MakeTranslateMatrix(transform.translate);
 }
-
-//乗算
-Transform Transform::operator*(const Transform transform) {
-	Transform result;
-	result.scale = this->scale * transform.scale;
-	result.rotate = this->rotate * transform.rotate;
-	result.translate = this->translate * transform.translate;
-	return result;
-}
-
-//乗算
-Transform2d Transform2d::operator*(const Transform2d transform) {
-	Transform2d result;
-	result.scale = this->scale * transform.scale;
-	result.rotate = this->rotate * transform.rotate;
-	result.translate = this->translate * transform.translate;
-	return result;
-}
-

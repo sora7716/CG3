@@ -41,6 +41,7 @@ void GameObjectList::LoadSprite() {
 	SpriteManager::GetInstance()->LoadSprite("monsterBall", "monsterBall.png");
 	SpriteManager::GetInstance()->LoadSprite("block", "block.png");
 	SpriteManager::GetInstance()->LoadSprite("uvChecker", "uvChecker.png");
+	SpriteManager::GetInstance()->LoadSprite("circle", "circle.png");
 
 }
 
@@ -50,6 +51,8 @@ void GameObjectList::LoadModel() {
 	ModelManager::GetInstance()->LoadOBJModel("cube", "cube", "cube");
 	//平面
 	ModelManager::GetInstance()->LoadOBJModel("plane", "plane", "plane");
+	//軸
+	ModelManager::GetInstance()->LoadOBJModel("test", "test", "test");
 }
 
 //カメラの生成

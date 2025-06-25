@@ -47,8 +47,8 @@ public://メンバ関数
 	/// <summary>
 	/// テクスチャの変更
 	/// </summary>
-	/// <param name="spriteName">スプライトの名前</param>
-	void ChangeTexture(std::string spriteName);
+	/// <param name="textureName">テクスチャの名前</param>
+	void ChangeTexture(std::string textureName);
 
 	/// <summary>
 	/// サイズのゲッター

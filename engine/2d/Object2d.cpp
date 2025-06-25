@@ -78,9 +78,9 @@ void Object2d::Draw() {
 }
 
 //テクスチャの変更
-void Object2d::ChangeTexture(std::string spriteName) {
-	std::string name = spriteName;
-	TextureManager::GetInstance()->LoadTexture(name);
+void Object2d::ChangeTexture(std::string textureName) {
+	modelData_.material.textureFilePath = "engine/resources/textures/"+textureName;
+	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
 }
 
 //サイズのゲッター
