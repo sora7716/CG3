@@ -55,9 +55,6 @@
     <Filter Include="application\scene">
       <UniqueIdentifier>{d09609c5-5464-4a8e-a106-9af2e72858bf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\gameObject">
-      <UniqueIdentifier>{fe8994bd-0b9a-44df-b447-7f1938d187b4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="engine\blend">
       <UniqueIdentifier>{05db597a-c161-4c9e-8086-648f850d3793}</UniqueIdentifier>
     </Filter>
