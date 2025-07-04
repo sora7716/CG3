@@ -13,14 +13,13 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 	worldTransform3d_.rotate = {};
 	worldTransform3d_.translate = { 0.0f,0.0f,0.0f };
 	object3d_->Initialize();
-	object3d_->SetModel("test");
-	//object3d_->SetTexture("circle.png");
+	object3d_->SetModel("cube");
+	object3d_->SetTexture("uvChecker.png");
 
 	directionalLight_.color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLight_.intensity = 1.0f;
 
 	particleSystem_ = std::make_unique<ParticleSystem>();
-	//TextureManager::GetInstance()->LoadTexture("engine/resources/textures/monsterBall.png");
 	particleSystem_->Initialize(directXBase,"circle.png");
 
 	sprite_ = std::make_unique<Sprite>();
