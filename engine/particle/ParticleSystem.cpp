@@ -243,7 +243,7 @@ void ParticleSystem::UpdateWorldTransform(uint32_t numInstance, auto iterator) {
 //ストラクチャバッファの生成
 void ParticleSystem::CreateStructuredBuffer() {
 	//ストラクチャバッファを生成
-	srvIndex_ = SRVManager::GetInstance()->Allocate();
+	srvIndex_ = SRVManager::GetInstance()->Allocate() + TextureManager::kSRVIndexTop;
 	SRVManager::GetInstance()->CreateSRVForStructuredBuffer(
 		srvIndex_,
 		instancingResource_.Get(),

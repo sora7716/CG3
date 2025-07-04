@@ -83,7 +83,7 @@ private://メンバ関数
 	TextureManager(TextureManager&) = delete;
 	//代入演算子の禁止
 	TextureManager& operator=(TextureManager&) = delete;
-private://静的メンバ変数
+public://静的メンバ変数
 	//TextureManagerのインスタンス
 	static TextureManager* instance;
 	//SRVインデックスの開始番号

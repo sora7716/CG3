@@ -1,6 +1,5 @@
 #pragma once
 #include "engine/audio/AudioManager.h"
-#include "engine/2d/SpriteManager.h"
 #include "engine/3d/ModelManager.h"
 #include "engine/camera/CameraManager.h"
 
@@ -39,11 +38,6 @@ private://メンバ関数
 	/// オーディオの読み込み
 	/// </summary>
 	void LoadAudio();
-
-	/// <summary>
-	/// スプライトの読み込み
-	/// </summary>
-	void LoadSprite();
 
 	/// <summary>
 	/// OBJファイルの読み込み

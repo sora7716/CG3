@@ -100,7 +100,7 @@ void TitleScene::Draw() {
 	particleSystem_->Draw();
 	object3d_->Draw();
 	sprite_->Draw();
-	object2d_->Draw();
+	//object2d_->Draw();
 }
 
 //終了

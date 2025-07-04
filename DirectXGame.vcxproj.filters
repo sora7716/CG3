@@ -210,9 +210,6 @@
     <ClCompile Include="engine\worldTransform\WorldTransform.cpp">
       <Filter>engine\worldTransform</Filter>
     </ClCompile>
-    <ClCompile Include="engine\2d\SpriteManager.cpp">
-      <Filter>engine\2d</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\math\Matrix4x4.h">
@@ -364,9 +361,6 @@
     </ClInclude>
     <ClInclude Include="engine\worldTransform\WorldTransform.h">
       <Filter>engine\worldTransform</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\2d\SpriteManager.h">
-      <Filter>engine\2d</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

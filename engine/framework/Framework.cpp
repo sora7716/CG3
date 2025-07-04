@@ -6,7 +6,6 @@
 #include "engine/input/Input.h"
 #include "engine/3d/ModelManager.h"
 #include "engine/camera/CameraManager.h"
-#include "engine/2d/SpriteManager.h"
 
 //初期化
 void Framework::Initialize() {
@@ -85,8 +84,6 @@ void Framework::Finalize() {
 	SceneManager::GetInstance()->Finalize();
 	//シーンファクトリーの解放
 	delete sceneFactory_;
-	//スプライトの管理
-	SpriteManager::GetInstance()->Finalize();
 	//ゲームオブジェクトリスト
 	GameObjectList::GetInstance()->Finalize();
 }
