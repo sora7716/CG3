@@ -8,31 +8,23 @@
 #include "engine/math/func/Math.h"
 //初期化
 void TitleScene::Initialize(DirectXBase* directXBase) {
-	object3d_ = std::make_unique<Object3d>();
-	worldTransform3d_.scale = { 1.0f,1.0f,1.0f };
-	worldTransform3d_.rotate = {};
-	worldTransform3d_.translate = { 0.0f,0.0f,0.0f };
-	object3d_->Initialize();
-	object3d_->SetModel("sphere");
-	object3d_->SetTexture("uvChecker.png");
+	for (int32_t i = 0; i < 2; i++) {
+		object3des_[i] = std::make_unique<Object3d>();
+		worldTransform3d_[i].rotate = {};
+		worldTransform3d_[i].scale = { 1.0f,1.0f,1.0f };
+		object3des_[i]->SetModel("sphere");
+		object3des_[i]->SetTexture("uvChecker.png");
+		object3des_[i]->Initialize();
+	}
+	worldTransform3d_[0].translate = { 0.0f,0.0f,0.0f };
+	worldTransform3d_[1].translate = { 2.0f,2.0f,0.0f };
 
 	directionalLight_.color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLight_.intensity = 1.0f;
 
 	particleSystem_ = std::make_unique<ParticleSystem>();
-	particleSystem_->Initialize(directXBase,"circle.png");
+	particleSystem_->Initialize(directXBase, "circle.png");
 
-	sprite_ = std::make_unique<Sprite>();
-	sprite_->Initialize("sample.png");
-
-	object2d_ = std::make_unique<Object2d>();
-	object2d_->Initialize("monsterBall.png");
-	object2d_->ChangeTexture("circle.png");
-	worldTransform2d_ = {
-		{100.0f,100.0f},
-		Math::kPi,
-		{}
-	};
 }
 
 //更新
@@ -40,24 +32,27 @@ void TitleScene::Update() {
 	//ImGuiの受付開始
 	ImGuiManager::GetInstance()->Begin();
 
-	object3d_->SetScale(worldTransform3d_.scale);
-	object3d_->SetRotate(worldTransform3d_.rotate);
-	object3d_->SetTranslate(worldTransform3d_.translate);
-	object3d_->SetColor(object3dColor_);
 	Object3dCommon::GetInstance()->SetDirectionalLightData(directionalLight_);
-	object3d_->Update();
+
+	for (int32_t i = 0; i < 2; i++) {
+		object3des_[i]->SetScale(worldTransform3d_[i].scale);
+		object3des_[i]->SetRotate(worldTransform3d_[i].rotate);
+		object3des_[i]->SetTranslate(worldTransform3d_[i].translate);
+		object3des_[i]->SetColor(object3dColor_);
+		object3des_[i]->Update();
+	}
+	object3des_[1]->SetParent(object3des_[0]->GetWorldTransform());
 
 	particleSystem_->Update();
 
-	sprite_->Update();
-
-	object2d_->Update();
-	object2d_->SetTransform(worldTransform2d_);
 #ifdef USE_IMGUI
 	ImGui::Begin("3dModel");
-	ImGui::DragFloat3("scale", &worldTransform3d_.scale.x, 0.1f);
-	ImGui::DragFloat3("rotate", &worldTransform3d_.rotate.x, 0.1f);
-	ImGui::DragFloat3("translate", &worldTransform3d_.translate.x, 0.1f);
+	ImGui::DragFloat3("scale[0]", &worldTransform3d_[0].scale.x, 0.1f);
+	ImGui::DragFloat3("rotate[0]", &worldTransform3d_[0].rotate.x, 0.1f);
+	ImGui::DragFloat3("translate[0]", &worldTransform3d_[0].translate.x, 0.1f);
+	ImGui::DragFloat3("scale[1]", &worldTransform3d_[1].scale.x, 0.1f);
+	ImGui::DragFloat3("rotate[1]", &worldTransform3d_[1].rotate.x, 0.1f);
+	ImGui::DragFloat3("translate[1]", &worldTransform3d_[1].translate.x, 0.1f);
 	ImGui::DragFloat4("color", &object3dColor_.x, 0.1f);
 	ImGui::ColorEdit4("color", &object3dColor_.x);
 	ImGui::End();
@@ -68,27 +63,21 @@ void TitleScene::Update() {
 	ImGui::DragFloat("intensity", &directionalLight_.intensity, 0.1f, 0.0f, 10.0f);
 	ImGui::End();
 
-	ImGui::Begin("blend");
-	/*const char* blendModes3d[] = { "None", "Normal", "Add", "Subtract", "Multiply", "Screen" };
-	if (ImGui::Combo("3dMode", &blendMode_, blendModes3d, IM_ARRAYSIZE(blendModes3d))) {
-		object3d_->SetBlendMode((BlendMode)blendMode_);
-	}*/
-	const char* blendModes2d[] = { "None", "Normal", "Add", "Subtract", "Multiply", "Screen" };
-	if (ImGui::Combo("3dMode", &blendMode_, blendModes2d, IM_ARRAYSIZE(blendModes2d))) {
-		object3d_->SetBlendMode((BlendMode)blendMode_);
-	}
-	ImGui::End();
+	//ImGui::Begin("blend");
+	///*const char* blendModes3d[] = { "None", "Normal", "Add", "Subtract", "Multiply", "Screen" };
+	//if (ImGui::Combo("3dMode", &blendMode_, blendModes3d, IM_ARRAYSIZE(blendModes3d))) {
+	//	object3d_->SetBlendMode((BlendMode)blendMode_);
+	//}*/
+	//const char* blendModes2d[] = { "None", "Normal", "Add", "Subtract", "Multiply", "Screen" };
+	//if (ImGui::Combo("3dMode", &blendMode_, blendModes2d, IM_ARRAYSIZE(blendModes2d))) {
+	//	object3des_->SetBlendMode((BlendMode)blendMode_);
+	//}
+	//ImGui::End();
 
 	/*ImGui::Begin("camera");
 	ImGui::DragFloat3("cameraPos", &cameraRotate_.x, 0.1f);
 	ImGui::End();
 	CameraManager::GetInstance()->FindCamera("defaultCamera")->SetRotate(cameraRotate_);*/
-
-	ImGui::Begin("2dModel");
-	ImGui::DragFloat2("scale", &worldTransform2d_.scale.x, 0.1f);
-	ImGui::DragFloat("rotate", &worldTransform2d_.rotate, 0.1f);
-	ImGui::DragFloat2("translate", &worldTransform2d_.translate.x, 0.1f);
-	ImGui::End();
 #endif // USE_IMGUI
 	//ImGuiの受付終了
 	ImGuiManager::GetInstance()->End();
@@ -97,9 +86,9 @@ void TitleScene::Update() {
 //描画
 void TitleScene::Draw() {
 	particleSystem_->Draw();
-	object3d_->Draw();
-	//sprite_->Draw();
-	//object2d_->Draw();
+	for (auto& object3d : object3des_) {
+		object3d->Draw();
+	}
 }
 
 //終了

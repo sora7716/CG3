@@ -33,69 +33,69 @@ void WorldTransform::Draw() {
 }
 
 //スクリーンに表示する範囲
-void WorldTransform::SetScreenArea(ScreenArea screenArea){
+void WorldTransform::SetScreenArea(ScreenArea screenArea) {
 	screenArea_ = screenArea;
 }
 
 //カメラのセッター
-void WorldTransform::SetCamera(Camera* camera){
+void WorldTransform::SetCamera(Camera* camera) {
 	camera_ = camera;
 }
 
 //親のセッター
-void WorldTransform::SetParent(const WorldTransform* parent){
+void WorldTransform::SetParent(const WorldTransform* parent) {
 	parent_ = parent;
 }
 
 //ワールド座標のセッター
-void WorldTransform::SetTransform(const TransformData& transform){
+void WorldTransform::SetTransform(const TransformData& transform) {
 	transform_ = transform;
 }
 
 //ワールド座標のセッター(2D)
-void WorldTransform::SetTransform2d(const Transform2dData& transform2d){
-	transform_ = { 
+void WorldTransform::SetTransform2d(const Transform2dData& transform2d) {
+	transform_ = {
 		{transform2d.scale.x,transform2d.scale.y,1.0f},
 		{0.0f,0.0f,transform2d.rotate},
-		{transform2d.translate.x,transform2d.translate.y,0.0f} 
+		{transform2d.translate.x,transform2d.translate.y,0.0f}
 	};
 }
 
 //スケールのセッター
-void WorldTransform::SetScale(const Vector3& scale){
+void WorldTransform::SetScale(const Vector3& scale) {
 	transform_.scale = scale;
 }
 
 //回転のセッター
-void WorldTransform::SetRotate(const Vector3& rotate){
+void WorldTransform::SetRotate(const Vector3& rotate) {
 	transform_.rotate = rotate;
 }
 
 //平行移動のセッター
-void WorldTransform::SetTranslate(const Vector3& translate){
+void WorldTransform::SetTranslate(const Vector3& translate) {
 	transform_.translate = translate;
 }
 
 //ワールド行列のゲッター
-const Matrix4x4& WorldTransform::GetWorldMatrix() const{
+const Matrix4x4& WorldTransform::GetWorldMatrix() const {
 	// TODO: return ステートメントをここに挿入します
 	return worldMatrix_;
 }
 
 //スケールのゲッター
-const Vector3& WorldTransform::GetScale() const{
+const Vector3& WorldTransform::GetScale() const {
 	// TODO: return ステートメントをここに挿入します
 	return transform_.scale;
 }
 
 //回転のゲッター
-const Vector3& WorldTransform::GetRotate() const{
+const Vector3& WorldTransform::GetRotate() const {
 	// TODO: return ステートメントをここに挿入します
 	return transform_.rotate;
 }
 
 //平行移動のセッター
-const Vector3& WorldTransform::GetTranslate() const{
+const Vector3& WorldTransform::GetTranslate() const {
 	// TODO: return ステートメントをここに挿入します
 	return transform_.translate;
 }
@@ -115,16 +115,17 @@ void WorldTransform::CreateTransformationMatrixResorce() {
 //座標の更新
 void WorldTransform::UpdateTransform() {
 	//TransformからWorldMatrixを作る
-	worldMatrix_ = Rendering::MakeAffineMatrix(transform_);
 	if (parent_) {
+		worldMatrix_ = Rendering::MakeAffineMatrix(transform_);
 		worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;
+	} else {
+		worldMatrix_ = Rendering::MakeAffineMatrix(transform_);
 	}
 	//wvpの書き込み
 	if (camera_) {
 		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
 		wvpData_->WVP = worldMatrix_ * viewProjectionMatrix;
-	}
-	else {
+	} else {
 		wvpData_->WVP = worldMatrix_;
 	}
 	//ワールド行列を送信
@@ -132,7 +133,7 @@ void WorldTransform::UpdateTransform() {
 }
 
 //座標の更新(2次元)
-void WorldTransform::UpdateTransform2d(){
+void WorldTransform::UpdateTransform2d() {
 	//TransformからWorldMatrixを作る
 	worldMatrix_ = Rendering::MakeAffineMatrix(transform_);
 	if (parent_) {
@@ -144,7 +145,7 @@ void WorldTransform::UpdateTransform2d(){
 	const Matrix4x4& viewProjectionMatrix = Matrix4x4::Identity4x4() * projectionMatrix;
 	wvpData_->WVP = worldMatrix_ * viewProjectionMatrix;
 	/*if (camera_) {
-		
+
 	}
 	else {
 		wvpData_->WVP = worldMatrix_ * projectionMatrix;

@@ -134,7 +134,7 @@ Vector3 Vector3::operator/(float n)const {
 }
 
 //加法(float)
-Vector3 Vector3::operator+(float n){
+Vector3 Vector3::operator+(float n) {
 	Vector3 result = {
 		x + n,
 		y + n,
@@ -166,3 +166,4 @@ Vector3 Vector3::operator-()const {
 bool Vector3::operator<(const Vector3& v) {
 	return x < v.x && y < v.y && z < v.z;
 }
+

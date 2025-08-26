@@ -70,5 +70,4 @@ struct Vector3 final {
 	Vector3 operator-()const;
 	// vのほうが小さい
 	bool operator<(const Vector3& v);
-
 };
