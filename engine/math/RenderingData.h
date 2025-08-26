@@ -8,7 +8,6 @@ typedef struct TransformData {
 	Vector3 scale;
 	Vector3 rotate;
 	Vector3 translate;
-	TransformData operator/(const TransformData& transformData);
 }TransformData;
 
 //Transform2D情報

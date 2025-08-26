@@ -50,4 +50,5 @@ private://メンバ変数
 	std::unique_ptr<ParticleSystem>particleSystem_ = nullptr;
 
 	Vector3 cameraRotate_ = {};
+
 };

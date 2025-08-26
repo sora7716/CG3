@@ -3,7 +3,7 @@
 
 //インスタンスのゲッター
 CameraManager* CameraManager::GetInstance(){
-    assert(!isFialize && "GetInstance() called after Finalize()");
+    assert(!isFinalize && "GetInstance() called after Finalize()");
     if (instance == nullptr) {
         instance = new CameraManager();
     }
@@ -46,5 +46,5 @@ Camera* CameraManager::FindCamera(const std::string& name){
 void CameraManager::Finalize(){
 	delete instance;
 	instance = nullptr;
-	isFialize = true;
+	isFinalize = true;
 }

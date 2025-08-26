@@ -210,8 +210,8 @@
     <ClCompile Include="engine\worldTransform\WorldTransform.cpp">
       <Filter>engine\worldTransform</Filter>
     </ClCompile>
-    <ClCompile Include="engine\math\RenderingData.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="engine\particle\ParticleManager.cpp">
+      <Filter>engine\particle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -332,9 +332,6 @@
     <ClInclude Include="engine\blend\BlendMode.h">
       <Filter>engine\blend</Filter>
     </ClInclude>
-    <ClInclude Include="engine\math\RenderingData.h">
-      <Filter>engine\math\func</Filter>
-    </ClInclude>
     <ClInclude Include="engine\3d\Object3dCommon.h">
       <Filter>engine\3d</Filter>
     </ClInclude>
@@ -364,6 +361,12 @@
     </ClInclude>
     <ClInclude Include="engine\worldTransform\WorldTransform.h">
       <Filter>engine\worldTransform</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\RenderingData.h">
+      <Filter>engine\math</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\particle\ParticleManager.h">
+      <Filter>engine\particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

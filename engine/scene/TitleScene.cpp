@@ -6,6 +6,8 @@
 #include "engine/3d/Object3dCommon.h"
 #include "engine/2d/TextureManager.h"
 #include "engine/math/func/Math.h"
+#include "engine/particle/ParticleManager.h"
+
 //初期化
 void TitleScene::Initialize(DirectXBase* directXBase) {
 	for (int32_t i = 0; i < 2; i++) {
@@ -23,7 +25,10 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 	directionalLight_.intensity = 1.0f;
 
 	particleSystem_ = std::make_unique<ParticleSystem>();
-	particleSystem_->Initialize(directXBase, "circle.png");
+	particleSystem_->Initialize(directXBase, "uvChecker.png");
+
+	ParticleManager::GetInstance()->AddParticleSystem("d");
+	ParticleManager::GetInstance()->FindParticleSystem("d")->Initialize(directXBase, "circle.png");
 
 }
 
@@ -33,6 +38,7 @@ void TitleScene::Update() {
 	ImGuiManager::GetInstance()->Begin();
 
 	Object3dCommon::GetInstance()->SetDirectionalLightData(directionalLight_);
+
 
 	for (int32_t i = 0; i < 2; i++) {
 		object3des_[i]->SetScale(worldTransform3d_[i].scale);
@@ -44,7 +50,7 @@ void TitleScene::Update() {
 	object3des_[1]->SetParent(object3des_[0]->GetWorldTransform());
 
 	particleSystem_->Update();
-
+	ParticleManager::GetInstance()->FindParticleSystem("d")->Update();
 #ifdef USE_IMGUI
 	ImGui::Begin("3dModel");
 	ImGui::DragFloat3("scale[0]", &worldTransform3d_[0].scale.x, 0.1f);
@@ -89,9 +95,11 @@ void TitleScene::Draw() {
 	for (auto& object3d : object3des_) {
 		object3d->Draw();
 	}
+	ParticleManager::GetInstance()->FindParticleSystem("d")->Draw();
 }
 
 //終了
 void TitleScene::Finalize() {
 	particleSystem_->Finalize();
+	ParticleManager::GetInstance()->Finalize();
 }

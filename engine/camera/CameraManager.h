@@ -52,7 +52,7 @@ private://静的メンバ変数
 	//カメラのインスタンス
 	static inline CameraManager* instance = nullptr;
 	//終了処理をしたかのフラグ
-	static inline bool isFialize = false;
+	static inline bool isFinalize = false;
 private://メンバ変数
 	//カメラ
 	std::map<std::string, std::unique_ptr<Camera>>cameras_;
