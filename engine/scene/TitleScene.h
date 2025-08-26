@@ -1,4 +1,3 @@
-
 #pragma once
 #include "IScene.h"
 #include "engine/2d/Sprite.h"
