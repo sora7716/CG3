@@ -37,7 +37,10 @@ void GameObjectList::LoadAudio() {
 //OBJファイルの読み込み
 void GameObjectList::LoadModel() {
 	//モデルの読み込み
+	//立方体
 	ModelManager::GetInstance()->LoadOBJModel("cube", "cube", "cube");
+	//球
+	ModelManager::GetInstance()->LoadOBJModel("sphere", "sphere", "sphere");
 	//平面
 	ModelManager::GetInstance()->LoadOBJModel("plane", "plane", "plane");
 	//軸

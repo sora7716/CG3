@@ -19,7 +19,7 @@ typedef struct AABB {
 //構造体
 //パーティクル単体のデータ
 typedef struct Particle {
-	Transform transform;//SRVの情報
+	TransformData transform;//SRVの情報
 	Vector3 velocity;//速度
 	Vector4 color;//色
 	float lifeTime;//生存時間
@@ -35,7 +35,7 @@ typedef struct ParticleForGPU {
 
 //発生源
 typedef struct Emitter {
-	Transform transform;//エミッターのTransform
+	TransformData transform;//エミッターのTransform
 	uint32_t count;//発生数
 	float frequency;//発生頻度
 	float frequencyTime;//頻度用時刻

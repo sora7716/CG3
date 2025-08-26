@@ -41,7 +41,7 @@ public://メンバ関数
 private://メンバ変数
 	//3Dモデル
 	std::unique_ptr<Object3d>object3d_ = nullptr;
-	Transform worldTransform3d_ = {};
+	TransformData worldTransform3d_ = {};
 	Vector4 object3dColor_ = { 1.0f,1.0f,1.0f,1.0f };
 	//ライト
 	DirectionalLight directionalLight_ = {};
@@ -54,5 +54,5 @@ private://メンバ変数
 	std::unique_ptr<Sprite>sprite_ = nullptr;
 
 	std::unique_ptr <Object2d> object2d_ = nullptr;
-	Transform2d worldTransform2d_ = {};
+	Transform2dData worldTransform2d_ = {};
 };

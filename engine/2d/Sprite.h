@@ -56,7 +56,7 @@ public://メンバ関数
 	/// UVの座標変換の更新
 	/// </summary>
 	/// <param name="uvTransform">uv座標</param>
-	void UpdateUVTransform(Transform2d uvTransform);
+	void UpdateUVTransform(Transform2dData uvTransform);
 
 	/// <summary>
 	/// 色のゲッター
@@ -102,7 +102,7 @@ private://メンバ関数
 private://メンバ変数
 	//テクスチャ番号
 	std::string spriteName_ = {};
-	Transform transform_ = { {100.0f,100.0f ,1.0f},{},{} };//トランスフォームの情報
+	TransformData transform_ = { {100.0f,100.0f ,1.0f},{},{} };//トランスフォームの情報
 	DirectXBase* directXBase_ = nullptr;//DirectXの基盤
 	//バッファリソース
 	ComPtr<ID3D12Resource>vertexResource_ = nullptr;//頂点

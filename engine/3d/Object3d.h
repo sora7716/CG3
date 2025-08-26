@@ -78,7 +78,7 @@ public://メンバ関数
 	/// トランスフォームのセッター
 	/// </summary>
 	/// <param name="transform">トランスフォーム</param>
-	void SetTransform(const Transform& transform);
+	void SetTransform(const TransformData& transform);
 
 	/// <summary>
 	/// uvスケールのセッター
@@ -171,7 +171,7 @@ public://メンバ関数
 	const WorldTransform* GetWorldTransform()const;
 private://メンバ変数
 	//UV座標
-	Transform2d uvTransform_ = {
+	Transform2dData uvTransform_ = {
 		.scale = { 1.0f,1.0f },
 		.rotate = 0.0f,
 		.translate = {0.0f,0.0f}

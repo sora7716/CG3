@@ -106,7 +106,7 @@ public://メンバ関数
 	const float GetFarClip()const;
 private://メンバ変数
 	//ローカル座標
-	Transform transform_ = {};
+	TransformData transform_ = {};
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};
 	//ビュー行列

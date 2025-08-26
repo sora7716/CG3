@@ -26,7 +26,7 @@ public://メンバ関数
 	/// <param name="vector">vector</param>
 	/// <param name="matrix">matrix</param>
 	/// <returns>デカルト座標系</returns>
-	static Vector3 TransformVector(const Vector3& vector, const Matrix4x4& matrix);
+	static Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 
 	/// <summary>
 	/// x座標を軸に回転
@@ -77,7 +77,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="transform">トランスフォーム</param>
 	/// <returns>アフィン行列</returns>
-	static Matrix4x4 MakeAffineMatrix(const Transform& transform);
+	static Matrix4x4 MakeAffineMatrix(const TransformData& transform);
 
 	/// <summary>
 	/// STRの変換
@@ -145,6 +145,6 @@ public://メンバ関数
 	/// <param name="cameraWorldMatrix">カメラのワールド行列</param>
 	/// <param name="transform">トランスフォーム</param>
 	/// <returns>ビルボード行列を含んだアフィン行列</returns>
-	static Matrix4x4 MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const Transform& transform);
+	static Matrix4x4 MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const TransformData& transform);
 };
 

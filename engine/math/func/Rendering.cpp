@@ -1,37 +1,36 @@
 #include "Rendering.h"
 #include "engine/math/func/Math.h"
+#include <cassert>
 using namespace std;
 
 //拡縮
 Matrix4x4 Rendering::MakeScaleMatrix(const Vector3& scale) {
-	Matrix4x4 result{
-		scale.x,0.0f,0.0f,0.0f,
-		0.0f,scale.y,0.0f,0.0f,
-		0.0f,0.0f,scale.z,0.0f,
-		0.0f,0.0f,0.0f,1.0f
-	};
+	//単位行列で初期化
+	Matrix4x4 result = Matrix4x4::Identity4x4();
+	result.m[0][0] = scale.x;
+	result.m[1][1] = scale.y;
+	result.m[2][2] = scale.z;
 	return result;
 }
 
 //平行移動
 Matrix4x4 Rendering::MakeTranslateMatrix(const Vector3& translate) {
-	Matrix4x4 result{
-		1.0f,0.0f,0.0f,0.0f,
-		0.0f,1.0f,0.0f,0.0f,
-		0.0f,0.0f,1.0f,0.0f,
-		translate.x,translate.y,translate.z,1.0f
-	};
+	//単位行列で初期化
+	Matrix4x4 result = Matrix4x4::Identity4x4();
+	result.m[3][0] = translate.x;
+	result.m[3][1] = translate.y;
+	result.m[3][2] = translate.z;
 	return result;
 }
 
 //同次座標系で計算しデカルト座標系に変換
-Vector3 Rendering::TransformVector(const Vector3& vector, const Matrix4x4& matrix) {
+Vector3 Rendering::Transform(const Vector3& vector, const Matrix4x4& matrix) {
 	Vector3 result{};
 	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
 	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.0f * matrix.m[3][1];
 	result.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + 1.0f * matrix.m[3][2];
 	float w = vector.x * matrix.m[0][3] + vector.y * matrix.m[1][3] + vector.z * matrix.m[2][3] + 1.0f * matrix.m[3][3];
-	//assert(w != 0.0f);
+	assert(w != 0.0f);
 	result.x /= w;
 	result.y /= w;
 	result.z /= w;
@@ -41,34 +40,34 @@ Vector3 Rendering::TransformVector(const Vector3& vector, const Matrix4x4& matri
 
 //x座標を軸に回転
 Matrix4x4 Rendering::MakeRotateXMatrix(const float& radian) {
-	Matrix4x4 result{
-		1.0f,0.0f,0.0f,0.0f,
-		0.0f,cos(radian),sin(radian),0.0f,
-		0.0f,-sin(radian),cos(radian),0.0f,
-		0.0f,0.0f,0.0f,1.0f,
-	};
+	//単位行列で初期化
+	Matrix4x4 result = Matrix4x4::Identity4x4();
+	result.m[1][1] = std::cos(radian);
+	result.m[1][2] = std::sin(radian);
+	result.m[2][1] = -std::sin(radian);
+	result.m[2][2] = std::cos(radian);
 	return result;
 }
 
 //y座標を軸に回転
 Matrix4x4 Rendering::MakeRotateYMatrix(const float& radian) {
-	Matrix4x4 result{
-		cos(radian),0.0f,-sin(radian),0.0f,
-		0.0f,1.0f,0.0f,0.0f,
-		sin(radian),0.0f,cos(radian),0.0f,
-		0.0f,0.0f,0.0f,1.0f
-	};
+	//単位行列で初期化
+	Matrix4x4 result = Matrix4x4::Identity4x4();
+	result.m[0][0] = std::cos(radian);
+	result.m[0][2] = -std::sin(radian);
+	result.m[2][0] = std::sin(radian);
+	result.m[2][2] = std::cos(radian);
 	return result;
 }
 
 //z座標を軸に回転
 Matrix4x4 Rendering::MakeRotateZMatrix(const float& radian) {
-	Matrix4x4 result{
-		cos(radian),sin(radian),0.0f,0.0f,
-		-sin(radian),cos(radian),0.0f,0.0f,
-		0.0f,0.0f,1.0f,0.0f,
-		0.0f,0.0f,0.0f,1.0f
-	};
+	//単位行列で初期化
+	Matrix4x4 result = Matrix4x4::Identity4x4();
+	result.m[0][0] = std::cos(radian);
+	result.m[0][1] = std::sin(radian);
+	result.m[1][0] = -std::sin(radian);
+	result.m[1][1] = std::cos(radian);
 	return result;
 }
 
@@ -111,7 +110,7 @@ Matrix4x4 Rendering::MakeOBBWorldMatrix(const Vector3* orientations, const Vecto
 }
 
 //アフィン関数
-Matrix4x4 Rendering::MakeAffineMatrix(const Transform& transform) {
+Matrix4x4 Rendering::MakeAffineMatrix(const TransformData& transform) {
 	return (MakeScaleMatrix(transform.scale) * MakeRotateXYZMatrix(transform.rotate)) * MakeTranslateMatrix(transform.translate);
 }
 
@@ -173,6 +172,6 @@ Matrix4x4 Rendering::MakeBillboardMatrix(const Matrix4x4& cameraWorldMatrix, con
 }
 
 //ビルボード行列を含んだアフィン行列の作成
-Matrix4x4 Rendering::MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const Transform& transform) {
+Matrix4x4 Rendering::MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const TransformData& transform) {
 	return (MakeScaleMatrix(transform.scale) * MakeBillboardMatrix(cameraWorldMatrix, transform.rotate)) * MakeTranslateMatrix(transform.translate);
 }

@@ -87,7 +87,7 @@ void Sprite::ChangeTexture(std::string spriteName) {
 }
 
 // UVの座標変換の更新
-void Sprite::UpdateUVTransform(Transform2d uvTransform) {
+void Sprite::UpdateUVTransform(Transform2dData uvTransform) {
 	//UVTransform
 	materialData_->uvTransform = Rendering::MakeUVAffineMatrix({ uvTransform.scale.x,uvTransform.scale.y,1.0f }, uvTransform.rotate, { uvTransform.translate.x,uvTransform.translate.y,1.0f });
 }

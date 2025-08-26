@@ -48,12 +48,12 @@ void WorldTransform::SetParent(const WorldTransform* parent){
 }
 
 //ワールド座標のセッター
-void WorldTransform::SetTransform(const Transform& transform){
+void WorldTransform::SetTransform(const TransformData& transform){
 	transform_ = transform;
 }
 
 //ワールド座標のセッター(2D)
-void WorldTransform::SetTransform2d(const Transform2d& transform2d){
+void WorldTransform::SetTransform2d(const Transform2dData& transform2d){
 	transform_ = { 
 		{transform2d.scale.x,transform2d.scale.y,1.0f},
 		{0.0f,0.0f,transform2d.rotate},

@@ -78,13 +78,13 @@ public://メンバ関数
 	/// ワールド座標のセッター
 	/// </summary>
 	/// <param name="transform">ワールド座標</param>
-	void SetTransform(const Transform& transform);
+	void SetTransform(const TransformData& transform);
 
 	/// <summary>
 	/// ワールド座標のセッター(2D)
 	/// </summary>
 	/// <param name="transform2d">ワールド座標(2d)</param>
-	void SetTransform2d(const Transform2d& transform2d);
+	void SetTransform2d(const Transform2dData& transform2d);
 
 	/// <summary>
 	/// スケールのセッター
@@ -159,7 +159,7 @@ private://メンバ変数
 	//トランスフォームモード
 	TransformMode transformMode_ = TransformMode::k3d;
 	//ワールド座標
-	Transform transform_ = {};
+	TransformData transform_ = {};
 	//ワールド行列
 	Matrix4x4 worldMatrix_ = {};
 	//親
