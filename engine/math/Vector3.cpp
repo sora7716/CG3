@@ -8,8 +8,13 @@ float Vector3::Length() {
 
 //正規化
 Vector3 Vector3::Normalize() {
-	// TODO: return ステートメントをここに挿入します
-	Vector3 result = (Vector3(x, y, z).Length() != 0.0f) ? Vector3(x, y, z) / Vector3(x, y, z).Length() : Vector3(x, y, z);
+	Vector3 result = {};
+	float len = this->Length();
+	if (len != 0.0f) {
+		result.x = x / len;
+		result.y = y / len;
+		result.z = z / len;
+	}
 	return result;
 }
 

@@ -177,7 +177,7 @@ void Sprite::InitializeMaterialData() {
 	//色を書き込む
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	materialData_->enableLighting = false;
-	materialData_->uvTransform = Math::MakeIdentity4x4();
+	materialData_->uvTransform = Matrix4x4::Identity4x4();
 }
 
 //マテリアルリソースの生成

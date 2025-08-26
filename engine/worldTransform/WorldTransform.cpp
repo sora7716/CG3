@@ -108,8 +108,8 @@ void WorldTransform::CreateTransformationMatrixResorce() {
 	//書き込むためのアドレス
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
 	//単位行列を書き込んでおく
-	wvpData_->WVP = Math::MakeIdentity4x4();
-	wvpData_->World = Math::MakeIdentity4x4();
+	wvpData_->WVP = Matrix4x4::Identity4x4();
+	wvpData_->World = Matrix4x4::Identity4x4();
 }
 
 //座標の更新
@@ -141,7 +141,7 @@ void WorldTransform::UpdateTransform2d(){
 	//ProjectionMatrixを作って平行投影行列を書き込む
 	const Matrix4x4& projectionMatrix = Rendering::MakeOrthographicMatrix(screenArea_.left, screenArea_.top, screenArea_.right, screenArea_.bottom, 0.1f, 100.0f);
 	//wvpの書き込み
-	const Matrix4x4& viewProjectionMatrix = Math::MakeIdentity4x4() * projectionMatrix;
+	const Matrix4x4& viewProjectionMatrix = Matrix4x4::Identity4x4() * projectionMatrix;
 	wvpData_->WVP = worldMatrix_ * viewProjectionMatrix;
 	/*if (camera_) {
 		

@@ -18,7 +18,7 @@ void Camera::Update() {
 	//アフィン変換行列の作成
 	worldMatrix_ = Rendering::MakeAffineMatrix(transform_);
 	//worldMatrixの逆行列
-	viewMatrix_ = ~worldMatrix_;
+	viewMatrix_ = worldMatrix_.Inverse();
 	//透視投影行列の作成
 	projectionMatrix_ = Rendering::MakePerspectiveFovMatrix(fovY_, aspectRation_, nearClip_, farClip_);
 	//ビュープロジェクション行列の作成

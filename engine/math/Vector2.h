@@ -3,7 +3,7 @@ struct Vector3;
 /// <summary>
 /// 2次元ベクトル
 /// </summary>
-typedef struct Vector2 final {
+struct Vector2 final {
 	float x;
 	float y;
 
@@ -29,12 +29,12 @@ typedef struct Vector2 final {
 	Vector2& operator*=(float n);
 	//Vector3を代入
 	Vector2& operator=(const Vector3& v);
-}Vector2;
+};
 
 /// <summary>
 /// 2次元ベクトルの整数型
 /// </summary>
-typedef struct Vector2Int final {
+struct Vector2Int final {
 	int x;
 	int y;
-}Vector2Int;
+};

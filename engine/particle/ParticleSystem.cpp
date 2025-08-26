@@ -157,7 +157,7 @@ void ParticleSystem::InitializeMaterialData() {
 	//色を書き込む
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	materialData_->enableLighting = false;
-	materialData_->uvTransform = Math::MakeIdentity4x4();
+	materialData_->uvTransform = Matrix4x4::Identity4x4();
 }
 
 //頂点リソースの生成
@@ -218,8 +218,8 @@ void ParticleSystem::CreateWorldTransformResource() {
 	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
 	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
 		//単位行列を書き込んでおく
-		instancingData_[i].WVP = Math::MakeIdentity4x4();
-		instancingData_[i].World = Math::MakeIdentity4x4();
+		instancingData_[i].WVP = Matrix4x4::Identity4x4();
+		instancingData_[i].World = Matrix4x4::Identity4x4();
 		instancingData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 初期色を白に設定
 	}
 }

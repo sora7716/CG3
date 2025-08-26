@@ -2,7 +2,7 @@
 /// <summary>
 /// 3次元ベクトル
 /// </summary>
-typedef struct Vector3 final {
+struct Vector3 final {
 	float x;
 	float y;
 	float z;
@@ -71,4 +71,4 @@ typedef struct Vector3 final {
 	// vのほうが小さい
 	bool operator<(const Vector3& v);
 
-}Vector3;
+};

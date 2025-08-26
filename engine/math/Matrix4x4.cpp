@@ -59,7 +59,7 @@ Matrix4x4& Matrix4x4::operator-=(const Matrix4x4& mat) {
 }
 
 //逆行列
-Matrix4x4 Matrix4x4::operator~() const {
+Matrix4x4 Matrix4x4::Inverse() const{
 	Matrix4x4 result{};
 	float determinant = m[0][0] * (m[1][1] * m[2][2] * m[3][3] +
 		m[2][1] * m[3][2] * m[1][3] +
@@ -221,5 +221,24 @@ Matrix4x4 Matrix4x4::operator~() const {
 	}
 
 	return result;
+}
 
+//転置行列
+Matrix4x4 Matrix4x4::Transpose(){
+	Matrix4x4 result = {};
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			result.m[i][j] = this->m[j][i];
+		}
+	}
+	return result;
+}
+
+//単位行列
+Matrix4x4 Matrix4x4::Identity4x4(){
+	Matrix4x4 result = {};
+	for (int i = 0; i < 4; i++) {
+		result.m[i][i] = 1;
+	}
+	return result;
 }

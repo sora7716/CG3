@@ -2,7 +2,7 @@
 /// <summary>
 /// 4x4の行列
 /// </summary>
-typedef struct Matrix4x4 final {
+struct Matrix4x4 final {
 	float m[4][4];
 
 	//加法
@@ -15,6 +15,13 @@ typedef struct Matrix4x4 final {
 	Matrix4x4& operator+=(const Matrix4x4& mat);
 	//減法(複合)
 	Matrix4x4& operator-=(const Matrix4x4& mat);
+	
 	//逆行列
-	Matrix4x4 operator~()const;
-}Matrix4x4;
+	Matrix4x4 Inverse()const;
+	
+	//転置行列
+	Matrix4x4 Transpose();
+	
+	//単位行列
+	static Matrix4x4 Identity4x4();
+};

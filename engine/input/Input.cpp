@@ -134,7 +134,7 @@ const Vector3 Input::GetWorldMousePosition(Camera* camera) const{
 	Vector3 posNDC = { mouseX, mouseY, 1.0f }; // 遠平面(z = 1.0f)でのNDC
 
 	// ビュープロジェクション行列の逆行列を取得
-	Matrix4x4 matInverseVP = ~(camera->GetViewMatrix() * camera->GetProjectionMatrix());
+	Matrix4x4 matInverseVP = (camera->GetViewMatrix() * camera->GetProjectionMatrix()).Inverse();
 
 	// NDCからワールド座標系への変換（遠平面）
 	Vector3 posFar = Rendering::TransformVector(posNDC, matInverseVP);
@@ -144,7 +144,7 @@ const Vector3 Input::GetWorldMousePosition(Camera* camera) const{
 	Vector3 posNear = Rendering::TransformVector(posNDC, matInverseVP);
 
 	// マウスレイの方向を計算
-	Vector3 mouseDirection = Math::Normalize(posFar - posNear);
+	Vector3 mouseDirection =(posFar - posNear).Normalize();
 	return mouseDirection;
 }
 

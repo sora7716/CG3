@@ -204,5 +204,5 @@ void Model::CreateMaterialResource() {
 	//色を書き込む
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	materialData_->enableLighting = true;
-	materialData_->uvTransform = Math::MakeIdentity4x4();
+	materialData_->uvTransform = Matrix4x4::Identity4x4();
 }
