@@ -96,7 +96,7 @@ void TitleScene::Update() {
 
 //描画
 void TitleScene::Draw() {
-	//particleSystem_->Draw();
+	particleSystem_->Draw();
 	object3d_->Draw();
 	//sprite_->Draw();
 	//object2d_->Draw();

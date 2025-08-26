@@ -38,12 +38,14 @@ void ParticleCommon::Initialize(DirectXBase* directXBase) {
 	makeGraphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
 	makeGraphicsPipeline_->CompilePixelShader();
+	//デプスステンシルステート
+	directXBase_->InitializeDepthStencilForParticle();
 	//PSO
 	for (uint32_t i = 0; i < static_cast<int32_t>(BlendMode::kCountOfBlendMode); i++) {
 		//ブレンドステート
 		makeGraphicsPipeline_->InitializeBlendState(i);
 		//グラフィックスパイプラインの生成[
-		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline();
+		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline(directXBase_->GetDepthStencil());
 	}	//ルートシグネイチャの記録
 	rootSignature_ = makeGraphicsPipeline_->GetRootSignature();
 }

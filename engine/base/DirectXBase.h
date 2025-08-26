@@ -66,9 +66,14 @@ public://メンバ関数
 	void InitializeRTV();
 
 	/// <summary>
-	/// 深度ステンシルビューの初期化
+	/// 深度ステンシルビューの初期化(3Dオブジェクト用)
 	/// </summary>
-	void InitializeDepthStencil();
+	void InitializeDepthStencilForObject3d();
+
+	/// <summary>
+	/// 深度ステンシルビューの初期化(パーティクル用)
+	/// </summary>
+	void InitializeDepthStencilForParticle();
 
 	/// <summary>
 	/// フェンスの初期化
@@ -204,6 +209,7 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>スワップチェーンのリソース数</returns>
 	size_t GetSwapChainResourceNum()const;
+
 public://静的メンバ関数
 	/// <summary>
 	/// デスクリプターCPUハンドルのゲッター

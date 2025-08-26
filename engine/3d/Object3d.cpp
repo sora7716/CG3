@@ -31,6 +31,8 @@ void Object3d::Initialize() {
 
 //更新
 void Object3d::Update() {
+	//震度バッファの初期化
+	directXBase_->InitializeDepthStencilForObject3d();
 	//ワールドトランスフォーム
 	worldTransform_->Update();
 	if (model_) {

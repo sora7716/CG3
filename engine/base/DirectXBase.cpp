@@ -29,7 +29,7 @@ void DirectXBase::Initialize() {
 	//レンダーターゲットビューの初期化
 	InitializeRTV();
 	//深度ステンシルビューの初期化
-	InitializeDepthStencil();
+	InitializeDepthStencilForObject3d();
 	//フェンスの初期化
 	InitializeFence();
 	//ビューポート矩形の初期化
@@ -109,8 +109,25 @@ void DirectXBase::InitializeRTV() {
 	}
 }
 
-//深度ステンシルビューの初期化
-void DirectXBase::InitializeDepthStencil() {
+//深度ステンシルビューの初期化(3Dオブジェクト用)
+void DirectXBase::InitializeDepthStencilForObject3d() {
+	//Depthの機能を有効化
+	depthStencilDesc_.DepthEnable = true;
+	//書き込みをする
+	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	//比較関数はLessEqual。つまり、近ければ描画される
+	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
+	//DSVの設定
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;//Format。基本的にはResourceに合わせる
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;//2dTexture
+	//DSVHeapの先頭にDSVを作る
+	device_->CreateDepthStencilView(depthStencilResource_.Get(), &dsvDesc, dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart());
+}
+
+//深度ステンシルビューの初期化(パーティクル用)
+void DirectXBase::InitializeDepthStencilForParticle(){
 	//Depthの機能を有効化
 	depthStencilDesc_.DepthEnable = true;
 	//書き込みをする

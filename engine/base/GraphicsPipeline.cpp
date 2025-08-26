@@ -10,7 +10,7 @@
 using namespace Microsoft::WRL;
 
 //初期化
-void GraphicsPipeline::Initialize(DirectXBase* directXBase) {
+void GraphicsPipeline::Initialize(DirectXBase* directXBase, D3D12_DEPTH_STENCIL_DESC depthStencilDesc) {
 	//DirectXの基盤部分を記録する
 	directXBase_ = directXBase;
 	//シグネイチャBlobの初期化
@@ -30,7 +30,7 @@ void GraphicsPipeline::Initialize(DirectXBase* directXBase) {
 		//ブレンドステート
 		InitializeBlendState(i);
 		//グラフィックスパイプラインの生成
-		graphicsPipelines_[i] = CreateGraphicsPipeline();
+		graphicsPipelines_[i] = CreateGraphicsPipeline(depthStencilDesc);
 	}
 }
 
@@ -229,7 +229,7 @@ void GraphicsPipeline::CompilePixelShader() {
 }
 
 //PSOの生成
-ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipeline() {
+ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipeline(D3D12_DEPTH_STENCIL_DESC depthStencilDesc) {
 	HRESULT result = S_FALSE;
 	//PSOを生成
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
@@ -253,7 +253,7 @@ ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipeline() {
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	//DepthStencilの設定
-	graphicsPipelineStateDesc.DepthStencilState = directXBase_->GetDepthStencil();
+	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	//実際に生成
 	ComPtr<ID3D12PipelineState>graphicsPipelineState;

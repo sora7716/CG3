@@ -25,7 +25,9 @@ void Object2dCommon::Initialize(DirectXBase* directXBase) {
 	//シェーダを設定
 	makeGraphicsPipeline_->SetVertexShaderFileName(L"Object3d.VS.hlsl");
 	makeGraphicsPipeline_->SetPixelShaderFileName(L"Object3d.PS.hlsl");
-	makeGraphicsPipeline_->Initialize(directXBase_);
+	//デプスステンシルステート
+	directXBase_->InitializeDepthStencilForObject3d();
+	makeGraphicsPipeline_->Initialize(directXBase_, directXBase_->GetDepthStencil());
 	//ルートシグネイチャの記録
 	rootSignature_ = makeGraphicsPipeline_->GetRootSignature();
 	//グラフィックスパイプラインステートの記録
