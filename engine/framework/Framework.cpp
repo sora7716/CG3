@@ -6,6 +6,7 @@
 #include "engine/input/Input.h"
 #include "engine/3d/ModelManager.h"
 #include "engine/camera/CameraManager.h"
+#include "engine/particle/ParticleManager.h"
 
 //初期化
 void Framework::Initialize() {
@@ -80,6 +81,8 @@ void Framework::Finalize() {
 	Object3dCommon::GetInstance()->Finalize();
 	//パーティクルの共通部分
 	ParticleCommon::GetInstance()->Finalize();
+	//パーティクルマネージャー
+	ParticleManager::GetInstance()->Finalize();
 	//シーンの管理
 	SceneManager::GetInstance()->Finalize();
 	//シーンファクトリーの解放

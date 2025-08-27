@@ -31,7 +31,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	void Initialize(DirectXBase* directXBase, D3D12_DEPTH_STENCIL_DESC depthStencilDesc);
+	void Initialize(DirectXBase* directXBase);
 
 	/// <summary>
 	/// ルートシグネイチャのゲッター

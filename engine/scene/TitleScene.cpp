@@ -18,14 +18,12 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 		object3des_[i]->SetTexture("uvChecker.png");
 		object3des_[i]->Initialize();
 	}
+	object3des_[1]->SetParent(object3des_[0]->GetWorldTransform());
 	worldTransform3d_[0].translate = { 0.0f,0.0f,0.0f };
 	worldTransform3d_[1].translate = { 2.0f,2.0f,0.0f };
 
 	directionalLight_.color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLight_.intensity = 1.0f;
-
-	particleSystem_ = std::make_unique<ParticleSystem>();
-	particleSystem_->Initialize(directXBase, "uvChecker.png");
 
 	ParticleManager::GetInstance()->AddParticleSystem("d");
 	ParticleManager::GetInstance()->FindParticleSystem("d")->Initialize(directXBase, "circle.png");
@@ -47,9 +45,7 @@ void TitleScene::Update() {
 		object3des_[i]->SetColor(object3dColor_);
 		object3des_[i]->Update();
 	}
-	object3des_[1]->SetParent(object3des_[0]->GetWorldTransform());
 
-	particleSystem_->Update();
 	ParticleManager::GetInstance()->FindParticleSystem("d")->Update();
 #ifdef USE_IMGUI
 	ImGui::Begin("3dModel");
@@ -91,7 +87,6 @@ void TitleScene::Update() {
 
 //描画
 void TitleScene::Draw() {
-	particleSystem_->Draw();
 	for (auto& object3d : object3des_) {
 		object3d->Draw();
 	}
@@ -100,6 +95,5 @@ void TitleScene::Draw() {
 
 //終了
 void TitleScene::Finalize() {
-	particleSystem_->Finalize();
-	ParticleManager::GetInstance()->Finalize();
+
 }

@@ -10,7 +10,7 @@
 using namespace Microsoft::WRL;
 
 //初期化
-void GraphicsPipeline::Initialize(DirectXBase* directXBase, D3D12_DEPTH_STENCIL_DESC depthStencilDesc) {
+void GraphicsPipeline::Initialize(DirectXBase* directXBase) {
 	//DirectXの基盤部分を記録する
 	directXBase_ = directXBase;
 	//シグネイチャBlobの初期化
@@ -30,7 +30,7 @@ void GraphicsPipeline::Initialize(DirectXBase* directXBase, D3D12_DEPTH_STENCIL_
 		//ブレンドステート
 		InitializeBlendState(i);
 		//グラフィックスパイプラインの生成
-		graphicsPipelines_[i] = CreateGraphicsPipeline(depthStencilDesc);
+		graphicsPipelines_[i] = CreateGraphicsPipeline(directXBase_->GetDepthStencil());
 	}
 }
 

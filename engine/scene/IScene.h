@@ -1,7 +1,8 @@
 #pragma once
 #include "engine/2d/Object2d.h"
 #include "engine/3d/Object3d.h"
-#include "engine/particle/ParticleSystem.h"
+#include "engine/2d/Sprite.h"
+#include "engine/particle/ParticleManager.h"
 #include "engine/debug/ImGuiManager.h"
 #include "engine/audio/AudioManager.h"
 #include "engine/camera/CameraManager.h"

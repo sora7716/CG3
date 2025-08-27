@@ -1,6 +1,5 @@
 #pragma once
 #include "IScene.h"
-#include "engine/2d/Sprite.h"
 
 /// <summary>
 /// タイトルシーン
@@ -47,8 +46,6 @@ private://メンバ変数
 	DirectionalLight directionalLight_ = {};
 	//ブレンドモード
 	int32_t blendMode_ = static_cast<int32_t>(BlendMode::kNone);
-	std::unique_ptr<ParticleSystem>particleSystem_ = nullptr;
-
+	//カメラの回転
 	Vector3 cameraRotate_ = {};
-
 };
