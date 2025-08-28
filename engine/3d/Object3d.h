@@ -45,6 +45,11 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
+	/// 親子関係を解除
+	/// </summary>
+	void Decompose();
+
+	/// <summary>
 	/// モデルのセッター
 	/// </summary>
 	/// <param name="name">モデルの名前</param>

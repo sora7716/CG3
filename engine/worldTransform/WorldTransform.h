@@ -75,6 +75,11 @@ public://メンバ関数
 	void SetParent(const WorldTransform* parent);
 
 	/// <summary>
+	/// 親子関係を解除
+	/// </summary>
+	void Decompose();
+
+	/// <summary>
 	/// ワールド座標のセッター
 	/// </summary>
 	/// <param name="transform">ワールド座標</param>

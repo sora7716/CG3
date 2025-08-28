@@ -57,6 +57,13 @@ void TitleScene::Update() {
 	ImGui::DragFloat3("translate[1]", &worldTransform3d_[1].translate.x, 0.1f);
 	ImGui::DragFloat4("color", &object3dColor_.x, 0.1f);
 	ImGui::ColorEdit4("color", &object3dColor_.x);
+	if (ImGui::Button("Decompose")) {
+		object3des_[1]->Decompose();
+		worldTransform3d_[1] = { object3des_[1]->GetScale(),object3des_[1]->GetRotate(),object3des_[1]->GetTranslate() };
+	}
+	if (ImGui::Button("parent")) {
+		object3des_[1]->SetParent(object3des_[0]->GetWorldTransform());
+	}
 	ImGui::End();
 
 	ImGui::Begin("light");

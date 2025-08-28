@@ -58,6 +58,11 @@ void Object3d::Draw() {
 	}
 }
 
+//親子関係を解除
+void Object3d::Decompose(){
+	worldTransform_->Decompose();
+}
+
 //モデルのセッター
 void Object3d::SetModel(const std::string& name) {
 	model_ = ModelManager::GetInstance()->FindModel(name);

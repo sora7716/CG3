@@ -3,6 +3,7 @@
 #include "engine/math/func/Rendering.h"
 #include "engine/math/func/Math.h"
 #include "engine/camera/Camera.h"
+#include <cmath>
 ////メンバ関数テーブルの初期化
 void(WorldTransform::* WorldTransform::UpdateTransformTable[])() = {
 	&UpdateTransform,
@@ -45,6 +46,55 @@ void WorldTransform::SetCamera(Camera* camera) {
 //親のセッター
 void WorldTransform::SetParent(const WorldTransform* parent) {
 	parent_ = parent;
+}
+
+void WorldTransform::Decompose() {
+	if (parent_) {
+		//拡縮
+		transform_.scale.x = std::sqrt(
+			std::pow(worldMatrix_.m[0][0], 2.0f) + 
+			std::pow(worldMatrix_.m[0][1], 2.0f) + 
+			std::pow(worldMatrix_.m[0][2], 2.0f)
+		);
+		transform_.scale.y = std::sqrt(
+			std::pow(worldMatrix_.m[1][0], 2.0f) +
+			std::pow(worldMatrix_.m[1][1], 2.0f) +
+			std::pow(worldMatrix_.m[1][2], 2.0f)
+		);
+		transform_.scale.z = std::sqrt(
+			std::pow(worldMatrix_.m[2][0], 2.0f) +
+			std::pow(worldMatrix_.m[2][1], 2.0f) +
+			std::pow(worldMatrix_.m[2][2], 2.0f)
+		);
+
+		//回転
+		// 回転行列の正規化（スケール除去）
+		float rm00 = worldMatrix_.m[0][0] / transform_.scale.x;
+		float rm01 = worldMatrix_.m[0][1] / transform_.scale.x;
+		float rm02 = worldMatrix_.m[0][2] / transform_.scale.x;
+
+		float rm10 = worldMatrix_.m[1][0] / transform_.scale.y;
+		float rm11 = worldMatrix_.m[1][1] / transform_.scale.y;
+		float rm12 = worldMatrix_.m[1][2] / transform_.scale.y;
+
+		float rm20 = worldMatrix_.m[2][0] / transform_.scale.z;
+		float rm21 = worldMatrix_.m[2][1] / transform_.scale.z;
+		float rm22 = worldMatrix_.m[2][2] / transform_.scale.z;
+
+		// オイラー角 (Yaw-Pitch-Roll 順)
+		transform_.rotate.x = std::atan2(-rm21, sqrtf(rm20 * rm20 + rm22 * rm22));//Pitch
+		transform_.rotate.y = std::atan2(rm20, rm22);//Yaw
+		transform_.rotate.z = std::atan2(rm01, rm11);//Roll
+
+		//平行移動
+		transform_.translate = { 
+			worldMatrix_.m[3][0],
+			worldMatrix_.m[3][1],
+			worldMatrix_.m[3][2] 
+		};
+		//親子関係を解除
+		parent_ = nullptr;
+	}
 }
 
 //ワールド座標のセッター
