@@ -146,5 +146,12 @@ public://メンバ関数
 	/// <param name="transform">トランスフォーム</param>
 	/// <returns>ビルボード行列を含んだアフィン行列</returns>
 	static Matrix4x4 MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatrix, const TransformData& transform);
+
+	/// <summary>
+	/// 行列をTransformDataに分解
+	/// </summary>
+	/// <param name="mat">行列</param>
+	/// <returns>TransformData</returns>
+	static TransformData DecomposeMatrix(const Matrix4x4& mat);
 };
 
