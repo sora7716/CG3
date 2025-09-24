@@ -17,7 +17,7 @@ void WorldTransform::Initialize(DirectXBase* directXBase, TransformMode transfor
 	//ワールド座標
 	transform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	//wvpリソースの初期化
-	CreateTransformationMatrixResorce();
+	CreateTransformationMatrixResource();
 	transformMode_ = transformMode;
 }
 
@@ -46,6 +46,13 @@ void WorldTransform::SetCamera(Camera* camera) {
 //親のセッター
 void WorldTransform::SetParent(const WorldTransform* parent) {
 	parent_ = parent;
+}
+
+//親子付け
+void WorldTransform::Compose(const WorldTransform* parent) {
+	Matrix4x4 childLocal = parent_->worldMatrix_.Inverse() * worldMatrix_;
+	transform_ = Rendering::DecomposeMatrix(childLocal);
+	SetParent(parent);
 }
 
 //親子関係を解除
@@ -112,7 +119,7 @@ const Vector3& WorldTransform::GetTranslate() const {
 }
 
 //座標変換行列リソースの生成
-void WorldTransform::CreateTransformationMatrixResorce() {
+void WorldTransform::CreateTransformationMatrixResource() {
 	//座標変換行列リソースを作成する
 	wvpResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix));
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
@@ -125,18 +132,24 @@ void WorldTransform::CreateTransformationMatrixResorce() {
 
 //座標の更新
 void WorldTransform::UpdateTransform() {
+	Matrix4x4 local = Rendering::MakeAffineMatrix(transform_);
 	//TransformからWorldMatrixを作る
 	if (parent_) {
-		worldMatrix_ = Rendering::MakeAffineMatrix(transform_);
-		worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;
-	} else {
-		worldMatrix_ = Rendering::MakeAffineMatrix(transform_);
+		Matrix4x4 childLocal = parent_->worldMatrix_.Inverse() * worldMatrix_;
+		transform_ = Rendering::DecomposeMatrix(childLocal);
+		local = Rendering::MakeAffineMatrix(transform_);
+		worldMatrix_ = local;
+		worldMatrix_ = parent_->worldMatrix_ * worldMatrix_;
+	}
+	else {
+		worldMatrix_ = local;
 	}
 	//wvpの書き込み
 	if (camera_) {
 		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
 		wvpData_->WVP = worldMatrix_ * viewProjectionMatrix;
-	} else {
+	}
+	else {
 		wvpData_->WVP = worldMatrix_;
 	}
 	//ワールド行列を送信

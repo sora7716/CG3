@@ -45,6 +45,12 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
+	/// 親子付け
+	/// </summary>
+	/// <param name="parent">親</param>
+	void Compose(const WorldTransform* parent);
+
+	/// <summary>
 	/// 親子関係を解除
 	/// </summary>
 	void Decompose();

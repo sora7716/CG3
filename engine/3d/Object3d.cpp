@@ -58,6 +58,11 @@ void Object3d::Draw() {
 	}
 }
 
+//親子付け
+void Object3d::Compose(const WorldTransform* parent) {
+	worldTransform_->Compose(parent);
+}
+
 //親子関係を解除
 void Object3d::Decompose(){
 	worldTransform_->Decompose();

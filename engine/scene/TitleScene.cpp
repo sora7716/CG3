@@ -62,6 +62,7 @@ void TitleScene::Update() {
 		worldTransform3d_[1] = { object3des_[1]->GetScale(),object3des_[1]->GetRotate(),object3des_[1]->GetTranslate() };
 	}
 	if (ImGui::Button("parent")) {
+		//object3des_[1]->Compose(object3des_[0]->GetWorldTransform());
 		object3des_[1]->SetParent(object3des_[0]->GetWorldTransform());
 	}
 	ImGui::End();
@@ -72,16 +73,17 @@ void TitleScene::Update() {
 	ImGui::DragFloat("intensity", &directionalLight_.intensity, 0.1f, 0.0f, 10.0f);
 	ImGui::End();
 
-	//ImGui::Begin("blend");
-	///*const char* blendModes3d[] = { "None", "Normal", "Add", "Subtract", "Multiply", "Screen" };
-	//if (ImGui::Combo("3dMode", &blendMode_, blendModes3d, IM_ARRAYSIZE(blendModes3d))) {
-	//	object3d_->SetBlendMode((BlendMode)blendMode_);
-	//}*/
-	//const char* blendModes2d[] = { "None", "Normal", "Add", "Subtract", "Multiply", "Screen" };
-	//if (ImGui::Combo("3dMode", &blendMode_, blendModes2d, IM_ARRAYSIZE(blendModes2d))) {
-	//	object3des_->SetBlendMode((BlendMode)blendMode_);
-	//}
-	//ImGui::End();
+	ImGui::Begin("blend");
+	/*const char* blendModes3d[] = { "None", "Normal", "Add", "Subtract", "Multiply", "Screen" };
+	if (ImGui::Combo("3dMode", &blendMode_, blendModes3d, IM_ARRAYSIZE(blendModes3d))) {
+		object3d_->SetBlendMode((BlendMode)blendMode_);
+	}*/
+	const char* blendModes2d[] = { "None", "Normal", "Add", "Subtract", "Multiply", "Screen" };
+	if (ImGui::Combo("3dMode", &blendMode_, blendModes2d, IM_ARRAYSIZE(blendModes2d))) {
+		object3des_[0]->SetBlendMode((BlendMode)blendMode_);
+		object3des_[1]->SetBlendMode((BlendMode)blendMode_);
+	}
+	ImGui::End();
 
 	/*ImGui::Begin("camera");
 	ImGui::DragFloat3("cameraPos", &cameraRotate_.x, 0.1f);

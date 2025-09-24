@@ -75,6 +75,12 @@ public://メンバ関数
 	void SetParent(const WorldTransform* parent);
 
 	/// <summary>
+	/// 親子付け
+	/// </summary>
+	/// <param name="parent">親</param>
+	void Compose(const WorldTransform* parent);
+
+	/// <summary>
 	/// 親子関係を解除
 	/// </summary>
 	void Decompose();
@@ -136,7 +142,7 @@ private://メンバ関数
 	/// <summary>
 	/// 座標変換行列リソースの生成
 	/// </summary>
-	void CreateTransformationMatrixResorce();
+	void CreateTransformationMatrixResource();
 
 	/// <summary>
 	/// 座標の更新

@@ -53,4 +53,6 @@ void GameObjectList::CreateCamera() {
 	CameraManager::GetInstance()->AddCamera("defaultCamera");
 	//タイトルカメラ
 	CameraManager::GetInstance()->AddCamera("titleCamera");
+	//デバッグカメラ
+	CameraManager::GetInstance()->AddCamera("debugCamera");
 }
