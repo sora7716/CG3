@@ -40,6 +40,9 @@ public://メンバ関数
 	/// </summary>
 	void Finalize()override;
 
+public://静的メンバ変数
+	static inline const float kLookRadPerCount = 1.0f / 1000.0f;
+
 private://メンバ変数
 	//3Dモデル
 	std::unique_ptr<Object3d>object3d_ = nullptr;
@@ -53,5 +56,4 @@ private://メンバ変数
 	Vector3 cameraMoveDir = {};
 	Vector2 cameraFlickVector_ = {};
 	float cameraSpeed_ = 0.1f;
-	//static inline const float k
 };

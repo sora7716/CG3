@@ -85,8 +85,8 @@ void TitleScene::Update() {
 		cameraFlickVector_.y = static_cast<float>(mouseFlick.y);
 
 		//フリックの値をカメラの回転に反映
-		cameraRotate_.x += cameraFlickVector_.y / 1000.0f;
-		cameraRotate_.y += cameraFlickVector_.x / 1000.0f;
+		cameraRotate_.x += cameraFlickVector_.y * kLookRadPerCount;
+		cameraRotate_.y += cameraFlickVector_.x * kLookRadPerCount;
 	}
 
 #ifdef USE_IMGUI
