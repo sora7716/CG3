@@ -1,5 +1,17 @@
 #include "Vector2.h"
 #include "Vector3.h"
+#include <cmath>
+
+//正規化
+Vector2 Vector2::Normalize() {
+	Vector2 result = {};
+	float len = std::sqrt(std::pow(x, 2.0f) + std::pow(y, 2.0f));
+	if (len != 0.0f) {
+		result.x = x / len;
+		result.y = y / len;
+	}
+	return result;
+}
 
 //加法
 Vector2 Vector2::operator+(const Vector2& v)const {
@@ -67,7 +79,7 @@ Vector2& Vector2::operator*=(float n) {
 }
 
 //Vector3を代入
-Vector2& Vector2::operator=(const Vector3& v){
+Vector2& Vector2::operator=(const Vector3& v) {
 	// TODO: return ステートメントをここに挿入します
 	x = v.x;
 	y = v.y;

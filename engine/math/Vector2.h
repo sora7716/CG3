@@ -7,6 +7,12 @@ struct Vector2 final {
 	float x;
 	float y;
 
+	/// <summary>
+	/// 正規化
+	/// </summary>
+	/// <returns>正規化ベクトル</returns>
+	Vector2 Normalize();
+
 	//加法
 	Vector2 operator+(const Vector2& v)const;
 	//減法

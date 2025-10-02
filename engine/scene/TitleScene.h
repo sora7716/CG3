@@ -1,6 +1,9 @@
 #pragma once
 #include "IScene.h"
 
+//前方宣言
+class Input;
+
 /// <summary>
 /// タイトルシーン
 /// </summary>
@@ -39,13 +42,16 @@ public://メンバ関数
 
 private://メンバ変数
 	//3Dモデル
-	std::unique_ptr<Object3d>object3des_[2] = { nullptr };
-	TransformData worldTransform3d_[2] = {};
-	Vector4 object3dColor_ = { 1.0f,1.0f,1.0f,1.0f };
-	//ライト
-	DirectionalLight directionalLight_ = {};
-	//ブレンドモード
-	int32_t blendMode_ = static_cast<int32_t>(BlendMode::kNone);
-	//カメラの回転
+	std::unique_ptr<Object3d>object3d_ = nullptr;
+	TransformData transformData3d_ = { {1.0f,1.0f,1.0f} };
+	//デバッグカメラ
+	Camera* debugCamera_ = nullptr;
 	Vector3 cameraRotate_ = {};
+	Vector3 cameraTranslate_ = {};
+	//入力
+	Input* input_ = nullptr;
+	Vector3 cameraMoveDir = {};
+	Vector2 cameraFlickVector_ = {};
+	float cameraSpeed_ = 0.1f;
+	//static inline const float k
 };

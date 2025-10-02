@@ -10,96 +10,110 @@
 
 //初期化
 void TitleScene::Initialize(DirectXBase* directXBase) {
-	for (int32_t i = 0; i < 2; i++) {
-		object3des_[i] = std::make_unique<Object3d>();
-		worldTransform3d_[i].rotate = {};
-		worldTransform3d_[i].scale = { 1.0f,1.0f,1.0f };
-		object3des_[i]->SetModel("sphere");
-		object3des_[i]->SetTexture("uvChecker.png");
-		object3des_[i]->Initialize();
-	}
-	object3des_[1]->SetParent(object3des_[0]->GetWorldTransform());
-	worldTransform3d_[0].translate = { 0.0f,0.0f,0.0f };
-	worldTransform3d_[1].translate = { 2.0f,2.0f,0.0f };
+	object3d_ = std::make_unique<Object3d>();
+	object3d_->Initialize();
+	object3d_->SetModel("cube");
+	transformData3d_.translate = { 0.0f,0.0f,10.0f };
 
-	directionalLight_.color = { 1.0f,1.0f,1.0f,1.0f };
-	directionalLight_.intensity = 1.0f;
+	//デバッグカメラ
+	debugCamera_ = CameraManager::GetInstance()->FindCamera("debugCamera");
 
-	ParticleManager::GetInstance()->AddParticleSystem("d");
-	ParticleManager::GetInstance()->FindParticleSystem("d")->Initialize(directXBase, "circle.png");
+	object3d_->SetCamera(debugCamera_);
 
+	//入力
+	input_ = Input::GetInstance();
+	input_->Initialize();
 }
 
 //更新
 void TitleScene::Update() {
+	object3d_->SetTransform(transformData3d_);
+	object3d_->Update();
+
+	debugCamera_->SetRotate(cameraRotate_);
+	debugCamera_->SetTranslate(cameraTranslate_);
+	debugCamera_->Update();
+
+	//カメラの移動
+	//横移動
+	if (input_->PressKey(DIK_A)) {
+		cameraMoveDir.x = -1.0f;
+	}
+	else if (input_->PressKey(DIK_D)) {
+		cameraMoveDir.x = 1.0f;
+	}
+	else {
+		cameraMoveDir.x = 0.0f;
+	}
+
+	//前後移動
+	if (input_->PressKey(DIK_W)) {
+		cameraMoveDir.z = 1.0f;
+	}
+	else if (input_->PressKey(DIK_S)) {
+		cameraMoveDir.z = -1.0f;
+	}
+	else {
+		cameraMoveDir.z = 0.0f;
+	}
+
+	//上下移動
+	if (input_->PressKey(DIK_Q)) {
+		cameraMoveDir.y = 1.0f;
+	}
+	else if (input_->PressKey(DIK_E)) {
+		cameraMoveDir.y = -1.0f;
+	}
+	else {
+		cameraMoveDir.y = 0.0f;
+	}
+
+	//カメラの角度をもとに回転行列を求める
+	Matrix4x4 rotMat = Rendering::MakeRotateXYZMatrix(cameraRotate_);
+
+	//カメラの向いてる方向を正にする
+	cameraMoveDir = Math::TransformNormal(cameraMoveDir, rotMat);
+
+	//カメラを移動させる
+	cameraTranslate_ += cameraMoveDir * cameraSpeed_;
+
+	//マウスのフリックを取得
+	if (input_->PressMouseButton(kLeft)) {
+		Vector2Int mouseFlick = input_->GetMouseMoveAmount();
+		//フリックの値をVector2に格納
+		cameraFlickVector_.x = static_cast<float>(mouseFlick.x);
+		cameraFlickVector_.y = static_cast<float>(mouseFlick.y);
+
+		//フリックの値をカメラの回転に反映
+		cameraRotate_.x += cameraFlickVector_.y / 1000.0f;
+		cameraRotate_.y += cameraFlickVector_.x / 1000.0f;
+	}
+
+#ifdef USE_IMGUI
 	//ImGuiの受付開始
 	ImGuiManager::GetInstance()->Begin();
 
-	Object3dCommon::GetInstance()->SetDirectionalLightData(directionalLight_);
-
-
-	for (int32_t i = 0; i < 2; i++) {
-		object3des_[i]->SetScale(worldTransform3d_[i].scale);
-		object3des_[i]->SetRotate(worldTransform3d_[i].rotate);
-		object3des_[i]->SetTranslate(worldTransform3d_[i].translate);
-		object3des_[i]->SetColor(object3dColor_);
-		object3des_[i]->Update();
-	}
-
-	ParticleManager::GetInstance()->FindParticleSystem("d")->Update();
-#ifdef USE_IMGUI
-	ImGui::Begin("3dModel");
-	ImGui::DragFloat3("scale[0]", &worldTransform3d_[0].scale.x, 0.1f);
-	ImGui::DragFloat3("rotate[0]", &worldTransform3d_[0].rotate.x, 0.1f);
-	ImGui::DragFloat3("translate[0]", &worldTransform3d_[0].translate.x, 0.1f);
-	ImGui::DragFloat3("scale[1]", &worldTransform3d_[1].scale.x, 0.1f);
-	ImGui::DragFloat3("rotate[1]", &worldTransform3d_[1].rotate.x, 0.1f);
-	ImGui::DragFloat3("translate[1]", &worldTransform3d_[1].translate.x, 0.1f);
-	ImGui::DragFloat4("color", &object3dColor_.x, 0.1f);
-	ImGui::ColorEdit4("color", &object3dColor_.x);
-	if (ImGui::Button("Decompose")) {
-		object3des_[1]->Decompose();
-		worldTransform3d_[1] = { object3des_[1]->GetScale(),object3des_[1]->GetRotate(),object3des_[1]->GetTranslate() };
-	}
-	if (ImGui::Button("parent")) {
-		//object3des_[1]->Compose(object3des_[0]->GetWorldTransform());
-		object3des_[1]->SetParent(object3des_[0]->GetWorldTransform());
-	}
+	ImGui::Begin("object3d");
+	ImGui::DragFloat3("rotate", &transformData3d_.rotate.x, 0.1f);
+	ImGui::DragFloat3("translate", &transformData3d_.translate.x, 0.1f);
 	ImGui::End();
 
-	ImGui::Begin("light");
-	ImGui::ColorEdit4("color", &directionalLight_.color.x);
-	ImGui::DragFloat3("direction", &directionalLight_.direction.x, 0.1f);
-	ImGui::DragFloat("intensity", &directionalLight_.intensity, 0.1f, 0.0f, 10.0f);
+	ImGui::Begin("camera");
+	ImGui::DragFloat3("rotate", &cameraRotate_.x, 0.1f);
+	ImGui::DragFloat3("translate", &cameraTranslate_.x, 0.1f);
+	ImGui::DragFloat("speed", &cameraSpeed_, 0.1f);
+	ImGui::Text("flick(x:%f,y:%f)", cameraFlickVector_.x, cameraFlickVector_.y);
 	ImGui::End();
 
-	ImGui::Begin("blend");
-	/*const char* blendModes3d[] = { "None", "Normal", "Add", "Subtract", "Multiply", "Screen" };
-	if (ImGui::Combo("3dMode", &blendMode_, blendModes3d, IM_ARRAYSIZE(blendModes3d))) {
-		object3d_->SetBlendMode((BlendMode)blendMode_);
-	}*/
-	const char* blendModes2d[] = { "None", "Normal", "Add", "Subtract", "Multiply", "Screen" };
-	if (ImGui::Combo("3dMode", &blendMode_, blendModes2d, IM_ARRAYSIZE(blendModes2d))) {
-		object3des_[0]->SetBlendMode((BlendMode)blendMode_);
-		object3des_[1]->SetBlendMode((BlendMode)blendMode_);
-	}
-	ImGui::End();
-
-	/*ImGui::Begin("camera");
-	ImGui::DragFloat3("cameraPos", &cameraRotate_.x, 0.1f);
-	ImGui::End();
-	CameraManager::GetInstance()->FindCamera("defaultCamera")->SetRotate(cameraRotate_);*/
-#endif // USE_IMGUI
 	//ImGuiの受付終了
 	ImGuiManager::GetInstance()->End();
+#endif // USE_IMGUI
+
 }
 
 //描画
 void TitleScene::Draw() {
-	for (auto& object3d : object3des_) {
-		object3d->Draw();
-	}
-	ParticleManager::GetInstance()->FindParticleSystem("d")->Draw();
+	object3d_->Draw();
 }
 
 //終了
