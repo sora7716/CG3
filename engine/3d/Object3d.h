@@ -2,7 +2,7 @@
 #include "engine/3d/Model.h"
 #include "engine/math/ResourceData.h"
 #include "engine/math/RenderingData.h"
-#include "engine/blend/BlendMode.h"
+#include "engine/base/BlendMode.h"
 #include <vector>
 #include <string>
 #include <wrl.h>

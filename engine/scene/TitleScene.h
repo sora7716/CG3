@@ -47,13 +47,6 @@ private://メンバ変数
 	//3Dモデル
 	std::unique_ptr<Object3d>object3d_ = nullptr;
 	TransformData transformData3d_ = { {1.0f,1.0f,1.0f} };
-	//デバッグカメラ
-	Camera* debugCamera_ = nullptr;
-	Vector3 cameraRotate_ = {};
-	Vector3 cameraTranslate_ = {};
-	//入力
-	Input* input_ = nullptr;
-	Vector3 cameraMoveDir = {};
-	Vector2 cameraFlickVector_ = {};
-	float cameraSpeed_ = 0.1f;
+	//デバックカメラ
+	std::unique_ptr<DebugCamera>debugCamera_ = nullptr;
 };

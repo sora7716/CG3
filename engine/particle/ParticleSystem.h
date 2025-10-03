@@ -1,7 +1,7 @@
 #pragma once
 #include "engine/math/ResourceData.h"
 #include "engine/math/RenderingData.h"
-#include "engine/blend/BlendMode.h"
+#include "engine/base/BlendMode.h"
 #include <d3d12.h>
 #include <wrl.h>
 #include <random>

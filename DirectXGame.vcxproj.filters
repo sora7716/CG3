@@ -55,9 +55,6 @@
     <Filter Include="application\scene">
       <UniqueIdentifier>{d09609c5-5464-4a8e-a106-9af2e72858bf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\blend">
-      <UniqueIdentifier>{05db597a-c161-4c9e-8086-648f850d3793}</UniqueIdentifier>
-    </Filter>
     <Filter Include="engine\3d">
       <UniqueIdentifier>{79d8f6c8-0826-4916-b23e-c709776c8173}</UniqueIdentifier>
     </Filter>
@@ -174,9 +171,6 @@
     <ClCompile Include="engine\2d\SpriteCommon.cpp">
       <Filter>engine\2d</Filter>
     </ClCompile>
-    <ClCompile Include="engine\blend\Blend.cpp">
-      <Filter>engine\blend</Filter>
-    </ClCompile>
     <ClCompile Include="engine\math\Vector4.cpp">
       <Filter>engine\math</Filter>
     </ClCompile>
@@ -212,6 +206,9 @@
     </ClCompile>
     <ClCompile Include="engine\particle\ParticleManager.cpp">
       <Filter>engine\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\base\Blend.cpp">
+      <Filter>engine\base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -326,12 +323,6 @@
     <ClInclude Include="engine\2d\SpriteCommon.h">
       <Filter>engine\2d</Filter>
     </ClInclude>
-    <ClInclude Include="engine\blend\Blend.h">
-      <Filter>engine\blend</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\blend\BlendMode.h">
-      <Filter>engine\blend</Filter>
-    </ClInclude>
     <ClInclude Include="engine\3d\Object3dCommon.h">
       <Filter>engine\3d</Filter>
     </ClInclude>
@@ -367,6 +358,12 @@
     </ClInclude>
     <ClInclude Include="engine\particle\ParticleManager.h">
       <Filter>engine\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\Blend.h">
+      <Filter>engine\base</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\BlendMode.h">
+      <Filter>engine\base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

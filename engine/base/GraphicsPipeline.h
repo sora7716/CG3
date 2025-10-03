@@ -1,5 +1,5 @@
 #pragma once
-#include "engine/blend/Blend.h"
+#include "engine/base/Blend.h"
 #include <dxcapi.h>
 #include <wrl.h>
 #include <d3d12.h>

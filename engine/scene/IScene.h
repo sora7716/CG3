@@ -1,14 +1,15 @@
 #pragma once
-#include "engine/2d/Object2d.h"
-#include "engine/3d/Object3d.h"
-#include "engine/2d/Sprite.h"
-#include "engine/particle/ParticleManager.h"
-#include "engine/debug/ImGuiManager.h"
-#include "engine/audio/AudioManager.h"
-#include "engine/camera/CameraManager.h"
 #include "engine/base/DirectXBase.h"
 #include "engine/base/SRVManager.h"
-#include "engine/blend/BlendMode.h"
+#include "engine/base/BlendMode.h"
+#include "engine/2d/Object2d.h"
+#include "engine/debug/ImGuiManager.h"
+#include "engine/debug/DebugCamera.h"
+#include "engine/audio/AudioManager.h"
+#include "engine/camera/CameraManager.h"
+#include "engine/2d/Sprite.h"
+#include "engine/3d/Object3d.h"
+#include "engine/particle/ParticleManager.h"
 
 //前方宣言
 class SceneManager;
