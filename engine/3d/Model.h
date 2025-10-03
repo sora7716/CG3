@@ -64,13 +64,18 @@ public://メンバ関数
 	const Vector4& GetColor()const;
 
 	/// <summary>
+	/// モデルデータのゲッター
+	/// </summary>
+	/// <returns>モデルデータ</returns>
+	const ModelData& GetModelData()const;
+
+	/// <summary>
 	/// .mtlファイルの読み取り	
 	/// </summary>
 	/// <param name="directoryPath">ディレクトリファイルパス</param>
 	/// <param name="filename">ファイル名</param>
 	/// <returns>マテリアルデータ</returns>
 	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-
 
 	/// <summary>
     /// .objファイル読み取り

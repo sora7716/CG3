@@ -37,6 +37,9 @@ public://メンバ関数
 	/// <returns>カメラ</returns>
 	Camera* GetCamera();
 
+	/// <summary>
+	/// デバックに使用する
+	/// </summary>
 	void Debug();
 private://メンバ関数
 	/// <summary>

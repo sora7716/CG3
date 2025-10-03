@@ -10,45 +10,46 @@
 //前方宣言
 class DirectXBase;
 class Camera;
+class Model;
 
-typedef struct AABB {
+struct AABB {
 	Vector3 min;//最小値
 	Vector3 max;//最大値
-}AABB;
+};
 
 //構造体
 //パーティクル単体のデータ
-typedef struct Particle {
+struct Particle {
 	TransformData transform;//SRVの情報
 	Vector3 velocity;//速度
 	Vector4 color;//色
 	float lifeTime;//生存時間
 	float currentTime;//発生してからの
-}Particle;
+};
 
 //パーティクルの情報をGPUに送るための構造体
-typedef struct ParticleForGPU {
+struct ParticleForGPU {
 	Matrix4x4 WVP;
 	Matrix4x4 World;
 	Vector4 color;
-}ParticleForGPU;
+};
 
 //発生源
-typedef struct Emitter {
+struct Emitter {
 	TransformData transform;//エミッターのTransform
 	uint32_t count;//発生数
 	float frequency;//発生頻度
 	float frequencyTime;//頻度用時刻
-}Emitter;
+};
 
 //フィールドの加速度
-typedef struct AccelerationField {
+struct AccelerationField {
 	Vector3 acceleration;//加速度
 	AABB area;//範囲
-}AccelerationField;
+};
 
 /// <summary>
-/// パーティクルのエミット
+/// パーティクルシステム
 /// </summary>
 class ParticleSystem {
 private://エイリアステンプレート
@@ -65,11 +66,12 @@ public://メンバ関数
 	~ParticleSystem() = default;
 
 	/// <summary>
-	/// 初期化
-	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="textureName">テクスチャ名</param>
-	void Initialize(DirectXBase* directXBase,const std::string& textureName);
+    /// 初期化
+    /// </summary>
+    /// <param name="directXBase">DirectXの基盤部分</param>
+    /// <param name="textureName">テクスチャ名</param>
+	/// <param name="model">モデル</param>
+	void Initialize(DirectXBase* directXBase, const std::string& textureName, Model* model = nullptr);
 
 	/// <summary>
 	/// 更新
@@ -86,13 +88,22 @@ public://メンバ関数
 	/// </summary>
 	void Finalize();
 
-
+	/// <summary>
+	/// テクスチャ名のゲッター
+	/// </summary>
+	/// <returns>テクスチャ名</returns>
 	std::string GetTextureName();
+
+	/// <summary>
+	/// カメラのセッター
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void SetCamera(Camera* camera);
 private://メンバ関数
 	/// <summary>
 	/// モデルデータの初期化
 	/// </summary>
-	void InitializeModelData();
+	void InitializeQuadModelData();
 
 	/// <summary>
 	/// マテリアルデータの初期化
@@ -162,6 +173,8 @@ private://メンバ変数
 	ComPtr<ID3D12Resource>instancingResource_ = nullptr;
 	//ワールドビュープロジェクションのデータ
 	ParticleForGPU* instancingData_ = {};
+	//モデル
+	Model* model_ = nullptr;
 	//モデルデータ
 	ModelData modelData_ = {};
 	//マテリアルデータ

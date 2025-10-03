@@ -8,15 +8,18 @@
 #include "engine/2d/TextureManager.h"
 #include "engine/math/func/Math.h"
 #include "engine/base/SRVManager.h"
+#include "engine/3d/ModelManager.h"
 
 //初期化
-void ParticleSystem::Initialize(DirectXBase* directXBase, const std::string& textureName) {
+void ParticleSystem::Initialize(DirectXBase* directXBase, const std::string& textureName, Model* model) {
 	//DirectXの基盤部分を記録する
 	directXBase_ = directXBase;
 	//カメラを設定
 	camera_ = ParticleCommon::GetInstance()->GetDefaultCamera();
 	//ワールドトランスフォームのリソースの生成
 	CreateWorldTransformResource();
+	//モデルを受け取る
+	model_ = model;
 	//頂点リソースの生成
 	CreateVertexResource();
 	//テクスチャファイルの記録
@@ -78,12 +81,12 @@ void ParticleSystem::Update() {
 
 
 #ifdef  USE_IMGUI
-	ImGui::Begin("particle");
+	/*ImGui::Begin("particle");
 	ImGui::Text("size:%d", particles_.size());
 	ImGui::Text("instance:%d", numInstance_);
 	ImGui::DragFloat3("acceleration", &accelerationField_.acceleration.x, 0.1f);
 	ImGui::DragFloat3("translate", &emitter_.transform.translate.x, 0.1f);
-	ImGui::End();
+	ImGui::End();*/
 #endif //USE_IMGUI
 }
 
@@ -114,12 +117,18 @@ void ParticleSystem::Finalize() {
 
 }
 
+//テクスチャ名のゲッター
 std::string ParticleSystem::GetTextureName() {
 	return modelData_.material.textureFilePath;
 }
 
+//カメラのセッター
+void ParticleSystem::SetCamera(Camera* camera) {
+	camera_ = camera;
+}
+
 //モデルデータの初期化
-void ParticleSystem::InitializeModelData() {
+void ParticleSystem::InitializeQuadModelData() {
 	modelData_.vertices.push_back({
 		.position = {1.0f,1.0f,0.0f,1.0f},
 		.texcoord = {0.0f,0.0f},
@@ -163,7 +172,14 @@ void ParticleSystem::InitializeMaterialData() {
 //頂点リソースの生成
 void ParticleSystem::CreateVertexResource() {
 	//頂点データの初期化
-	InitializeModelData();
+	if (model_) {
+		//モデルがあればモデルデータを取得
+		modelData_ = model_->GetModelData();
+	}
+	else {
+		//モデルがなければ四角形を生成
+		InitializeQuadModelData();
+	}
 	//頂点リソースを生成
 	vertexResource_ = directXBase_->CreateBufferResource(sizeof(VertexData) * modelData_.vertices.size());
 	//VertexBufferViewを作成する(頂点バッファービュー)
@@ -228,12 +244,19 @@ void ParticleSystem::CreateWorldTransformResource() {
 void ParticleSystem::UpdateWorldTransform(uint32_t numInstance, auto iterator) {
 	//wvpの書き込み
 	if (camera_) {
-		//TransformからWorldMatrixを作る(ビルボード行列を入れた)
-		worldMatrix_ = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), (*iterator).transform);
+		if (model_) {
+			//モデルがあったらAffine行列を入れる
+			worldMatrix_ = Rendering::MakeAffineMatrix((*iterator).transform);
+		}
+		else {
+			//モデルがないならビルボード行列を入れる
+			worldMatrix_ = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), (*iterator).transform);
+		}
 		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
 
 		instancingData_[numInstance].WVP = worldMatrix_ * viewProjectionMatrix;
-	} else {
+	}
+	else {
 		instancingData_[numInstance].WVP = worldMatrix_;
 	}
 	//ワールド行列を送信
@@ -325,7 +348,8 @@ bool ParticleSystem::IsCollision(const AABB& aabb, const Vector3& point) {
 		if (0.0f <= tMin && tMin <= 1.0f || 0.0f <= tMax && tMax <= 1.0f) {
 			isCollision = true;
 		}
-	} else {
+	}
+	else {
 		isCollision = false;
 	}
 	return isCollision;

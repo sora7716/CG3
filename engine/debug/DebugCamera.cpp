@@ -39,11 +39,13 @@ Camera* DebugCamera::GetCamera() {
 	return camera_;
 }
 
+//デバックに使用する
 void DebugCamera::Debug() {
 	ImGui::Begin("debugCamera");
 	ImGui::DragFloat3("rotate", &rotate_.x, 0.1f);
 	ImGui::DragFloat2("flick", &mouseFlick_.x, 0.1f);
 	ImGui::DragFloat("fovY", &fovY_, 0.1f);
+	ImGui::DragFloat("speed", &speed_,0.1f);
 	ImGui::End();
 }
 
@@ -110,7 +112,7 @@ void DebugCamera::ZoomControl(){
 //回転の操作
 void DebugCamera::RotateControl() {
 	//マウスのフリックを取得
-	if (input_->PressMouseButton(kLeft)) {
+	if (input_->PressMouseButton(kRight)) {
 		Vector2Int mouseFlick = input_->GetMouseMoveAmount();
 		//フリックの値をVector2に格納
 		mouseFlick_.x = static_cast<float>(mouseFlick.x);

@@ -61,6 +61,12 @@ const Vector4& Model::GetColor() const {
 	return materialData_->color;
 }
 
+//モデルデータのゲッター
+const ModelData& Model::GetModelData() const{
+	// TODO: return ステートメントをここに挿入します
+	return modelData_;
+}
+
 //.mtlファイルの読み取り	
 MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
 	//1.中で必要となる変数の宣言
