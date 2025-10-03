@@ -3,6 +3,7 @@
 #include "engine/camera/CameraManager.h"
 #include "engine/math/func/Math.h"
 #include "ImGuiManager.h"
+#include <algorithm>
 
 //初期化
 void DebugCamera::Initialize() {
@@ -45,7 +46,7 @@ void DebugCamera::Debug() {
 	ImGui::DragFloat3("rotate", &rotate_.x, 0.1f);
 	ImGui::DragFloat2("flick", &mouseFlick_.x, 0.1f);
 	ImGui::DragFloat("fovY", &fovY_, 0.1f);
-	ImGui::DragFloat("speed", &speed_,0.1f);
+	ImGui::DragFloat("speed", &speed_, 0.01f);
 	ImGui::End();
 }
 
@@ -91,17 +92,13 @@ void DebugCamera::DollyControl() {
 }
 
 //ズーム操作
-void DebugCamera::ZoomControl(){
+void DebugCamera::ZoomControl() {
 	//マウスホイールの回転量でズームイン、ズームアウト
-	fovY_ += static_cast<float>(input_->GetWheelRotate()) * kZoomSpeedMagnification;
 
-	if (fovY_ > 0.0f) {
-		//fovYのセット
-		camera_->SetFovY(fovY_);
-	}
-	else {
-		fovY_ = 0.0f;
-	}
+	fovY_ += static_cast<float>(input_->GetWheelRotate()) * kZoomSpeedMagnification;
+	fovY_ = std::clamp(fovY_, kMinFovY, kMaxFovY);
+	//fovYのセット
+	camera_->SetFovY(fovY_);
 
 	//ズーム操作のリセット
 	if (input_->PressMouseButton(kMiddle)) {

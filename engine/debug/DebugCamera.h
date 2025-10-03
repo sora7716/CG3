@@ -76,6 +76,10 @@ public://定数
 	static inline const float kLookRadPerCount = 1.0f / 1000.0f;
 	//ズーム時の移動速度の倍率
 	static inline const float kZoomSpeedMagnification = 1.0f / 1000.0f;
+	//FovYの最小値
+	static inline const float kMinFovY = 0.1f;
+	//FovYの最大値
+	static inline const float kMaxFovY = 2.0f;
 private://メンバ変数
 	//カメラ
 	Camera* camera_ = nullptr;
