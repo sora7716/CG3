@@ -104,6 +104,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns></returns>
 	const float GetFarClip()const;
+
+	/// <summary>
+	/// FovYのゲッター
+	/// </summary>
+	/// <returns>FovY</returns>
+	const float GetFovY()const;
 private://メンバ変数
 	//ローカル座標
 	TransformData transform_ = {};

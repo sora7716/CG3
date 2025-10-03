@@ -12,18 +12,21 @@ void DebugCamera::Initialize() {
 
 	//カメラ
 	camera_ = CameraManager::GetInstance()->FindCamera("debugCamera");
+
+	//fovYの設定
+	fovY_ = camera_->GetFovY();
 }
 
 //更新
 void DebugCamera::Update() {
-	//入力
-	input_->Update();
-
 	//平行移動の更新
-	UpdateTranslate();
+	TranslateUpdate();
 
-	//回転の更新
-	UpdateRotate();
+	//回転の操作
+	RotateControl();
+
+	//ズーム操作
+	ZoomControl();
 
 	//カメラ
 	camera_->SetRotate(rotate_);
@@ -40,11 +43,12 @@ void DebugCamera::Debug() {
 	ImGui::Begin("debugCamera");
 	ImGui::DragFloat3("rotate", &rotate_.x, 0.1f);
 	ImGui::DragFloat2("flick", &mouseFlick_.x, 0.1f);
+	ImGui::DragFloat("fovY", &fovY_, 0.1f);
 	ImGui::End();
 }
 
-//X軸ローカル移動
-void DebugCamera::TranslateLocalX() {
+//左右移動の操作
+void DebugCamera::StrafeControl() {
 	//横移動
 	if (input_->PressKey(DIK_A)) {
 		moveDir_.x = -1.0f;
@@ -57,8 +61,8 @@ void DebugCamera::TranslateLocalX() {
 	}
 }
 
-//Y軸ローカル移動
-void DebugCamera::TranslateLocalY() {
+//上下移動の操作
+void DebugCamera::ElevateControl() {
 	if (input_->PressKey(DIK_Q)) {
 		moveDir_.y = 1.0f;
 	}
@@ -70,8 +74,8 @@ void DebugCamera::TranslateLocalY() {
 	}
 }
 
-//Z軸ローカル移動
-void DebugCamera::TranslateLocalZ() {
+//前後移動の操作
+void DebugCamera::DollyControl() {
 	if (input_->PressKey(DIK_W)) {
 		moveDir_.z = 1.0f;
 	}
@@ -84,29 +88,27 @@ void DebugCamera::TranslateLocalZ() {
 
 }
 
-//平行移動の更新
-void DebugCamera::UpdateTranslate() {
-	//X軸方向の移動
-	TranslateLocalX();
+//ズーム操作
+void DebugCamera::ZoomControl(){
+	//マウスホイールの回転量でズームイン、ズームアウト
+	fovY_ += static_cast<float>(input_->GetWheelRotate()) * kZoomSpeedMagnification;
 
-	//Y軸方向の移動
-	TranslateLocalY();
+	if (fovY_ > 0.0f) {
+		//fovYのセット
+		camera_->SetFovY(fovY_);
+	}
+	else {
+		fovY_ = 0.0f;
+	}
 
-	//Z軸方向の移動
-	TranslateLocalZ();
-
-	//カメラの角度をもとに回転行列を求める
-	Matrix4x4 rotMat = Rendering::MakeRotateXYZMatrix(rotate_);
-
-	//カメラの向いてる方向を正にする
-	moveDir_ = Math::TransformNormal(moveDir_, rotMat);
-
-	//カメラを移動させる
-	translate_ += moveDir_ * speed_;
+	//ズーム操作のリセット
+	if (input_->PressMouseButton(kMiddle)) {
+		fovY_ = 0.45f;
+	}
 }
 
-//回転の更新
-void DebugCamera::UpdateRotate() {
+//回転の操作
+void DebugCamera::RotateControl() {
 	//マウスのフリックを取得
 	if (input_->PressMouseButton(kLeft)) {
 		Vector2Int mouseFlick = input_->GetMouseMoveAmount();
@@ -118,4 +120,28 @@ void DebugCamera::UpdateRotate() {
 		rotate_.x += mouseFlick_.y * kLookRadPerCount;
 		rotate_.y += mouseFlick_.x * kLookRadPerCount;
 	}
+}
+
+//平行移動の更新
+void DebugCamera::TranslateUpdate() {
+	//X軸方向の移動
+	StrafeControl();
+
+	//Y軸方向の移動
+	ElevateControl();
+
+	//Z軸方向の移動
+	DollyControl();
+
+	//カメラの角度をもとに回転行列を求める
+	Matrix4x4 rotMat = Rendering::MakeRotateXYZMatrix(rotate_);
+
+	//カメラの向いてる方向を正にする(XとZ軸限定)
+	Vector3 moveDirXZ = Math::TransformNormal(Vector3(moveDir_.x, 0.0f, moveDir_.z), rotMat);
+
+	//Y軸のそのまま
+	moveDir_ = { moveDirXZ.x,moveDir_.y,moveDirXZ.z };
+
+	//カメラを移動させる
+	translate_ += moveDir_.Normalize() * speed_;
 }

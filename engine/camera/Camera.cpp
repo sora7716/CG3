@@ -100,3 +100,8 @@ const float Camera::GetNearClip() const {
 const float Camera::GetFarClip() const {
 	return farClip_;
 }
+
+//FovYのゲッター
+const float Camera::GetFovY() const{
+	return fovY_;
+}

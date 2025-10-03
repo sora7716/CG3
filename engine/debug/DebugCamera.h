@@ -38,36 +38,41 @@ public://メンバ関数
 	Camera* GetCamera();
 
 	void Debug();
-
 private://メンバ関数
 	/// <summary>
-	/// X軸ローカル移動 
+	/// 左右移動の操作
 	/// </summary>
-	void TranslateLocalX();
+	void StrafeControl();
 
 	/// <summary>
-	/// Y軸ローカル移動
+	/// 上下移動の操作
 	/// </summary>
-	void TranslateLocalY();
+	void ElevateControl();
 
 	/// <summary>
-	/// Z軸ローカル移動
+	/// 前後移動の操作
 	/// </summary>
-	void TranslateLocalZ();
+	void DollyControl();
+
+	/// <summary>
+	/// ズーム操作
+	/// </summary>
+	void ZoomControl();
+
+	/// <summary>
+	/// 回転の操作
+	/// </summary>
+	void RotateControl();
 
 	/// <summary>
 	/// 平行移動の更新
 	/// </summary>
-	void UpdateTranslate();
-
-	/// <summary>
-	/// 回転の更新
-	/// </summary>
-	void UpdateRotate();
-
+	void TranslateUpdate();
 public://定数
 	//カメラ回転時のマウスの移動量に対する回転角の倍率
 	static inline const float kLookRadPerCount = 1.0f / 1000.0f;
+	//ズーム時の移動速度の倍率
+	static inline const float kZoomSpeedMagnification = 1.0f / 1000.0f;
 private://メンバ変数
 	//カメラ
 	Camera* camera_ = nullptr;
@@ -82,6 +87,8 @@ private://メンバ変数
 	//カメラの移動速度
 	float speed_ = 0.1f;
 	//入力
-	Input* input_ = nullptr;
+	Input* input_ = nullptr; 
+	//FovY
+	float fovY_ = 0.0f;
 };
 
