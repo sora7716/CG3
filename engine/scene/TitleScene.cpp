@@ -28,7 +28,7 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 	ParticleManager::GetInstance()->FindParticleSystem("par")->SetCamera(debugCamera_->GetCamera());
 }
 
-//更新
+//更新ww
 void TitleScene::Update() {
 	//デバックカメラ
 	debugCamera_->Update();
