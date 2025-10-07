@@ -22,6 +22,7 @@ struct AABB {
 struct Particle {
 	TransformData transform;//SRVの情報
 	Vector3 velocity;//速度
+	Vector3 direction;//方向
 	Vector4 color;//色
 	float lifeTime;//生存時間
 	float currentTime;//発生してからの
@@ -168,11 +169,12 @@ private://メンバ関数
 	bool IsCollision(const AABB& aabb, const Vector3& point);
 
 	/// <summary>
-	/// 矩形状にパーティクルを発生させる
+	/// 矩形状に移動させる
 	/// </summary>
 	/// <param name="translate">平行移動</param>
+	/// <param name="direction">移動する向き</param>
 	/// <param name="velocity">速度</param>
-	void EmitOnRect(Vector3& translate,const Vector3& velocity);
+	void EmitOnRect(Vector3& translate,const Vector3& direction,const Vector3& velocity);
 private://静的メンバ変数
 	//パーティクルの数
 	static const uint32_t kNumMaxInstance = 1024;

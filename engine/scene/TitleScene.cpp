@@ -24,7 +24,7 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 
 	//パーティクル
 	ParticleManager::GetInstance()->AddParticleSystem("par");
-	ParticleManager::GetInstance()->FindParticleSystem("par")->Initialize(directXBase, "monsterBall.png", ModelManager::GetInstance()->FindModel("sphere"));
+	ParticleManager::GetInstance()->FindParticleSystem("par")->Initialize(directXBase, "monsterBall.png"/*, ModelManager::GetInstance()->FindModel("sphere")*/);
 	ParticleManager::GetInstance()->FindParticleSystem("par")->SetCamera(debugCamera_->GetCamera());
 }
 

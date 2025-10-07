@@ -57,7 +57,7 @@ void ParticleSystem::Update() {
 				//(*it).velocity += accelerationField_.acceleration * Math::kDeltaTime;
 			}
 			//移動
-			EmitOnRect((*it).transform.translate, (*it).velocity);
+			EmitOnRect((*it).transform.translate, (*it).direction, (*it).velocity);
 			//(*it).transform.translate += (*it).velocity * Math::kDeltaTime;
 			//経過時間を足す
 			(*it).currentTime += Math::kDeltaTime;
@@ -289,8 +289,11 @@ Particle ParticleSystem::MakeNewParticle() {
 	//パーティクルの位置を発生源を中心に設定
 	particle.transform.translate = emitter_.transform.translate + randomTranslate;
 	//速度
-	particle.velocity = { distribution(randomEngine_), distribution(randomEngine_), distribution(randomEngine_) };
-
+	particle.velocity = { 1.0f,1.0f,1.0f };
+	//移動する向き
+	particle.direction = { distribution(randomEngine_), distribution(randomEngine_), distribution(randomEngine_) };
+	//向きを正規化
+	particle.direction = particle.direction.Normalize();
 	//色の値を[0.0f,1.0f]でランダムに設定
 	std::uniform_real_distribution<float>distColor(0.0f, 1.0f);
 	//色
@@ -354,6 +357,6 @@ bool ParticleSystem::IsCollision(const AABB& aabb, const Vector3& point) {
 }
 
 //矩形上にパーティクルを発生させる
-void ParticleSystem::EmitOnRect(Vector3& translate, const Vector3& velocity) {
-	translate += velocity * Math::kDeltaTime;
+void ParticleSystem::EmitOnRect(Vector3& translate, const Vector3& direction, const Vector3& velocity) {
+	translate += velocity * direction * Math::kDeltaTime;
 }
