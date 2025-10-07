@@ -42,12 +42,12 @@ Camera* DebugCamera::GetCamera() {
 
 //デバックに使用する
 void DebugCamera::Debug() {
-	ImGui::Begin("debugCamera");
+#ifdef USE_IMGUI
 	ImGui::DragFloat3("rotate", &rotate_.x, 0.1f);
 	ImGui::DragFloat2("flick", &mouseFlick_.x, 0.1f);
 	ImGui::DragFloat("fovY", &fovY_, 0.1f);
 	ImGui::DragFloat("speed", &speed_, 0.01f);
-	ImGui::End();
+#endif // USE_IMGUI
 }
 
 //左右移動の操作

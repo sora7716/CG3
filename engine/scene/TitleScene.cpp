@@ -49,7 +49,13 @@ void TitleScene::Update() {
 	ImGui::DragFloat3("translate", &transformData3d_.translate.x, 0.1f);
 	ImGui::End();
 
+	ImGui::Begin("debugCamera");
 	debugCamera_->Debug();
+	ImGui::End();
+
+	ImGui::Begin("particle");
+	ParticleManager::GetInstance()->FindParticleSystem("par")->Debug();
+	ImGui::End();
 	//ImGuiの受付終了
 	ImGuiManager::GetInstance()->End();
 #endif // USE_IMGUI

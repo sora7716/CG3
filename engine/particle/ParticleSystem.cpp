@@ -54,10 +54,11 @@ void ParticleSystem::Update() {
 			instancingData_[numInstance_].color.SetRGB((*it).color.GetRGB());
 			//Field内のParticleには加速度を適用する
 			if (IsCollision(accelerationField_.area, (*it).transform.translate)) {
-				(*it).velocity += accelerationField_.acceleration * Math::kDeltaTime;
+				//(*it).velocity += accelerationField_.acceleration * Math::kDeltaTime;
 			}
 			//移動
-			(*it).transform.translate += (*it).velocity * Math::kDeltaTime;
+			EmitOnRect((*it).transform.translate, (*it).velocity);
+			//(*it).transform.translate += (*it).velocity * Math::kDeltaTime;
 			//経過時間を足す
 			(*it).currentTime += Math::kDeltaTime;
 			float alpha = 1.0f - ((*it).currentTime / (*it).lifeTime);
@@ -78,16 +79,6 @@ void ParticleSystem::Update() {
 		particles_.splice(particles_.end(), Emit());
 		emitter_.frequencyTime -= emitter_.frequency;//余計に過ぎた時間も加味して頻度を計算する
 	}
-
-
-#ifdef  USE_IMGUI
-	/*ImGui::Begin("particle");
-	ImGui::Text("size:%d", particles_.size());
-	ImGui::Text("instance:%d", numInstance_);
-	ImGui::DragFloat3("acceleration", &accelerationField_.acceleration.x, 0.1f);
-	ImGui::DragFloat3("translate", &emitter_.transform.translate.x, 0.1f);
-	ImGui::End();*/
-#endif //USE_IMGUI
 }
 
 //描画
@@ -110,6 +101,17 @@ void ParticleSystem::Draw() {
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVHandleGPU(modelData_.material.textureFilePath));
 	//描画(DrawCall/ドローコール)
 	directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(modelData_.vertices.size()), numInstance_, 0, 0, 0);
+}
+
+
+//デバッグ
+void ParticleSystem::Debug() {
+#ifdef  USE_IMGUI
+	ImGui::Text("size:%d", particles_.size());
+	ImGui::Text("instance:%d", numInstance_);
+	ImGui::DragFloat3("acceleration", &accelerationField_.acceleration.x, 0.1f);
+	ImGui::DragFloat3("translate", &emitter_.transform.translate.x, 0.1f);
+#endif //USE_IMGUI
 }
 
 //終了
@@ -175,8 +177,7 @@ void ParticleSystem::CreateVertexResource() {
 	if (model_) {
 		//モデルがあればモデルデータを取得
 		modelData_ = model_->GetModelData();
-	}
-	else {
+	} else {
 		//モデルがなければ四角形を生成
 		InitializeQuadModelData();
 	}
@@ -247,16 +248,14 @@ void ParticleSystem::UpdateWorldTransform(uint32_t numInstance, auto iterator) {
 		if (model_) {
 			//モデルがあったらAffine行列を入れる
 			worldMatrix_ = Rendering::MakeAffineMatrix((*iterator).transform);
-		}
-		else {
+		} else {
 			//モデルがないならビルボード行列を入れる
 			worldMatrix_ = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), (*iterator).transform);
 		}
 		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
 
 		instancingData_[numInstance].WVP = worldMatrix_ * viewProjectionMatrix;
-	}
-	else {
+	} else {
 		instancingData_[numInstance].WVP = worldMatrix_;
 	}
 	//ワールド行列を送信
@@ -348,9 +347,13 @@ bool ParticleSystem::IsCollision(const AABB& aabb, const Vector3& point) {
 		if (0.0f <= tMin && tMin <= 1.0f || 0.0f <= tMax && tMax <= 1.0f) {
 			isCollision = true;
 		}
-	}
-	else {
+	} else {
 		isCollision = false;
 	}
 	return isCollision;
+}
+
+//矩形上にパーティクルを発生させる
+void ParticleSystem::EmitOnRect(Vector3& translate, const Vector3& velocity) {
+	translate += velocity * Math::kDeltaTime;
 }

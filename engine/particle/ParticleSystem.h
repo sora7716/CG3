@@ -84,6 +84,11 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void Debug();
+
+	/// <summary>
 	/// 終了
 	/// </summary>
 	void Finalize();
@@ -161,6 +166,13 @@ private://メンバ関数
 	/// <param name="point">point</param>
 	/// <returns>衝突判定</returns>
 	bool IsCollision(const AABB& aabb, const Vector3& point);
+
+	/// <summary>
+	/// 矩形状にパーティクルを発生させる
+	/// </summary>
+	/// <param name="translate">平行移動</param>
+	/// <param name="velocity">速度</param>
+	void EmitOnRect(Vector3& translate,const Vector3& velocity);
 private://静的メンバ変数
 	//パーティクルの数
 	static const uint32_t kNumMaxInstance = 1024;
