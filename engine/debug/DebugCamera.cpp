@@ -95,7 +95,7 @@ void DebugCamera::DollyControl() {
 void DebugCamera::ZoomControl() {
 	//マウスホイールの回転量でズームイン、ズームアウト
 
-	fovY_ += static_cast<float>(input_->GetWheelRotate()) * kZoomSpeedMagnification;
+	fovY_ -= static_cast<float>(input_->GetWheelRotate()) * kZoomSpeedMagnification;
 	fovY_ = std::clamp(fovY_, kMinFovY, kMaxFovY);
 	//fovYのセット
 	camera_->SetFovY(fovY_);

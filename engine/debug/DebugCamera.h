@@ -73,7 +73,7 @@ private://メンバ関数
 	void TranslateUpdate();
 public://定数
 	//カメラ回転時のマウスの移動量に対する回転角の倍率
-	static inline const float kLookRadPerCount = 1.0f / 1000.0f;
+	static inline const float kLookRadPerCount = 1.0f / 700.0f;
 	//ズーム時の移動速度の倍率
 	static inline const float kZoomSpeedMagnification = 1.0f / 1000.0f;
 	//FovYの最小値

@@ -24,7 +24,7 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 
 	//パーティクル
 	ParticleManager::GetInstance()->AddParticleSystem("par");
-	ParticleManager::GetInstance()->FindParticleSystem("par")->Initialize(directXBase, "monsterBall.png"/*, ModelManager::GetInstance()->FindModel("sphere")*/);
+	ParticleManager::GetInstance()->FindParticleSystem("par")->Initialize(directXBase, "uvChecker.png", ModelManager::GetInstance()->FindModel("sphere"));
 	ParticleManager::GetInstance()->FindParticleSystem("par")->SetCamera(debugCamera_->GetCamera());
 }
 
@@ -45,6 +45,7 @@ void TitleScene::Update() {
 	ImGuiManager::GetInstance()->Begin();
 
 	ImGui::Begin("object3d");
+	ImGui::DragFloat3("scale", &transformData3d_.scale.x, 0.1f);
 	ImGui::DragFloat3("rotate", &transformData3d_.rotate.x, 0.1f);
 	ImGui::DragFloat3("translate", &transformData3d_.translate.x, 0.1f);
 	ImGui::End();

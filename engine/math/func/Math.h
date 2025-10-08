@@ -86,6 +86,13 @@ public:
 	/// <param name="theta">θ</param>
 	/// <returns>逆正接関数</returns>
 	static float Cont(float theta);
+
+	///// <summary>
+	///// 弧度法を度数法に変換
+	///// </summary>
+	///// <param name="rad"></param>
+	///// <returns></returns>
+	//static float Degree(float rad);
 public://定数
 	//デルタタイム
 	static inline const float kDeltaTime = 1.0f / 60.0f;
