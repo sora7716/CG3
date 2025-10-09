@@ -210,6 +210,9 @@
     <ClCompile Include="engine\base\Blend.cpp">
       <Filter>engine\base</Filter>
     </ClCompile>
+    <ClCompile Include="engine\particle\ParticleEmitter.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\math\Matrix4x4.h">
@@ -364,6 +367,9 @@
     </ClInclude>
     <ClInclude Include="engine\base\BlendMode.h">
       <Filter>engine\base</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\particle\ParticleEmitter.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

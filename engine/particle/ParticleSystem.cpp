@@ -14,12 +14,11 @@
 void ParticleSystem::Initialize(DirectXBase* directXBase, const std::string& textureName, Model* model) {
 	//DirectXの基盤部分を記録する
 	directXBase_ = directXBase;
-	//カメラを設定
-	camera_ = ParticleCommon::GetInstance()->GetDefaultCamera();
+	//エミッター
+	emitter_ = new ParticleEmitter();
+	emitter_->Initialize(model);
 	//ワールドトランスフォームのリソースの生成
 	CreateWorldTransformResource();
-	//モデルを受け取る
-	model_ = model;
 	//頂点リソースの生成
 	CreateVertexResource();
 	//テクスチャファイルの記録
@@ -32,53 +31,11 @@ void ParticleSystem::Initialize(DirectXBase* directXBase, const std::string& tex
 	CreateIndexResource();
 	//ストラクチャバッファの生成
 	CreateStructuredBuffer();
-
-	//乱数エンジンの初期化
-	std::random_device seedGenerator;
-	randomEngine_.seed(seedGenerator());
 }
 
 //更新
 void ParticleSystem::Update() {
-	//生存しているパーティクルの数を0に初期化
-	numInstance_ = 0;
-
-	//更新処理
-	for (auto it = particles_.begin(); it != particles_.end();) {
-		if (numInstance_ < kNumMaxInstance) {
-			if ((*it).lifeTime <= (*it).currentTime) {
-				it = particles_.erase(it); //生存期間を過ぎたらパーティクルをlistから削除
-				continue;//削除したので次のループへ
-			}
-			// パーティクルの色を設定
-			instancingData_[numInstance_].color.SetRGB((*it).color.GetRGB());
-			//Field内のParticleには加速度を適用する
-			if (IsCollision(accelerationField_.area, (*it).transform.translate)) {
-				//(*it).velocity += accelerationField_.acceleration * Math::kDeltaTime;
-			}
-			//移動
-			EmitOnRect((*it).transform.translate, (*it).direction, (*it).velocity);
-			//(*it).transform.translate += (*it).velocity * Math::kDeltaTime;
-			//経過時間を足す
-			(*it).currentTime += Math::kDeltaTime;
-			float alpha = 1.0f - ((*it).currentTime / (*it).lifeTime);
-			instancingData_[numInstance_].color.w = alpha;
-			//ワールドトランスフォームの更新
-			UpdateWorldTransform(numInstance_, it);
-			//生きているパーティクルの数を記録
-			numInstance_++;
-
-		}
-		//次のイテレータに進める
-		it++;
-	}
-
-	//Emitterの更新
-	emitter_.frequencyTime += Math::kDeltaTime;
-	if (emitter_.frequency <= emitter_.frequencyTime) {
-		particles_.splice(particles_.end(), Emit());
-		emitter_.frequencyTime -= emitter_.frequency;//余計に過ぎた時間も加味して頻度を計算する
-	}
+	emitter_->Update(instancingData_);
 }
 
 //描画
@@ -100,18 +57,18 @@ void ParticleSystem::Draw() {
 	//SRVのDescriptorTableの先頭を設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVHandleGPU(modelData_.material.textureFilePath));
 	//描画(DrawCall/ドローコール)
-	directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(modelData_.vertices.size()), numInstance_, 0, 0, 0);
+	directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(modelData_.vertices.size()), emitter_->GetNumInstance(), 0, 0, 0);
 }
 
 
 //デバッグ
 void ParticleSystem::Debug() {
-#ifdef  USE_IMGUI
-	ImGui::Text("size:%d", particles_.size());
-	ImGui::Text("instance:%d", numInstance_);
-	ImGui::DragFloat3("acceleration", &accelerationField_.acceleration.x, 0.1f);
-	ImGui::DragFloat3("translate", &emitter_.transform.translate.x, 0.1f);
-#endif //USE_IMGUI
+	//#ifdef  USE_IMGUI
+	//	ImGui::Text("size:%d", particles_.size());
+	//	ImGui::Text("instance:%d", numInstance_);
+	//	ImGui::DragFloat3("acceleration", &accelerationField_.acceleration.x, 0.1f);
+	//	ImGui::DragFloat3("translate", &emitter_.transform.translate.x, 0.1f);
+	//#endif //USE_IMGUI
 }
 
 //終了
@@ -126,7 +83,7 @@ std::string ParticleSystem::GetTextureName() {
 
 //カメラのセッター
 void ParticleSystem::SetCamera(Camera* camera) {
-	camera_ = camera;
+	emitter_->SetCamera(camera);
 }
 
 //モデルデータの初期化
@@ -174,9 +131,9 @@ void ParticleSystem::InitializeMaterialData() {
 //頂点リソースの生成
 void ParticleSystem::CreateVertexResource() {
 	//頂点データの初期化
-	if (model_) {
+	if (emitter_->GetModel()) {
 		//モデルがあればモデルデータを取得
-		modelData_ = model_->GetModelData();
+		modelData_ = emitter_->GetModel()->GetModelData();
 	} else {
 		//モデルがなければ四角形を生成
 		InitializeQuadModelData();
@@ -229,37 +186,16 @@ void ParticleSystem::CreateIndexResource() {
 //ワールドトランスフォームのリソースの生成
 void ParticleSystem::CreateWorldTransformResource() {
 	//座標変換行列リソースを作成する	
-	instancingResource_ = directXBase_->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
+	instancingResource_ = directXBase_->CreateBufferResource(sizeof(ParticleForGPU) * ParticleEmitter::kNumMaxInstance);
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
 	//書き込むためのアドレス
 	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
-	for (uint32_t i = 0; i < kNumMaxInstance; i++) {
+	for (uint32_t i = 0; i < ParticleEmitter::kNumMaxInstance; i++) {
 		//単位行列を書き込んでおく
 		instancingData_[i].WVP = Matrix4x4::Identity4x4();
 		instancingData_[i].World = Matrix4x4::Identity4x4();
 		instancingData_[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 初期色を白に設定
 	}
-}
-
-//ワールドトランスフォームの更新
-void ParticleSystem::UpdateWorldTransform(uint32_t numInstance, auto iterator) {
-	//wvpの書き込み
-	if (camera_) {
-		if (model_) {
-			//モデルがあったらAffine行列を入れる
-			worldMatrix_ = Rendering::MakeAffineMatrix((*iterator).transform);
-		} else {
-			//モデルがないならビルボード行列を入れる
-			worldMatrix_ = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), (*iterator).transform);
-		}
-		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
-
-		instancingData_[numInstance].WVP = worldMatrix_ * viewProjectionMatrix;
-	} else {
-		instancingData_[numInstance].WVP = worldMatrix_;
-	}
-	//ワールド行列を送信
-	instancingData_[numInstance].World = worldMatrix_;
 }
 
 //ストラクチャバッファの生成
@@ -269,94 +205,7 @@ void ParticleSystem::CreateStructuredBuffer() {
 	SRVManager::GetInstance()->CreateSRVForStructuredBuffer(
 		srvIndex_,
 		instancingResource_.Get(),
-		kNumMaxInstance,
+		ParticleEmitter::kNumMaxInstance,
 		sizeof(ParticleForGPU)
 	);
-}
-
-//パーティクルの生成
-Particle ParticleSystem::MakeNewParticle() {
-	//位置と速度を[-1.0f,1.0f]でランダムに設定
-	std::uniform_real_distribution<float>distribution(-1.0f, 1.0f);
-	//パーティクルの初期化
-	Particle particle;
-	//拡縮
-	particle.transform.scale = { 1.0f, 1.0f, 1.0f };
-	//回転
-	particle.transform.rotate = { 0.0f, Math::kPi, 0.0f };
-	//位置
-	Vector3 randomTranslate = { distribution(randomEngine_), distribution(randomEngine_), distribution(randomEngine_) };
-	//パーティクルの位置を発生源を中心に設定
-	particle.transform.translate = emitter_.transform.translate + randomTranslate;
-	//速度
-	particle.velocity = { 1.0f,1.0f,1.0f };
-	//移動する向き
-	particle.direction = { distribution(randomEngine_), distribution(randomEngine_), distribution(randomEngine_) };
-	//向きを正規化
-	particle.direction = particle.direction.Normalize();
-	//色の値を[0.0f,1.0f]でランダムに設定
-	std::uniform_real_distribution<float>distColor(0.0f, 1.0f);
-	//色
-	particle.color = { distColor(randomEngine_), distColor(randomEngine_), distColor(randomEngine_),1.0f };
-
-	//生存時間
-	std::uniform_real_distribution<float>distTime(1.0f, 3.0f);
-	particle.lifeTime = distTime(randomEngine_);
-	particle.currentTime = 0.0f;
-
-	return particle;
-}
-
-//パーティクルの発生
-std::list<Particle> ParticleSystem::Emit() {
-	std::list<Particle>particles;
-	for (uint32_t i = 0; i < emitter_.count; i++) {
-		particles.push_back(MakeNewParticle());
-	}
-	return particles;
-}
-
-//衝突判定
-bool ParticleSystem::IsCollision(const AABB& aabb, const Vector3& point) {
-	AABB temp = aabb;
-	Vector3 tNear;
-	Vector3 tFar;
-
-	temp.min.x = (aabb.min.x - point.x);
-	temp.max.x = (aabb.max.x - point.x);
-
-	temp.min.y = (aabb.min.y - point.y);
-	temp.max.y = (aabb.max.y - point.y);
-
-	temp.min.z = (aabb.min.z - point.z);
-	temp.max.z = (aabb.max.z - point.z);
-
-	tNear.x = std::min(temp.min.x, temp.max.x);
-	tFar.x = std::max(temp.min.x, temp.max.x);
-
-	tNear.y = std::min(temp.min.y, temp.max.y);
-	tFar.y = std::max(temp.min.y, temp.max.y);
-
-	tNear.z = std::min(temp.min.z, temp.max.z);
-	tFar.z = std::max(temp.min.z, temp.max.z);
-
-	float tMin = std::max(tNear.x, std::max(tNear.z, tNear.y));
-	float tMax = std::min(tFar.x, std::min(tFar.z, tFar.y));
-	bool isCollision = false;
-	if (tMin <= tMax) {
-		if (tMin * tMax < 0.0f) {
-			isCollision = true;
-		}
-		if (0.0f <= tMin && tMin <= 1.0f || 0.0f <= tMax && tMax <= 1.0f) {
-			isCollision = true;
-		}
-	} else {
-		isCollision = false;
-	}
-	return isCollision;
-}
-
-//矩形上にパーティクルを発生させる
-void ParticleSystem::EmitOnRect(Vector3& translate, const Vector3& direction, const Vector3& velocity) {
-	translate += velocity * direction * Math::kDeltaTime;
 }
