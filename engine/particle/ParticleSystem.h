@@ -2,6 +2,7 @@
 #include "engine/math/ResourceData.h"
 #include "engine/base/BlendMode.h"
 #include "ParticleEmitter.h"
+#include <memory>
 #include <d3d12.h>
 #include <wrl.h>
 
@@ -124,5 +125,5 @@ private://メンバ変数
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kAdd;
 	//パーティクルの発生源
-	ParticleEmitter* emitter_ = nullptr;
+	std::unique_ptr<ParticleEmitter>emitter_ = nullptr;
 };

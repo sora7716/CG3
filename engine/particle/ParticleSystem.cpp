@@ -14,21 +14,28 @@
 void ParticleSystem::Initialize(DirectXBase* directXBase, const std::string& textureName, Model* model) {
 	//DirectXの基盤部分を記録する
 	directXBase_ = directXBase;
+
 	//エミッター
-	emitter_ = new ParticleEmitter();
+	emitter_ = std::make_unique<ParticleEmitter>();
 	emitter_->Initialize(model);
+
 	//ワールドトランスフォームのリソースの生成
 	CreateWorldTransformResource();
+
 	//頂点リソースの生成
 	CreateVertexResource();
+
 	//テクスチャファイルの記録
 	modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
 	//テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
+
 	//マテリアルリソースの生成
 	CreateMaterialResource();
+
 	//インデックスリソースの生成
 	CreateIndexResource();
+
 	//ストラクチャバッファの生成
 	CreateStructuredBuffer();
 }
