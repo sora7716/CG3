@@ -4,6 +4,7 @@
 #include "engine/camera/Camera.h"
 #include "engine/particle/ParticleCommon.h"
 #include "engine/3d/Model.h"
+#include "engine/debug/ImGuiManager.h"
 
 //初期化
 void ParticleEmitter::Initialize(Model* model) {
@@ -32,7 +33,7 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData) {
 			instancingData[numInstance_].color.SetRGB((*it).color.GetRGB());
 			//Field内のParticleには加速度を適用する
 			if (IsCollision(accelerationField_.area, (*it).transform.translate)) {
-				//(*it).velocity += accelerationField_.acceleration * Math::kDeltaTime;
+				(*it).velocity += accelerationField_.acceleration * Math::kDeltaTime;
 			}
 			//移動
 			EmitOnRect((*it).transform.translate, (*it).direction, (*it).velocity);
@@ -51,6 +52,15 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData) {
 		it++;
 	}
 
+	////更新処理
+	//for (auto it = particles_.begin(); it != particles_.end();) {
+	//		//Field内のParticleには加速度を適用する
+	//		if (IsCollision(accelerationField_.area, (*it).transform.translate)) {
+	//			(*it).velocity += accelerationField_.acceleration * Math::kDeltaTime;
+	//		}
+	//	it++;
+	//}
+
 	//Emitterの更新
 	emitter_.frequencyTime += Math::kDeltaTime;
 	if (emitter_.frequency <= emitter_.frequencyTime) {
@@ -59,14 +69,26 @@ void ParticleEmitter::Update(ParticleForGPU* instancingData) {
 	}
 }
 
+void ParticleEmitter::Debug() {
+	#ifdef  USE_IMGUI
+		ImGui::Text("size:%d", particles_.size());
+		ImGui::Text("instance:%d", numInstance_);
+		ImGui::DragFloat3("acceleration", &accelerationField_.acceleration.x, 0.1f);
+		ImGui::DragFloat3("translate", &emitter_.transform.translate.x, 0.1f);
+	#endif //USE_IMGUI
+}
+
+//モデルのゲッター
 Model* ParticleEmitter::GetModel() const {
 	return model_;
 }
 
+//生存しているパーティクルの数のゲッター
 const uint32_t ParticleEmitter::GetNumInstance() const {
 	return numInstance_;
 }
 
+//カメラのセッター
 void ParticleEmitter::SetCamera(Camera* camera) {
 	camera_ = camera;
 }

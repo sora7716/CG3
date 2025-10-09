@@ -70,12 +70,7 @@ void ParticleSystem::Draw() {
 
 //デバッグ
 void ParticleSystem::Debug() {
-	//#ifdef  USE_IMGUI
-	//	ImGui::Text("size:%d", particles_.size());
-	//	ImGui::Text("instance:%d", numInstance_);
-	//	ImGui::DragFloat3("acceleration", &accelerationField_.acceleration.x, 0.1f);
-	//	ImGui::DragFloat3("translate", &emitter_.transform.translate.x, 0.1f);
-	//#endif //USE_IMGUI
+	emitter_->Debug();
 }
 
 //終了

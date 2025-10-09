@@ -72,13 +72,29 @@ public://メンバ関数
 	/// <param name="instancingData">インスタンシングデータ</param>
 	void Update(ParticleForGPU* instancingData);
 
+	void Debug();
+
+	/// <summary>
+	/// モデルのゲッター
+	/// </summary>
+	/// <returns></returns>
 	Model* GetModel()const;
 
+	/// <summary>
+	/// 生存しているパーティクルの数のゲッター
+	/// </summary>
+	/// <returns></returns>
 	const uint32_t GetNumInstance()const;
 
+	/// <summary>
+	/// カメラのセッター
+	/// </summary>
+	/// <param name="camera"></param>
 	void SetCamera(Camera* camera);
-
 private://メンバ関数
+
+	
+
 	/// <summary>
 	/// パーティクルの生成
 	/// </summary>
