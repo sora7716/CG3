@@ -24,8 +24,7 @@ struct ParticleForGPU {
 //パーティクル単体のデータ
 struct Particle {
 	TransformData transform;//SRVの情報
-	Vector3 velocity;//速度
-	Vector3 direction;//方向
+	Vector3 velocity;//方向
 	Vector4 color;//色
 	float lifeTime;//生存時間
 	float currentTime;//発生してからの
@@ -37,6 +36,7 @@ struct Emitter {
 	uint32_t count;//発生数
 	float frequency;//発生頻度
 	float frequencyTime;//頻度用時刻
+	float range;//発生範囲
 };
 
 //フィールドの加速度
@@ -72,6 +72,9 @@ public://メンバ関数
 	/// <param name="instancingData">インスタンシングデータ</param>
 	void Update(ParticleForGPU* instancingData);
 
+	/// <summary>
+	/// デバッグ
+	/// </summary>
 	void Debug();
 
 	/// <summary>
@@ -91,15 +94,42 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="camera"></param>
 	void SetCamera(Camera* camera);
+
+	/// <summary>
+	/// トランスフォームデータのセッター
+	/// </summary>
+	/// <param name="transfrom">トランスフォーム</param>
+	void SetTransformData(const TransformData& transfrom);
+
+	/// <summary>
+	/// パーティクルの数のセッター
+	/// </summary>
+	/// <param name="cont">パーティクルの数</param>
+	void SetParticleCount(uint32_t cont);
+
+	/// <summary>
+	/// 発生範囲のセッター
+	/// </summary>
+	/// <param name="range">範囲</param>
+	void SetEmitRange(float range);
+
+	/// <summary>
+	/// 加速度が起こるフィールドのセッター
+	/// </summary>
+	/// <param name="field">フィールド</param>
+	void SetAccelerationField(const AccelerationField& field);
 private://メンバ関数
-
-	
-
 	/// <summary>
 	/// パーティクルの生成
 	/// </summary>
 	/// <returns>新しいパーティクル</returns>
 	Particle MakeNewParticle();
+
+	/// <summary>
+	/// 通常のパーティクルを生成
+	/// </summary>
+	/// <returns>パーティクル</returns>
+	Particle MakeNormalParticle();
 
 	/// <summary>
 	/// ワールドトランスフォームの更新
@@ -122,14 +152,6 @@ private://メンバ関数
 	/// <param name="point">point</param>
 	/// <returns>衝突判定</returns>
 	bool IsCollision(const AABB& aabb, const Vector3& point);
-
-	/// <summary>
-	/// 矩形状に移動させる
-	/// </summary>
-	/// <param name="translate">平行移動</param>
-	/// <param name="direction">移動する向き</param>
-	/// <param name="velocity">速度</param>
-	void EmitOnRect(Vector3& translate, const Vector3& direction, const Vector3& velocity);
 public://静的メンバ変数
 	//パーティクルの数
 	static const uint32_t kNumMaxInstance = 1024;
@@ -146,13 +168,16 @@ private://メンバ変数
 	Matrix4x4 worldMatrix_ = {};
 	//生存しているパーティクルの数
 	uint32_t numInstance_ = 0;
+
 	//発生源
 	Emitter emitter_ = {
 		.transform = {{1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}},
 		.count = 1,
 		.frequency = 0.1f,//発生頻度
-		.frequencyTime = 0.0f//発生頻度用の時刻,0.0fで初期化
+		.frequencyTime = 0.0f,//発生頻度用の時刻,0.0fで初期化
+		.range = 1.0f
 	};
+
 	//フィールドの加速度
 	AccelerationField accelerationField_ = {
 		.acceleration = {15.0f,0.0f,0.0f},

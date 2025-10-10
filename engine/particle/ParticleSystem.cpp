@@ -88,6 +88,31 @@ void ParticleSystem::SetCamera(Camera* camera) {
 	emitter_->SetCamera(camera);
 }
 
+//ブレンドモードのセッター
+void ParticleSystem::SetBlendMode(BlendMode blendMode) {
+	blendMode_ = blendMode;
+}
+
+//トランスフォームデータのセッター
+void ParticleSystem::SetTransformData(const TransformData& transfrom) {
+	emitter_->SetTransformData(transfrom);
+}
+
+//パーティクルの数のセッター
+void ParticleSystem::SetParticleCount(uint32_t cont) {
+	emitter_->SetParticleCount(cont);
+}
+
+//発生範囲のセッター
+void ParticleSystem::SetEmitRange(float range) {
+	emitter_->SetEmitRange(range);
+}
+
+//加速度が起こるフィールドのセッター
+void ParticleSystem::SetAccelerationField(const AccelerationField& field) {
+	emitter_->SetAccelerationField(field);
+}
+
 //モデルデータの初期化
 void ParticleSystem::InitializeQuadModelData() {
 	modelData_.vertices.push_back({

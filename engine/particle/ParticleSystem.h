@@ -65,6 +65,36 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	void SetCamera(Camera* camera);
+
+	/// <summary>
+	/// ブレンドモードのセッター
+	/// </summary>
+	/// <param name="blendMode">ブレンドモード</param>
+	void SetBlendMode(BlendMode blendMode);
+
+	/// <summary>
+	/// トランスフォームデータのセッター
+	/// </summary>
+	/// <param name="transfrom">トランスフォーム</param>
+	void SetTransformData(const TransformData& transfrom);
+
+	/// <summary>
+	/// パーティクルの数のセッター
+	/// </summary>
+	/// <param name="cont">パーティクルの数</param>
+	void SetParticleCount(uint32_t cont);
+
+	/// <summary>
+	/// 発生範囲のセッター
+	/// </summary>
+	/// <param name="range">範囲</param>
+	void SetEmitRange(float range);
+
+	/// <summary>
+	/// 加速度が起こるフィールドのセッター
+	/// </summary>
+	/// <param name="field">フィールド</param>
+	void SetAccelerationField(const AccelerationField& field);
 private://メンバ関数
 	/// <summary>
 	/// モデルデータの初期化

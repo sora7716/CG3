@@ -49,4 +49,8 @@ private://メンバ変数
 	TransformData transformData3d_ = { {1.0f,1.0f,1.0f} };
 	//デバックカメラ
 	std::unique_ptr<DebugCamera>debugCamera_ = nullptr;
+	//パーティクルシステム
+	ParticleSystem* particleSystem_ = nullptr;
+	Emitter emitter_ = {};
+	AccelerationField accelerationField_ = {};
 };

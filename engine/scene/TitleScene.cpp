@@ -23,9 +23,24 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 
 
 	//パーティクル
-	ParticleManager::GetInstance()->AddParticleSystem("par");
-	ParticleManager::GetInstance()->FindParticleSystem("par")->Initialize(directXBase, "uvChecker.png", ModelManager::GetInstance()->FindModel("sphere"));
-	ParticleManager::GetInstance()->FindParticleSystem("par")->SetCamera(debugCamera_->GetCamera());
+	//エミッター
+	emitter_ = {
+		.transform = {{1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f}},
+		.count = 1,
+		.frequency = 0.1f,//発生頻度
+		.frequencyTime = 0.0f,//発生頻度用の時刻,0.0fで初期化
+		.range = 1.0f
+	};
+
+
+	//加速度フィールド
+	accelerationField_.acceleration = {};
+	accelerationField_.area.min = { -1.0f,-1.0f,-1.0f };
+	accelerationField_.area.max = { 1.0f,1.0f,1.0f };
+	ParticleManager::GetInstance()->AddParticleSystem("testParticle");
+	particleSystem_ = ParticleManager::GetInstance()->FindParticleSystem("testParticle");
+	particleSystem_->Initialize(directXBase, "uvChecker.png", ModelManager::GetInstance()->FindModel("sphere"));
+	particleSystem_->SetCamera(debugCamera_->GetCamera());
 }
 
 //更新ww
@@ -38,7 +53,11 @@ void TitleScene::Update() {
 	object3d_->Update();
 
 	//パーティクル
-	ParticleManager::GetInstance()->FindParticleSystem("par")->Update();
+	particleSystem_->SetTransformData(emitter_.transform);
+	particleSystem_->SetParticleCount(emitter_.count);
+	particleSystem_->SetEmitRange(emitter_.range);
+	particleSystem_->SetAccelerationField(accelerationField_);
+	particleSystem_->Update();
 
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
@@ -55,8 +74,14 @@ void TitleScene::Update() {
 	ImGui::End();
 
 	ImGui::Begin("particle");
-	ParticleManager::GetInstance()->FindParticleSystem("par")->Debug();
+	particleSystem_->Debug();
+	ImGui::DragFloat3("acceleration", &accelerationField_.acceleration.x, 0.1f);
+	ImGui::DragFloat3("scale", &emitter_.transform.scale.x, 0.1f);
+	ImGui::DragFloat3("rotate", &emitter_.transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("translate", &emitter_.transform.translate.x, 0.1f);
+	ImGui::DragFloat("emitRange", &emitter_.range, 0.1f, 0.0f, 10.0f);
 	ImGui::End();
+
 	//ImGuiの受付終了
 	ImGuiManager::GetInstance()->End();
 #endif // USE_IMGUI
@@ -69,7 +94,7 @@ void TitleScene::Draw() {
 	object3d_->Draw();
 
 	//パーティクル
-	ParticleManager::GetInstance()->FindParticleSystem("par")->Draw();
+	particleSystem_->Draw();
 }
 
 //終了
