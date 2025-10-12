@@ -39,18 +39,7 @@ public://メンバ関数
 	/// 終了
 	/// </summary>
 	void Finalize()override;
-
-public://静的メンバ変数
-	static inline const float kLookRadPerCount = 1.0f / 1000.0f;
-
 private://メンバ変数
-	//3Dモデル
-	std::unique_ptr<Object3d>object3d_ = nullptr;
-	TransformData transformData3d_ = { {1.0f,1.0f,1.0f} };
 	//デバックカメラ
 	std::unique_ptr<DebugCamera>debugCamera_ = nullptr;
-	//パーティクルシステム
-	ParticleSystem* particleSystem_ = nullptr;
-	Emitter emitter_ = {};
-	AccelerationField accelerationField_ = {};
 };
