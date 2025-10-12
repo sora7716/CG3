@@ -10,10 +10,9 @@
 #include "engine/2d/Sprite.h"
 #include "engine/3d/Object3d.h"
 #include "engine/particle/ParticleManager.h"
-
-//前方宣言
-class SceneManager;
-class AbstractSceneFactory;
+#include "engine/scene/SceneManager.h"
+#include "engine/scene/SceneFactory.h"
+#include <memory>
 
 /// <summary>
 /// シーンのインターフェース
@@ -29,10 +28,27 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	virtual ~IScene() = default;
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	virtual void Initialize(DirectXBase* directXBase);
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	virtual void Update();
+
 	//純粋仮想関数
-	virtual void Initialize(DirectXBase*) = 0;
-	virtual void Update() = 0;
 	virtual void Draw() = 0;
 	virtual void Finalize() = 0;
+protected://メンバ変数
+	//DirectXの基盤部分
+	DirectXBase* directXBase_ = nullptr;
+	//デバックカメラ
+	std::unique_ptr<DebugCamera>debugCamera_ = nullptr;
+	//シーンファクトリー
+	AbstractSceneFactory* sceneFactory_ = nullptr;
 };
 

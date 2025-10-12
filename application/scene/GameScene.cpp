@@ -2,12 +2,14 @@
 
 //初期化
 void GameScene::Initialize(DirectXBase* directXBase){
-	
+	//シーンのインタフェースの初期化
+	IScene::Initialize(directXBase);
 }
 
 //更新
 void GameScene::Update(){
-	
+	//シーンのインタフェースの初期化
+	IScene::Update();
 	//ImGuiの受付開始
 	ImGuiManager::GetInstance()->Begin();
 #ifdef USE_IMGUI

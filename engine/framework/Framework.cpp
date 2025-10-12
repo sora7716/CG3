@@ -1,6 +1,6 @@
 #include "Framework.h"
 #include "engine/2d/TextureManager.h"
-#include "engine/framework/GameObjectList.h"
+#include "application/actor/GameObjectList.h"
 #include "engine/math/func/Math.h"
 #include "engine/audio/AudioManager.h"
 #include "engine/input/Input.h"

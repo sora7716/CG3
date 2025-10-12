@@ -1,7 +1,7 @@
 #include "TitleScene.h"
 #include "engine/input/Input.h"
-#include "SceneManager.h"
-#include "SceneFactory.h"
+#include "engine/scene/SceneManager.h"
+#include "engine/scene/SceneFactory.h"
 #include "engine/3d/ModelManager.h"
 #include "engine/3d/Object3dCommon.h"
 #include "engine/2d/TextureManager.h"
@@ -10,22 +10,18 @@
 
 //初期化
 void TitleScene::Initialize(DirectXBase* directXBase) {
-	//デバックカメラ
-	debugCamera_ = std::make_unique<DebugCamera>();
-	debugCamera_->Initialize();
+	//シーンのインタフェースの初期化
+	IScene::Initialize(directXBase);
 }
 
 //更新ww
 void TitleScene::Update() {
-	//デバックカメラ
-	debugCamera_->Update();
-
+	//シーンのインタフェースの初期化
+	IScene::Update();
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
 	ImGuiManager::GetInstance()->Begin();
-	ImGui::Begin("debugCamera");
-	debugCamera_->Debug();
-	ImGui::End();
+
 	//ImGuiの受付終了
 	ImGuiManager::GetInstance()->End();
 #endif // USE_IMGUI

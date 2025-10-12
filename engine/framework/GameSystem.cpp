@@ -10,6 +10,10 @@ void GameSystem::Initialize() {
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
 	//タイトルシーンを呼び出す
 	SceneManager::GetInstance()->ChangeScene("Title");
+#ifdef _DEBUG
+	//デバッグしたいシーンを呼び出す
+	SceneManager::GetInstance()->ChangeScene("Game");
+#endif // _DEBUG
 }
 
 //更新

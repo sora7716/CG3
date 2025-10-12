@@ -1,8 +1,5 @@
 #pragma once
-#include "IScene.h"
-
-//前方宣言
-class Input;
+#include "engine/scene/IScene.h"
 
 /// <summary>
 /// タイトルシーン
@@ -40,6 +37,5 @@ public://メンバ関数
 	/// </summary>
 	void Finalize()override;
 private://メンバ変数
-	//デバックカメラ
-	std::unique_ptr<DebugCamera>debugCamera_ = nullptr;
+	
 };

@@ -1,6 +1,6 @@
 #include "SceneFactory.h"
-#include "TitleScene.h"
-#include "GameScene.h"
+#include "application/scene/TitleScene.h"
+#include "application/scene/GameScene.h"
 // シーンの生成
 IScene* SceneFactory::CreateScene(const std::string& sceneName) {
 	//次のシーンの生成
