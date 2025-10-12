@@ -1,4 +1,6 @@
 #include "IScene.h"
+#include "engine/scene/SceneManager.h"
+#include "engine/scene/SceneFactory.h"
 
 //初期化
 void IScene::Initialize(DirectXBase* directXBase) {
@@ -17,4 +19,11 @@ void IScene::Initialize(DirectXBase* directXBase) {
 void IScene::Update() {
 	//デバックカメラ
 	debugCamera_->Update();
+}
+
+//終了
+void IScene::Finalize() {
+	//シーンファクトリーの解放
+	delete sceneFactory_;
+	sceneFactory_ = nullptr;
 }

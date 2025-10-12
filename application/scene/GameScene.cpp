@@ -26,4 +26,6 @@ void GameScene::Draw(){
 
 //終了
 void GameScene::Finalize(){
+	//シーンのインターフェースの終了
+	IScene::Finalize();
 }

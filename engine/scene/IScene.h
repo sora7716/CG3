@@ -10,9 +10,11 @@
 #include "engine/2d/Sprite.h"
 #include "engine/3d/Object3d.h"
 #include "engine/particle/ParticleManager.h"
-#include "engine/scene/SceneManager.h"
-#include "engine/scene/SceneFactory.h"
 #include <memory>
+
+// 前方宣言
+class SceneManager;
+class AbstractSceneFactory;
 
 /// <summary>
 /// シーンのインターフェース
@@ -40,9 +42,13 @@ public://メンバ関数
 	/// </summary>
 	virtual void Update();
 
+	/// <summary>
+	/// 終了
+	/// </summary>
+	virtual void Finalize();
+
 	//純粋仮想関数
 	virtual void Draw() = 0;
-	virtual void Finalize() = 0;
 protected://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;

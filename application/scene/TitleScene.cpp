@@ -34,5 +34,6 @@ void TitleScene::Draw() {
 
 //終了
 void TitleScene::Finalize() {
-
+	//シーンのインターフェースの終了
+	IScene::Finalize();
 }
