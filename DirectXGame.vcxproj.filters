@@ -64,6 +64,9 @@
     <Filter Include="engine\worldTransform">
       <UniqueIdentifier>{6b108ed3-207f-4093-80c2-6739f3530329}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application\actor">
+      <UniqueIdentifier>{27e5a16f-78eb-4123-ac65-8f26cccee1a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\main.cpp">
@@ -211,7 +214,10 @@
       <Filter>application\scene</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\GameObjectList.cpp">
-      <Filter>application</Filter>
+      <Filter>application\actor</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\Player.cpp">
+      <Filter>application\actor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -369,7 +375,13 @@
       <Filter>application\scene</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\GameObjectList.h">
-      <Filter>application</Filter>
+      <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\Player.h">
+      <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\ActorData.h">
+      <Filter>application\actor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

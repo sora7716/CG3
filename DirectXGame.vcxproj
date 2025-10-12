@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application\actor\GameObjectList.cpp" />
+    <ClCompile Include="application\actor\Player.cpp" />
     <ClCompile Include="application\scene\GameScene.cpp" />
     <ClCompile Include="application\scene\TitleScene.cpp" />
     <ClCompile Include="engine\2d\Object2d.cpp" />
@@ -61,7 +62,9 @@
     <ClCompile Include="engine\worldTransform\WorldTransform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\actor\ActorData.h" />
     <ClInclude Include="application\actor\GameObjectList.h" />
+    <ClInclude Include="application\actor\Player.h" />
     <ClInclude Include="application\scene\GameScene.h" />
     <ClInclude Include="application\scene\TitleScene.h" />
     <ClInclude Include="engine\2d\Object2d.h" />

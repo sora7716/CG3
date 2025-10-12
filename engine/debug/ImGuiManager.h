@@ -1,4 +1,5 @@
 #pragma once
+#include "engine/math/RenderingData.h"
 #ifdef USE_IMGUI
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx12.h"
@@ -38,6 +39,12 @@ public://メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	/// <summary>
+	/// トランスフォームデータ用のImGui
+	/// </summary>
+	/// <param name="transfromData">トランスフォームデータ</param>
+	void DragTransfrom(TransformData& transfromData);
 
 	/// <summary>
 	/// 終了

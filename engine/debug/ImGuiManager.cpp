@@ -69,6 +69,13 @@ void ImGuiManager::Draw() {
 #endif // USE_IMGUI
 }
 
+//トランスフォームデータ用のImGui
+void ImGuiManager::DragTransfrom(TransformData& transfromData){
+	ImGui::DragFloat3("scale", &transfromData.scale.x, 0.1f);
+	ImGui::DragFloat3("rotate", &transfromData.rotate.x, 0.1f);
+	ImGui::DragFloat3("translate", &transfromData.translate.x, 0.1f);
+}
+
 //終了
 void ImGuiManager::Finalize() {
 #ifdef USE_IMGUI

@@ -1,5 +1,6 @@
 #pragma once
 #include "engine/scene/IScene.h"
+#include "application/actor/Player.h"
 
 /// <summary>
 /// ゲームシーン
@@ -38,6 +39,7 @@ public://メンバ関数
 	void Finalize()override;
 
 private://メンバ変数
-	
+	//プレイヤー
+	std::unique_ptr<Player>player_ = nullptr;
 };
 

@@ -1,5 +1,11 @@
 #include "Vector3.h"
 #include <cmath>
+
+//Vector3のメンバ変数すべてに1.0fを代入したVector3を作成
+Vector3 Vector3::MakeAllOne() {
+	return Vector3(1.0f, 1.0f, 1.0f);
+}
+
 //長さ(ノルム)
 float Vector3::Length() {
 	float result = std::sqrt(Vector3(x, y, z).Dot(Vector3(x, y, z)));

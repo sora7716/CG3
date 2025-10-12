@@ -7,6 +7,12 @@ struct Vector3 final {
 	float y;
 	float z;
 
+	/// <summary>
+	/// Vector3のメンバ変数すべてに1.0fを代入したVector3を作成
+	/// </summary>
+	/// <returns>Vector3</returns>
+	static Vector3 MakeAllOne();
+
 	//長さ(ノルム)
 	float Length();
 	// 正規化
