@@ -5,16 +5,57 @@
 #include <wrl.h>
 #include "engine/math/Vector2.h"
 #include "engine/math/Vector3.h"
+#include "Xinput.h"
 #include <cstdint>
 //前方宣言
 class WinApi;
 class Camera;
 
 //マウスのクリック位置
-enum Clic {
+enum class Click {
 	kLeft,
 	kRight,
 	kMiddle
+};
+
+//Xboxのボタンの位置
+enum class XboxInput :WORD {
+	kDPadUp = XINPUT_GAMEPAD_DPAD_UP,
+	kDPadRight = XINPUT_GAMEPAD_DPAD_RIGHT,
+	kDPadDown = XINPUT_GAMEPAD_DPAD_DOWN,
+	kDPadLeft = XINPUT_GAMEPAD_DPAD_LEFT,
+	kY = XINPUT_GAMEPAD_Y,
+	kB = XINPUT_GAMEPAD_B,
+	kA = XINPUT_GAMEPAD_A,
+	kX = XINPUT_GAMEPAD_X,
+	kRB = XINPUT_GAMEPAD_RIGHT_SHOULDER,
+	kLB = XINPUT_GAMEPAD_LEFT_SHOULDER,
+	kRTHUMB= XINPUT_GAMEPAD_RIGHT_THUMB,
+	kLTHUMB= XINPUT_GAMEPAD_LEFT_THUMB,
+	kStart= XINPUT_GAMEPAD_START,
+	kBack= XINPUT_GAMEPAD_BACK,
+	kRT,
+	kLT,
+};
+
+//Xboxのボタン用構造体
+struct XboxButton {
+	WORD button;
+	bool leftTriggerButton;
+	bool rightTriggerButton;
+};
+
+//XboxPadのデータ
+struct XboxPadData {
+	XINPUT_STATE state;//ステータス
+	bool isConnected;//接続できたか
+	XboxButton currButton;//現在のボタン
+	XboxButton preButton;//過去のボタン
+	float leftTrigger;//LTボタン
+	float rightTrigger;//RTボタン
+	Vector2 leftStick;//左スティック
+	Vector2 rightStick;//右スティック
+	float deadZone;//デッドゾーン
 };
 
 /// <summary>
@@ -73,21 +114,21 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="mouseClicPos">マウスのボタン</param>
 	/// <returns>押されてるか</returns>
-	bool PressMouseButton(Clic mouseClicPos);
+	bool PressMouseButton(Click mouseClicPos);
 
 	/// <summary>
 	/// マウスのボタンの押下した瞬間をチェック
 	/// </summary>
 	/// <param name="mouseClicPos">マウスのボタン</param>
 	/// <returns>押した瞬間</returns>
-	bool TriggerMouseButton(Clic mouseClicPos);
+	bool TriggerMouseButton(Click mouseClicPos);
 
 	/// <summary>
-	/// マウスのボタンを話した瞬間をチェック
+	/// マウスのボタンを離した瞬間をチェック
 	/// </summary>
 	/// <param name="mouseClicPos">マウスのボタン</param>
 	/// <returns>離した瞬間</returns>
-	bool ReleaseTriggerMouseButton(Clic mouseClicPos);
+	bool ReleaseTriggerMouseButton(Click mouseClicPos);
 
 	/// <summary>
 	/// マウスの移動量のゲッター
@@ -106,13 +147,66 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	/// <returns>ワールド座標系のマウスの位置</returns>
-	const Vector3 GetWorldMousePosition(Camera*camera)const;
+	const Vector3 GetWorldMousePosition(Camera* camera)const;
 
 	/// <summary>
 	/// スクリーン座標系のマウスの位置のゲッター
 	/// </summary>
 	/// <returns>スクリーン座標系のマウスの位置</returns>
 	const Vector2Int GetMousePosition()const;
+
+	/// <summary>
+	/// Xboxが接続できたかどうか
+	/// </summary>
+	/// <param name="xBoxPadNumber">何番目(0~4)</param>
+	/// <param name="joyState">Xボックスコントローラーのステータス</param>
+	/// <returns>接続できたかどうか</returns>
+	bool IsXboxPadConnected(DWORD xBoxPadNumber);
+
+	/// <summary>
+	/// XboxPadのボタンの押下をチェック
+	/// </summary>
+	/// <param name="xBoxPadNumber">何番目(0~4)</param>
+	/// <param name="xboxButton">Xboxのボタン</param>
+	/// <returns>押されてるか</returns>
+	bool PressXboxPad(DWORD xBoxPadNumber, XboxInput xboxButton);
+
+	/// <summary>
+	/// XboxPadのボタンの押下した瞬間をチェック
+	/// </summary>
+	/// <param name="xBoxPadNumber">何番目(0~4)</param>
+	/// <param name="xboxButton">Xboxのボタン</param>
+	/// <returns>押した瞬間</returns>
+	bool TriggerXboxPad(DWORD xBoxPadNumber, XboxInput xboxButton);
+
+	/// <summary>
+	/// XboxPadのボタンの離した瞬間をチェック
+	/// </summary>
+	/// <param name="xBoxPadNumber">何番目(0~4)</param>
+	/// <param name="xboxButton">Xboxのボタン</param>
+	/// <returns>離した瞬間</returns>
+	bool ReleaseTriggerXboxPad(DWORD xBoxPadNumber, XboxInput xboxButton);
+
+	/// <summary>
+	/// Xboxの左スティックのゲッター
+	/// </summary>
+	/// <param name="xBoxPadNumber">何番目(0~4)</param>
+	/// <returns>左スティック</returns>
+	const Vector2 GetXboxPadLeftStick(DWORD xBoxPadNumber);
+
+	/// <summary>
+	/// Xboxの右スティックのゲッター
+	/// </summary>
+	/// <param name="xBoxPadNumber">何番目(0~4)</param>
+	/// <returns>右スティック</returns>
+	const Vector2 GetXboxPadRighttStick(DWORD xBoxPadNumber);
+
+	/// <summary>
+	/// Xboxのデッドゾーン
+	/// </summary>
+	/// <param name="xBoxPadNumber">何番目(0~4)</param>
+	/// <param name="deadZone">デッドゾーン</param>
+	void SetDeadZone(DWORD xBoxPadNumber,float deadZone);
 private://メンバ関数
 	//コンストラクタの封印
 	Input() = default;
@@ -142,6 +236,11 @@ private://メンバ関数
 	/// マウス入力の更新
 	/// </summary>
 	void MouseUpdate();
+
+	/// <summary>
+	/// XboxPadの更新
+	/// </summary>
+	void XboxPadUpdate();
 private://静的メンバ変数
 	//インスタンス
 	static inline Input* instance = nullptr;
@@ -159,5 +258,8 @@ private://メンバ変数
 	ComPtr<IDirectInputDevice8>mouse_ = nullptr;
 	DIMOUSESTATE mouseState_ = {};
 	DIMOUSESTATE preMouseState_ = {};
+
+	//XboxPad
+	XboxPadData xboxPadDatas_[4] = {};
 };
 

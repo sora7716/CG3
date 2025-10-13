@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "engine/input/Input.h"
 
 //初期化
 void GameScene::Initialize(DirectXBase* directXBase) {
@@ -27,6 +28,15 @@ void GameScene::Update() {
 	ImGui::Begin("Player");
 	player_->DebugText();
 	ImGui::End();
+	bool isConect = Input::GetInstance()->IsXboxPadConnected(0);
+	Vector2 leftStick = Input::GetInstance()->GetXboxPadLeftStick(0);
+	Vector2 rightStick = Input::GetInstance()->GetXboxPadRighttStick(0);
+	ImGui::Begin("Xbox");
+	ImGui::Checkbox("isConect", &isConect);
+	ImGui::DragFloat2("left", &leftStick.x);
+	ImGui::DragFloat2("right", &rightStick.x);
+	ImGui::End();
+
 
 	//ImGuiの受付終了
 	ImGuiManager::GetInstance()->End();

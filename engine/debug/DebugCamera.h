@@ -1,6 +1,7 @@
 #pragma once
 #include "engine/math/Vector3.h"
 #include "engine/math/Vector2.h"
+#include <Windows.h>
 
 //前方宣言
 class Camera;
@@ -36,6 +37,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>カメラ</returns>
 	Camera* GetCamera();
+
+	/// <summary>
+	/// XboxPadの番号のセッター
+	/// </summary>
+	/// <param name="xboxPadNumber">XBoxPadの番号</param>
+	void SetXBoxPadNumber(DWORD xboxPadNumber);
 
 	/// <summary>
 	/// デバックに使用する
@@ -80,6 +87,14 @@ public://定数
 	static inline const float kMinFovY = 0.1f;
 	//FovYの最大値
 	static inline const float kMaxFovY = 2.0f;
+	//カメラの移動速度
+	static inline const float kMoveSpeed = 0.1f;
+
+	//XboxPad
+	//回転速度
+	static inline const float kXboxPadRotSpeed = 0.01f;
+	//zoom速度
+	static inline const float kXboxPadZoomSpeed = 0.01f;
 private://メンバ変数
 	//カメラ
 	Camera* camera_ = nullptr;
@@ -91,11 +106,11 @@ private://メンバ変数
 	Vector2 mouseFlick_ = {};
 	//カメラの移動方向のベクトル
 	Vector3 moveDir_ = {};
-	//カメラの移動速度
-	float speed_ = 0.1f;
 	//入力
 	Input* input_ = nullptr; 
 	//FovY
 	float fovY_ = 0.0f;
+	//Xboxの番号
+	DWORD xBoxPadNumber_ = 0;
 };
 
