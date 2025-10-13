@@ -20,14 +20,22 @@ void DebugCamera::Initialize() {
 
 //更新
 void DebugCamera::Update() {
-	//平行移動の更新
-	TranslateUpdate();
+	//デバッグするかどうか
+	if (isDebug) {
+		//平行移動の更新
+		TranslateUpdate();
 
-	//回転の操作
-	RotateControl();
+		//回転の操作
+		RotateControl();
 
-	//ズーム操作
-	ZoomControl();
+		//ズーム操作
+		ZoomControl();
+	}
+
+	//デバッグOn/Off
+	if (input_->TriggerKey(DIK_ESCAPE) || input_->TriggerXboxPad(xBoxPadNumber_,XboxInput::kStart)) {
+		isDebug = !isDebug;
+	}
 
 	//カメラ
 	camera_->SetRotate(rotate_);
@@ -48,6 +56,8 @@ void DebugCamera::SetXBoxPadNumber(DWORD xboxPadNumber) {
 //デバックに使用する
 void DebugCamera::Debug() {
 #ifdef USE_IMGUI
+	ImGui::Text("ESCAPE or XboxPadforStart");
+	ImGui::Text("DebugMode:%s", isDebug ? "ON" : "OFF");
 	ImGui::DragFloat3("rotate", &rotate_.x, 0.1f);
 	ImGui::DragFloat2("flick", &mouseFlick_.x, 0.1f);
 	ImGui::DragFloat("fovY", &fovY_, 0.1f);
@@ -69,9 +79,9 @@ void DebugCamera::StrafeControl() {
 //上下移動の操作
 void DebugCamera::ElevateControl() {
 	if (input_->PressKey(DIK_Q)) {
-		moveDir_.y = 1.0f;
-	} else if (input_->PressKey(DIK_E)) {
 		moveDir_.y = -1.0f;
+	} else if (input_->PressKey(DIK_E)) {
+		moveDir_.y = 1.0f;
 	} else if (input_->PressXboxPad(xBoxPadNumber_, XboxInput::kLT)) {
 		moveDir_.y = -1.0f;
 	} else if (input_->PressXboxPad(xBoxPadNumber_, XboxInput::kRT)) {
