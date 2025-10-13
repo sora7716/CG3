@@ -1,27 +1,40 @@
 #include "CameraController.h"
-#include "engine/camera/CameraManager.h"
+#include "engine/camera/Camera.h"
 #include "application/actor/Player.h"
 #include "engine/math/RenderingData.h"
+#include "engine/debug/ImGuiManager.h"
+#include <algorithm>
 
 //初期化
-void CameraController::Initialize(const std::string& cameraName) {
+void CameraController::Initialize(Camera* camera) {
 	//カメラを受け取る
-	camera_ = CameraManager::GetInstance()->FindCamera(cameraName);
+	camera_ = camera;
 }
 
 //更新
 void CameraController::Update() {
 	//追従対象のトランスフォームデータを参照
 	TransformData targetTransformData = target_->GetTransformData();
-	//追従対象とオフセットからカメラの座標を計算
-	camera_->SetTranslate(targetTransformData.translate + targetOffset_);
+	//追従対象とオフセットと追従対象の速度から目的地を計算
+	goalPosition_ = targetTransformData.translate + targetOffset_ + target_->GetVelocity() * kVelocityBias;
+
+	//座標補間によりゆったり追従
+	Vector3 cameraTranslate = cameraTranslate.Lerp(camera_->GetTranslate(), goalPosition_, kInterpolationRate);
+
+	//追従対象が画面外に出ないように補正
+	cameraTranslate.x = std::clamp(cameraTranslate.x, target_->GetTransformData().translate.x + margin.left, target_->GetTransformData().translate.x + margin.right);
+	cameraTranslate.y = std::clamp(cameraTranslate.y, target_->GetTransformData().translate.y + margin.bottom, target_->GetTransformData().translate.y + margin.top);
+	//追従対象が画面外に出ないように補正を設定
+	camera_->SetTranslate(cameraTranslate);
+
+	//移動範囲の制限
+	cameraTranslate.x = std::clamp(cameraTranslate.x, movableArea_.left, movableArea_.right);
+	cameraTranslate.y = std::clamp(cameraTranslate.y, movableArea_.bottom, movableArea_.top);
+	//制限した移動範囲を設定
+	camera_->SetTranslate(cameraTranslate);
+
 	//行列を更新
 	camera_->Update();
-}
-
-//追従対象
-void CameraController::SetTarget(Player* target) {
-	target_ = target;
 }
 
 //リセット
@@ -30,4 +43,21 @@ void CameraController::Reset() {
 	TransformData targetTransformData = target_->GetTransformData();
 	//追従対象とオフセットからカメラの座標を計算
 	camera_->SetTranslate(targetTransformData.translate + targetOffset_);
+}
+
+//デバッグ
+void CameraController::Debug() {
+#ifdef USE_IMGUI
+	ImGui::Text("translate{x:%0.2f,y:%0.2f}", camera_->GetTranslate().x, camera_->GetTranslate().y);
+#endif // USE_IMGUI
+}
+
+//追従対象
+void CameraController::SetTarget(Player* target) {
+	target_ = target;
+}
+
+//移動範囲のセッター
+void CameraController::SetMovableArea(const Rect& area) {
+	movableArea_ = area;
 }

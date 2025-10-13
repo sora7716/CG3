@@ -33,7 +33,7 @@ void DebugCamera::Update() {
 	}
 
 	//デバッグOn/Off
-	if (input_->TriggerKey(DIK_ESCAPE) || input_->TriggerXboxPad(xBoxPadNumber_,XboxInput::kStart)) {
+	if (input_->TriggerKey(DIK_ESCAPE) || input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kStart)) {
 		isDebug = !isDebug;
 	}
 
@@ -46,6 +46,11 @@ void DebugCamera::Update() {
 //カメラのゲッター
 Camera* DebugCamera::GetCamera() {
 	return camera_;
+}
+
+//デバッグ中どうかのフラグのゲッター
+const bool DebugCamera::IsDebug()const {
+	return isDebug;
 }
 
 //XboxPadの番号のセッター

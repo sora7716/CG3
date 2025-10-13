@@ -40,9 +40,16 @@ public://メンバ関数
 	void Finalize()override;
 
 private://メンバ変数
+	//ゲームシーンのカメラ
+	Camera* camera_ = nullptr;
+
 	//プレイヤー
 	std::unique_ptr<Player>player_ = nullptr;
+
 	//追従カメラ
 	std::unique_ptr<CameraController>cameraController_ = nullptr;
+
+	//3Dオブジェクト
+	std::unique_ptr<Object3d>object3d_ = nullptr;
 };
 

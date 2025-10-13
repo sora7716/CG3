@@ -45,6 +45,8 @@ void GameObjectList::LoadModel() {
 	ModelManager::GetInstance()->LoadOBJModel("plane", "plane", "plane");
 	//軸
 	ModelManager::GetInstance()->LoadOBJModel("test", "base", "axis");
+	////六角形
+	//ModelManager::GetInstance()->LoadOBJModel("hexagon", "hexagon", "hexagon");
 }
 
 //カメラの生成
