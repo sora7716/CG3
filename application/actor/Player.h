@@ -1,9 +1,9 @@
-﻿#pragma once
+#pragma once
 #include "ActorData.h"
+#include <string>
 
 // 前方宣言
 class Object3d;
-class Camera;
 class Input;
 
 /// <summary>
@@ -49,8 +49,14 @@ public://メンバ関数
 	/// <summary>
 	/// カメラのセッター
 	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void SetCamera(Camera* camera);
+	/// <param name="cameraName">カメラ名</param>
+	void SetCamera(const std::string& cameraName);
+
+	/// <summary>
+	/// トランスフォームデータのゲッター
+	/// </summary>
+	/// <returns>トランスフォームデータ</returns>
+	TransformData GetTransformData();
 private://メンバ関数
 	/// <summary>
 	/// 移動

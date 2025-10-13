@@ -51,8 +51,10 @@ void GameObjectList::LoadModel() {
 void GameObjectList::CreateCamera() {
 	//カメラの管理
 	CameraManager::GetInstance()->AddCamera("defaultCamera");
-	//タイトルカメラ
-	CameraManager::GetInstance()->AddCamera("titleCamera");
 	//デバッグカメラ
 	CameraManager::GetInstance()->AddCamera("debugCamera");
+	//タイトルカメラ
+	CameraManager::GetInstance()->AddCamera("titleCamera");
+	//ゲームカメラ
+	CameraManager::GetInstance()->AddCamera("gameCamera");
 }

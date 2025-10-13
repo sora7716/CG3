@@ -1,6 +1,6 @@
 #include "Player.h"
 #include "engine/3d/Object3d.h"
-#include "engine/camera/Camera.h"
+#include "engine/camera/CameraManager.h"
 #include "engine/debug/ImGuiManager.h"
 #include "engine/input/Input.h"
 #include "engine/math/func/Math.h"
@@ -50,8 +50,13 @@ void Player::Finalize() {
 }
 
 //カメラのセッター
-void Player::SetCamera(Camera* camera) {
-	object3d_->SetCamera(camera);
+void Player::SetCamera(const std::string& cameraName) {
+	object3d_->SetCamera(CameraManager::GetInstance()->FindCamera(cameraName));
+}
+
+//トランスフォームデータのゲッター
+TransformData Player::GetTransformData() {
+	return gameObject_.transfromData;
 }
 
 //移動

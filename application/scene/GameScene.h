@@ -1,6 +1,7 @@
 #pragma once
 #include "engine/scene/IScene.h"
 #include "application/actor/Player.h"
+#include "application/actor/CameraController.h"
 
 /// <summary>
 /// ゲームシーン
@@ -41,5 +42,7 @@ public://メンバ関数
 private://メンバ変数
 	//プレイヤー
 	std::unique_ptr<Player>player_ = nullptr;
+	//追従カメラ
+	std::unique_ptr<CameraController>cameraController_ = nullptr;
 };
 

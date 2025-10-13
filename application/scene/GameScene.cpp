@@ -9,7 +9,13 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	//プレイヤー
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
-	player_->SetCamera(debugCamera_->GetCamera());
+	player_->SetCamera("gameCamera");
+
+	//追従カメラ
+	cameraController_ = std::make_unique<CameraController>();
+	cameraController_->Initialize("gameCamera");
+	cameraController_->SetTarget(player_.get());
+	cameraController_->Reset();
 }
 
 //更新
@@ -19,6 +25,9 @@ void GameScene::Update() {
 
 	//プレイヤー
 	player_->Update();
+
+	//追従カメラ
+	cameraController_->Update();
 
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
