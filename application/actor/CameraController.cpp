@@ -3,6 +3,7 @@
 #include "application/actor/Player.h"
 #include "engine/math/RenderingData.h"
 #include "engine/debug/ImGuiManager.h"
+#include "engine/3d/Object3d.h"
 #include <algorithm>
 
 //初期化
@@ -33,6 +34,12 @@ void CameraController::Update() {
 	//制限した移動範囲を設定
 	camera_->SetTranslate(cameraTranslate);
 
+	//カメラの角度のセッター
+	camera_->SetRotate(cameraRotate_);
+
+	//FovYのセッター
+	camera_->SetFovY(fovY_);
+
 	//行列を更新
 	camera_->Update();
 }
@@ -48,7 +55,9 @@ void CameraController::Reset() {
 //デバッグ
 void CameraController::Debug() {
 #ifdef USE_IMGUI
-	ImGui::Text("translate{x:%0.2f,y:%0.2f}", camera_->GetTranslate().x, camera_->GetTranslate().y);
+	ImGui::DragFloat3("rotate", &cameraRotate_.x, 0.01f);
+	ImGui::DragFloat3("position", &targetOffset_.x, 0.1f);
+	ImGui::DragFloat("fovY", &fovY_, 0.01f);
 #endif // USE_IMGUI
 }
 

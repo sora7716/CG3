@@ -11,14 +11,13 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	//プレイヤー
 	player_ = std::make_unique<Player>();
 	player_->Initialize(camera_,"player");
-	player_->SetCamera(camera_);
 
 	//追従カメラ
 	cameraController_ = std::make_unique<CameraController>();
 	cameraController_->Initialize(camera_);
 	cameraController_->SetTarget(player_.get());
 	cameraController_->Reset();
-	cameraController_->SetMovableArea({ 0.0f,10.0f,0.0f,10.0f });
+	cameraController_->SetMovableArea({ 0.0f,30.0f,0.0f,30.0f });
 
 	//地面
 	ground_ = std::make_unique<Ground>();
@@ -77,7 +76,7 @@ void GameScene::Update() {
 }
 
 //描画
-void GameScene::Draw() {
+void GameScene::Draw() {	
 	//プレイヤー
 	player_->Draw();
 

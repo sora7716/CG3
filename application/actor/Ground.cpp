@@ -3,51 +3,77 @@
 #include "engine/3d/Object3d.h"
 
 //初期化
-void Ground::Initialize(Camera* camera,const std::string& modelName) {
-	//3Dモデル
-	groundData_.object = new Object3d();
-	groundData_.object->Initialize();
-	groundData_.object->SetModel(modelName);
+void Ground::Initialize(Camera* camera, const std::string& modelName) {
+	groundDates_.resize(kBlockCount.y);
+	for (int32_t i = 0; i < kBlockCount.y; i++) {
+		groundDates_[i].resize(kBlockCount.x);
+		for (int32_t j = 0; j < kBlockCount.x; j++) {
+			//3Dモデル
+			groundDates_[i][j].object = new Object3d();
+			groundDates_[i][j].object->Initialize();
+			groundDates_[i][j].object->SetModel(modelName);
 
-	//カメラの設定
-	groundData_.object->SetCamera(camera);
+			//カメラの設定
+			groundDates_[i][j].object->SetCamera(camera);
 
-	//トランスフォームデータの初期化
-	groundData_.transform.scale = Vector3::MakeAllOne();
-	groundData_.transform.rotate = {};
-	groundData_.transform.translate = {};
+			//トランスフォームデータの初期化
+			groundDates_[i][j].transform.scale = Vector3::MakeAllOne();
+			groundDates_[i][j].transform.rotate = {};
+			groundDates_[i][j].transform.translate = { 2.0f * j,-2.0f,2.0f * i };
+		}
+	}
 }
 
 //更新
 void Ground::Update() {
-	//トランスフォームデータのセット
-	groundData_.object->SetTransform(groundData_.transform);
+	for (std::vector<GroundData>& groundBlockLine : groundDates_) {
+		for (GroundData& groundBlock : groundBlockLine) {
+			//トランスフォームデータのセット
+			groundBlock.object->SetTransform(groundBlock.transform);
 
-	//3Dオブジェクトの更新
-	groundData_.object->Update();
+			//3Dオブジェクトの更新
+			groundBlock.object->Update();
+		}
+	}
 }
 
 //描画
 void Ground::Draw() {
-	//3Dオブジェクトの描画
-	groundData_.object->Draw();
+	for (std::vector<GroundData>& groundBlockLine : groundDates_) {
+		for (GroundData& groundBlock : groundBlockLine) {
+			//3Dオブジェクトの描画
+			groundBlock.object->Draw();
+		}
+	}
 }
 
 
 //終了
 void Ground::Finalize() {
 	//3Dオブジェクトを解放
-	delete groundData_.object;
-	groundData_.object = nullptr;
+	for (std::vector<GroundData>& groundBlockLine : groundDates_) {
+		for (GroundData& groundBlock : groundBlockLine) {
+			delete groundBlock.object;
+			groundBlock.object = nullptr;
+		}
+	}
+	groundDates_.clear();
 }
 
 //カメラのセッター
 void Ground::SetCamera(Camera* camera) {
-	//カメラの設定
-	groundData_.object->SetCamera(camera);
+	for (std::vector<GroundData>& groundBlockLine : groundDates_) {
+		for (GroundData& groundBlock : groundBlockLine) {
+			groundBlock.object->SetCamera(camera);
+		}
+	}
 }
 
 //テクスチャのセッター
 void Ground::SetTexture(const std::string& textureName) {
-	groundData_.object->SetTexture(textureName);
+	for (std::vector<GroundData>& groundBlockLine : groundDates_) {
+		for (GroundData& groundBlock : groundBlockLine) {
+			groundBlock.object->SetTexture(textureName);
+		}
+	}
 }

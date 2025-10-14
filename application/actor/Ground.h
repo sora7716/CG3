@@ -1,6 +1,7 @@
 #pragma once
 #include "engine/math/RenderingData.h"
 #include <string>
+#include <vector>
 
 //カメラ
 class Camera;
@@ -60,8 +61,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="textureName">テクスチャ名</param>
 	void SetTexture(const std::string& textureName);
+private://定数
+	//ブロックの数
+	static inline const Vector2Int kBlockCount = { 30,30 };
 private://メンバ変数
-	GroundData groundData_ = { nullptr,{} };
+	//地面のデータ
+	std::vector<std::vector<GroundData>>groundDates_;
 };
 
 

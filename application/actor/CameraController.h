@@ -77,9 +77,13 @@ private://メンバ変数
 	Player* target_ = nullptr;
 	//追従対象とカメラの座標の差(オフセット)
 	Vector3 targetOffset_ = { 0.0f,0.0f,-15.0f };
+	//カメラの角度
+	Vector3 cameraRotate_ = {};
 	//移動範囲
 	Rect movableArea_ = { 0.0f,100.0f,0.0f,100.0f };
 	//目的地
 	Vector3 goalPosition_ = {};
+	//FovY
+	float fovY_ = 0.45f;
 };
 

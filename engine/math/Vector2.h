@@ -1,4 +1,6 @@
 #pragma once
+#include <cstdint>
+
 struct Vector3;
 /// <summary>
 /// 2次元ベクトル
@@ -41,6 +43,6 @@ struct Vector2 final {
 /// 2次元ベクトルの整数型
 /// </summary>
 struct Vector2Int final {
-	int x;
-	int y;
+	int32_t x;
+	int32_t y;
 };
