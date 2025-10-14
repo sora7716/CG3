@@ -25,6 +25,7 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	object3d_->Initialize();
 	object3d_->SetModel("test");
 	object3d_->SetCamera(camera_);
+	object3d_->SetTexture("white1x1.png");
 }
 
 //更新

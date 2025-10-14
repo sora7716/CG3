@@ -15,7 +15,7 @@ void Player::Initialize() {
 		.rotate = {},
 		.translate = {}
 	};
-	gameObject_.velocity = {2.0f,0.0f,2.0f};
+	gameObject_.velocity = {5.0f,0.0f,5.0f};
 	gameObject_.acceleration = { 0.1f,0.0f,0.1f };
 	//3Dオブジェクトの生成と初期化
 	object3d_ = new Object3d();
