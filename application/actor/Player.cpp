@@ -6,9 +6,10 @@
 #include "engine/math/func/Math.h"
 
 //初期化
-void Player::Initialize() {
+void Player::Initialize(Camera* camera, const std::string& modelName) {
 	//入力
 	input_ = Input::GetInstance();
+
 	//トランスフォームの初期化
 	gameObject_.transfromData = {
 		.scale = Vector3::MakeAllOne(),
@@ -17,10 +18,12 @@ void Player::Initialize() {
 	};
 	gameObject_.velocity = {5.0f,0.0f,5.0f};
 	gameObject_.acceleration = { 0.1f,0.0f,0.1f };
+
 	//3Dオブジェクトの生成と初期化
 	object3d_ = new Object3d();
 	object3d_->Initialize();
-	object3d_->SetModel("cube");
+	object3d_->SetModel(modelName);
+	object3d_->SetCamera(camera);
 }
 
 //更新

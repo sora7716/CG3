@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application\actor\CameraController.cpp" />
+    <ClCompile Include="application\actor\Ground.cpp" />
     <ClCompile Include="application\actor\GameObjectList.cpp" />
     <ClCompile Include="application\actor\Player.cpp" />
     <ClCompile Include="application\scene\GameScene.cpp" />
@@ -65,6 +66,7 @@
   <ItemGroup>
     <ClInclude Include="application\actor\ActorData.h" />
     <ClInclude Include="application\actor\CameraController.h" />
+    <ClInclude Include="application\actor\Ground.h" />
     <ClInclude Include="application\actor\GameObjectList.h" />
     <ClInclude Include="application\actor\Player.h" />
     <ClInclude Include="application\scene\GameScene.h" />

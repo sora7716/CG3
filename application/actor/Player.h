@@ -1,5 +1,6 @@
 #pragma once
 #include "ActorData.h"
+#include <string>
 
 // 前方宣言
 class Object3d;
@@ -24,7 +25,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	/// <param name="camera">カメラ</param>
+	/// <param name="modelName">モデル名</param>
+	void Initialize(Camera*camera,const std::string& modelName);
 
 	/// <summary>
 	/// 更新

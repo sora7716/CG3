@@ -122,7 +122,7 @@ public://メンバ関数
 	void SetParent(const WorldTransform* parent);
 
 	/// <summary>
-	/// テクスチャの変更(.pngはいらない)
+	/// テクスチャの変更
 	/// </summary>
 	/// <param name="filePath">ファイルパス</param>
 	void SetTexture(const std::string& filePath);

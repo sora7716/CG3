@@ -37,16 +37,16 @@ void GameObjectList::LoadAudio() {
 //OBJファイルの読み込み
 void GameObjectList::LoadModel() {
 	//モデルの読み込み
-	//立方体
-	ModelManager::GetInstance()->LoadOBJModel("cube", "cube", "cube");
+	//プレイヤー
+	ModelManager::GetInstance()->LoadOBJModel("player", "cube", "cube");
+	//地面
+	ModelManager::GetInstance()->LoadOBJModel("ground", "cube", "cube");
 	//球
 	ModelManager::GetInstance()->LoadOBJModel("sphere", "sphere", "sphere");
 	//平面
 	ModelManager::GetInstance()->LoadOBJModel("plane", "plane", "plane");
 	//軸
 	ModelManager::GetInstance()->LoadOBJModel("test", "base", "axis");
-	//六角形
-	//ModelManager::GetInstance()->LoadOBJModel("aa", "aa", "aa");
 }
 
 //カメラの生成

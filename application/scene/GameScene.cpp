@@ -10,7 +10,7 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();
-	player_->Initialize();
+	player_->Initialize(camera_,"player");
 	player_->SetCamera(camera_);
 
 	//追従カメラ
@@ -20,12 +20,10 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	cameraController_->Reset();
 	cameraController_->SetMovableArea({ 0.0f,10.0f,0.0f,10.0f });
 
-	//3Dオブジェクト
-	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize();
-	object3d_->SetModel("test");
-	object3d_->SetCamera(camera_);
-	object3d_->SetTexture("white1x1.png");
+	//地面
+	ground_ = std::make_unique<Ground>();
+	ground_->Initialize(camera_, "ground");
+	ground_->SetTexture("white1x1.png");
 }
 
 //更新
@@ -39,8 +37,8 @@ void GameScene::Update() {
 	//追従カメラ
 	cameraController_->Update();
 
-	//3Dオブジェクト
-	object3d_->Update();
+	//地面
+	ground_->Update();
 
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
@@ -73,7 +71,7 @@ void GameScene::Update() {
 		camera_ = CameraManager::GetInstance()->FindCamera("gameCamera");
 	}
 	player_->SetCamera(camera_);
-	object3d_->SetCamera(camera_);
+	ground_->SetCamera(camera_);
 #endif // _DEBUG
 
 }
@@ -83,14 +81,17 @@ void GameScene::Draw() {
 	//プレイヤー
 	player_->Draw();
 
-	//3Dオブジェクト
-	object3d_->Draw();
+	//地面
+	ground_->Draw();
 }
 
 //終了
 void GameScene::Finalize() {
 	//プレイヤー
 	player_->Finalize();
+
+	//地面
+	ground_->Finalize();
 
 	//シーンのインターフェース
 	IScene::Finalize();

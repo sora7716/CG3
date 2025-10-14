@@ -47,8 +47,14 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 
 	//ミップマップの作成
 	DirectX::ScratchImage mipImages{};
-	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
-		assert(SUCCEEDED(hr));
+
+	if (image.GetMetadata().width <= 1 && image.GetMetadata().height <= 1) {
+		DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, mipImages);
+	} else {
+		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+	}
+
+	assert(SUCCEEDED(hr));
 
 	//テクスチャ枚数上限チェック
 	assert(srvManager_->TextureLimitCheck(kSRVIndexTop));
@@ -67,7 +73,7 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 }
 
 //テクスチャファイルのアンロード
-void TextureManager::UnloadTexture(const std::string& filePath){
+void TextureManager::UnloadTexture(const std::string& filePath) {
 	auto it = textureDatas_.find(filePath);
 	if (it != textureDatas_.end()) {
 		SRVManager::GetInstance()->Free(it->second.srvIndex);//srvIndexの解放

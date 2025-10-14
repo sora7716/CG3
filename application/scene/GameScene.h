@@ -2,6 +2,7 @@
 #include "engine/scene/IScene.h"
 #include "application/actor/Player.h"
 #include "application/actor/CameraController.h"
+#include "application/actor/Ground.h"
 
 /// <summary>
 /// ゲームシーン
@@ -49,7 +50,7 @@ private://メンバ変数
 	//追従カメラ
 	std::unique_ptr<CameraController>cameraController_ = nullptr;
 
-	//3Dオブジェクト
-	std::unique_ptr<Object3d>object3d_ = nullptr;
+	//地面
+	std::unique_ptr<Ground>ground_ = nullptr;
 };
 
