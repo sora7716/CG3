@@ -30,8 +30,10 @@ PixelShaderOutput main(VertexShaderOutput input) {
     if (gMaterial.enableLighring != 0) {
         //lambert
         // float cos = saturate(dot(normalize(input.normal), -gDirectionalLight.direction));
+        
         //half lambert
         float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
+        //NdotL = step(0.25f, NdotL);
         float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
         output.color.rgb = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
         output.color.a = gMaterial.color.a * textureColor.a;

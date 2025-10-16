@@ -10,6 +10,12 @@
 void CameraController::Initialize(Camera* camera) {
 	//カメラを受け取る
 	camera_ = camera;
+	//角度
+	cameraRotate_ = { 0.51f,0.0f,0.0f };
+	//位置のオフセット
+	targetOffset_ = { 0.0f,30.1f,-8.0f };
+	//FovY
+	fovY_ = 1.0f;
 }
 
 //更新

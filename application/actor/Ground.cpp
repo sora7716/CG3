@@ -19,7 +19,7 @@ void Ground::Initialize(Camera* camera, const std::string& modelName) {
 			//トランスフォームデータの初期化
 			groundDates_[i][j].transform.scale = Vector3::MakeAllOne();
 			groundDates_[i][j].transform.rotate = {};
-			groundDates_[i][j].transform.translate = { 2.0f * j,-2.0f,2.0f * i };
+			groundDates_[i][j].transform.translate = { 2.1f * j,-2.0f,2.1f * i };
 		}
 	}
 }
