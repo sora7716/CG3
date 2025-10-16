@@ -41,9 +41,10 @@ void Player::Draw() {
 	Move();
 }
 
-//デバッグテキスト
-void Player::DebugText() {
+//デバッグ
+void Player::Debug() {
 	ImGuiManager::GetInstance()->DragTransfrom(gameObject_.transfromData);
+	object3d_->Debug();
 }
 
 //終了

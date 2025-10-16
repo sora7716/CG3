@@ -40,9 +40,9 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// デバッグテキスト
+	/// デバッグ
 	/// </summary>
-	void DebugText();
+	void Debug();
 
 	/// <summary>
 	/// 終了

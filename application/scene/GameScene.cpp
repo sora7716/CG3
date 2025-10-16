@@ -45,7 +45,7 @@ void GameScene::Update() {
 
 	//プレイヤー
 	ImGui::Begin("Player");
-	player_->DebugText();
+	player_->Debug();
 	ImGui::End();
 
 	//デバッグカメラ

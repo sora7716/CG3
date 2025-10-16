@@ -86,6 +86,12 @@ public://メンバ関数
     /// <returns>モデルデータ</returns>
 	static ModelData LoadObjFile(const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename);
 
+	/// <summary>
+	/// マテリアルのセッター
+	/// </summary>
+	/// <param name="materialData">マテリアルデータ</param>
+	void SetMaterial(const Material& materialData);
+
 private://メンバ関数
 	/// <summary>
 	/// 頂点リソースの生成

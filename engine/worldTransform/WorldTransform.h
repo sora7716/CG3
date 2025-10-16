@@ -138,6 +138,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>平行移動</returns>
 	const Vector3& GetTranslate()const;
+
+	/// <summary>
+	/// カメラのゲッター
+	/// </summary>
+	/// <returns>カメラ</returns>
+	Camera* GetCamera();
 private://メンバ関数
 	/// <summary>
 	/// 座標変換行列リソースの生成

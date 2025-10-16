@@ -41,15 +41,26 @@ public://メンバ関数
 	void CreateDirectionLight();
 
 	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
-
-	/// <summary>
 	/// DirectionalLightのセッター
 	/// </summary>
 	/// <param name="directionalLightData">DirectionalLightデータ</param>
 	void SetDirectionalLightData(const DirectionalLight& directionalLightData);
+
+	/// <summary>
+	/// カメラリソースの生成
+	/// </summary>
+	void CreateCameraResource(const Vector3& cameraTranslate);
+
+	/// <summary>
+	/// カメラの位置のセッター
+	/// </summary>
+	/// <param name="cameraTranslate"></param>
+	void SetCameraForGPU(const Vector3& cameraTranslate);
+
+	/// <summary>
+	/// 終了
+	/// </summary>
+	void Finalize();
 
 	/// <summary>
 	/// DirectionalLightのリソースのゲッター
@@ -105,8 +116,10 @@ private://メンバ変数
 	GraphicsPipeline* makeGraphicsPipeline_ = nullptr;
 	//バッファリソース
 	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//光源
+	ComPtr<ID3D12Resource> cameraResource_ = nullptr;//カメラ
 	//バッファリソース内のデータを指すポインタ
 	DirectionalLight* directionalLightData_ = nullptr;//光源
+	CameraForGPU* cameraForGPU_ = nullptr;//カメラ
 	//ブレンド
 	Blend* blend_ = nullptr;
 	BlendMode blendMode_ = BlendMode::kNone;

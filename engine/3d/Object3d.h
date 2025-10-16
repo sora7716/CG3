@@ -45,6 +45,11 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void Debug();
+
+	/// <summary>
 	/// 親子付け
 	/// </summary>
 	/// <param name="parent">親</param>
@@ -195,5 +200,10 @@ private://メンバ変数
 	WorldTransform* worldTransform_ = nullptr;
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
+
+	//マテリアル
+	Material material_ = {};
+	//DirectionalLight
+	DirectionalLight directionalLight_ = {};
 };
 

@@ -9,36 +9,42 @@
 #include <vector>
 
 //頂点データ
-typedef struct VertexData {
+struct VertexData {
 	Vector4 position;//直行座標
 	Vector2 texcoord;//UV座標
 	Vector3 normal;//法線
-}VertexData;
+};
 
 //マテリアル
-typedef struct Material {
+struct Material {
 	Vector4 color;//色
 	int32_t enableLighting;//ライティングするかどうかのフラグ
 	float padding[3];
 	Matrix4x4 uvTransform;//UVTransform
-}Material;
+	float shininess;//光沢度
+};
 
 //平行光源
-typedef struct DirectionalLight {
+struct DirectionalLight {
 	Vector4 color;//ライトの色
 	Vector3 direction;//ライトの向き
 	float intensity;//輝度
-}DirectionalLight;
+};
 
 //マテリアルデータ
-typedef struct MaterialData {
+struct MaterialData {
 	std::string textureFilePath;
 	uint32_t srvIndex;
-}MaterialData;
+};
 
 
 //モデルデータの構造体
-typedef struct ModelData {
+struct ModelData {
 	std::vector<VertexData> vertices;
 	MaterialData material;
-}ModelData;
+};
+
+//カメラのデータの構造体
+struct CameraForGPU {
+	Vector3 worldPosition;
+};

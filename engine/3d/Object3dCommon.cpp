@@ -39,6 +39,8 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 void Object3dCommon::DrawSetting() {
 	//ルートシグネイチャをセットするコマンド
 	directXBase_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
+	//カメラCBufferの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource_.Get()->GetGPUVirtualAddress());
 	//プリミティブトポロジーをセットするコマンド
 	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
@@ -51,7 +53,7 @@ void Object3dCommon::CreateDirectionLight() {
 	directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData_));
 	directionalLightData_->color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLightData_->direction = { 0.0f,-1.0f,0.0f };
-	directionalLightData_->intensity = 1.0f;
+	directionalLightData_->intensity = 10.0f;
 }
 
 //DirectionalLightのセッター
@@ -59,6 +61,20 @@ void Object3dCommon::SetDirectionalLightData(const DirectionalLight& directional
 	directionalLightData_->color = directionalLightData.color;
 	directionalLightData_->direction = directionalLightData.direction;
 	directionalLightData_->intensity = directionalLightData.intensity;
+}
+
+//カメラリソースの生成
+void Object3dCommon::CreateCameraResource(const Vector3& cameraTranslate) {
+	//光源のリソースを作成
+	cameraResource_ = directXBase_->CreateBufferResource(sizeof(CameraForGPU));
+	//光源データの書きこみ
+	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPU_));
+	cameraForGPU_->worldPosition = cameraTranslate;
+}
+
+//カメラの位置のセッター
+void Object3dCommon::SetCameraForGPU(const Vector3& cameraTranslate) {
+	cameraForGPU_->worldPosition = cameraTranslate;
 }
 
 //DirectionalLightのリソースのゲッター
@@ -75,6 +91,7 @@ DirectXBase* Object3dCommon::GetDirectXBase() const {
 std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> Object3dCommon::GetGraphicsPipelineStates() const {
 	return graphicsPipelineStates_;
 }
+
 //終了
 void Object3dCommon::Finalize() {
 	delete blend_;

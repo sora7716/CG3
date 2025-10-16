@@ -62,7 +62,7 @@ const Vector4& Model::GetColor() const {
 }
 
 //モデルデータのゲッター
-const ModelData& Model::GetModelData() const{
+const ModelData& Model::GetModelData() const {
 	// TODO: return ステートメントをここに挿入します
 	return modelData_;
 }
@@ -163,6 +163,14 @@ ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string
 	return modelData;
 }
 
+//マテリアルのセッター
+void Model::SetMaterial(const Material& materialData) {
+	materialData_->color = materialData.color;
+	materialData_->enableLighting = materialData.enableLighting;
+	materialData_->shininess = materialData.shininess;
+	materialData_->uvTransform = materialData.uvTransform;
+}
+
 
 //頂点リソースの生成
 void Model::CreateVertexResource() {
@@ -211,4 +219,5 @@ void Model::CreateMaterialResource() {
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	materialData_->enableLighting = true;
 	materialData_->uvTransform = Matrix4x4::Identity4x4();
+	materialData_->shininess = 0.1f;
 }

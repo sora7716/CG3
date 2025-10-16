@@ -6,6 +6,7 @@
 #include "engine/3d/ModelManager.h"
 #include "engine/worldTransform/WorldTransform.h"
 #include "engine/math/func/Rendering.h"
+#include "engine/debug/ImGuiManager.h"
 #include <cassert>
 
 //デストラクタ
@@ -26,13 +27,26 @@ void Object3d::Initialize() {
 	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
 	//カメラにデフォルトカメラを代入
 	worldTransform_->SetCamera(Object3dCommon::GetInstance()->GetDefaultCamera());
+	//カメラをセット
+	Object3dCommon::GetInstance()->CreateCameraResource(worldTransform_->GetCamera()->GetTranslate());
+
+	//マテリアルの初期化
+	material_.color = { 1.0f,1.0f,1.0f,1.0f };
+	material_.enableLighting = true;
+	material_.uvTransform = Matrix4x4::Identity4x4();
+	material_.shininess = 10.0f;
+
+	//DirectionalLightの初期化
+	directionalLight_.color = { 1.0f,1.0f,1.0f,1.0f };
+	directionalLight_.direction = { 0.0f,-1.0f,0.0f };
+	directionalLight_.intensity = 1.0f;
 }
 
 
 //更新
 void Object3d::Update() {
-	//震度バッファの初期化
-	directXBase_->InitializeDepthStencilForObject3d();
+	////震度バッファの初期化
+	//directXBase_->InitializeDepthStencilForObject3d();
 	//ワールドトランスフォーム
 	worldTransform_->Update();
 	if (model_) {
@@ -58,6 +72,20 @@ void Object3d::Draw() {
 	}
 }
 
+//デバッグ
+void Object3d::Debug() {
+#ifdef USE_IMGUI
+	ImGui::ColorEdit4("color", &material_.color.x);
+	ImGui::DragFloat("shininess", &material_.shininess, 0.1f);
+	ImGui::ColorEdit4("light.color", &directionalLight_.color.x);
+	ImGui::DragFloat3("light.direction", &directionalLight_.direction.x, 0.1f);
+	ImGui::DragFloat("light.intensity", &directionalLight_.intensity, 0.1f);
+	Object3dCommon::GetInstance()->SetDirectionalLightData(directionalLight_);
+	model_->SetMaterial(material_);
+#endif // USE_IMGUI
+
+}
+
 //親子付け
 void Object3d::Compose(const WorldTransform* parent) {
 	worldTransform_->Compose(parent);
@@ -76,6 +104,7 @@ void Object3d::SetModel(const std::string& name) {
 //カメラのセッター
 void Object3d::SetCamera(Camera* camera) {
 	worldTransform_->SetCamera(camera);
+	Object3dCommon::GetInstance()->SetCameraForGPU(camera->GetTranslate());
 }
 
 // スケールのセッター

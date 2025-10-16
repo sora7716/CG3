@@ -118,6 +118,11 @@ const Vector3& WorldTransform::GetTranslate() const {
 	return transform_.translate;
 }
 
+//カメラのゲッター
+Camera* WorldTransform::GetCamera() {
+	return camera_;
+}
+
 //座標変換行列リソースの生成
 void WorldTransform::CreateTransformationMatrixResource() {
 	//座標変換行列リソースを作成する
@@ -140,16 +145,14 @@ void WorldTransform::UpdateTransform() {
 		local = Rendering::MakeAffineMatrix(transform_);
 		worldMatrix_ = local;
 		worldMatrix_ = parent_->worldMatrix_ * worldMatrix_;
-	}
-	else {
+	} else {
 		worldMatrix_ = local;
 	}
 	//wvpの書き込み
 	if (camera_) {
 		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
 		wvpData_->WVP = worldMatrix_ * viewProjectionMatrix;
-	}
-	else {
+	} else {
 		wvpData_->WVP = worldMatrix_;
 	}
 	//ワールド行列を送信
