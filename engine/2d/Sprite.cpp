@@ -69,6 +69,8 @@ void Sprite::Draw() {
 	worldTransform_->Draw();
 	//平光源CBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, SpriteCommon::GetInstance()->GetDirectionalLightResource()->GetGPUVirtualAddress());
+	//点光源のCBufferの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(5, SpriteCommon::GetInstance()->GetPointLightResource()->GetGPUVirtualAddress());
 	//VertexBufferViewの設定
 	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
 	//IndexBufferViewを設定

@@ -65,6 +65,8 @@ void Object2d::Draw() {
 	worldTransform_->Draw();
 	//平光源CBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, Object2dCommon::GetInstance()->GetDirectionalLightResource()->GetGPUVirtualAddress());
+	//点光源のCBufferの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(5, Object2dCommon::GetInstance()->GetPointLightResource()->GetGPUVirtualAddress());
 	//IndexBufferViewの設定
 	directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);//IBVを設定
 	//VertexBufferViewの設定

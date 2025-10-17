@@ -18,13 +18,19 @@ Object3d::~Object3d() {
 void Object3d::Initialize() {
 	//DirectXの基盤部分を受け取る
 	directXBase_ = Object3dCommon::GetInstance()->GetDirectXBase();
-	//光源の生成
+
+	//平行光源の生成
 	Object3dCommon::GetInstance()->CreateDirectionLight();
+	//点光源の生成
+	Object3dCommon::GetInstance()->CreatePointLight();
+
 	//ワールドトランスフォームの生成、初期化
 	worldTransform_ = new WorldTransform();
 	worldTransform_->Initialize(directXBase_, TransformMode::k3d);
+
 	//uv座標
 	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
+
 	//カメラにデフォルトカメラを代入
 	worldTransform_->SetCamera(Object3dCommon::GetInstance()->GetDefaultCamera());
 	//カメラをセット
@@ -53,14 +59,20 @@ void Object3d::Update() {
 void Object3d::Draw() {
 	//3Dオブジェクトの共通部分
 	Object3dCommon::GetInstance()->DrawSetting();
+	
 	//PSOの設定
 	auto pso = Object3dCommon::GetInstance()->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
+	
 	//ワールドトランスフォーム
 	worldTransform_->Draw();
+
 	//平光源CBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, Object3dCommon::GetInstance()->GetDirectionalLightResource()->GetGPUVirtualAddress());
+	//点光源のCBufferの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(5, Object3dCommon::GetInstance()->GetPointLightResource()->GetGPUVirtualAddress());
+
 	//3Dモデルが割り当てられていれば描画
 	if (model_) {
 		model_->Draw();

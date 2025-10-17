@@ -41,6 +41,8 @@ void GameObjectList::LoadModel() {
 	ModelManager::GetInstance()->LoadOBJModel("player", "sphere", "sphere");
 	//地面
 	ModelManager::GetInstance()->LoadOBJModel("ground", "hexagon", "hexagon");
+	//フィールド
+	ModelManager::GetInstance()->LoadOBJModel("field", "terrain", "terrain");
 	//球
 	ModelManager::GetInstance()->LoadOBJModel("sphere", "sphere", "sphere");
 	//平面

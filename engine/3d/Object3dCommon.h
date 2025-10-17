@@ -41,9 +41,14 @@ public://メンバ関数
 	void Debug();
 
 	/// <summary>
-	/// 光源の生成
+	/// 平行光源の生成
 	/// </summary>
 	void CreateDirectionLight();
+
+	/// <summary>
+	/// 点光源の生成
+	/// </summary>
+	void CreatePointLight();
 
 	/// <summary>
 	/// カメラリソースの生成
@@ -66,6 +71,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>DirectionalLightのリソース</returns>
 	ID3D12Resource* GetDirectionalLightResource()const;
+
+	/// <summary>
+    /// PointLightのリソースのゲッター
+    /// </summary>
+    /// <returns>PointLightのリソース</returns>
+	ID3D12Resource* GetPointLightResource()const;
 
 	/// <summary>
 	/// DirectXの基盤のゲッター
@@ -117,14 +128,18 @@ private://メンバ変数
 	GraphicsPipeline* makeGraphicsPipeline_ = nullptr;
 
 	//バッファリソース
-	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//光源
+	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//平行光源
+	ComPtr<ID3D12Resource> pointLightResource_ = nullptr;//点光源
 	ComPtr<ID3D12Resource> cameraResource_ = nullptr;//カメラ
 	//バッファリソース内のデータを指すポインタ
-	DirectionalLight* directionalLightPtr_ = nullptr;//光源
+	DirectionalLight* directionalLightPtr_ = nullptr;//平行光源
+	PointLight* pointLightPtr_ = nullptr;//点光源
 	CameraForGPU* cameraForGPU_ = nullptr;//カメラ
 
-	//光源
+	//平行光源
 	DirectionalLight directionalLightData_ = {};
+	//点光源
+	PointLight pointLightData_ = {};
 
 	//ブレンド
 	Blend* blend_ = nullptr;

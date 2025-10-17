@@ -41,6 +41,11 @@ public://メンバ関数
 	void CreateDirectionLight();
 
 	/// <summary>
+    /// 点光源
+    /// </summary>
+	void CreatePointLight();
+
+	/// <summary>
 	/// 終了
 	/// </summary>
 	void Finalize();
@@ -56,6 +61,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>DirectionalLightのリソース</returns>
 	ID3D12Resource* GetDirectionalLightResource()const;
+
+	/// <summary>
+	/// PointLightのリソースのゲッター
+	/// </summary>
+	/// <returns>PointLightのリソース</returns>
+	ID3D12Resource* GetPointLightResource()const;
 
 	/// <summary>
 	/// DirectXの基盤のゲッター
@@ -103,10 +114,14 @@ private://メンバ変数
 	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> graphicsPipelineStates_ = { nullptr };
 	//グラフィックスパイプライン
 	GraphicsPipeline* makeGraphicsPipeline_ = nullptr;
+	
 	//バッファリソース
-	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//光源
+	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//平行光源
+	ComPtr<ID3D12Resource> pointLightResource_ = nullptr;//点光源
 	//バッファリソース内のデータを指すポインタ
-	DirectionalLight* directionalLightData_ = nullptr;//光源
+	DirectionalLight* directionalLightPtr_ = nullptr;//平行光源
+	PointLight* pointLightPtr_ = nullptr;//点光源
+
 	//ブレンド
 	Blend* blend_ = nullptr;
 	BlendMode blendMode_ = BlendMode::kNone;

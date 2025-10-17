@@ -60,11 +60,15 @@ void Object3dCommon::Debug() {
 	ImGui::DragFloat("light.intensity", &directionalLightData_.intensity, 0.1f);
 	ImGuiManager::CheckBoxToInt("isLambert", directionalLightData_.isLambert);
 	ImGuiManager::CheckBoxToInt("isBlingPhong", directionalLightData_.isBlinnPhong);
+	ImGui::ColorEdit4("pointLight.color", &pointLightData_.color.x);
+	ImGui::DragFloat3("pointLight.position", &pointLightData_.position.x, 0.1f);
+	ImGui::DragFloat("pointLight.intensity", &pointLightData_.intensity, 0.1f);
 	ImGui::End();
 	*directionalLightPtr_ = directionalLightData_;
+	*pointLightPtr_ = pointLightData_;
 }
 
-//光源の生成
+//平行光源の生成
 void Object3dCommon::CreateDirectionLight() {
 	//光源のリソースを作成
 	directionalLightResource_ = directXBase_->CreateBufferResource(sizeof(DirectionalLight));
@@ -75,6 +79,17 @@ void Object3dCommon::CreateDirectionLight() {
 	directionalLightPtr_->intensity = 10.0f;
 	directionalLightPtr_->isLambert = false;
 	directionalLightPtr_->isBlinnPhong = true;
+}
+
+//点光源の生成
+void Object3dCommon::CreatePointLight() {
+	//光源のリソースを作成
+	pointLightResource_ = directXBase_->CreateBufferResource(sizeof(PointLight));
+	//光源データの書きこみ
+	pointLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointLightPtr_));
+	pointLightPtr_->color = { 1.0f,1.0f,1.0f,1.0f };
+	pointLightPtr_->position = { 0.0f,-1.0f,0.0f };
+	pointLightPtr_->intensity = 10.0f;
 }
 
 //カメラリソースの生成
@@ -94,6 +109,11 @@ void Object3dCommon::SetCameraForGPU(const Vector3& cameraTranslate) {
 //DirectionalLightのリソースのゲッター
 ID3D12Resource* Object3dCommon::GetDirectionalLightResource()const {
 	return directionalLightResource_.Get();
+}
+
+//PointLightのリソースのゲッター
+ID3D12Resource* Object3dCommon::GetPointLightResource() const {
+	return pointLightResource_.Get();
 }
 
 //DirectXの基盤のゲッター

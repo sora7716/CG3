@@ -52,5 +52,9 @@ private://メンバ変数
 
 	//地面
 	std::unique_ptr<Ground>ground_ = nullptr;
+
+	//フィールド
+	std::unique_ptr<Object3d>object3d_ = nullptr;
+	TransformData transformData_ = { {1.0f,1.0f,1.0f},{},{} };
 };
 

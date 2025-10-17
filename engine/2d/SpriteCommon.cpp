@@ -48,27 +48,43 @@ void SpriteCommon::LoadTexture(const std::string& filename) {
 	TextureManager::GetInstance()->LoadTexture(filename);
 }
 
-//光源の生成
+//平行光源の生成
 void SpriteCommon::CreateDirectionLight() {
 	//光源のリソースを作成
 	directionalLightResource_ = directXBase_->CreateBufferResource(sizeof(DirectionalLight));
 	//光源データの書きこみ
-	directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData_));
-	directionalLightData_->color = { 1.0f,1.0f,1.0f,1.0f };
-	directionalLightData_->direction = { 0.0f,-1.0f,0.0f };
-	directionalLightData_->intensity = 1.0f;
+	directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightPtr_));
+	directionalLightPtr_->color = { 1.0f,1.0f,1.0f,1.0f };
+	directionalLightPtr_->direction = { 0.0f,-1.0f,0.0f };
+	directionalLightPtr_->intensity = 1.0f;
+}
+
+//点光源の生成
+void SpriteCommon::CreatePointLight() {
+	//光源のリソースを作成
+	pointLightResource_ = directXBase_->CreateBufferResource(sizeof(PointLight));
+	//光源データの書きこみ
+	pointLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointLightPtr_));
+	pointLightPtr_->color = { 1.0f,1.0f,1.0f,1.0f };
+	pointLightPtr_->position = { 0.0f,-1.0f,0.0f };
+	pointLightPtr_->intensity = 10.0f;
 }
 
 //DirectionalLightのセッター
 void SpriteCommon::SetDirectionalLightData(const DirectionalLight& directionalLightData) {
-	directionalLightData_->color = directionalLightData.color;
-	directionalLightData_->direction = directionalLightData.direction;
-	directionalLightData_->intensity = directionalLightData.intensity;
+	directionalLightPtr_->color = directionalLightData.color;
+	directionalLightPtr_->direction = directionalLightData.direction;
+	directionalLightPtr_->intensity = directionalLightData.intensity;
 }
 
 //DirectionalLightのリソースのゲッター
 ID3D12Resource* SpriteCommon::GetDirectionalLightResource()const {
 	return directionalLightResource_.Get();
+}
+
+//PointLightのリソースのゲッター
+ID3D12Resource* SpriteCommon::GetPointLightResource()const {
+	return pointLightResource_.Get();
 }
 
 //DirectXの基盤部分のゲッター

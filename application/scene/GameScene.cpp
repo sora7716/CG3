@@ -23,6 +23,12 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	//地面
 	ground_ = std::make_unique<Ground>();
 	ground_->Initialize(camera_, "ground");
+
+	object3d_ = std::make_unique<Object3d>();
+	object3d_->Initialize();
+	object3d_->SetModel("field");
+	object3d_->SetTransform(transformData_);
+	object3d_->SetCamera(camera_);
 }
 
 //更新
@@ -38,6 +44,9 @@ void GameScene::Update() {
 
 	//地面
 	ground_->Update();
+
+	//フィールド
+	object3d_->Update();
 
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
@@ -79,6 +88,7 @@ void GameScene::Update() {
 	}
 	player_->SetCamera(camera_);
 	ground_->SetCamera(camera_);
+	object3d_->SetCamera(camera_);
 #endif // _DEBUG
 
 }
@@ -89,7 +99,10 @@ void GameScene::Draw() {
 	player_->Draw();
 
 	//地面
-	ground_->Draw();
+	//ground_->Draw();
+
+	//フィールド
+	object3d_->Draw();
 }
 
 //終了
