@@ -70,10 +70,17 @@ void ImGuiManager::Draw() {
 }
 
 //トランスフォームデータ用のImGui
-void ImGuiManager::DragTransfrom(TransformData& transfromData){
+void ImGuiManager::DragTransform(TransformData& transfromData){
 	ImGui::DragFloat3("scale", &transfromData.scale.x, 0.1f);
 	ImGui::DragFloat3("rotate", &transfromData.rotate.x, 0.1f);
 	ImGui::DragFloat3("translate", &transfromData.translate.x, 0.1f);
+}
+
+//int型でcheckBoxを表示する
+void ImGuiManager::CheckBoxToInt(const std::string& label, int32_t& frag) {
+	bool checkBox = static_cast<bool>(frag);
+	ImGui::Checkbox(label.c_str(), &checkBox);
+	frag = static_cast<int32_t>(checkBox);
 }
 
 //終了

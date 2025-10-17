@@ -36,15 +36,14 @@ public://メンバ関数
 	void DrawSetting();
 
 	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void Debug();
+
+	/// <summary>
 	/// 光源の生成
 	/// </summary>
 	void CreateDirectionLight();
-
-	/// <summary>
-	/// DirectionalLightのセッター
-	/// </summary>
-	/// <param name="directionalLightData">DirectionalLightデータ</param>
-	void SetDirectionalLightData(const DirectionalLight& directionalLightData);
 
 	/// <summary>
 	/// カメラリソースの生成
@@ -108,21 +107,29 @@ private://静的メンバ変数
 private://メンバ変数
 	//DirectXの基盤
 	DirectXBase* directXBase_ = nullptr;
+
 	//ルートシグネイチャ
 	ComPtr<ID3D12RootSignature>rootSignature_ = nullptr;
+
 	//グラフィックスパイプライン(PSO)
 	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> graphicsPipelineStates_ = { nullptr };
 	//グラフィックスパイプライン
 	GraphicsPipeline* makeGraphicsPipeline_ = nullptr;
+
 	//バッファリソース
 	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//光源
 	ComPtr<ID3D12Resource> cameraResource_ = nullptr;//カメラ
 	//バッファリソース内のデータを指すポインタ
-	DirectionalLight* directionalLightData_ = nullptr;//光源
+	DirectionalLight* directionalLightPtr_ = nullptr;//光源
 	CameraForGPU* cameraForGPU_ = nullptr;//カメラ
+
+	//光源
+	DirectionalLight directionalLightData_ = {};
+
 	//ブレンド
 	Blend* blend_ = nullptr;
 	BlendMode blendMode_ = BlendMode::kNone;
+
 	//デフォルトカメラ
 	Camera* defaultCamera_ = nullptr;
 };

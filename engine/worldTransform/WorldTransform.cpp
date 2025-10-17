@@ -131,8 +131,9 @@ void WorldTransform::CreateTransformationMatrixResource() {
 	//書き込むためのアドレス
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
 	//単位行列を書き込んでおく
-	wvpData_->WVP = Matrix4x4::Identity4x4();
-	wvpData_->World = Matrix4x4::Identity4x4();
+	wvpData_->wvp = Matrix4x4::Identity4x4();
+	wvpData_->world = Matrix4x4::Identity4x4();
+	wvpData_->worldInverseTranspose = Matrix4x4::Identity4x4();
 }
 
 //座標の更新
@@ -151,12 +152,14 @@ void WorldTransform::UpdateTransform() {
 	//wvpの書き込み
 	if (camera_) {
 		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
-		wvpData_->WVP = worldMatrix_ * viewProjectionMatrix;
+		wvpData_->wvp = worldMatrix_ * viewProjectionMatrix;
 	} else {
-		wvpData_->WVP = worldMatrix_;
+		wvpData_->wvp = worldMatrix_;
 	}
 	//ワールド行列を送信
-	wvpData_->World = worldMatrix_;
+	wvpData_->world = worldMatrix_;
+	//逆行列の転置行列を送信
+	wvpData_->worldInverseTranspose = worldMatrix_.InverseTranspose();
 }
 
 //座標の更新(2次元)
@@ -170,7 +173,7 @@ void WorldTransform::UpdateTransform2d() {
 	const Matrix4x4& projectionMatrix = Rendering::MakeOrthographicMatrix(screenArea_.left, screenArea_.top, screenArea_.right, screenArea_.bottom, 0.1f, 100.0f);
 	//wvpの書き込み
 	const Matrix4x4& viewProjectionMatrix = Matrix4x4::Identity4x4() * projectionMatrix;
-	wvpData_->WVP = worldMatrix_ * viewProjectionMatrix;
+	wvpData_->wvp = worldMatrix_ * viewProjectionMatrix;
 	/*if (camera_) {
 
 	}
@@ -178,7 +181,7 @@ void WorldTransform::UpdateTransform2d() {
 		wvpData_->WVP = worldMatrix_ * projectionMatrix;
 	}*/
 	//ワールド行列を送信
-	wvpData_->World = worldMatrix_;
+	wvpData_->world = worldMatrix_;
 }
 
 

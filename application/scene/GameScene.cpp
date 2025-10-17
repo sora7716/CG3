@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "engine/input/Input.h"
+#include "engine/3d/Object3dCommon.h"
 
 //初期化
 void GameScene::Initialize(DirectXBase* directXBase) {
@@ -57,6 +58,9 @@ void GameScene::Update() {
 	ImGui::Begin("cameraController");
 	cameraController_->Debug();
 	ImGui::End();
+
+	//Object3dCommon
+	Object3dCommon::GetInstance()->Debug();
 	
 	//ImGuiの受付終了
 	ImGuiManager::GetInstance()->End();

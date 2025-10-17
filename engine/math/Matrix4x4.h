@@ -16,12 +16,27 @@ struct Matrix4x4 final {
 	//減法(複合)
 	Matrix4x4& operator-=(const Matrix4x4& mat);
 	
-	//逆行列
+	/// <summary>
+	/// 逆行列
+	/// </summary>
+	/// <returns>逆行列</returns>
 	Matrix4x4 Inverse()const;
 	
-	//転置行列
+	/// <summary>
+	/// 転置行列
+	/// </summary>
+	/// <returns>転置行列</returns>
 	Matrix4x4 Transpose();
+
+	/// <summary>
+	/// 逆転置行列
+	/// </summary>
+	/// <returns>逆転置行列</returns>
+	Matrix4x4 InverseTranspose();
 	
-	//単位行列
+	/// <summary>
+	/// 単位行列
+	/// </summary>
+	/// <returns>単位行列</returns>
 	static Matrix4x4 Identity4x4();
 };

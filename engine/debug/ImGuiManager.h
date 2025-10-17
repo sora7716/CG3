@@ -5,6 +5,7 @@
 #include "imgui/imgui_impl_dx12.h"
 #include "imgui/imgui_impl_win32.h"
 #endif // USE_IMGUI
+#include <string>
 //前方宣言
 class DirectXBase;
 class SRVManager;
@@ -44,7 +45,14 @@ public://メンバ関数
 	/// トランスフォームデータ用のImGui
 	/// </summary>
 	/// <param name="transfromData">トランスフォームデータ</param>
-	void DragTransfrom(TransformData& transfromData);
+	static void DragTransform(TransformData& transfromData);
+
+	/// <summary>
+	/// int型でcheckBoxを表示する
+	/// </summary>
+	/// <param name="label">ラベル</param>
+	/// <param name="frag">フラグ</param>
+	static void CheckBoxToInt(const std::string& label,int32_t& frag);
 
 	/// <summary>
 	/// 終了

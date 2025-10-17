@@ -2,6 +2,7 @@
 #include "engine/base/DirectXBase.h"
 #include "engine/camera/Camera.h"
 #include "engine/base/GraphicsPipeline.h"
+#include "engine/debug/ImGuiManager.h"
 #include <cassert>
 using namespace Microsoft::WRL;
 
@@ -33,6 +34,12 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	//グラフィックスパイプラインステートの記録
 	graphicsPipelineStates_ = makeGraphicsPipeline_->GetGraphicsPipelines();
 
+	//DirectionalLightの初期化
+	directionalLightData_.color = { 1.0f,1.0f,1.0f,1.0f };
+	directionalLightData_.direction = { 0.0f,-1.0f,0.0f };
+	directionalLightData_.intensity = 1.0f;
+	directionalLightData_.isLambert = false;
+	directionalLightData_.isBlingPhong = true;
 }
 
 //共通描画設定
@@ -45,22 +52,29 @@ void Object3dCommon::DrawSetting() {
 	directXBase_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
+//デバッグ
+void Object3dCommon::Debug() {
+	ImGui::Begin("Lighting");
+	ImGui::ColorEdit4("light.color", &directionalLightData_.color.x);
+	ImGui::DragFloat3("light.direction", &directionalLightData_.direction.x, 0.1f);
+	ImGui::DragFloat("light.intensity", &directionalLightData_.intensity, 0.1f);
+	ImGuiManager::CheckBoxToInt("isLambert", directionalLightData_.isLambert);
+	ImGuiManager::CheckBoxToInt("isBlingPhong", directionalLightData_.isBlingPhong);
+	ImGui::End();
+	*directionalLightPtr_ = directionalLightData_;
+}
+
 //光源の生成
 void Object3dCommon::CreateDirectionLight() {
 	//光源のリソースを作成
 	directionalLightResource_ = directXBase_->CreateBufferResource(sizeof(DirectionalLight));
 	//光源データの書きこみ
-	directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData_));
-	directionalLightData_->color = { 1.0f,1.0f,1.0f,1.0f };
-	directionalLightData_->direction = { 0.0f,-1.0f,0.0f };
-	directionalLightData_->intensity = 10.0f;
-}
-
-//DirectionalLightのセッター
-void Object3dCommon::SetDirectionalLightData(const DirectionalLight& directionalLightData) {
-	directionalLightData_->color = directionalLightData.color;
-	directionalLightData_->direction = directionalLightData.direction;
-	directionalLightData_->intensity = directionalLightData.intensity;
+	directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightPtr_));
+	directionalLightPtr_->color = { 1.0f,1.0f,1.0f,1.0f };
+	directionalLightPtr_->direction = { 0.0f,-1.0f,0.0f };
+	directionalLightPtr_->intensity = 10.0f;
+	directionalLightPtr_->isLambert = false;
+	directionalLightPtr_->isBlingPhong = true;
 }
 
 //カメラリソースの生成

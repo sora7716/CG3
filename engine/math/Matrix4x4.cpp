@@ -234,6 +234,12 @@ Matrix4x4 Matrix4x4::Transpose(){
 	return result;
 }
 
+//逆転置行列
+Matrix4x4 Matrix4x4::InverseTranspose() {
+	Matrix4x4 result = this->Inverse();
+	return result.Transpose();
+}
+
 //単位行列
 Matrix4x4 Matrix4x4::Identity4x4(){
 	Matrix4x4 result = {};

@@ -35,11 +35,6 @@ void Object3d::Initialize() {
 	material_.enableLighting = true;
 	material_.uvTransform = Matrix4x4::Identity4x4();
 	material_.shininess = 10.0f;
-
-	//DirectionalLightの初期化
-	directionalLight_.color = { 1.0f,1.0f,1.0f,1.0f };
-	directionalLight_.direction = { 0.0f,-1.0f,0.0f };
-	directionalLight_.intensity = 1.0f;
 }
 
 
@@ -77,10 +72,7 @@ void Object3d::Debug() {
 #ifdef USE_IMGUI
 	ImGui::ColorEdit4("color", &material_.color.x);
 	ImGui::DragFloat("shininess", &material_.shininess, 0.1f);
-	ImGui::ColorEdit4("light.color", &directionalLight_.color.x);
-	ImGui::DragFloat3("light.direction", &directionalLight_.direction.x, 0.1f);
-	ImGui::DragFloat("light.intensity", &directionalLight_.intensity, 0.1f);
-	Object3dCommon::GetInstance()->SetDirectionalLightData(directionalLight_);
+	ImGuiManager::CheckBoxToInt("enableLighting", material_.enableLighting);
 	model_->SetMaterial(material_);
 #endif // USE_IMGUI
 
