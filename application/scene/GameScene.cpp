@@ -23,7 +23,6 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	//地面
 	ground_ = std::make_unique<Ground>();
 	ground_->Initialize(camera_, "ground");
-	ground_->SetTexture("white1x1.png");
 }
 
 //更新
@@ -45,8 +44,13 @@ void GameScene::Update() {
 	ImGuiManager::GetInstance()->Begin();
 
 	//プレイヤー
-	ImGui::Begin("Player");
+	ImGui::Begin("player");
 	player_->Debug();
+	ImGui::End();
+
+	//地面
+	ImGui::Begin("ground");
+	ground_->Debug();
 	ImGui::End();
 
 	//デバッグカメラ

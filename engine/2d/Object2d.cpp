@@ -50,7 +50,7 @@ void Object2d::Update() {
 	//ワールドトランスフォームの更新
 	worldTransform_->Update();
 	//UVTransform
-	materialData_->uvTransform = Rendering::MakeUVAffineMatrix({ uvTransform_.scale.x,uvTransform_.scale.y,1.0f }, uvTransform_.rotate, { uvTransform_.translate.x,uvTransform_.translate.y,1.0f });
+	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix({ uvTransform_.scale.x,uvTransform_.scale.y,1.0f }, uvTransform_.rotate, { uvTransform_.translate.x,uvTransform_.translate.y,1.0f });
 }
 
 //描画
@@ -248,7 +248,7 @@ void Object2d::InitializeMaterialData() {
 	//色を書き込む
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	materialData_->enableLighting = false;
-	materialData_->uvTransform =Matrix4x4::Identity4x4();
+	materialData_->uvMatrix =Matrix4x4::Identity4x4();
 }
 
 //マテリアルリソースの生成

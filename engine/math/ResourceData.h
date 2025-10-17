@@ -20,7 +20,7 @@ struct Material {
 	Vector4 color;//色
 	int32_t enableLighting;//ライティングするかどうかのフラグ
 	float padding[3];
-	Matrix4x4 uvTransform;//UVTransform
+	Matrix4x4 uvMatrix;//UVTransform
 	float shininess;//光沢度
 };
 
@@ -30,7 +30,14 @@ struct DirectionalLight {
 	Vector3 direction;//ライトの向き
 	float intensity;//輝度
 	int32_t isLambert;//lambertにするかどうか
-	int32_t isBlingPhong;//BlingPhongReflectionを行うかどうか
+	int32_t isBlinnPhong;//BlinnPhongReflectionを行うかどうか
+};
+
+//点光源
+struct PointLight {
+	Vector4 color;//ライトの色
+	Vector3 position;//ライトの位置
+	float intensity;//輝度
 };
 
 //マテリアルデータ

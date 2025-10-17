@@ -89,7 +89,7 @@ void Sprite::ChangeTexture(std::string spriteName) {
 // UVの座標変換の更新
 void Sprite::UpdateUVTransform(Transform2dData uvTransform) {
 	//UVTransform
-	materialData_->uvTransform = Rendering::MakeUVAffineMatrix({ uvTransform.scale.x,uvTransform.scale.y,1.0f }, uvTransform.rotate, { uvTransform.translate.x,uvTransform.translate.y,1.0f });
+	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix({ uvTransform.scale.x,uvTransform.scale.y,1.0f }, uvTransform.rotate, { uvTransform.translate.x,uvTransform.translate.y,1.0f });
 }
 
 //色のゲッター
@@ -177,7 +177,7 @@ void Sprite::InitializeMaterialData() {
 	//色を書き込む
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	materialData_->enableLighting = false;
-	materialData_->uvTransform = Matrix4x4::Identity4x4();
+	materialData_->uvMatrix = Matrix4x4::Identity4x4();
 }
 
 //マテリアルリソースの生成

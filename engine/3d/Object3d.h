@@ -45,11 +45,6 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// デバッグ
-	/// </summary>
-	void Debug();
-
-	/// <summary>
 	/// 親子付け
 	/// </summary>
 	/// <param name="parent">親</param>
@@ -185,6 +180,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>ワールドトランスフォーム</returns>
 	const WorldTransform* GetWorldTransform()const;
+
+	/// <summary>
+	/// モデルのゲッター
+	/// </summary>
+	/// <returns>モデル</returns>
+	Model* GetModel();
 private://メンバ変数
 	//UV座標
 	Transform2dData uvTransform_ = {

@@ -39,7 +39,7 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	directionalLightData_.direction = { 0.0f,-1.0f,0.0f };
 	directionalLightData_.intensity = 1.0f;
 	directionalLightData_.isLambert = false;
-	directionalLightData_.isBlingPhong = true;
+	directionalLightData_.isBlinnPhong = true;
 }
 
 //共通描画設定
@@ -59,7 +59,7 @@ void Object3dCommon::Debug() {
 	ImGui::DragFloat3("light.direction", &directionalLightData_.direction.x, 0.1f);
 	ImGui::DragFloat("light.intensity", &directionalLightData_.intensity, 0.1f);
 	ImGuiManager::CheckBoxToInt("isLambert", directionalLightData_.isLambert);
-	ImGuiManager::CheckBoxToInt("isBlingPhong", directionalLightData_.isBlingPhong);
+	ImGuiManager::CheckBoxToInt("isBlingPhong", directionalLightData_.isBlinnPhong);
 	ImGui::End();
 	*directionalLightPtr_ = directionalLightData_;
 }
@@ -74,7 +74,7 @@ void Object3dCommon::CreateDirectionLight() {
 	directionalLightPtr_->direction = { 0.0f,-1.0f,0.0f };
 	directionalLightPtr_->intensity = 10.0f;
 	directionalLightPtr_->isLambert = false;
-	directionalLightPtr_->isBlingPhong = true;
+	directionalLightPtr_->isBlinnPhong = true;
 }
 
 //カメラリソースの生成

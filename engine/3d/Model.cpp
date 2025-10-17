@@ -41,7 +41,7 @@ void Model::Draw() {
 
 //uv変換
 void Model::UVTransform(Transform2dData uvTransform) {
-	materialData_->uvTransform = Rendering::MakeUVAffineMatrix({ uvTransform.scale.x,uvTransform.scale.y,1.0f }, uvTransform.rotate, { uvTransform.translate.x,uvTransform.translate.y,1.0f });
+	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix({ uvTransform.scale.x,uvTransform.scale.y,1.0f }, uvTransform.rotate, { uvTransform.translate.x,uvTransform.translate.y,1.0f });
 }
 
 // 色を変更
@@ -168,7 +168,7 @@ void Model::SetMaterial(const Material& materialData) {
 	materialData_->color = materialData.color;
 	materialData_->enableLighting = materialData.enableLighting;
 	materialData_->shininess = materialData.shininess;
-	materialData_->uvTransform = materialData.uvTransform;
+	materialData_->uvMatrix = materialData.uvMatrix;
 }
 
 
@@ -218,6 +218,6 @@ void Model::CreateMaterialResource() {
 	//色を書き込む
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	materialData_->enableLighting = true;
-	materialData_->uvTransform = Matrix4x4::Identity4x4();
+	materialData_->uvMatrix = Matrix4x4::Identity4x4();
 	materialData_->shininess = 0.1f;
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "engine/math/RenderingData.h"
+#include "engine/math/ResourceData.h"
 #include <string>
 #include <vector>
 
@@ -51,6 +52,11 @@ public://メンバ関数
 	void Finalize();
 
 	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void Debug();
+
+	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera">カメラ</param>
@@ -63,10 +69,14 @@ public://メンバ関数
 	void SetTexture(const std::string& textureName);
 private://定数
 	//ブロックの数
-	static inline const Vector2Int kBlockCount = { 30,30 };
+	static inline const Vector2Int kBlockCount = { 20,20 };
 private://メンバ変数
 	//地面のデータ
 	std::vector<std::vector<GroundData>>groundDates_;
+	//距離感
+	float blank_ = 3.2f;
+	//マテリアル
+	Material material_ = {};
 };
 
 

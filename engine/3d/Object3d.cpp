@@ -33,7 +33,7 @@ void Object3d::Initialize() {
 	//マテリアルの初期化
 	material_.color = { 1.0f,1.0f,1.0f,1.0f };
 	material_.enableLighting = true;
-	material_.uvTransform = Matrix4x4::Identity4x4();
+	material_.uvMatrix = Matrix4x4::Identity4x4();
 	material_.shininess = 10.0f;
 }
 
@@ -65,17 +65,6 @@ void Object3d::Draw() {
 	if (model_) {
 		model_->Draw();
 	}
-}
-
-//デバッグ
-void Object3d::Debug() {
-#ifdef USE_IMGUI
-	ImGui::ColorEdit4("color", &material_.color.x);
-	ImGui::DragFloat("shininess", &material_.shininess, 0.1f);
-	ImGuiManager::CheckBoxToInt("enableLighting", material_.enableLighting);
-	model_->SetMaterial(material_);
-#endif // USE_IMGUI
-
 }
 
 //親子付け
@@ -208,4 +197,12 @@ const Vector4& Object3d::GetColor() const {
 const WorldTransform* Object3d::GetWorldTransform() const {
 	// TODO: return ステートメントをここに挿入します
 	return worldTransform_;
+}
+
+//モデルのゲッター
+Model* Object3d::GetModel() {
+	if (model_) {
+		return model_;
+	}
+	return nullptr;
 }

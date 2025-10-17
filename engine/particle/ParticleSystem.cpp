@@ -152,7 +152,7 @@ void ParticleSystem::InitializeMaterialData() {
 	//色を書き込む
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	materialData_->enableLighting = false;
-	materialData_->uvTransform = Matrix4x4::Identity4x4();
+	materialData_->uvMatrix = Matrix4x4::Identity4x4();
 }
 
 //頂点リソースの生成

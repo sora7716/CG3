@@ -1,5 +1,6 @@
 #pragma once
 #include "ActorData.h"
+#include "engine/math/ResourceData.h"
 #include <string>
 
 // 前方宣言
@@ -74,9 +75,14 @@ private://メンバ関数
 private://メンバ変数
 	//入力
 	Input* input_ = nullptr;
+
 	//3Dオブジェクト
 	Object3d* object3d_ = nullptr;
+
 	//ゲームオブジェクト
 	GameObect gameObject_ = {};
+
+	//マテリアル
+	Material material_ = {};
 };
 

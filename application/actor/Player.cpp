@@ -24,12 +24,23 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	object3d_->Initialize();
 	object3d_->SetModel(modelName);
 	object3d_->SetCamera(camera);
+
+	//マテリアルの初期化
+	material_.color = { 1.0f,1.0f,1.0f,1.0f };
+	material_.enableLighting = true;
+	material_.shininess = 10.0f;
+	material_.uvMatrix = Matrix4x4::Identity4x4();
 }
 
 //更新
 void Player::Update() {
-	//3Dオブジェクトの更新
+	//トランスフォームのセット
 	object3d_->SetTransform(gameObject_.transfromData);
+
+	//マテリアルのセット
+	object3d_->GetModel()->SetMaterial(material_);
+
+	//3Dオブジェクトの更新
 	object3d_->Update();
 }
 
@@ -44,7 +55,12 @@ void Player::Draw() {
 //デバッグ
 void Player::Debug() {
 	ImGuiManager::GetInstance()->DragTransform(gameObject_.transfromData);
-	object3d_->Debug();
+#ifdef USE_IMGUI
+	ImGui::ColorEdit4("color", &material_.color.x);
+	ImGui::DragFloat("shininess", &material_.shininess, 0.1f);
+	ImGuiManager::CheckBoxToInt("enableLighting", material_.enableLighting);
+#endif // USE_IMGUI
+
 }
 
 //終了

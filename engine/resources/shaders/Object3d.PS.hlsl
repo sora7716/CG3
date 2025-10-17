@@ -3,7 +3,7 @@
 struct Material {
     float4 color;
     int enableLighring;
-    float4x4 uvTransform;
+    float4x4 uvMatrix;
     float shininess;
 };
 
@@ -13,7 +13,14 @@ struct DirectionalLight {
     float3 direction; //ライトの向き
     float intensity; //輝度
     int isLambert; //lambertにするかどうか
-    int isBlingPhong; //BlingPhongReflectionを行うかどうか
+    int isBlinnPhong; //BlinnPhongReflectionを行うかどうか
+};
+
+//点光源
+struct PointLight {
+    float4 color;//ライトの色
+    float3 position;//ライトの位置
+    float intensity;//輝度
 };
 
 //カメラ
@@ -26,13 +33,14 @@ Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 ConstantBuffer<Camera> gCamera : register(b2);
+//ConstantBuffer<PointLight> gPointLight : register(b3);
 
 struct PixelShaderOutput {
     float4 color : SV_TARGET0;
 };
 
 PixelShaderOutput main(VertexShaderOutput input) {
-    float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
+    float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvMatrix);
     float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
     PixelShaderOutput output;
     
@@ -58,7 +66,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
         
         //鏡面反射の強度
         float specularPow = 0.0f;
-        if (gDirectionalLight.isBlingPhong) {
+        if (gDirectionalLight.isBlinnPhong) {
             //BlingPhongReflectionModel
             //ハーフベクトル
             float3 halfVector = normalize(-gDirectionalLight.direction + toEye);
