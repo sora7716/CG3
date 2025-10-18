@@ -223,7 +223,7 @@
       <Filter>application\actor</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\Ground.cpp">
-      <Filter>application\actor</Filter>
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -393,7 +393,7 @@
       <Filter>application\actor</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\Ground.h">
-      <Filter>application\actor</Filter>
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -409,12 +409,21 @@
     <FxCompile Include="engine\resources\shaders\Particle.VS.hlsl">
       <Filter>shaders</Filter>
     </FxCompile>
+    <FxCompile Include="engine\resources\shaders\Sprite.VS.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="engine\resources\shaders\Sprite.PS.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\resources\shaders\Object3d.hlsli">
       <Filter>shaders</Filter>
     </None>
     <None Include="engine\resources\shaders\Particle.hlsli">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="engine\resources\shaders\Sprite.hlsli">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

@@ -58,5 +58,7 @@ private://メンバ変数
 	TransformData transformData_ = { {1.0f,1.0f,1.0f},{},{} };
 	Material material_ = {};
 
+
+	std::unique_ptr<Sprite>sprite_ = nullptr;
 };
 

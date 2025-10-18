@@ -29,7 +29,8 @@ void Sprite::Initialize(const std::string& spriteName) {
 	//DirectXの基盤部分を記録
 	directXBase_ = SpriteCommon::GetInstance()->GetDirectXBase();
 	//ライトの生成
-	SpriteCommon::GetInstance()->CreateDirectionLight();
+	/*SpriteCommon::GetInstance()->CreateDirectionLight();
+	SpriteCommon::GetInstance()->CreatePointLight();*/
 	//スクリーンに表示する範囲を設定
 	WorldTransform::ScreenArea screenArea = {
 		.left = 0,
@@ -45,13 +46,6 @@ void Sprite::Initialize(const std::string& spriteName) {
 
 //更新
 void Sprite::Update() {
-#ifdef USE_IMGUI
-	ImGui::Begin("sprite");
-	ImGui::DragFloat3("scale", &transform_.scale.x, 0.1f);
-	ImGui::DragFloat3("rotate", &transform_.rotate.x, 0.1f);
-	ImGui::DragFloat3("translate", &transform_.translate.x, 0.1f);
-	ImGui::End();
-#endif // USE_IMGUI
 	worldTransform_->SetTransform(transform_);
 	//ワールドトランスフォームの更新
 	worldTransform_->Update();
@@ -67,10 +61,10 @@ void Sprite::Draw() {
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 	//ワールドトランスフォームの描画
 	worldTransform_->Draw();
-	//平光源CBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, SpriteCommon::GetInstance()->GetDirectionalLightResource()->GetGPUVirtualAddress());
-	//点光源のCBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(5, SpriteCommon::GetInstance()->GetPointLightResource()->GetGPUVirtualAddress());
+	////平光源CBufferの場所を設定
+	//directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, SpriteCommon::GetInstance()->GetDirectionalLightResource()->GetGPUVirtualAddress());
+	////点光源のCBufferの場所を設定
+	//directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(5, SpriteCommon::GetInstance()->GetPointLightResource()->GetGPUVirtualAddress());
 	//VertexBufferViewの設定
 	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
 	//IndexBufferViewを設定
