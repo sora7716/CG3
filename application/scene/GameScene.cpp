@@ -24,11 +24,16 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	ground_ = std::make_unique<Ground>();
 	ground_->Initialize(camera_, "ground");
 
+	material_.color = { 1.0f,1.0f,1.0f,1.0f };
+	material_.enableLighting = true;
+	material_.shininess = 10.0f;
+	material_.uvMatrix = Matrix4x4::Identity4x4();
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize();
 	object3d_->SetModel("field");
 	object3d_->SetTransform(transformData_);
 	object3d_->SetCamera(camera_);
+	object3d_->GetModel()->SetMaterial(material_);
 }
 
 //更新
@@ -46,6 +51,7 @@ void GameScene::Update() {
 	ground_->Update();
 
 	//フィールド
+	object3d_->GetModel()->SetMaterial(material_);
 	object3d_->Update();
 
 #ifdef USE_IMGUI
@@ -70,6 +76,13 @@ void GameScene::Update() {
 	//追従カメラ
 	ImGui::Begin("cameraController");
 	cameraController_->Debug();
+	ImGui::End();
+
+	//フィールド
+	ImGui::Begin("field");
+	ImGui::ColorEdit4("color", &material_.color.x);
+	ImGui::DragFloat("shiness", &material_.shininess);
+	ImGuiManager::CheckBoxToInt("enableLighting", material_.enableLighting);
 	ImGui::End();
 
 	//Object3dCommon

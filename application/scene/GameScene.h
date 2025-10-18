@@ -56,5 +56,7 @@ private://メンバ変数
 	//フィールド
 	std::unique_ptr<Object3d>object3d_ = nullptr;
 	TransformData transformData_ = { {1.0f,1.0f,1.0f},{},{} };
+	Material material_ = {};
+
 };
 

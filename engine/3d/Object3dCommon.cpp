@@ -40,6 +40,11 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	directionalLightData_.intensity = 1.0f;
 	directionalLightData_.isLambert = false;
 	directionalLightData_.isBlinnPhong = true;
+
+	//PointLightの初期化
+	pointLightData_.color = { 1.0f,1.0f,1.0f,1.0f };
+	pointLightData_.position = {};
+	pointLightData_.intensity = 1.0f;
 }
 
 //共通描画設定
