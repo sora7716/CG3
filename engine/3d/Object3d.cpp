@@ -23,6 +23,8 @@ void Object3d::Initialize() {
 	Object3dCommon::GetInstance()->CreateDirectionLight();
 	//点光源の生成
 	Object3dCommon::GetInstance()->CreatePointLight();
+	//スポットライトの生成
+	Object3dCommon::GetInstance()->CreateSpotLight();
 
 	//ワールドトランスフォームの生成、初期化
 	worldTransform_ = new WorldTransform();
@@ -72,6 +74,8 @@ void Object3d::Draw() {
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, Object3dCommon::GetInstance()->GetDirectionalLightResource()->GetGPUVirtualAddress());
 	//点光源のCBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(5, Object3dCommon::GetInstance()->GetPointLightResource()->GetGPUVirtualAddress());
+	//スポットライトのCBufferの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(6, Object3dCommon::GetInstance()->GetSpotLight()->GetGPUVirtualAddress());
 
 	//3Dモデルが割り当てられていれば描画
 	if (model_) {

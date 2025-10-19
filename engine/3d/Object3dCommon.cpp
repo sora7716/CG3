@@ -4,6 +4,7 @@
 #include "engine/base/GraphicsPipeline.h"
 #include "engine/debug/ImGuiManager.h"
 #include <cassert>
+#include "engine/math/func/Math.h"
 using namespace Microsoft::WRL;
 
 //インスタンスのゲッター
@@ -48,6 +49,18 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	pointLightData_.intensity = 1.0f;
 	pointLightData_.isBlinnPhong = false;
 	pointLightData_.enablePointLighting = false;
+
+	//SpotLightの初期化
+	spotLightData_.color = { 1.0f,1.0f,1.0f,1.0f };
+	spotLightData_.position = { 2.0f,1.25f,0.0f };
+	spotLightData_.distance = 7.0f;
+	spotLightData_.direction = Vector3({ -1.0f,-1.0f,0.0f }).Normalize();
+	spotLightData_.intensity = 4.0f;
+	spotLightData_.decay = 2.0f;
+	spotLightData_.cosFolloffStart = 0.0f;
+	spotLightData_.cosAngle = std::cos(Math::kPi / 3.0f);
+	spotLightData_.isBlinnPhong = false;
+	spotLightData_.enableSpotLighting = false;
 }
 
 //共通描画設定
@@ -74,9 +87,20 @@ void Object3dCommon::Debug() {
 	ImGui::DragFloat("point.intensity", &pointLightData_.intensity, 0.1f);
 	ImGuiManager::CheckBoxToInt("point.isBlingPhong", pointLightData_.isBlinnPhong);
 	ImGuiManager::CheckBoxToInt("point.enablePointLight", pointLightData_.enablePointLighting);
+	ImGui::ColorEdit4("spot.color", &spotLightData_.color.x);
+	ImGui::DragFloat3("spot.position", &spotLightData_.position.x, 0.1f);
+	ImGui::DragFloat3("spot.direction", &spotLightData_.direction.x, 0.1f);
+	ImGui::SliderFloat("spot.cosFolloffStart", &spotLightData_.cosFolloffStart, -1.0f, 1.0f);
+	ImGui::SliderFloat("spot.cosAngle", &spotLightData_.cosAngle, -1.0f, 1.0f);
+	ImGui::DragFloat("spot.decay", &spotLightData_.decay, 0.1f);
+	ImGui::DragFloat("spot.distance", &spotLightData_.distance, 0.1f);
+	ImGui::DragFloat("spot.intensity", &spotLightData_.intensity, 0.1f);
+	ImGuiManager::CheckBoxToInt("spot.isBlingPhong", spotLightData_.isBlinnPhong);
+	ImGuiManager::CheckBoxToInt("spot.enableSpotLight", spotLightData_.enableSpotLighting);
 	ImGui::End();
 	*directionalLightPtr_ = directionalLightData_;
 	*pointLightPtr_ = pointLightData_;
+	*spotLightPtr_ = spotLightData_;
 }
 
 //平行光源の生成
@@ -90,6 +114,7 @@ void Object3dCommon::CreateDirectionLight() {
 	directionalLightPtr_->intensity = 10.0f;
 	directionalLightPtr_->isLambert = false;
 	directionalLightPtr_->isBlinnPhong = true;
+	directionalLightPtr_->enableDirectionalLighting = true;
 }
 
 //点光源の生成
@@ -101,6 +126,26 @@ void Object3dCommon::CreatePointLight() {
 	pointLightPtr_->color = { 1.0f,1.0f,1.0f,1.0f };
 	pointLightPtr_->position = { 0.0f,-1.0f,0.0f };
 	pointLightPtr_->intensity = 10.0f;
+	pointLightPtr_->isBlinnPhong = true;
+	pointLightPtr_->enablePointLighting = false;
+}
+
+//スポットライトの生成
+void Object3dCommon::CreateSpotLight() {
+	//光源のリソースを作成
+	spotLightResource_ = directXBase_->CreateBufferResource(sizeof(SpotLight));
+	//光源データの書きこみ
+	spotLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&spotLightPtr_));
+	spotLightPtr_->color = { 1.0f,1.0f,1.0f,1.0f };
+	spotLightPtr_->position = { 2.0f,1.25f,0.0f };
+	spotLightPtr_->distance = 7.0f;
+	spotLightPtr_->direction = Vector3({ -1.0f,-1.0f,0.0f }).Normalize();
+	spotLightPtr_->intensity = 4.0f;
+	spotLightPtr_->decay = 2.0f;
+	spotLightPtr_->cosAngle = std::cos(Math::kPi / 3.0f);
+	spotLightPtr_->cosFolloffStart =0.0f;
+	spotLightPtr_->isBlinnPhong = true;
+	spotLightPtr_->enableSpotLighting = false;
 }
 
 //カメラリソースの生成
@@ -125,6 +170,11 @@ ID3D12Resource* Object3dCommon::GetDirectionalLightResource()const {
 //PointLightのリソースのゲッター
 ID3D12Resource* Object3dCommon::GetPointLightResource() const {
 	return pointLightResource_.Get();
+}
+
+//SpotLightのリソースのゲッター
+ID3D12Resource* Object3dCommon::GetSpotLight() const {
+	return spotLightResource_.Get();
 }
 
 //DirectXの基盤のゲッター

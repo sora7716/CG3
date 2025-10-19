@@ -27,6 +27,20 @@ struct PointLight {
     int enablePointLighting; //点光源を有効にするか
 };
 
+//スポットライト
+struct SpotLight {
+    float4 color; //ライトの色
+    float3 position; //ライトの位置
+    float intensity; //輝度
+    float3 direction; //スポットライトの方向
+    float distance; //ライトの届く最大距離
+    float decay; //減衰率
+    float cosAngle; //スポットライトの余弦
+    float cosFalloffStart;
+    int isBlinnPhong; //BlinnPhongReflectionを行うかどうか
+    int enablSpotLighting; //点光源を有効にするか
+};
+
 //カメラ
 struct Camera {
     float3 worldPosition;
@@ -38,6 +52,7 @@ SamplerState gSampler : register(s0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 ConstantBuffer<Camera> gCamera : register(b2);
 ConstantBuffer<PointLight> gPointLight : register(b3);
+ConstantBuffer<SpotLight> gSpotLight : register(b4);
 
 //ライティング
 struct Lighting {
@@ -92,7 +107,7 @@ Lighting DirectionalLighting(VertexShaderOutput input, float4 textureColor, floa
 
 //点光源
 Lighting PointLighing(VertexShaderOutput input, float4 textureColor, float3 toEye) {
-     //ライティング
+    //ライティング
     Lighting result;
     
     //点光源の方向ベクトル
@@ -135,6 +150,55 @@ Lighting PointLighing(VertexShaderOutput input, float4 textureColor, float3 toEy
     return result;
 }
 
+//スポットライト
+Lighting SpotLightint(VertexShaderOutput input, float4 textureColor, float3 toEye) {
+    //ライティング
+    Lighting result;
+    
+    //スポットライトの入射光
+    float3 spotLightDirectionOnSurface = normalize(input.worldPosition - gSpotLight.position);
+    
+    //コサイン
+    float NDotSpot = saturate(dot(normalize(input.normal), -spotLightDirectionOnSurface));
+        
+     //鏡面反射の強度
+    float specularPow = 0.0f;
+    if (gSpotLight.isBlinnPhong) {
+        //BlingPhongReflectionModel
+        //ハーフベクトル
+        float3 halfVector = normalize(-spotLightDirectionOnSurface + toEye);
+        float NDotH = dot(normalize(input.normal), halfVector);
+        //反射強度
+        specularPow = pow(saturate(NDotH), gMaterial.shininess);
+    } else {
+        //PhongReflectionModel
+        //入射光の反射ベクトルを求める
+        float3 reflectLight = reflect(spotLightDirectionOnSurface, normalize(input.normal));
+        //鏡面反射の強度
+        float RdotE = dot(reflectLight, toEye);
+        //反射強度
+        specularPow = pow(saturate(RdotE), gMaterial.shininess);
+    }
+        
+    //拡散反射
+    result.diffuse = gMaterial.color.rgb * textureColor.rgb * gSpotLight.color.rgb * NDotSpot * gSpotLight.intensity;
+
+    //鏡面反射
+    result.specular = gSpotLight.color.rgb * gSpotLight.intensity * specularPow * float3(1.0f, 1.0f, 1.0f);
+        
+    float cosAngle = dot(spotLightDirectionOnSurface, gSpotLight.direction);
+    float falloffFactor = saturate((cosAngle - gSpotLight.cosAngle) / (gSpotLight.cosFalloffStart - gSpotLight.cosAngle));
+        
+    //光の減衰
+    float attenuation = 1.0f / (gSpotLight.distance * gSpotLight.decay);
+        
+    //光の減衰を適応
+    result.diffuse *= attenuation * falloffFactor;
+    result.specular *= attenuation * falloffFactor;
+    
+    return result;
+}
+
 //ライティングのモードを切り替える用の関数
 float3 SetLightingMode(float3 baseColor, VertexShaderOutput input, float4 textureColor, float3 toEye) {
     //平行光源
@@ -143,6 +207,9 @@ float3 SetLightingMode(float3 baseColor, VertexShaderOutput input, float4 textur
     //点光源
     Lighting pointLighting = PointLighing(input, textureColor, toEye);
     
+    //スポットライト
+    Lighting spotLight = SpotLightint(input, textureColor, toEye);
+    
     //拡散反射+鏡面反射
     if (gDirectionalLight.enableDirectonalLighting) {
         //平行光源が有効だった場合
@@ -150,11 +217,22 @@ float3 SetLightingMode(float3 baseColor, VertexShaderOutput input, float4 textur
     } else if (gPointLight.enablePointLighting) {
         //点光源が有効だった場合
         baseColor = pointLighting.diffuse + pointLighting.specular;
+    } else if (gSpotLight.enablSpotLighting) {
+        baseColor = spotLight.diffuse + spotLight.specular;
     }
     
     //両方が有効だった場合
     if (gDirectionalLight.enableDirectonalLighting && gPointLight.enablePointLighting) {
         baseColor = directionalLighting.diffuse + directionalLighting.specular + pointLighting.diffuse + pointLighting.specular;
+    } else if (gDirectionalLight.enableDirectonalLighting && gSpotLight.enablSpotLighting) {
+        baseColor = directionalLighting.diffuse + directionalLighting.specular + spotLight.diffuse + spotLight.specular;
+    } else if (gPointLight.enablePointLighting && gSpotLight.enablSpotLighting) {
+        baseColor = pointLighting.diffuse + pointLighting.specular + spotLight.diffuse + spotLight.specular;
+    }
+     
+    //三つとも有効だった場合
+    if (gDirectionalLight.enableDirectonalLighting && gPointLight.enablePointLighting && gSpotLight.enablSpotLighting) {
+        baseColor = directionalLighting.diffuse + directionalLighting.specular + pointLighting.diffuse + pointLighting.specular + spotLight.diffuse + spotLight.specular;
     }
     
     return baseColor;
@@ -176,7 +254,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
         
         //ライティング
         output.color.rgb = SetLightingMode(output.color.rgb, input, textureColor, toEye);
-        
+      
         //アルファ  
         output.color.a = gMaterial.color.a * textureColor.a;
 

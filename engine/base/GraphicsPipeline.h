@@ -63,11 +63,6 @@ public://メンバ関数
 	void CreateRootSignatureBlobForCBV();
 
 	/// <summary>
-	/// ルートシグネイチャBlobの生成(スプライト用)
-	/// </summary>
-	void CreateRootSignetureBlobForSprite();
-
-	/// <summary>
 	/// ルートシグネイチャBlobの生成(SRV)
 	/// </summary>
 	void CreateRootSignatureBlobForSRV();

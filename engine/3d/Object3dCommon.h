@@ -51,6 +51,11 @@ public://メンバ関数
 	void CreatePointLight();
 
 	/// <summary>
+	/// スポットライトの生成
+	/// </summary>
+	void CreateSpotLight();
+
+	/// <summary>
 	/// カメラリソースの生成
 	/// </summary>
 	void CreateCameraResource(const Vector3& cameraTranslate);
@@ -77,6 +82,12 @@ public://メンバ関数
     /// </summary>
     /// <returns>PointLightのリソース</returns>
 	ID3D12Resource* GetPointLightResource()const;
+
+	/// <summary>
+	/// SpotLightのリソースのゲッター
+	/// </summary>
+	/// <returns>SpotLightのリソース</returns>
+	ID3D12Resource* GetSpotLight()const;
 
 	/// <summary>
 	/// DirectXの基盤のゲッター
@@ -130,16 +141,20 @@ private://メンバ変数
 	//バッファリソース
 	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//平行光源
 	ComPtr<ID3D12Resource> pointLightResource_ = nullptr;//点光源
+	ComPtr<ID3D12Resource> spotLightResource_ = nullptr;//スポットライト
 	ComPtr<ID3D12Resource> cameraResource_ = nullptr;//カメラ
 	//バッファリソース内のデータを指すポインタ
 	DirectionalLight* directionalLightPtr_ = nullptr;//平行光源
 	PointLight* pointLightPtr_ = nullptr;//点光源
+	SpotLight* spotLightPtr_ = nullptr;//スポットライト
 	CameraForGPU* cameraForGPU_ = nullptr;//カメラ
 
 	//平行光源
 	DirectionalLight directionalLightData_ = {};
 	//点光源
 	PointLight pointLightData_ = {};
+	//スポットライト
+	SpotLight spotLightData_ = {};
 
 	//ブレンド
 	Blend* blend_ = nullptr;
