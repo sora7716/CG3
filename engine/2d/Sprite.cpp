@@ -28,9 +28,6 @@ void Sprite::Initialize(const std::string& spriteName) {
 	SpriteCommon::GetInstance()->LoadTexture(spriteName_);
 	//DirectXの基盤部分を記録
 	directXBase_ = SpriteCommon::GetInstance()->GetDirectXBase();
-	//ライトの生成
-	/*SpriteCommon::GetInstance()->CreateDirectionLight();
-	SpriteCommon::GetInstance()->CreatePointLight();*/
 	//スクリーンに表示する範囲を設定
 	WorldTransform::ScreenArea screenArea = {
 		.left = 0,
@@ -61,10 +58,6 @@ void Sprite::Draw() {
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 	//ワールドトランスフォームの描画
 	worldTransform_->Draw();
-	////平光源CBufferの場所を設定
-	//directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, SpriteCommon::GetInstance()->GetDirectionalLightResource()->GetGPUVirtualAddress());
-	////点光源のCBufferの場所を設定
-	//directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(5, SpriteCommon::GetInstance()->GetPointLightResource()->GetGPUVirtualAddress());
 	//VertexBufferViewの設定
 	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
 	//IndexBufferViewを設定
@@ -97,6 +90,15 @@ const Vector4& Sprite::GetColor() const {
 //色のセッター
 void Sprite::SetColor(const Vector4& color) {
 	materialData_->color = color;
+}
+
+//トランスフォームのセッター
+void Sprite::SetTransform(const Transform2dData& transform) {
+	transform_.scale.x = transform.scale.x;
+	transform_.scale.y = transform.scale.y;
+	transform_.rotate.z = transform.rotate;
+	transform_.translate.x = transform.translate.x;
+	transform_.translate.y = transform.translate.y;
 }
 
 //頂点データの初期化

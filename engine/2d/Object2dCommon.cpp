@@ -23,15 +23,33 @@ void Object2dCommon::Initialize(DirectXBase* directXBase) {
 	//グラフィックスパイプラインの生成と初期化
 	makeGraphicsPipeline_ = new GraphicsPipeline();
 	//シェーダを設定
-	makeGraphicsPipeline_->SetVertexShaderFileName(L"Object3d.VS.hlsl");
-	makeGraphicsPipeline_->SetPixelShaderFileName(L"Object3d.PS.hlsl");
+	makeGraphicsPipeline_->SetVertexShaderFileName(L"Sprite.VS.hlsl");
+	makeGraphicsPipeline_->SetPixelShaderFileName(L"Sprite.PS.hlsl");
 	//デプスステンシルステート
 	directXBase_->InitializeDepthStencilForObject3d();
-	makeGraphicsPipeline_->Initialize(directXBase_);
+	//makeGraphicsPipeline_->Initialize(directXBase_);
+	makeGraphicsPipeline_->SetDirectXBase(directXBase);
+	//シグネイチャBlobの初期化
+	makeGraphicsPipeline_->CreateRootSignatureBlobForCBV();
+	//ルートシグネイチャの保存
+	makeGraphicsPipeline_->CreateRootSignature();
+	//インプットレイアウト
+	makeGraphicsPipeline_->InitializeInputLayoutDesc();
+	//ラスタライザステート
+	makeGraphicsPipeline_->InitializeRasterizerSatate();
+	//頂点シェーダBlob
+	makeGraphicsPipeline_->CompileVertexShader();
+	//ピクセルシェーダBlob
+	makeGraphicsPipeline_->CompilePixelShader();
+	//PSO
+	for (uint32_t i = 0; i < static_cast<int32_t>(BlendMode::kCountOfBlendMode); i++) {
+		//ブレンドステート
+		makeGraphicsPipeline_->InitializeBlendState(i);
+		//グラフィックスパイプラインの生成
+		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline(directXBase_->GetDepthStencil());
+	}
 	//ルートシグネイチャの記録
 	rootSignature_ = makeGraphicsPipeline_->GetRootSignature();
-	//グラフィックスパイプラインステートの記録
-	graphicsPipelineStates_ = makeGraphicsPipeline_->GetGraphicsPipelines();
 
 }
 

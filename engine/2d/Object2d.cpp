@@ -16,8 +16,6 @@ Object2d::~Object2d() {
 void Object2d::Initialize(const std::string& textureName) {
 	//DirectXの基盤部分を記録する
 	directXBase_ = Object2dCommon::GetInstance()->GetDirectXBase();
-	//光源の生成
-	Object2dCommon::GetInstance()->CreateDirectionLight();
 	//頂点データの生成
 	CreateVertexResource();
 	//インデックスリソースの生成
@@ -29,7 +27,7 @@ void Object2d::Initialize(const std::string& textureName) {
 	//テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
 	//uvTransform変数を作る
-	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
+	uvTransform_ = { {1.0f,1.0f},Math::kPi,{0.0f,0.0f} };
 	//ワールドトランスフォームの生成と初期化
 	worldTransform_ = new WorldTransform();
 	worldTransform_->Initialize(directXBase_, TransformMode::k2d);
@@ -47,6 +45,8 @@ void Object2d::Initialize(const std::string& textureName) {
 
 //更新
 void Object2d::Update() {
+	//トランスフォームのセッター
+	worldTransform_->SetTransform2d(transform_);
 	//ワールドトランスフォームの更新
 	worldTransform_->Update();
 	//UVTransform
@@ -63,10 +63,6 @@ void Object2d::Draw() {
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 	//ワールドトランスフォームの描画
 	worldTransform_->Draw();
-	//平光源CBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, Object2dCommon::GetInstance()->GetDirectionalLightResource()->GetGPUVirtualAddress());
-	//点光源のCBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(5, Object2dCommon::GetInstance()->GetPointLightResource()->GetGPUVirtualAddress());
 	//IndexBufferViewの設定
 	directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);//IBVを設定
 	//VertexBufferViewの設定
@@ -136,22 +132,22 @@ WorldTransform* Object2d::GetWorldTransform() {
 
 //サイズのセッター
 void Object2d::SetScale(const Vector2& scale) {
-	worldTransform_->SetScale({ scale.x,scale.y,1.0f });
+	transform_.scale=scale;
 }
 
 //回転のセッター
 void Object2d::SetRotate(float rotate) {
-	worldTransform_->SetRotate({ 0.0f,0.0f,rotate });
+	transform_.rotate = rotate;
 }
 
 //位置のセッター
 void Object2d::SetTranslate(const Vector2& translate) {
-	worldTransform_->SetTranslate({ translate.x,translate.y,0.0f });
+	transform_.translate = translate;
 }
 
 //トランスフォームのセッター
-void Object2d::SetTransform(const Transform2dData& transform2d) {
-	worldTransform_->SetTransform2d(transform2d);
+void Object2d::SetTransform(const Transform2dData& transform) {
+	transform_ = transform;
 }
 
 //UVのサイズのセッター

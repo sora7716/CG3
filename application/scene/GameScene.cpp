@@ -34,9 +34,6 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	object3d_->SetTransform(transformData_);
 	object3d_->SetCamera(camera_);
 	object3d_->GetModel()->SetMaterial(material_);
-
-	sprite_ = std::make_unique<Sprite>();
-	sprite_->Initialize("white1x1.png");
 }
 
 //更新
@@ -56,8 +53,6 @@ void GameScene::Update() {
 	//フィールド
 	object3d_->GetModel()->SetMaterial(material_);
 	object3d_->Update();
-
-	sprite_->Update();
 
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
@@ -121,8 +116,6 @@ void GameScene::Draw() {
 
 	//フィールド
 	//object3d_->Draw();
-
-	sprite_->Draw();
 }
 
 //終了

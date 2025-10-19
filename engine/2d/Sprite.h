@@ -69,6 +69,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="color">色</param>
 	void SetColor(const Vector4& color);
+
+	/// <summary>
+    /// トランスフォームのセッター
+    /// </summary>
+	/// <param name="transformData">トランスフォームデータ(scaleは100,100に初期設定してる)</param>
+	void SetTransform(const Transform2dData& transformData);
 private://メンバ関数
 	/// <summary>
 	/// 頂点データの初期化

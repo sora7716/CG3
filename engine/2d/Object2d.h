@@ -101,7 +101,7 @@ public://メンバ関数
 	/// <summary>
 	/// サイズのセッター
 	/// </summary>
-	/// <param name="scale">サイズ</param>
+	/// <param name="scale">サイズ(100,100で初期設定)</param>
 	void SetScale(const Vector2& scale);
 
 	/// <summary>
@@ -119,8 +119,8 @@ public://メンバ関数
 	/// <summary>
 	/// トランスフォームのセッター
 	/// </summary>
-	/// <param name="transform2d">トランスフォ-ム</param>
-	void SetTransform(const Transform2dData& transform2d);
+	/// <param name="transform">トランスフォ-ム(scaleは100,100で初期設定)</param>
+	void SetTransform(const Transform2dData& transform);
 
 	/// <summary>
 	/// UVのサイズのセッター
@@ -208,8 +208,14 @@ private://メンバ変数
 		.rotate = 0.0f,
 		.translate = {0.0f,0.0f}
 	};
+	//ワールド座標
+	Transform2dData transform_ = {
+		.scale = {100.0f,100.0f},
+		.rotate = 0.0f,
+		.translate = {0.0f,0.0f}
+	};
 	//DirectXの基盤部分
-	DirectXBase* directXBase_ = nullptr;
+	DirectXBase * directXBase_ = nullptr;
 	//ワールドトランスフォーム
 	WorldTransform* worldTransform_ = nullptr;
 	//ブレンドモード
