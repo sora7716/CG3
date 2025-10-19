@@ -109,10 +109,10 @@ void GameScene::Update() {
 //描画
 void GameScene::Draw() {	
 	//プレイヤー
-	//player_->Draw();
+	player_->Draw();
 
 	//地面
-	//ground_->Draw();
+	ground_->Draw();
 
 	//フィールド
 	//object3d_->Draw();

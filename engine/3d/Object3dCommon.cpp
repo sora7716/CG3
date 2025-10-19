@@ -40,11 +40,14 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	directionalLightData_.intensity = 1.0f;
 	directionalLightData_.isLambert = false;
 	directionalLightData_.isBlinnPhong = true;
+	directionalLightData_.enableDirectionalLighting = true;
 
 	//PointLightの初期化
 	pointLightData_.color = { 1.0f,1.0f,1.0f,1.0f };
 	pointLightData_.position = {};
 	pointLightData_.intensity = 1.0f;
+	pointLightData_.isBlinnPhong = false;
+	pointLightData_.enablePointLighting = false;
 }
 
 //共通描画設定
@@ -60,14 +63,17 @@ void Object3dCommon::DrawSetting() {
 //デバッグ
 void Object3dCommon::Debug() {
 	ImGui::Begin("Lighting");
-	ImGui::ColorEdit4("light.color", &directionalLightData_.color.x);
-	ImGui::DragFloat3("light.direction", &directionalLightData_.direction.x, 0.1f);
-	ImGui::DragFloat("light.intensity", &directionalLightData_.intensity, 0.1f);
-	ImGuiManager::CheckBoxToInt("isLambert", directionalLightData_.isLambert);
-	ImGuiManager::CheckBoxToInt("isBlingPhong", directionalLightData_.isBlinnPhong);
-	ImGui::ColorEdit4("pointLight.color", &pointLightData_.color.x);
-	ImGui::DragFloat3("pointLight.position", &pointLightData_.position.x, 0.1f);
-	ImGui::DragFloat("pointLight.intensity", &pointLightData_.intensity, 0.1f);
+	ImGui::ColorEdit4("directional.color", &directionalLightData_.color.x);
+	ImGui::DragFloat3("directional.direction", &directionalLightData_.direction.x, 0.1f);
+	ImGui::DragFloat("directional.intensity", &directionalLightData_.intensity, 0.1f);
+	ImGuiManager::CheckBoxToInt("directional.isLambert", directionalLightData_.isLambert);
+	ImGuiManager::CheckBoxToInt("directional.isBlingPhong", directionalLightData_.isBlinnPhong);
+	ImGuiManager::CheckBoxToInt("directional.enableDirectionalLight", directionalLightData_.enableDirectionalLighting);
+	ImGui::ColorEdit4("point.color", &pointLightData_.color.x);
+	ImGui::DragFloat3("point.position", &pointLightData_.position.x, 0.1f);
+	ImGui::DragFloat("point.intensity", &pointLightData_.intensity, 0.1f);
+	ImGuiManager::CheckBoxToInt("point.isBlingPhong", pointLightData_.isBlinnPhong);
+	ImGuiManager::CheckBoxToInt("point.enablePointLight", pointLightData_.enablePointLighting);
 	ImGui::End();
 	*directionalLightPtr_ = directionalLightData_;
 	*pointLightPtr_ = pointLightData_;

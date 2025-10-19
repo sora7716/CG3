@@ -15,6 +15,7 @@ struct DirectionalLight {
     float intensity; //輝度
     int isLambert; //lambertにするかどうか
     int isBlinnPhong; //BlinnPhongReflectionを行うかどうか
+    int enableDirectonalLighting; //平行光源を有効にするか
 };
 
 //点光源
@@ -22,6 +23,8 @@ struct PointLight {
     float4 color; //ライトの色
     float3 position; //ライトの位置
     float intensity; //輝度
+    int isBlinnPhong; //BlinnPhongReflectionを行うかどうか
+    int enablePointLighting; //点光源を有効にするか
 };
 
 //カメラ
@@ -44,6 +47,9 @@ struct Lighting {
 
 //平行光源
 Lighting DirectionalLighting(VertexShaderOutput input, float4 textureColor, float3 toEye) {
+     //ライティング
+    Lighting result;
+    
     //コサイン
     float NDotDirectional = 0.0f;
         
@@ -75,9 +81,6 @@ Lighting DirectionalLighting(VertexShaderOutput input, float4 textureColor, floa
         specularPow = pow(saturate(RdotE), gMaterial.shininess); //反射強度
     }
     
-    //ライティング
-    Lighting result;
-    
     //NdotL = step(0.25f, NdotL);
     result.diffuse = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * NDotDirectional * gDirectionalLight.intensity;
         
@@ -89,33 +92,72 @@ Lighting DirectionalLighting(VertexShaderOutput input, float4 textureColor, floa
 
 //点光源
 Lighting PointLighing(VertexShaderOutput input, float4 textureColor, float3 toEye) {
-    //BlingPhongReflectionModel
+     //ライティング
+    Lighting result;
+    
     //点光源の方向ベクトル
     float3 pointLightDirection = normalize(input.worldPosition - gPointLight.position);
-    //ハーフベクトル
-    float3 halfVector = normalize(-pointLightDirection + toEye);
-    float NDotH = dot(normalize(input.normal), halfVector);
-    //反射強度
-    float specularPowForPoint = pow(saturate(NDotH), gMaterial.shininess); 
-    
+   
     //コサイン
     float NDotPoint = saturate(dot(normalize(input.normal), -pointLightDirection));
+    
+    //鏡面反射の強度
+    float specularPow = 0.0f;
+    if (gPointLight.isBlinnPhong) {
+        //BlingPhongReflectionModel
+        //ハーフベクトル
+        float3 halfVector = normalize(-pointLightDirection + toEye);
+        float NDotH = dot(normalize(input.normal), halfVector);
+        //反射強度
+        specularPow = pow(saturate(NDotH), gMaterial.shininess);
+    } else {
+        //PhongReflectionModel
+        //入射光の反射ベクトルを求める
+        float3 reflectLight = reflect(pointLightDirection, normalize(input.normal));
+        //鏡面反射の強度
+        float RdotE = dot(reflectLight, toEye);
+        //反射強度
+        specularPow = pow(saturate(RdotE), gMaterial.shininess);
+    }
     
     //距離減衰
     float distance = length(gPointLight.position - input.worldPosition);
     float attenuation = 1.0f / pow(distance, 2.0f);
     
-    //ライティング
-    Lighting result;
     //拡散反射
     result.diffuse = gMaterial.color.rgb * textureColor.rgb * gPointLight.color.rgb * NDotPoint * gPointLight.intensity;
     //鏡面反射
-    result.specular= gPointLight.color.rgb * gPointLight.intensity * specularPowForPoint * float3(1.0f, 1.0f, 1.0f);
+    result.specular = gPointLight.color.rgb * gPointLight.intensity * specularPow * float3(1.0f, 1.0f, 1.0f);
     
     //距離減衰を適応
     result.diffuse *= attenuation;
     result.specular *= attenuation;
     return result;
+}
+
+//ライティングのモードを切り替える用の関数
+float3 SetLightingMode(float3 baseColor, VertexShaderOutput input, float4 textureColor, float3 toEye) {
+    //平行光源
+    Lighting directionalLighting = DirectionalLighting(input, textureColor, toEye);
+        
+    //点光源
+    Lighting pointLighting = PointLighing(input, textureColor, toEye);
+    
+    //拡散反射+鏡面反射
+    if (gDirectionalLight.enableDirectonalLighting) {
+        //平行光源が有効だった場合
+        baseColor = directionalLighting.diffuse + directionalLighting.specular;
+    } else if (gPointLight.enablePointLighting) {
+        //点光源が有効だった場合
+        baseColor = pointLighting.diffuse + pointLighting.specular;
+    }
+    
+    //両方が有効だった場合
+    if (gDirectionalLight.enableDirectonalLighting && gPointLight.enablePointLighting) {
+        baseColor = directionalLighting.diffuse + directionalLighting.specular + pointLighting.diffuse + pointLighting.specular;
+    }
+    
+    return baseColor;
 }
 
 struct PixelShaderOutput {
@@ -131,15 +173,10 @@ PixelShaderOutput main(VertexShaderOutput input) {
     if (gMaterial.enableLighring) {
         //カメラの視点を取得
         float3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
-     
-        //平行光源
-        Lighting directionalLighting = DirectionalLighting(input, textureColor, toEye);
         
-        //点光源
-        Lighting pointLighting = PointLighing(input, textureColor, toEye);
+        //ライティング
+        output.color.rgb = SetLightingMode(output.color.rgb, input, textureColor, toEye);
         
-        //拡散反射+鏡面反射
-        output.color.rgb = directionalLighting.diffuse + directionalLighting.specular + pointLighting.diffuse + pointLighting.specular;
         //アルファ  
         output.color.a = gMaterial.color.a * textureColor.a;
 

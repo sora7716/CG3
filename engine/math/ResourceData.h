@@ -31,6 +31,7 @@ struct DirectionalLight {
 	float intensity;//輝度
 	int32_t isLambert;//lambertにするかどうか
 	int32_t isBlinnPhong;//BlinnPhongReflectionを行うかどうか
+	int32_t enableDirectionalLighting;//平行光源を有効にするか
 };
 
 //点光源
@@ -38,6 +39,8 @@ struct PointLight {
 	Vector4 color;//ライトの色
 	Vector3 position;//ライトの位置
 	float intensity;//輝度
+	int32_t isBlinnPhong;//BlinnPhongReflectionを行うかどうか
+	int32_t enablePointLighting;//点光源を有効にするか
 };
 
 //マテリアルデータ
