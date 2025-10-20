@@ -119,10 +119,10 @@ public://メンバ関数
 	Camera* GetDefaultCamera()const;
 
 	/// <summary>
-	/// SRVインデックスのゲッター
+	/// SRVインデックスのゲッター(PointLight)
 	/// </summary>
 	/// <returns>SRVインデックス</returns>
-	uint32_t GetSrvIndex()const;
+	uint32_t GetSrvIndexPoint()const;
 private://メンバ関数
 	//コンストラクタの封印
 	Object3dCommon() = default;
@@ -177,5 +177,6 @@ private://メンバ変数
 	Camera* defaultCamera_ = nullptr;
 
 	//SRVインデックス
-	uint32_t srvIndex_ = 0;
+	uint32_t srvIndexPoint_ = 0;
+	//uint32_t srvIndexSpot_ = 0;
 };

@@ -20,14 +20,6 @@ void Object3d::Initialize() {
 	//DirectXの基盤部分を受け取る
 	directXBase_ = Object3dCommon::GetInstance()->GetDirectXBase();
 
-	//平行光源の生成
-	Object3dCommon::GetInstance()->CreateDirectionLight();
-	//点光源の生成
-	Object3dCommon::GetInstance()->CreatePointLight();
-	Object3dCommon::GetInstance()->CreateStructuredBufferForPoint();
-	//スポットライトの生成
-	Object3dCommon::GetInstance()->CreateSpotLight();
-
 	//ワールドトランスフォームの生成、初期化
 	worldTransform_ = new WorldTransform();
 	worldTransform_->Initialize(directXBase_, TransformMode::k3d);
@@ -76,7 +68,7 @@ void Object3d::Draw() {
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, Object3dCommon::GetInstance()->GetDirectionalLightResource()->GetGPUVirtualAddress());
 	//点光源のCBufferの場所を設定
 	//directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(5, Object3dCommon::GetInstance()->GetPointLightResource()->GetGPUVirtualAddress());
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, SRVManager::GetInstance()->GetGPUDescriptorHandle(Object3dCommon::GetInstance()->GetSrvIndex()));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, SRVManager::GetInstance()->GetGPUDescriptorHandle(Object3dCommon::GetInstance()->GetSrvIndexPoint()));
 	//スポットライトのCBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(6, Object3dCommon::GetInstance()->GetSpotLight()->GetGPUVirtualAddress());
 

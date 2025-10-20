@@ -67,6 +67,15 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	spotLightData_.cosAngle = std::cos(Math::kPi / 3.0f);
 	spotLightData_.isBlinnPhong = false;
 	spotLightData_.enableSpotLighting = false;
+
+	//ライティング
+	//平行光源の生成
+	CreateDirectionLight();
+	//点光源の生成
+	CreatePointLight();
+	CreateStructuredBufferForPoint();
+	//スポットライトの生成
+	CreateSpotLight();
 }
 
 //共通描画設定
@@ -169,9 +178,9 @@ void Object3dCommon::CreatePointLight() {
 //ポイントライトのストラクチャバッファの生成
 void Object3dCommon::CreateStructuredBufferForPoint() {
 	//ストラクチャバッファを生成
-	srvIndex_ = SRVManager::GetInstance()->Allocate() + TextureManager::kSRVIndexTop;
+	srvIndexPoint_ = SRVManager::GetInstance()->Allocate() + TextureManager::kSRVIndexTop;
 	SRVManager::GetInstance()->CreateSRVForStructuredBuffer(
-		srvIndex_,
+		srvIndexPoint_,
 		pointLightResource_.Get(),
 		kMaxPointLightCount,
 		sizeof(PointLight)
@@ -254,7 +263,7 @@ Camera* Object3dCommon::GetDefaultCamera() const {
 	return defaultCamera_;
 }
 
-//SRVインデックスのゲッター
-uint32_t Object3dCommon::GetSrvIndex() const {
-	return srvIndex_;
+//SRVインデックスのゲッター(PointLight)
+uint32_t Object3dCommon::GetSrvIndexPoint() const {
+	return srvIndexPoint_;
 }
