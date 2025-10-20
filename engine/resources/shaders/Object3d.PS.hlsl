@@ -54,7 +54,7 @@ SamplerState gSampler : register(s0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 ConstantBuffer<Camera> gCamera : register(b2);
 StructuredBuffer<PointLight> gPointLight : register(t1);
-ConstantBuffer<SpotLight> gSpotLight : register(b4);
+StructuredBuffer<SpotLight> gSpotLight : register(t2);
 
 //ライティング
 struct Lighting {
@@ -152,19 +152,19 @@ float32_t3 PointLighing(VertexShaderOutput input, uint32_t instanceId, float32_t
 }
 
 //スポットライト
-float32_t3 SpotLightint(VertexShaderOutput input, float32_t4 textureColor, float32_t3 toEye) {
+float32_t3 SpotLightint(VertexShaderOutput input, uint32_t instanceId, float32_t4 textureColor, float32_t3 toEye) {
     //ライティング
     Lighting result;
     
     //スポットライトの入射光
-    float32_t3 spotLightDirectionOnSurface = normalize(input.worldPosition - gSpotLight.position);
+    float32_t3 spotLightDirectionOnSurface = normalize(input.worldPosition - gSpotLight[instanceId].position);
     
     //コサイン
     float32_t NDotSpot = saturate(dot(normalize(input.normal), -spotLightDirectionOnSurface));
         
      //鏡面反射の強度
     float specularPow = 0.0f;
-    if (gSpotLight.isBlinnPhong) {
+    if (gSpotLight[instanceId].isBlinnPhong) {
         //BlingPhongReflectionModel
         //ハーフベクトル
         float32_t3 halfVector = normalize(-spotLightDirectionOnSurface + toEye);
@@ -182,16 +182,16 @@ float32_t3 SpotLightint(VertexShaderOutput input, float32_t4 textureColor, float
     }
         
     //拡散反射
-    result.diffuse = gMaterial.color.rgb * textureColor.rgb * gSpotLight.color.rgb * NDotSpot * gSpotLight.intensity;
+    result.diffuse = gMaterial.color.rgb * textureColor.rgb * gSpotLight[instanceId].color.rgb * NDotSpot * gSpotLight[instanceId].intensity;
 
     //鏡面反射
-    result.specular = gSpotLight.color.rgb * gSpotLight.intensity * specularPow * float32_t3(1.0f, 1.0f, 1.0f);
+    result.specular = gSpotLight[instanceId].color.rgb * gSpotLight[instanceId].intensity * specularPow * float32_t3(1.0f, 1.0f, 1.0f);
         
-    float32_t cosAngle = dot(spotLightDirectionOnSurface, gSpotLight.direction);
-    float32_t falloffFactor = saturate((cosAngle - gSpotLight.cosAngle) / (gSpotLight.cosFalloffStart - gSpotLight.cosAngle));
+    float32_t cosAngle = dot(spotLightDirectionOnSurface, gSpotLight[instanceId].direction);
+    float32_t falloffFactor = saturate((cosAngle - gSpotLight[instanceId].cosAngle) / (gSpotLight[instanceId].cosFalloffStart - gSpotLight[instanceId].cosAngle));
         
     //光の減衰
-    float32_t attenuation = 1.0f / (gSpotLight.distance * gSpotLight.decay);
+    float32_t attenuation = 1.0f / (gSpotLight[instanceId].distance * gSpotLight[instanceId].decay);
         
     //光の減衰を適応
     result.diffuse *= attenuation * falloffFactor;
@@ -203,15 +203,15 @@ float32_t3 SpotLightint(VertexShaderOutput input, float32_t4 textureColor, float
 //ライティングのモードを切り替える用の関数
 float32_t3 SetLightingMode(VertexShaderOutput input, float32_t4 textureColor, float32_t3 toEye) {
     //ライティング
-    uint32_t lightCount, stride;
-    gPointLight.GetDimensions(lightCount, stride);
     //平行光源
     float32_t3 directionalLighting = DirectionalLighting(input, textureColor, toEye);
         
     //点光源
+    uint32_t pointLightCount, stridePoint;
+    gPointLight.GetDimensions(pointLightCount, stridePoint);
     float32_t3 pointLighting = { 0.0f, 0.0f, 0.0f };
     [loop]
-    for (uint32_t i = 0; i < lightCount; i++) {
+    for (uint32_t i = 0; i < pointLightCount; i++) {
         if (!gPointLight[i].enablePointLighting) {
             continue;
         }
@@ -220,9 +220,21 @@ float32_t3 SetLightingMode(VertexShaderOutput input, float32_t4 textureColor, fl
     }
     
     //スポットライト
-    float32_t3 spotLight = SpotLightint(input, textureColor, toEye);
+    uint32_t spotLightCount, strideSpot;
+    gSpotLight.GetDimensions(spotLightCount, strideSpot);
+    float32_t3 spotLight = { 0.0f, 0.0f, 0.0f };
+    [loop]
+    for (uint32_t j = 0; j < spotLightCount; j++) {
+        if (!gSpotLight[j].enablSpotLighting) {
+            continue;
+        }
+        spotLight += SpotLightint(input, j, textureColor, toEye);
+    }
         
-    float32_t3 directionalRgb = { 0.0f, 0.0f, 0.0f };
+    float32_t3 directionalRgb = {
+        0.0f, 0.0f, 0.0f
+    };
+    
     if (gDirectionalLight.enableDirectonalLighting) {
         directionalRgb = directionalLighting;
     }
@@ -232,14 +244,14 @@ float32_t3 SetLightingMode(VertexShaderOutput input, float32_t4 textureColor, fl
     //    pointRgb = pointLighting;
     //}
         
-    float32_t3 spotRgb = { 0.0f, 0.0f, 0.0f };
-    if (gSpotLight.enablSpotLighting) {
-        spotRgb = spotLight;
-    }
+    //float32_t3 spotRgb = { 0.0f, 0.0f, 0.0f };
+    //if (gSpotLight.enablSpotLighting) {
+    //    spotRgb = spotLight;
+    //}
     
 
     
-    return directionalRgb + pointLighting + spotRgb;
+    return directionalRgb + pointLighting + spotLight;
 }
 
 struct PixelShaderOutput {

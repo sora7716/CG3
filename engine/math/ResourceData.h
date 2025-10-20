@@ -57,7 +57,6 @@ struct SpotLight {
 	float cosFolloffStart;
 	int32_t isBlinnPhong;//BlinnPhongReflectionを行うかどうか
 	int32_t enableSpotLighting;//点光源を有効にするか
-	float padding[2];
 };
 
 //マテリアルデータ

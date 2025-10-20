@@ -128,17 +128,23 @@ void GraphicsPipeline::CreateRootSignatureBlobForObject3d() {
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
 	//DescriptorRange
-	D3D12_DESCRIPTOR_RANGE descriptorRange[2] = {};
+	D3D12_DESCRIPTOR_RANGE descriptorRange[3] = {};
 	descriptorRange[0].BaseShaderRegister = 0;//0から始まる
 	descriptorRange[0].NumDescriptors = 1;//数は1つ
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
 
+	//ポイントライト
 	descriptorRange[1].BaseShaderRegister = 1;//0から始まる
 	descriptorRange[1].NumDescriptors = 1;//数は1つ
 	descriptorRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
 	descriptorRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
 
+	//スポットライト
+	descriptorRange[2].BaseShaderRegister = 2;//0から始まる
+	descriptorRange[2].NumDescriptors = 1;//数は1つ
+	descriptorRange[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
+	descriptorRange[2].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//Offsetを自動計算
 
 	//RootParameterの作成。複数設定できるので配列。
 	D3D12_ROOT_PARAMETER rootParameters[7] = {};
@@ -169,15 +175,16 @@ void GraphicsPipeline::CreateRootSignatureBlobForObject3d() {
 	rootParameters[4].Descriptor.ShaderRegister = 2;//レジスタ番号2を使う
 
 	//点光源
-	rootParameters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//CBVを使う
+	rootParameters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//SRVを使う
 	rootParameters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
 	rootParameters[5].DescriptorTable.pDescriptorRanges = &descriptorRange[1];//Tableの中身の配列を指定
 	rootParameters[5].DescriptorTable.NumDescriptorRanges = 1;
 
 	//スポットライト
-	rootParameters[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//SRVを使う
 	rootParameters[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[6].Descriptor.ShaderRegister = 4;//レジスタ番号2を使う
+	rootParameters[6].DescriptorTable.pDescriptorRanges = &descriptorRange[2];//Tableの中身の配列を指定
+	rootParameters[6].DescriptorTable.NumDescriptorRanges = 1;
 
 	descriptionRootSignature.pParameters = rootParameters;//ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);//配列の長さ
