@@ -109,9 +109,10 @@ void GraphicsPipeline::CreateRootSignatureBlobForCBV() {
 	rootParameters[4].Descriptor.ShaderRegister = 2;//レジスタ番号2を使う
 
 	//点光源
-	rootParameters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//CBVを使う
 	rootParameters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderを使う
-	rootParameters[5].Descriptor.ShaderRegister = 3;//レジスタ番号2を使う
+	rootParameters[5].DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
+	rootParameters[5].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);//Tableで利用する数
 
 	//スポットライト
 	rootParameters[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う

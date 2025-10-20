@@ -7,6 +7,7 @@
 #include "engine/worldTransform/WorldTransform.h"
 #include "engine/math/func/Rendering.h"
 #include "engine/debug/ImGuiManager.h"
+#include "engine/base/SRVManager.h"
 #include <cassert>
 
 //デストラクタ
@@ -23,6 +24,7 @@ void Object3d::Initialize() {
 	Object3dCommon::GetInstance()->CreateDirectionLight();
 	//点光源の生成
 	Object3dCommon::GetInstance()->CreatePointLight();
+	Object3dCommon::GetInstance()->CreateStructuredBufferForPoint();
 	//スポットライトの生成
 	Object3dCommon::GetInstance()->CreateSpotLight();
 
@@ -73,7 +75,8 @@ void Object3d::Draw() {
 	//平光源CBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, Object3dCommon::GetInstance()->GetDirectionalLightResource()->GetGPUVirtualAddress());
 	//点光源のCBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(5, Object3dCommon::GetInstance()->GetPointLightResource()->GetGPUVirtualAddress());
+	//directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(5, Object3dCommon::GetInstance()->GetPointLightResource()->GetGPUVirtualAddress());
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, SRVManager::GetInstance()->GetGPUDescriptorHandle(Object3dCommon::GetInstance()->GetSrvIndex()));
 	//スポットライトのCBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(6, Object3dCommon::GetInstance()->GetSpotLight()->GetGPUVirtualAddress());
 

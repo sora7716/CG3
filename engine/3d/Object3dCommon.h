@@ -51,6 +51,11 @@ public://メンバ関数
 	void CreatePointLight();
 
 	/// <summary>
+	/// ポイントライトのストラクチャバッファの生成
+	/// </summary>
+	void CreateStructuredBufferForPoint();
+
+	/// <summary>
 	/// スポットライトの生成
 	/// </summary>
 	void CreateSpotLight();
@@ -78,9 +83,9 @@ public://メンバ関数
 	ID3D12Resource* GetDirectionalLightResource()const;
 
 	/// <summary>
-    /// PointLightのリソースのゲッター
-    /// </summary>
-    /// <returns>PointLightのリソース</returns>
+	/// PointLightのリソースのゲッター
+	/// </summary>
+	/// <returns>PointLightのリソース</returns>
 	ID3D12Resource* GetPointLightResource()const;
 
 	/// <summary>
@@ -112,6 +117,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>デフォルトカメラ</returns>
 	Camera* GetDefaultCamera()const;
+
+	/// <summary>
+	/// SRVインデックスのゲッター
+	/// </summary>
+	/// <returns>SRVインデックス</returns>
+	uint32_t GetSrvIndex()const;
 private://メンバ関数
 	//コンストラクタの封印
 	Object3dCommon() = default;
@@ -126,6 +137,8 @@ private://静的メンバ変数
 	static inline Object3dCommon* instance = nullptr;
 	//Finalizeをしたかどうかのフラグ
 	static inline bool isFinalize = false;
+	//ライトの最大値
+	static inline const int32_t kMaxLightCount = 1024;
 private://メンバ変数
 	//DirectXの基盤
 	DirectXBase* directXBase_ = nullptr;
@@ -162,4 +175,7 @@ private://メンバ変数
 
 	//デフォルトカメラ
 	Camera* defaultCamera_ = nullptr;
+
+	//SRVインデックス
+	uint32_t srvIndex_ = 0;
 };

@@ -3,6 +3,8 @@
 #include "engine/camera/Camera.h"
 #include "engine/base/GraphicsPipeline.h"
 #include "engine/debug/ImGuiManager.h"
+#include "engine/base/SRVManager.h"
+#include "engine/2d/TextureManager.h"
 #include <cassert>
 #include "engine/math/func/Math.h"
 using namespace Microsoft::WRL;
@@ -136,6 +138,18 @@ void Object3dCommon::CreatePointLight() {
 	pointLightPtr_->enablePointLighting = false;
 }
 
+//ポイントライトのストラクチャバッファの生成
+void Object3dCommon::CreateStructuredBufferForPoint() {
+	//ストラクチャバッファを生成
+	srvIndex_ = SRVManager::GetInstance()->Allocate() + TextureManager::kSRVIndexTop;
+	SRVManager::GetInstance()->CreateSRVForStructuredBuffer(
+		srvIndex_,
+		pointLightResource_.Get(),
+		kMaxLightCount,
+		sizeof(PointLight)
+	);
+}
+
 //スポットライトの生成
 void Object3dCommon::CreateSpotLight() {
 	//光源のリソースを作成
@@ -210,4 +224,9 @@ void Object3dCommon::SetDefaultCamera(Camera* camera) {
 // デフォルトカメラのゲッター
 Camera* Object3dCommon::GetDefaultCamera() const {
 	return defaultCamera_;
+}
+
+//SRVインデックスのゲッター
+uint32_t Object3dCommon::GetSrvIndex() const {
+	return srvIndex_;
 }

@@ -53,7 +53,7 @@ Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 ConstantBuffer<Camera> gCamera : register(b2);
-ConstantBuffer<PointLight> gPointLight : register(b3);
+ConstantBuffer<PointLight> gPointLight : register(t1);
 ConstantBuffer<SpotLight> gSpotLight : register(b4);
 
 //ライティング
