@@ -138,7 +138,7 @@ private://静的メンバ変数
 	//Finalizeをしたかどうかのフラグ
 	static inline bool isFinalize = false;
 	//ライトの最大値
-	static inline const int32_t kMaxLightCount = 1024;
+	static inline const int32_t kMaxPointLightCount = 16;
 private://メンバ変数
 	//DirectXの基盤
 	DirectXBase* directXBase_ = nullptr;
@@ -165,7 +165,7 @@ private://メンバ変数
 	//平行光源
 	DirectionalLight directionalLightData_ = {};
 	//点光源
-	PointLight pointLightData_ = {};
+	PointLight pointLightData_[3] = {};
 	//スポットライト
 	SpotLight spotLightData_ = {};
 

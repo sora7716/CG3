@@ -63,7 +63,7 @@ struct Lighting {
 };
 
 //平行光源
-Lighting DirectionalLighting(VertexShaderOutput input, float32_t4 textureColor, float32_t3 toEye) {
+float32_t3 DirectionalLighting(VertexShaderOutput input, float32_t4 textureColor, float32_t3 toEye) {
      //ライティング
     Lighting result;
     
@@ -104,11 +104,11 @@ Lighting DirectionalLighting(VertexShaderOutput input, float32_t4 textureColor, 
     //鏡面反射
     result.specular = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float32_t3(1.0f, 1.0f, 1.0f);
 
-    return result;
+    return result.diffuse + result.specular;
 }
 
 //点光源
-Lighting PointLighing(VertexShaderOutput input, uint32_t instanceId, float32_t4 textureColor, float32_t3 toEye) {
+float32_t3 PointLighing(VertexShaderOutput input, uint32_t instanceId, float32_t4 textureColor, float32_t3 toEye) {
     //ライティング
     Lighting result;
     
@@ -148,11 +148,11 @@ Lighting PointLighing(VertexShaderOutput input, uint32_t instanceId, float32_t4 
     //距離減衰を適応
     result.diffuse *= attenuation;
     result.specular *= attenuation;
-    return result;
+    return result.diffuse + result.specular;
 }
 
 //スポットライト
-Lighting SpotLightint(VertexShaderOutput input, float32_t4 textureColor, float32_t3 toEye) {
+float32_t3 SpotLightint(VertexShaderOutput input, float32_t4 textureColor, float32_t3 toEye) {
     //ライティング
     Lighting result;
     
@@ -197,37 +197,49 @@ Lighting SpotLightint(VertexShaderOutput input, float32_t4 textureColor, float32
     result.diffuse *= attenuation * falloffFactor;
     result.specular *= attenuation * falloffFactor;
     
-    return result;
+    return result.diffuse + result.specular;
 }
 
 //ライティングのモードを切り替える用の関数
-float32_t3 SetLightingMode(VertexShaderOutput input, uint32_t instanceId, float32_t4 textureColor, float32_t3 toEye) {
-   //ライティング
-        //平行光源
-    Lighting directionalLighting = DirectionalLighting(input, textureColor, toEye);
+float32_t3 SetLightingMode(VertexShaderOutput input, float32_t4 textureColor, float32_t3 toEye) {
+    //ライティング
+    uint32_t lightCount, stride;
+    gPointLight.GetDimensions(lightCount, stride);
+    //平行光源
+    float32_t3 directionalLighting = DirectionalLighting(input, textureColor, toEye);
         
-        //点光源
-    Lighting pointLighting = PointLighing(input, instanceId, textureColor, toEye);
+    //点光源
+    float32_t3 pointLighting = { 0.0f, 0.0f, 0.0f };
+    [loop]
+    for (uint32_t i = 0; i < lightCount; i++) {
+        if (!gPointLight[i].enablePointLighting) {
+            continue;
+        }
+        pointLighting += PointLighing(input, i, textureColor, toEye);
+
+    }
     
-        //スポットライト
-    Lighting spotLight = SpotLightint(input, textureColor, toEye);
+    //スポットライト
+    float32_t3 spotLight = SpotLightint(input, textureColor, toEye);
         
     float32_t3 directionalRgb = { 0.0f, 0.0f, 0.0f };
     if (gDirectionalLight.enableDirectonalLighting) {
-        directionalRgb = directionalLighting.diffuse + directionalLighting.specular;
+        directionalRgb = directionalLighting;
     }
         
-    float32_t3 pointRgb = { 0.0f, 0.0f, 0.0f };
-    if (gPointLight.enablePointLighting) {
-        pointRgb = pointLighting.diffuse + pointLighting.specular;
-    }
+    //float32_t3 pointRgb = { 0.0f, 0.0f, 0.0f };
+    //if (gPointLight.enablePointLighting) {
+    //    pointRgb = pointLighting;
+    //}
         
     float32_t3 spotRgb = { 0.0f, 0.0f, 0.0f };
     if (gSpotLight.enablSpotLighting) {
-        spotRgb = spotLight.diffuse + spotLight.specular;
+        spotRgb = spotLight;
     }
     
-    return directionalRgb + pointRgb + spotRgb;
+
+    
+    return directionalRgb + pointLighting + spotRgb;
 }
 
 struct PixelShaderOutput {
@@ -246,7 +258,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
         
         
         //ライティングをRGBに適応
-        output.color.rgb = SetLightingMode(input, instanceId, textureColor, toEye);
+        output.color.rgb = SetLightingMode(input, textureColor, toEye);
       
         //アルファ  
         output.color.a = gMaterial.color.a * textureColor.a;
