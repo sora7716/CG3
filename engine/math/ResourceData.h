@@ -39,6 +39,8 @@ struct PointLight {
 	Vector4 color;//ライトの色
 	Vector3 position;//ライトの位置
 	float intensity;//輝度
+	float distance;//ライトの届く最大距離
+	float decay;//減衰率
 	int32_t isBlinnPhong;//BlinnPhongReflectionを行うかどうか
 	int32_t enablePointLighting;//点光源を有効にするか
 };

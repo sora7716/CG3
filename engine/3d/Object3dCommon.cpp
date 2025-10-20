@@ -41,14 +41,16 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	directionalLightData_.intensity = 1.0f;
 	directionalLightData_.isLambert = false;
 	directionalLightData_.isBlinnPhong = true;
-	directionalLightData_.enableDirectionalLighting = true;
+	directionalLightData_.enableDirectionalLighting = false;
 
 	//PointLightの初期化
 	pointLightData_.color = { 1.0f,1.0f,1.0f,1.0f };
 	pointLightData_.position = {};
 	pointLightData_.intensity = 1.0f;
+	pointLightData_.distance = 7.0f;
+	pointLightData_.decay = 4.0f;
 	pointLightData_.isBlinnPhong = false;
-	pointLightData_.enablePointLighting = false;
+	pointLightData_.enablePointLighting = true;
 
 	//SpotLightの初期化
 	spotLightData_.color = { 1.0f,1.0f,1.0f,1.0f };
@@ -57,7 +59,7 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	spotLightData_.direction = Vector3({ -1.0f,-1.0f,0.0f }).Normalize();
 	spotLightData_.intensity = 4.0f;
 	spotLightData_.decay = 2.0f;
-	spotLightData_.cosFolloffStart = 0.0f;
+	spotLightData_.cosFolloffStart = 1.0f;
 	spotLightData_.cosAngle = std::cos(Math::kPi / 3.0f);
 	spotLightData_.isBlinnPhong = false;
 	spotLightData_.enableSpotLighting = false;
@@ -85,13 +87,15 @@ void Object3dCommon::Debug() {
 	ImGui::ColorEdit4("point.color", &pointLightData_.color.x);
 	ImGui::DragFloat3("point.position", &pointLightData_.position.x, 0.1f);
 	ImGui::DragFloat("point.intensity", &pointLightData_.intensity, 0.1f);
+	ImGui::DragFloat("point.distance", &pointLightData_.distance, 0.1f);
+	ImGui::DragFloat("point.decay", &pointLightData_.decay, 0.1f);
 	ImGuiManager::CheckBoxToInt("point.isBlingPhong", pointLightData_.isBlinnPhong);
 	ImGuiManager::CheckBoxToInt("point.enablePointLight", pointLightData_.enablePointLighting);
 	ImGui::ColorEdit4("spot.color", &spotLightData_.color.x);
 	ImGui::DragFloat3("spot.position", &spotLightData_.position.x, 0.1f);
 	ImGui::DragFloat3("spot.direction", &spotLightData_.direction.x, 0.1f);
-	ImGui::SliderFloat("spot.cosFolloffStart", &spotLightData_.cosFolloffStart, -1.0f, 1.0f);
-	ImGui::SliderFloat("spot.cosAngle", &spotLightData_.cosAngle, -1.0f, 1.0f);
+	ImGui::DragFloat("spot.cosFolloffStart", &spotLightData_.cosFolloffStart, 0.1f);
+	ImGui::DragFloat("spot.cosAngle", &spotLightData_.cosAngle, 0.1f);
 	ImGui::DragFloat("spot.decay", &spotLightData_.decay, 0.1f);
 	ImGui::DragFloat("spot.distance", &spotLightData_.distance, 0.1f);
 	ImGui::DragFloat("spot.intensity", &spotLightData_.intensity, 0.1f);
@@ -126,6 +130,8 @@ void Object3dCommon::CreatePointLight() {
 	pointLightPtr_->color = { 1.0f,1.0f,1.0f,1.0f };
 	pointLightPtr_->position = { 0.0f,-1.0f,0.0f };
 	pointLightPtr_->intensity = 10.0f;
+	pointLightPtr_->distance = 7.0f;
+	pointLightPtr_->decay = 2.0f;
 	pointLightPtr_->isBlinnPhong = true;
 	pointLightPtr_->enablePointLighting = false;
 }
@@ -143,7 +149,7 @@ void Object3dCommon::CreateSpotLight() {
 	spotLightPtr_->intensity = 4.0f;
 	spotLightPtr_->decay = 2.0f;
 	spotLightPtr_->cosAngle = std::cos(Math::kPi / 3.0f);
-	spotLightPtr_->cosFolloffStart =0.0f;
+	spotLightPtr_->cosFolloffStart = 0.0f;
 	spotLightPtr_->isBlinnPhong = true;
 	spotLightPtr_->enableSpotLighting = false;
 }
