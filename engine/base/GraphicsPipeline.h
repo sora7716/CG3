@@ -58,14 +58,19 @@ public://メンバ関数
 	void SetPixelShaderFileName(const std::wstring& fileName);
 
 	/// <summary>
-	/// ルートシグネイチャBlobの生成(CBV)
+	/// ルートシグネイチャBlobの生成(スプライト用)
 	/// </summary>
-	void CreateRootSignatureBlobForCBV();
+	void CreateRootSignatureBlobForSprite();
 
 	/// <summary>
-	/// ルートシグネイチャBlobの生成(SRV)
+	/// ルートシグネイチャBlobの生成(Object3d用)
 	/// </summary>
-	void CreateRootSignatureBlobForSRV();
+	void CreateRootSignatureBlobForObject3d();
+
+	/// <summary>
+	/// ルートシグネイチャBlobの生成(Particle用)
+	/// </summary>
+	void CreateRootSignatureBlobForParticle();
 
 	/// <summary>
 	/// ルートシグネイチャの生成

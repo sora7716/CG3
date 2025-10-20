@@ -31,7 +31,7 @@ void SpriteCommon::Initialize(DirectXBase* directXBase) {
 	//makeGraphicsPipeline_->Initialize(directXBase_);
 	makeGraphicsPipeline_->SetDirectXBase(directXBase);
 	//シグネイチャBlobの初期化
-	makeGraphicsPipeline_->CreateRootSignatureBlobForCBV();
+	makeGraphicsPipeline_->CreateRootSignatureBlobForSprite();
 	//ルートシグネイチャの保存
 	makeGraphicsPipeline_->CreateRootSignature();
 	//インプットレイアウト

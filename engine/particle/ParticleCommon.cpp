@@ -27,7 +27,7 @@ void ParticleCommon::Initialize(DirectXBase* directXBase) {
 	makeGraphicsPipeline_->SetVertexShaderFileName(L"Particle.VS.hlsl");
 	makeGraphicsPipeline_->SetPixelShaderFileName(L"Particle.PS.hlsl");
 	//シグネイチャBlobの初期化
-	makeGraphicsPipeline_->CreateRootSignatureBlobForSRV();
+	makeGraphicsPipeline_->CreateRootSignatureBlobForParticle();
 	//ルートシグネイチャの保存
 	makeGraphicsPipeline_->CreateRootSignature();
 	//インプットレイアウト
