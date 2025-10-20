@@ -53,7 +53,7 @@ Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 ConstantBuffer<Camera> gCamera : register(b2);
-ConstantBuffer<PointLight> gPointLight : register(t1);
+StructuredBuffer<PointLight> gPointLight : register(t1);
 ConstantBuffer<SpotLight> gSpotLight : register(b4);
 
 //ライティング
@@ -108,19 +108,19 @@ Lighting DirectionalLighting(VertexShaderOutput input, float32_t4 textureColor, 
 }
 
 //点光源
-Lighting PointLighing(VertexShaderOutput input, float32_t4 textureColor, float32_t3 toEye) {
+Lighting PointLighing(VertexShaderOutput input, uint32_t instanceId, float32_t4 textureColor, float32_t3 toEye) {
     //ライティング
     Lighting result;
     
     //点光源の方向ベクトル
-    float32_t3 pointLightDirection = normalize(input.worldPosition - gPointLight.position);
+    float32_t3 pointLightDirection = normalize(input.worldPosition - gPointLight[instanceId].position);
    
     //コサイン
     float32_t NDotPoint = saturate(dot(normalize(input.normal), -pointLightDirection));
     
     //鏡面反射の強度
     float32_t specularPow = 0.0f;
-    if (gPointLight.isBlinnPhong) {
+    if (gPointLight[instanceId].isBlinnPhong) {
         //BlingPhongReflectionModel
         //ハーフベクトル
         float32_t3 halfVector = normalize(-pointLightDirection + toEye);
@@ -138,12 +138,12 @@ Lighting PointLighing(VertexShaderOutput input, float32_t4 textureColor, float32
     }
     
     //距離減衰
-    float32_t attenuation = 1.0f / (gPointLight.distance * gPointLight.decay);
+    float32_t attenuation = 1.0f / (gPointLight[instanceId].distance * gPointLight[instanceId].decay);
     
     //拡散反射
-    result.diffuse = gMaterial.color.rgb * textureColor.rgb * gPointLight.color.rgb * NDotPoint * gPointLight.intensity;
+    result.diffuse = gMaterial.color.rgb * textureColor.rgb * gPointLight[instanceId].color.rgb * NDotPoint * gPointLight[instanceId].intensity;
     //鏡面反射
-    result.specular = gPointLight.color.rgb * gPointLight.intensity * specularPow * float32_t3(1.0f, 1.0f, 1.0f);
+    result.specular = gPointLight[instanceId].color.rgb * gPointLight[instanceId].intensity * specularPow * float32_t3(1.0f, 1.0f, 1.0f);
     
     //距離減衰を適応
     result.diffuse *= attenuation;
@@ -201,13 +201,13 @@ Lighting SpotLightint(VertexShaderOutput input, float32_t4 textureColor, float32
 }
 
 //ライティングのモードを切り替える用の関数
-float32_t3 SetLightingMode(VertexShaderOutput input, float32_t4 textureColor, float32_t3 toEye) {
+float32_t3 SetLightingMode(VertexShaderOutput input, uint32_t instanceId, float32_t4 textureColor, float32_t3 toEye) {
    //ライティング
         //平行光源
     Lighting directionalLighting = DirectionalLighting(input, textureColor, toEye);
         
         //点光源
-    Lighting pointLighting = PointLighing(input, textureColor, toEye);
+    Lighting pointLighting = PointLighing(input, instanceId, textureColor, toEye);
     
         //スポットライト
     Lighting spotLight = SpotLightint(input, textureColor, toEye);
@@ -246,7 +246,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
         
         
         //ライティングをRGBに適応
-        output.color.rgb = SetLightingMode(input, textureColor, toEye);
+        output.color.rgb = SetLightingMode(input, instanceId, textureColor, toEye);
       
         //アルファ  
         output.color.a = gMaterial.color.a * textureColor.a;
