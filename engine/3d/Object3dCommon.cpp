@@ -81,6 +81,15 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	CreateStructuredBufferForSpot();
 }
 
+//更新
+void Object3dCommon::Update() {
+	*directionalLightPtr_ = directionalLightData_;
+	for (int i = 0; i < kMaxLightCount; i++) {
+		pointLightPtr_[i] = pointLightDatas_[i];
+		spotLightPtr_[i] = spotLightDatas_[i];
+	}
+}
+
 //共通描画設定
 void Object3dCommon::DrawSetting() {
 	//ルートシグネイチャをセットするコマンド
@@ -158,11 +167,6 @@ void Object3dCommon::Debug() {
 	ImGuiManager::CheckBoxToInt("2.isBlingPhong", spotLightDatas_[2].isBlinnPhong);
 	ImGuiManager::CheckBoxToInt("2.enableSpotLight", spotLightDatas_[2].enableSpotLighting);
 	ImGui::End();
-	*directionalLightPtr_ = directionalLightData_;
-	for (int i = 0; i < kMaxLightCount; i++) {
-		pointLightPtr_[i] = pointLightDatas_[i];
-		spotLightPtr_[i] = spotLightDatas_[i];
-	}
 }
 
 //平行光源の生成

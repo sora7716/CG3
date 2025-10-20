@@ -42,8 +42,9 @@ void Object3d::Initialize() {
 
 //更新
 void Object3d::Update() {
-	////震度バッファの初期化
-	//directXBase_->InitializeDepthStencilForObject3d();
+	//Object3dの共通部分の更新
+	Object3dCommon::GetInstance()->Update();
+
 	//ワールドトランスフォーム
 	worldTransform_->Update();
 	if (model_) {
@@ -55,12 +56,12 @@ void Object3d::Update() {
 void Object3d::Draw() {
 	//3Dオブジェクトの共通部分
 	Object3dCommon::GetInstance()->DrawSetting();
-	
+
 	//PSOの設定
 	auto pso = Object3dCommon::GetInstance()->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
-	
+
 	//ワールドトランスフォーム
 	worldTransform_->Draw();
 
@@ -85,7 +86,7 @@ void Object3d::Compose(const WorldTransform* parent) {
 }
 
 //親子関係を解除
-void Object3d::Decompose(){
+void Object3d::Decompose() {
 	worldTransform_->Decompose();
 }
 

@@ -112,10 +112,10 @@ void GameScene::Draw() {
 	player_->Draw();
 
 	//地面
-	ground_->Draw();
+	//ground_->Draw();
 
 	//フィールド
-	//object3d_->Draw();
+	object3d_->Draw();
 }
 
 //終了

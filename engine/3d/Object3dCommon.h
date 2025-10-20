@@ -31,6 +31,11 @@ public://メンバ関数
 	void Initialize(DirectXBase* directXBase);
 
 	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update();
+
+	/// <summary>
 	/// 共通描画設定
 	/// </summary>
 	void DrawSetting();
