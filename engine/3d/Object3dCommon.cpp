@@ -43,31 +43,31 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	directionalLightData_.intensity = 1.0f;
 	directionalLightData_.isLambert = false;
 	directionalLightData_.isBlinnPhong = true;
-	directionalLightData_.enableDirectionalLighting = false;
+	directionalLightData_.enableDirectionalLighting = true;
 
 	//PointLightの初期化
 	for (int i = 0; i < kMaxLightCount; i++) {
-		pointLightDatas_[i].color = { 1.0f,1.0f,1.0f,1.0f };
-		pointLightDatas_[i].position = {};
-		pointLightDatas_[i].intensity = 1.0f;
-		pointLightDatas_[i].distance = 7.0f;
-		pointLightDatas_[i].decay = 4.0f;
-		pointLightDatas_[i].isBlinnPhong = false;
-		pointLightDatas_[i].enablePointLighting = false;
+		pointLightDataList_[i].color = { 1.0f,1.0f,1.0f,1.0f };
+		pointLightDataList_[i].position = {};
+		pointLightDataList_[i].intensity = 1.0f;
+		pointLightDataList_[i].distance = 7.0f;
+		pointLightDataList_[i].decay = 4.0f;
+		pointLightDataList_[i].isBlinnPhong = false;
+		pointLightDataList_[i].enablePointLighting = false;
 	}
 
 	//SpotLightの初期化
 	for (int i = 0; i < kMaxLightCount; i++) {
-		spotLightDatas_[i].color = { 1.0f,1.0f,1.0f,1.0f };
-		spotLightDatas_[i].position = { 2.0f,1.25f,0.0f };
-		spotLightDatas_[i].distance = 7.0f;
-		spotLightDatas_[i].direction = Vector3({ -1.0f,-1.0f,0.0f }).Normalize();
-		spotLightDatas_[i].intensity = 4.0f;
-		spotLightDatas_[i].decay = 2.0f;
-		spotLightDatas_[i].cosFolloffStart = 1.0f;
-		spotLightDatas_[i].cosAngle = std::cos(Math::kPi / 3.0f);
-		spotLightDatas_[i].isBlinnPhong = false;
-		spotLightDatas_[i].enableSpotLighting = false;
+		spotLightDataList_[i].color = { 1.0f,1.0f,1.0f,1.0f };
+		spotLightDataList_[i].position = { 2.0f,1.25f,0.0f };
+		spotLightDataList_[i].distance = 7.0f;
+		spotLightDataList_[i].direction = Vector3({ -1.0f,-1.0f,0.0f }).Normalize();
+		spotLightDataList_[i].intensity = 4.0f;
+		spotLightDataList_[i].decay = 2.0f;
+		spotLightDataList_[i].cosFolloffStart = 1.0f;
+		spotLightDataList_[i].cosAngle = std::cos(Math::kPi / 3.0f);
+		spotLightDataList_[i].isBlinnPhong = false;
+		spotLightDataList_[i].enableSpotLighting = false;
 	}
 
 	//ライティング
@@ -85,8 +85,8 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 void Object3dCommon::Update() {
 	*directionalLightPtr_ = directionalLightData_;
 	for (int i = 0; i < kMaxLightCount; i++) {
-		pointLightPtr_[i] = pointLightDatas_[i];
-		spotLightPtr_[i] = spotLightDatas_[i];
+		pointLightPtr_[i] = pointLightDataList_[i];
+		spotLightPtr_[i] = spotLightDataList_[i];
 	}
 }
 
@@ -112,60 +112,60 @@ void Object3dCommon::Debug() {
 	ImGui::End();
 
 	ImGui::Begin("point");
-	ImGui::ColorEdit4("0.color", &pointLightDatas_[0].color.x);
-	ImGui::DragFloat3("0.position", &pointLightDatas_[0].position.x, 0.1f);
-	ImGui::DragFloat("0.intensity", &pointLightDatas_[0].intensity, 0.1f);
-	ImGui::DragFloat("0.distance", &pointLightDatas_[0].distance, 0.1f);
-	ImGui::DragFloat("0.decay", &pointLightDatas_[0].decay, 0.1f);
-	ImGuiManager::CheckBoxToInt("0.isBlingPhong", pointLightDatas_[0].isBlinnPhong);
-	ImGuiManager::CheckBoxToInt("0.enablePointLight", pointLightDatas_[0].enablePointLighting);
-	ImGui::ColorEdit4("1.color", &pointLightDatas_[1].color.x);
-	ImGui::DragFloat3("1.position", &pointLightDatas_[1].position.x, 0.1f);
-	ImGui::DragFloat("1.intensity", &pointLightDatas_[1].intensity, 0.1f);
-	ImGui::DragFloat("1.distance", &pointLightDatas_[1].distance, 0.1f);
-	ImGui::DragFloat("1.decay", &pointLightDatas_[1].decay, 0.1f);
-	ImGuiManager::CheckBoxToInt("1.isBlingPhong", pointLightDatas_[1].isBlinnPhong);
-	ImGuiManager::CheckBoxToInt("1.enablePointLight", pointLightDatas_[1].enablePointLighting);
-	ImGui::ColorEdit4("2.color", &pointLightDatas_[2].color.x);
-	ImGui::DragFloat3("2.position", &pointLightDatas_[2].position.x, 0.1f);
-	ImGui::DragFloat("2.intensity", &pointLightDatas_[2].intensity, 0.1f);
-	ImGui::DragFloat("2.distance", &pointLightDatas_[2].distance, 0.1f);
-	ImGui::DragFloat("2.decay", &pointLightDatas_[2].decay, 0.1f);
-	ImGuiManager::CheckBoxToInt("2.isBlingPhong", pointLightDatas_[2].isBlinnPhong);
-	ImGuiManager::CheckBoxToInt("2.enablePointLight", pointLightDatas_[2].enablePointLighting);
+	ImGui::ColorEdit4("0.color", &pointLightDataList_[0].color.x);
+	ImGui::DragFloat3("0.position", &pointLightDataList_[0].position.x, 0.1f);
+	ImGui::DragFloat("0.intensity", &pointLightDataList_[0].intensity, 0.1f);
+	ImGui::DragFloat("0.distance", &pointLightDataList_[0].distance, 0.1f);
+	ImGui::DragFloat("0.decay", &pointLightDataList_[0].decay, 0.1f);
+	ImGuiManager::CheckBoxToInt("0.isBlingPhong", pointLightDataList_[0].isBlinnPhong);
+	ImGuiManager::CheckBoxToInt("0.enablePointLight", pointLightDataList_[0].enablePointLighting);
+	ImGui::ColorEdit4("1.color", &pointLightDataList_[1].color.x);
+	ImGui::DragFloat3("1.position", &pointLightDataList_[1].position.x, 0.1f);
+	ImGui::DragFloat("1.intensity", &pointLightDataList_[1].intensity, 0.1f);
+	ImGui::DragFloat("1.distance", &pointLightDataList_[1].distance, 0.1f);
+	ImGui::DragFloat("1.decay", &pointLightDataList_[1].decay, 0.1f);
+	ImGuiManager::CheckBoxToInt("1.isBlingPhong", pointLightDataList_[1].isBlinnPhong);
+	ImGuiManager::CheckBoxToInt("1.enablePointLight", pointLightDataList_[1].enablePointLighting);
+	ImGui::ColorEdit4("2.color", &pointLightDataList_[2].color.x);
+	ImGui::DragFloat3("2.position", &pointLightDataList_[2].position.x, 0.1f);
+	ImGui::DragFloat("2.intensity", &pointLightDataList_[2].intensity, 0.1f);
+	ImGui::DragFloat("2.distance", &pointLightDataList_[2].distance, 0.1f);
+	ImGui::DragFloat("2.decay", &pointLightDataList_[2].decay, 0.1f);
+	ImGuiManager::CheckBoxToInt("2.isBlingPhong", pointLightDataList_[2].isBlinnPhong);
+	ImGuiManager::CheckBoxToInt("2.enablePointLight", pointLightDataList_[2].enablePointLighting);
 	ImGui::End();
 
 	ImGui::Begin("spot");
-	ImGui::ColorEdit4("0.color", &spotLightDatas_[0].color.x);
-	ImGui::DragFloat3("0.position", &spotLightDatas_[0].position.x, 0.1f);
-	ImGui::DragFloat3("0.direction", &spotLightDatas_[0].direction.x, 0.1f);
-	ImGui::DragFloat("0.cosFolloffStart", &spotLightDatas_[0].cosFolloffStart, 0.1f);
-	ImGui::DragFloat("0.cosAngle", &spotLightDatas_[0].cosAngle, 0.1f);
-	ImGui::DragFloat("0.decay", &spotLightDatas_[0].decay, 0.1f);
-	ImGui::DragFloat("0.distance", &spotLightDatas_[0].distance, 0.1f);
-	ImGui::DragFloat("0.intensity", &spotLightDatas_[0].intensity, 0.1f);
-	ImGuiManager::CheckBoxToInt("0.isBlingPhong", spotLightDatas_[0].isBlinnPhong);
-	ImGuiManager::CheckBoxToInt("0.enableSpotLight", spotLightDatas_[0].enableSpotLighting);
-	ImGui::ColorEdit4("1.color", &spotLightDatas_[1].color.x);
-	ImGui::DragFloat3("1.position", &spotLightDatas_[1].position.x, 0.1f);
-	ImGui::DragFloat3("1.direction", &spotLightDatas_[1].direction.x, 0.1f);
-	ImGui::DragFloat("1.cosFolloffStart", &spotLightDatas_[1].cosFolloffStart, 0.1f);
-	ImGui::DragFloat("1.cosAngle", &spotLightDatas_[1].cosAngle, 0.1f);
-	ImGui::DragFloat("1.decay", &spotLightDatas_[1].decay, 0.1f);
-	ImGui::DragFloat("1.distance", &spotLightDatas_[1].distance, 0.1f);
-	ImGui::DragFloat("1.intensity", &spotLightDatas_[1].intensity, 0.1f);
-	ImGuiManager::CheckBoxToInt("1.isBlingPhong", spotLightDatas_[1].isBlinnPhong);
-	ImGuiManager::CheckBoxToInt("1.enableSpotLight", spotLightDatas_[1].enableSpotLighting);
-	ImGui::ColorEdit4("2.color", &spotLightDatas_[2].color.x);
-	ImGui::DragFloat3("2.position", &spotLightDatas_[2].position.x, 0.1f);
-	ImGui::DragFloat3("2.direction", &spotLightDatas_[2].direction.x, 0.1f);
-	ImGui::DragFloat("2.cosFolloffStart", &spotLightDatas_[2].cosFolloffStart, 0.1f);
-	ImGui::DragFloat("2.cosAngle", &spotLightDatas_[2].cosAngle, 0.1f);
-	ImGui::DragFloat("2.decay", &spotLightDatas_[2].decay, 0.1f);
-	ImGui::DragFloat("2.distance", &spotLightDatas_[2].distance, 0.1f);
-	ImGui::DragFloat("2.intensity", &spotLightDatas_[2].intensity, 0.1f);
-	ImGuiManager::CheckBoxToInt("2.isBlingPhong", spotLightDatas_[2].isBlinnPhong);
-	ImGuiManager::CheckBoxToInt("2.enableSpotLight", spotLightDatas_[2].enableSpotLighting);
+	ImGui::ColorEdit4("0.color", &spotLightDataList_[0].color.x);
+	ImGui::DragFloat3("0.position", &spotLightDataList_[0].position.x, 0.1f);
+	ImGui::DragFloat3("0.direction", &spotLightDataList_[0].direction.x, 0.1f);
+	ImGui::DragFloat("0.cosFolloffStart", &spotLightDataList_[0].cosFolloffStart, 0.1f);
+	ImGui::DragFloat("0.cosAngle", &spotLightDataList_[0].cosAngle, 0.1f);
+	ImGui::DragFloat("0.decay", &spotLightDataList_[0].decay, 0.1f);
+	ImGui::DragFloat("0.distance", &spotLightDataList_[0].distance, 0.1f);
+	ImGui::DragFloat("0.intensity", &spotLightDataList_[0].intensity, 0.1f);
+	ImGuiManager::CheckBoxToInt("0.isBlingPhong", spotLightDataList_[0].isBlinnPhong);
+	ImGuiManager::CheckBoxToInt("0.enableSpotLight", spotLightDataList_[0].enableSpotLighting);
+	ImGui::ColorEdit4("1.color", &spotLightDataList_[1].color.x);
+	ImGui::DragFloat3("1.position", &spotLightDataList_[1].position.x, 0.1f);
+	ImGui::DragFloat3("1.direction", &spotLightDataList_[1].direction.x, 0.1f);
+	ImGui::DragFloat("1.cosFolloffStart", &spotLightDataList_[1].cosFolloffStart, 0.1f);
+	ImGui::DragFloat("1.cosAngle", &spotLightDataList_[1].cosAngle, 0.1f);
+	ImGui::DragFloat("1.decay", &spotLightDataList_[1].decay, 0.1f);
+	ImGui::DragFloat("1.distance", &spotLightDataList_[1].distance, 0.1f);
+	ImGui::DragFloat("1.intensity", &spotLightDataList_[1].intensity, 0.1f);
+	ImGuiManager::CheckBoxToInt("1.isBlingPhong", spotLightDataList_[1].isBlinnPhong);
+	ImGuiManager::CheckBoxToInt("1.enableSpotLight", spotLightDataList_[1].enableSpotLighting);
+	ImGui::ColorEdit4("2.color", &spotLightDataList_[2].color.x);
+	ImGui::DragFloat3("2.position", &spotLightDataList_[2].position.x, 0.1f);
+	ImGui::DragFloat3("2.direction", &spotLightDataList_[2].direction.x, 0.1f);
+	ImGui::DragFloat("2.cosFolloffStart", &spotLightDataList_[2].cosFolloffStart, 0.1f);
+	ImGui::DragFloat("2.cosAngle", &spotLightDataList_[2].cosAngle, 0.1f);
+	ImGui::DragFloat("2.decay", &spotLightDataList_[2].decay, 0.1f);
+	ImGui::DragFloat("2.distance", &spotLightDataList_[2].distance, 0.1f);
+	ImGui::DragFloat("2.intensity", &spotLightDataList_[2].intensity, 0.1f);
+	ImGuiManager::CheckBoxToInt("2.isBlingPhong", spotLightDataList_[2].isBlinnPhong);
+	ImGuiManager::CheckBoxToInt("2.enableSpotLight", spotLightDataList_[2].enableSpotLighting);
 	ImGui::End();
 }
 
