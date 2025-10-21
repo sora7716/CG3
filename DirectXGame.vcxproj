@@ -14,6 +14,7 @@
     <ClCompile Include="application\actor\CameraController.cpp" />
     <ClCompile Include="application\actor\Ground.cpp" />
     <ClCompile Include="application\actor\GameObjectList.cpp" />
+    <ClCompile Include="application\actor\MapChip.cpp" />
     <ClCompile Include="application\actor\Player.cpp" />
     <ClCompile Include="application\scene\GameScene.cpp" />
     <ClCompile Include="application\scene\TitleScene.cpp" />
@@ -68,6 +69,7 @@
     <ClInclude Include="application\actor\CameraController.h" />
     <ClInclude Include="application\actor\Ground.h" />
     <ClInclude Include="application\actor\GameObjectList.h" />
+    <ClInclude Include="application\actor\MapChip.h" />
     <ClInclude Include="application\actor\Player.h" />
     <ClInclude Include="application\scene\GameScene.h" />
     <ClInclude Include="application\scene\TitleScene.h" />

@@ -34,6 +34,11 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	object3d_->SetTransform(transformData_);
 	object3d_->SetCamera(camera_);
 	object3d_->GetModel()->SetMaterial(material_);
+
+	//マップチップ
+	mapChip_ = std::make_unique<MapChip>();
+	mapChip_->Initialize();
+	mapChip_->SetModel("ground");
 }
 
 //更新
@@ -53,6 +58,9 @@ void GameScene::Update() {
 	//フィールド
 	object3d_->GetModel()->SetMaterial(material_);
 	object3d_->Update();
+
+	//マップチップ
+	mapChip_->Update();
 
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
@@ -116,6 +124,9 @@ void GameScene::Draw() {
 
 	//フィールド
 	//object3d_->Draw();
+
+	//マップチップ
+	mapChip_->Draw();
 }
 
 //終了

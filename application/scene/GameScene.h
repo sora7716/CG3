@@ -3,6 +3,7 @@
 #include "application/actor/Player.h"
 #include "application/actor/CameraController.h"
 #include "application/actor/Ground.h"
+#include "application/actor/MapChip.h"
 
 /// <summary>
 /// ゲームシーン
@@ -57,5 +58,9 @@ private://メンバ変数
 	std::unique_ptr<Object3d>object3d_ = nullptr;
 	TransformData transformData_ = { {1.0f,1.0f,1.0f},{},{} };
 	Material material_ = {};
+
+	//マップチップ
+	std::unique_ptr<MapChip>mapChip_ = nullptr;
+
 };
 
