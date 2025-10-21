@@ -5,7 +5,6 @@
 #include <d3d12.h>
 #include <cstdint>
 #include <memory>
-#include <array>
 #include <string>
 //前方宣言
 class DirectXBase;
@@ -26,36 +25,6 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~GraphicsPipeline() = default;
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
-	void Initialize(DirectXBase* directXBase);
-
-	/// <summary>
-	/// ルートシグネイチャのゲッター
-	/// </summary>
-	/// <returns>ルートシグネイチャ</returns>
-	ComPtr<ID3D12RootSignature>GetRootSignature();
-
-	/// <summary>
-	/// グラフィックスパイプライン達のゲッター
-	/// </summary>
-	/// <returns>グラフィックスパイプライン達</returns>
-	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)>GetGraphicsPipelines();
-
-	/// <summary>
-	/// 頂点シェーダのファイル名をセット
-	/// </summary>
-	/// <param name="fileName">ファイル名</param>
-	void SetVertexShaderFileName(const std::wstring& fileName);
-
-	/// <summary>
-	/// ピクセルシェーダのファイル名をセット
-	/// </summary>
-	/// <param name="fileName">ファイル名</param>
-	void SetPixelShaderFileName(const std::wstring& fileName);
 
 	/// <summary>
 	/// ルートシグネイチャBlobの生成(スプライト用)
@@ -114,10 +83,28 @@ public://メンバ関数
 	ComPtr<ID3D12PipelineState> CreateGraphicsPipeline(D3D12_DEPTH_STENCIL_DESC depthStencilDesc);
 
 	/// <summary>
+	/// ルートシグネイチャのゲッター
+	/// </summary>
+	/// <returns>ルートシグネイチャ</returns>
+	ComPtr<ID3D12RootSignature>GetRootSignature();
+
+	/// <summary>
 	/// DirectXの基盤のセッター
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	void SetDirectXBase(DirectXBase* directXBase);
+
+	/// <summary>
+	/// 頂点シェーダのファイル名をセット
+	/// </summary>
+	/// <param name="fileName">ファイル名</param>
+	void SetVertexShaderFileName(const std::wstring& fileName);
+
+	/// <summary>
+	/// ピクセルシェーダのファイル名をセット
+	/// </summary>
+	/// <param name="fileName">ファイル名</param>
+	void SetPixelShaderFileName(const std::wstring& fileName);
 protected://メンバ変数
 	//DirectXの基盤
 	DirectXBase* directXBase_ = nullptr;
@@ -133,8 +120,6 @@ protected://メンバ変数
 	ComPtr<IDxcBlob> vertexShaderBlob_ = nullptr;
 	//ピクセルシェーダBlob
 	ComPtr<IDxcBlob> pixelShaderBlob_ = nullptr;
-	//グラフィックスパイプライン達
-	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(6)>graphicsPipelines_ = { nullptr };
 	//ファイル名
 	std::wstring vertexShaderFileName_ = L"Object3d.VS.hlsl";//頂点
 	std::wstring pixelShaderFileName_ = L"Object3d.PS.hlsl";//ピクセル

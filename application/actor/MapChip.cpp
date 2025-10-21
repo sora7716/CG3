@@ -13,7 +13,7 @@
 #include <cassert>
 
 //初期化
-void MapChip::Initialize(DirectXBase* directXBase,Camera* camera) {
+void MapChip::Initialize(DirectXBase* directXBase, Camera* camera) {
 	//DirectXの基盤部分の記録
 	directXBase_ = directXBase;
 
@@ -22,19 +22,98 @@ void MapChip::Initialize(DirectXBase* directXBase,Camera* camera) {
 
 	//ブレンド
 	blend_ = new Blend();
-	
+
 	//グラフィックスパイプラインの生成と初期化
 	makeGraphicsPipeline_ = new GraphicsPipeline();
 	//シェーダを設定
+	//頂点シェーダ
 	makeGraphicsPipeline_->SetVertexShaderFileName(L"MapChip.VS.hlsl");
+
+	//ピクセルシェーダ
 	makeGraphicsPipeline_->SetPixelShaderFileName(L"MapChip.PS.hlsl");
+
 	//デプスステンシルステート
 	directXBase_->InitializeDepthStencilForObject3d();
-	makeGraphicsPipeline_->Initialize(directXBase_);
+
+	//DirectXを記録
+	makeGraphicsPipeline_->SetDirectXBase(directXBase_);
+
+	//シグネイチャBlobの初期化
+	makeGraphicsPipeline_->CreateRootSignatureBlobForObject3d();
+
+	//ルートシグネイチャの保存
+	makeGraphicsPipeline_->CreateRootSignature();
+
+	//インプットレイアウト
+	makeGraphicsPipeline_->InitializeInputLayoutDesc();
+
+	//ラスタライザステート
+	makeGraphicsPipeline_->InitializeRasterizerSatate();
+
+	//頂点シェーダBlob
+	makeGraphicsPipeline_->CompileVertexShader();
+
+	//ピクセルシェーダBlob
+	makeGraphicsPipeline_->CompilePixelShader();
+
+	//PSO
+	for (uint32_t i = 0; i < static_cast<int32_t>(BlendMode::kCountOfBlendMode); i++) {
+		//ブレンドステート
+		makeGraphicsPipeline_->InitializeBlendState(i);
+		//グラフィックスパイプラインの生成
+		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline(directXBase_->GetDepthStencil());
+	}
+
 	//ルートシグネイチャの記録
 	rootSignature_ = makeGraphicsPipeline_->GetRootSignature();
-	//グラフィックスパイプラインステートの記録
-	graphicsPipelineStates_ = makeGraphicsPipeline_->GetGraphicsPipelines();
+
+	//ライティング
+	//平行光源の生成
+	CreateDirectionLight();
+
+	//点光源の生成
+	CreatePointLight();
+
+	//点光源のSRVの生成
+	CreateStructuredBufferForPoint();
+
+	//スポットライトの生成
+	CreateSpotLight();
+
+	//スポットライトのSRVの生成
+	CreateStructuredBufferForSpot();
+
+	//カメラリソースの生成
+	CreateCameraResource(camera_->GetTranslate());
+
+	//ワールド座標
+	transform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+
+	//モデルデータの読み込み
+	modelData_ = ModelManager::GetInstance()->FindModel("ground")->GetModelData();
+
+	//テクスチャの読み込み
+	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
+
+	//wvpリソースの生成
+	CreateTransformationMatrixResource();
+
+	//頂点リソースの生成
+	CreateVertexResource();
+
+	//インデックスリソースのの生成
+	CreateIndexResource();
+
+	//マテリアルリソースのの生成
+	CreateMaterialResource();
+
+	//uv座標
+	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
+
+	//マテリアルの初期化
+	materialData_.color = Vector4::GetWhite();
+	materialData_.enableLighting = true;
+	materialData_.shininess = 10.0f;
 
 	//DirectionalLightの初期化
 	directionalLightData_.color = { 1.0f,1.0f,1.0f,1.0f };
@@ -68,44 +147,6 @@ void MapChip::Initialize(DirectXBase* directXBase,Camera* camera) {
 		spotLightDataList_[i].isBlinnPhong = false;
 		spotLightDataList_[i].enableSpotLighting = false;
 	}
-
-	//ライティング
-	//平行光源の生成
-	CreateDirectionLight();
-	//点光源の生成
-	CreatePointLight();
-	CreateStructuredBufferForPoint();
-	//スポットライトの生成
-	CreateSpotLight();
-	CreateStructuredBufferForSpot();
-
-	CreateCameraResource(camera_->GetTranslate());
-
-	//ワールド座標
-	transform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
-
-	//モデルデータの読み込み
-	modelData_ = ModelManager::GetInstance()->FindModel("ground")->GetModelData();
-
-	//テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
-
-	//wvpリソースの生成
-	CreateTransformationMatrixResource();
-	//頂点リソースの生成
-	CreateVertexResource();
-	//インデックスリソースのの生成
-	CreateIndexResource();
-	//マテリアルリソースのの生成
-	CreateMaterialResource();
-
-	//uv座標
-	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
-
-	//マテリアルの初期化
-	materialData_.color = Vector4::GetWhite();
-	materialData_.enableLighting = true;
-	materialData_.shininess = 10.0f;
 }
 
 

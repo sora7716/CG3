@@ -31,11 +31,28 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	makeGraphicsPipeline_->SetPixelShaderFileName(L"Object3d.PS.hlsl");
 	//デプスステンシルステート
 	directXBase_->InitializeDepthStencilForObject3d();
-	makeGraphicsPipeline_->Initialize(directXBase_);
-	//ルートシグネイチャの記録
+	//DirectXを記録
+	makeGraphicsPipeline_->SetDirectXBase(directXBase);
+	//シグネイチャBlobの初期化
+	makeGraphicsPipeline_->CreateRootSignatureBlobForObject3d();
+	//ルートシグネイチャの保存
+	makeGraphicsPipeline_->CreateRootSignature();
+	//インプットレイアウト
+	makeGraphicsPipeline_->InitializeInputLayoutDesc();
+	//ラスタライザステート
+	makeGraphicsPipeline_->InitializeRasterizerSatate();
+	//頂点シェーダBlob
+	makeGraphicsPipeline_->CompileVertexShader();
+	//ピクセルシェーダBlob
+	makeGraphicsPipeline_->CompilePixelShader();
+	//PSO
+	for (uint32_t i = 0; i < static_cast<int32_t>(BlendMode::kCountOfBlendMode); i++) {
+		//ブレンドステート
+		makeGraphicsPipeline_->InitializeBlendState(i);
+		//グラフィックスパイプラインの生成
+		graphicsPipelineStates_[i] = makeGraphicsPipeline_->CreateGraphicsPipeline(directXBase_->GetDepthStencil());
+	}	//ルートシグネイチャの記録
 	rootSignature_ = makeGraphicsPipeline_->GetRootSignature();
-	//グラフィックスパイプラインステートの記録
-	graphicsPipelineStates_ = makeGraphicsPipeline_->GetGraphicsPipelines();
 
 	//DirectionalLightの初期化
 	directionalLightData_.color = { 1.0f,1.0f,1.0f,1.0f };

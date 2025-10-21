@@ -9,51 +9,6 @@
 #pragma comment(lib,"dxcompiler.lib")
 using namespace Microsoft::WRL;
 
-//初期化
-void GraphicsPipeline::Initialize(DirectXBase* directXBase) {
-	//DirectXの基盤部分を記録する
-	directXBase_ = directXBase;
-	//シグネイチャBlobの初期化
-	CreateRootSignatureBlobForObject3d();
-	//ルートシグネイチャの保存
-	CreateRootSignature();
-	//インプットレイアウト
-	InitializeInputLayoutDesc();
-	//ラスタライザステート
-	InitializeRasterizerSatate();
-	//頂点シェーダBlob
-	CompileVertexShader();
-	//ピクセルシェーダBlob
-	CompilePixelShader();
-	//PSO
-	for (uint32_t i = 0; i < static_cast<int32_t>(BlendMode::kCountOfBlendMode); i++) {
-		//ブレンドステート
-		InitializeBlendState(i);
-		//グラフィックスパイプラインの生成
-		graphicsPipelines_[i] = CreateGraphicsPipeline(directXBase_->GetDepthStencil());
-	}
-}
-
-//ルートシグネイチャのゲッター
-ComPtr<ID3D12RootSignature> GraphicsPipeline::GetRootSignature() {
-	return rootSignature_;
-}
-
-//グラフィックスパイプラインのゲッター
-std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> GraphicsPipeline::GetGraphicsPipelines() {
-	return graphicsPipelines_;
-}
-
-//頂点シェーダのファイル名をセット
-void GraphicsPipeline::SetVertexShaderFileName(const std::wstring& fileName) {
-	vertexShaderFileName_ = fileName;
-}
-
-//ピクセルシェーダのファイル名をセット
-void GraphicsPipeline::SetPixelShaderFileName(const std::wstring& fileName) {
-	pixelShaderFileName_ = fileName;
-}
-
 //ルートシグネイチャBlobの生成(スプライト用)
 void GraphicsPipeline::CreateRootSignatureBlobForSprite() {
 	//RootSignature作成
@@ -364,7 +319,23 @@ ComPtr<ID3D12PipelineState> GraphicsPipeline::CreateGraphicsPipeline(D3D12_DEPTH
 	return graphicsPipelineState;
 }
 
+//ルートシグネイチャのゲッター
+ComPtr<ID3D12RootSignature> GraphicsPipeline::GetRootSignature() {
+	return rootSignature_;
+}
+
 //DirectXの基盤のセッター
 void GraphicsPipeline::SetDirectXBase(DirectXBase* directXBase){
 	directXBase_ = directXBase;
 }
+
+//頂点シェーダのファイル名をセット
+void GraphicsPipeline::SetVertexShaderFileName(const std::wstring& fileName) {
+	vertexShaderFileName_ = fileName;
+}
+
+//ピクセルシェーダのファイル名をセット
+void GraphicsPipeline::SetPixelShaderFileName(const std::wstring& fileName) {
+	pixelShaderFileName_ = fileName;
+}
+
