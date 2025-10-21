@@ -23,7 +23,7 @@ void Sprite::Initialize(const std::string& spriteName) {
 	//マテリアルデータの生成
 	CreateMaterialResource();
 	//スプライトファイルパスを記録
-	spriteName_ = "engine/resources/textures/"+spriteName;
+	spriteName_ = "engine/resources/textures/" + spriteName;
 	//スプライトの共通部分
 	SpriteCommon::GetInstance()->LoadTexture(spriteName_);
 	//DirectXの基盤部分を記録
@@ -78,7 +78,7 @@ void Sprite::ChangeTexture(std::string spriteName) {
 // UVの座標変換の更新
 void Sprite::UpdateUVTransform(Transform2dData uvTransform) {
 	//UVTransform
-	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix({ uvTransform.scale.x,uvTransform.scale.y,1.0f }, uvTransform.rotate, { uvTransform.translate.x,uvTransform.translate.y,1.0f });
+	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform.scale, uvTransform.rotate, uvTransform.translate);
 }
 
 //色のゲッター

@@ -169,6 +169,90 @@ void Object3dCommon::Debug() {
 	ImGui::End();
 }
 
+//カメラリソースの生成
+void Object3dCommon::CreateCameraResource(const Vector3& cameraTranslate) {
+	//光源のリソースを作成
+	cameraResource_ = directXBase_->CreateBufferResource(sizeof(CameraForGPU));
+	//光源データの書きこみ
+	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPU_));
+	cameraForGPU_->worldPosition = cameraTranslate;
+}
+
+//カメラの位置のセッター
+void Object3dCommon::SetCameraForGPU(const Vector3& cameraTranslate) {
+	cameraForGPU_->worldPosition = cameraTranslate;
+}
+
+//DirectionalLightのリソースのゲッター
+ID3D12Resource* Object3dCommon::GetDirectionalLightResource()const {
+	return directionalLightResource_.Get();
+}
+
+//PointLightのリソースのゲッター
+ID3D12Resource* Object3dCommon::GetPointLightResource() const {
+	return pointLightResource_.Get();
+}
+
+//SpotLightのリソースのゲッター
+ID3D12Resource* Object3dCommon::GetSpotLightResource() const {
+	return spotLightResource_.Get();
+}
+
+//DirectXの基盤のゲッター
+DirectXBase* Object3dCommon::GetDirectXBase() const {
+	return directXBase_;
+}
+
+//グラフィックパイプラインのゲッター
+std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> Object3dCommon::GetGraphicsPipelineStates() const {
+	return graphicsPipelineStates_;
+}
+
+//終了
+void Object3dCommon::Finalize() {
+	delete blend_;
+	delete makeGraphicsPipeline_;
+	delete instance;
+	instance = nullptr;
+	isFinalize = true;
+}
+
+// デフォルトカメラのセッター
+void Object3dCommon::SetDefaultCamera(Camera* camera) {
+	defaultCamera_ = camera;
+}
+
+// デフォルトカメラのゲッター
+Camera* Object3dCommon::GetDefaultCamera() const {
+	return defaultCamera_;
+}
+
+//SRVインデックスのゲッター(PointLight)
+uint32_t Object3dCommon::GetSrvIndexPoint() const {
+	return srvIndexPoint_;
+}
+
+//SRVインデックスのゲッター(SpotLight)
+uint32_t Object3dCommon::GetSrvIndexSpot() const {
+	return srvIndexSpot_;
+}
+
+//平行光源のゲッター
+const DirectionalLight& Object3dCommon::GetDirectionalLight() const {
+	// TODO: return ステートメントをここに挿入します
+	return directionalLightData_;
+}
+
+//点光源のセッター
+PointLight* Object3dCommon::GetPointLight() {
+	return pointLightDataList_;
+}
+
+//スポットライトのゲッター
+SpotLight* Object3dCommon::GetSpotLight() {
+	return spotLightDataList_;
+}
+
 //平行光源の生成
 void Object3dCommon::CreateDirectionLight() {
 	//光源のリソースを作成
@@ -248,72 +332,4 @@ void Object3dCommon::CreateStructuredBufferForSpot() {
 		kMaxLightCount,
 		sizeof(SpotLight)
 	);
-}
-
-//カメラリソースの生成
-void Object3dCommon::CreateCameraResource(const Vector3& cameraTranslate) {
-	//光源のリソースを作成
-	cameraResource_ = directXBase_->CreateBufferResource(sizeof(CameraForGPU));
-	//光源データの書きこみ
-	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPU_));
-	cameraForGPU_->worldPosition = cameraTranslate;
-}
-
-//カメラの位置のセッター
-void Object3dCommon::SetCameraForGPU(const Vector3& cameraTranslate) {
-	cameraForGPU_->worldPosition = cameraTranslate;
-}
-
-//DirectionalLightのリソースのゲッター
-ID3D12Resource* Object3dCommon::GetDirectionalLightResource()const {
-	return directionalLightResource_.Get();
-}
-
-//PointLightのリソースのゲッター
-ID3D12Resource* Object3dCommon::GetPointLightResource() const {
-	return pointLightResource_.Get();
-}
-
-//SpotLightのリソースのゲッター
-ID3D12Resource* Object3dCommon::GetSpotLight() const {
-	return spotLightResource_.Get();
-}
-
-//DirectXの基盤のゲッター
-DirectXBase* Object3dCommon::GetDirectXBase() const {
-	return directXBase_;
-}
-
-//グラフィックパイプラインのゲッター
-std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> Object3dCommon::GetGraphicsPipelineStates() const {
-	return graphicsPipelineStates_;
-}
-
-//終了
-void Object3dCommon::Finalize() {
-	delete blend_;
-	delete makeGraphicsPipeline_;
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
-}
-
-// デフォルトカメラのセッター
-void Object3dCommon::SetDefaultCamera(Camera* camera) {
-	defaultCamera_ = camera;
-}
-
-// デフォルトカメラのゲッター
-Camera* Object3dCommon::GetDefaultCamera() const {
-	return defaultCamera_;
-}
-
-//SRVインデックスのゲッター(PointLight)
-uint32_t Object3dCommon::GetSrvIndexPoint() const {
-	return srvIndexPoint_;
-}
-
-//SRVインデックスのゲッター(SpotLight)
-uint32_t Object3dCommon::GetSrvIndexSpot() const {
-	return srvIndexSpot_;
 }

@@ -11,7 +11,7 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();
-	player_->Initialize(camera_,"player");
+	player_->Initialize(camera_, "player");
 
 	//追従カメラ
 	cameraController_ = std::make_unique<CameraController>();
@@ -37,8 +37,7 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 
 	//マップチップ
 	mapChip_ = std::make_unique<MapChip>();
-	mapChip_->Initialize();
-	mapChip_->SetModel("ground");
+	mapChip_->Initialize(Object3dCommon::GetInstance()->GetDirectXBase(),camera_);
 }
 
 //更新
@@ -60,6 +59,9 @@ void GameScene::Update() {
 	object3d_->Update();
 
 	//マップチップ
+	mapChip_->SetDirectionalLight(Object3dCommon::GetInstance()->GetDirectionalLight());
+	mapChip_->SetPontLight(Object3dCommon::GetInstance()->GetPointLight());
+	mapChip_->SetSpotLight(Object3dCommon::GetInstance()->GetSpotLight());
 	mapChip_->Update();
 
 #ifdef USE_IMGUI
@@ -93,9 +95,14 @@ void GameScene::Update() {
 	ImGuiManager::CheckBoxToInt("enableLighting", material_.enableLighting);
 	ImGui::End();
 
+	//マップチップ
+	ImGui::Begin("mapChip");
+	mapChip_->Debug();
+	ImGui::End();
+
 	//Object3dCommon
 	Object3dCommon::GetInstance()->Debug();
-	
+
 	//ImGuiの受付終了
 	ImGuiManager::GetInstance()->End();
 #endif // USE_IMGUI
@@ -116,7 +123,7 @@ void GameScene::Update() {
 }
 
 //描画
-void GameScene::Draw() {	
+void GameScene::Draw() {
 	//プレイヤー
 	player_->Draw();
 
@@ -137,6 +144,9 @@ void GameScene::Finalize() {
 
 	//地面
 	ground_->Finalize();
+
+	//マップチップ
+	mapChip_->Finalize();
 
 	//シーンのインターフェース
 	IScene::Finalize();

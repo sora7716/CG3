@@ -15,19 +15,19 @@ enum class TransformMode :uint32_t {
 	k2d
 };
 /// <summary>
-/// ワールドトランスフォーム(平面用)
+/// ワールドトランスフォーム
 /// </summary>
 class WorldTransform {
 private://エイリアステンプレート
 	template<class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://構造体と列挙型
 	//正規化デバイスするときに使用する
-	typedef struct ScreenArea {
+	struct ScreenArea {
 		float left;
 		float top;
 		float right;
 		float bottom;
-	}ScreenArea;
+	};
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ

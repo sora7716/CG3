@@ -120,8 +120,8 @@ Matrix4x4 Rendering::MakeSTRMatrix(const Vector3& scale, const Vector3& rotate, 
 }
 
 // UVのアフィン変換
-Matrix4x4 Rendering::MakeUVAffineMatrix(const Vector3& scale, float rotate, const Vector3& translate) {
-	return MakeScaleMatrix(scale) * MakeRotateZMatrix(rotate) * MakeTranslateMatrix(translate);
+Matrix4x4 Rendering::MakeUVAffineMatrix(const Vector2& scale, float rotate, const Vector2& translate) {
+	return MakeScaleMatrix({ scale.x,scale.y,1.0f }) * MakeRotateZMatrix(rotate) * MakeTranslateMatrix({ translate.x,translate.y,1.0f });
 }
 
 // 正射影行列
@@ -177,7 +177,7 @@ Matrix4x4 Rendering::MakeBillboardAffineMatrix(const Matrix4x4& cameraWorldMatri
 }
 
 //行列をTransformDataに分解
-TransformData Rendering::DecomposeMatrix(const Matrix4x4& mat){
+TransformData Rendering::DecomposeMatrix(const Matrix4x4& mat) {
 	TransformData result{};
 	//拡縮
 	result.scale.x = std::sqrt(

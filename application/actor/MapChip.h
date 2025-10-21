@@ -6,11 +6,13 @@
 #include <vector>
 #include <string>
 #include <wrl.h>
+#include <array>
 #include <d3d12.h>
 //前方宣言
-class WorldTransform;
 class Camera;
 class DirectXBase;
+class GraphicsPipeline;
+class Blend;
 
 /// <summary>
 /// マップチップ
@@ -27,12 +29,14 @@ public://メンバ関数
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~MapChip();
+	~MapChip() = default;
 
 	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
+    /// 初期化
+    /// </summary>
+    /// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="camera">カメラ</param>
+	void Initialize(DirectXBase*directXBase,Camera*camera);
 
 	/// <summary>
 	/// 更新
@@ -45,21 +49,14 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// 親子付け
+	/// 終了
 	/// </summary>
-	/// <param name="parent">親</param>
-	void Compose(const WorldTransform* parent);
+	void Finalize();
 
 	/// <summary>
-	/// 親子関係を解除
+	/// デバッグ
 	/// </summary>
-	void Decompose();
-
-	/// <summary>
-	/// モデルのセッター
-	/// </summary>
-	/// <param name="name">モデルの名前</param>
-	void SetModel(const std::string& name);
+	void Debug();
 
 	/// <summary>
 	/// カメラのセッター
@@ -68,142 +65,168 @@ public://メンバ関数
 	void SetCamera(Camera* camera);
 
 	/// <summary>
-	/// スケールのセッター
-	/// </summary>
-	/// <param name="scale">スケール</param>
-	void SetScale(const Vector3& scale);
-
-	/// <summary>
-	/// 回転のセッター
-	/// </summary>
-	/// <param name="rotate">回転</param>
-	void SetRotate(const Vector3& rotate);
-
-	/// <summary>
-	/// 平行移動のセッター
-	/// </summary>
-	/// <param name="translate">平行移動</param>
-	void SetTranslate(const Vector3& translate);
-
-	/// <summary>
-	/// トランスフォームのセッター
-	/// </summary>
-	/// <param name="transform">トランスフォーム</param>
-	void SetTransform(const TransformData& transform);
-
-	/// <summary>
-	/// uvスケールのセッター
-	/// </summary>
-	/// <param name="uvScale">スケール</param>
-	void SetUVScale(const Vector2& uvScale);
-
-	/// <summary>
-	/// uv回転のセッター
-	/// </summary>
-	/// <param name="uvRotate">回転</param>
-	void SetUVRotate(const float uvRotate);
-
-	/// <summary>
-	/// uv平行移動のセッター
-	/// </summary>
-	/// <param name="uvTranslate">平行移動</param>
-	void SetUVTranslate(const Vector2& uvTranslate);
-
-	/// <summary>
-	/// 色のセッター
-	/// </summary>
-	/// <param name="color">色</param>
-	void SetColor(const Vector4& color);
-
-	/// <summary>
-	/// 親のセッター
-	/// </summary>
-	/// <param name="parent">親</param>
-	void SetParent(const WorldTransform* parent);
-
-	/// <summary>
-	/// テクスチャの変更
-	/// </summary>
-	/// <param name="filePath">ファイルパス</param>
-	void SetTexture(const std::string& filePath);
-
-	/// <summary>
 	/// ブレンドモードのセッター
 	/// </summary>
 	/// <param name="blendMode"></param>
 	void SetBlendMode(const BlendMode& blendMode);
 
 	/// <summary>
-	/// スケールのゲッター
+	/// カメラの位置のセッター
 	/// </summary>
-	/// <returns>スケール</returns>
-	const Vector3& GetScale()const;
+	/// <param name="cameraTranslate"></param>
+	void SetCameraForGPU(const Vector3& cameraTranslate);
 
 	/// <summary>
-	/// 回転のゲッター
+	/// 平行光源のセッター
 	/// </summary>
-	/// <returns>回転</returns>
-	const Vector3& GetRotate()const;
+	/// <param name="directionalLight">平行光源</param>
+	void SetDirectionalLight(const DirectionalLight& directionalLight);
 
 	/// <summary>
-	/// 平行移動のゲッター
+	/// 点光源のセッター
 	/// </summary>
-	/// <returns>平行移動</returns>
-	const Vector3& GetTranslate()const;
+	/// <param name="pointLight">点光源</param>
+	void SetPontLight(const PointLight* pointLight);
 
 	/// <summary>
-	/// uvスケールのゲッター
+	/// スポットライトのセッター
 	/// </summary>
-	/// <returns>uvスケール</returns>
-	const Vector2& GetUVScale()const;
+	/// <param name="spotLight">スポットライト</param>
+	void SetSpotLight(const SpotLight* spotLight);
+private://メンバ関数
+	/// <summary>
+	/// カメラリソースの生成
+	/// </summary>
+	void CreateCameraResource(const Vector3& cameraTranslate);
 
 	/// <summary>
-	/// uv回転のゲッター
+	/// 座標変換行列リソースの生成
 	/// </summary>
-	/// <returns>uv回転</returns>
-	const float GetUVRotate()const;
+	void CreateTransformationMatrixResource();
 
 	/// <summary>
-	/// uv平行移動のゲッター
+	/// 座標の更新
 	/// </summary>
-	/// <returns>uv平行移動</returns>
-	const Vector2& GetUVTranslate()const;
+	void UpdateTransform();
 
 	/// <summary>
-	/// 色のゲッター
+	/// uv変換
 	/// </summary>
-	/// <returns>色</returns>
-	const Vector4& GetColor()const;
+	void UVUpdateTransform();
 
 	/// <summary>
-	/// ワールドトランスフォームのゲッター
+	/// 頂点リソースの生成
 	/// </summary>
-	/// <returns>ワールドトランスフォーム</returns>
-	const WorldTransform* GetWorldTransform()const;
+	void CreateVertexResource();
 
 	/// <summary>
-	/// モデルのゲッター
+	/// インデックスリソースの生成
 	/// </summary>
-	/// <returns>モデル</returns>
-	Model* GetModel();
+	void CreateIndexResource();
+
+	/// <summary>
+	/// マテリアルリソースの生成
+	/// </summary>
+	void CreateMaterialResource();
+
+	/// <summary>
+	/// 平行光源の生成
+	/// </summary>
+	void CreateDirectionLight();
+
+	/// <summary>
+	/// 点光源の生成
+	/// </summary>
+	void CreatePointLight();
+
+	/// <summary>
+	/// 点光源のストラクチャバッファの生成
+	/// </summary>
+	void CreateStructuredBufferForPoint();
+
+	/// <summary>
+	/// スポットライトの生成
+	/// </summary>
+	void CreateSpotLight();
+
+	/// <summary>
+	/// スポットライトのストラクチャバッファの生成
+	/// </summary>
+	void CreateStructuredBufferForSpot();
+private://定数
+	//ライトの最大値
+	static inline const int32_t kMaxLightCount = 64;
 private://メンバ変数
+	//DirectXの基盤部分
+	DirectXBase* directXBase_ = nullptr;
+
+	//カメラ
+	Camera* camera_ = nullptr;
+
+	//Objファイルデータ
+	ModelData modelData_ = {};
+
+	//リソース
+	ComPtr<ID3D12Resource>vertexResource_ = nullptr;//VertexResource
+	ComPtr<ID3D12Resource>materialResource_ = nullptr;//MaterialResource
+	ComPtr<ID3D12Resource>indexResource_ = nullptr;//IndexResource
+	ComPtr<ID3D12Resource>wvpResource_ = nullptr;//wvpResource
+	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//平行光源
+	ComPtr<ID3D12Resource> pointLightResource_ = nullptr;//点光源
+	ComPtr<ID3D12Resource> spotLightResource_ = nullptr;//スポットライト
+	ComPtr<ID3D12Resource> cameraResource_ = nullptr;//カメラ
+
+	//ポインタ
+	VertexData* vertexPtr_ = nullptr;//Vertex
+	Material* materialPtr_ = nullptr;//Material
+	uint32_t* indexPtr_ = nullptr;//Index
+	TransformationMatrix* wvpPtr_ = nullptr;//TransformationMatrix
+	DirectionalLight* directionalLightPtr_ = nullptr;//平行光源
+	PointLight* pointLightPtr_ = nullptr;//点光源
+	SpotLight* spotLightPtr_ = nullptr;//スポットライト
+	CameraForGPU* cameraForGPU_ = nullptr;//カメラ
+
+	//SRVインデックス
+	uint32_t srvIndexPoint_ = 0;//PointLight
+	uint32_t srvIndexSpot_ = 0;//SpotLight
+
+	//VertexBufferView
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};
+	//IndexBufferView
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス	
+
+	//ルートシグネイチャ
+	ComPtr<ID3D12RootSignature>rootSignature_ = nullptr;
+
+	//グラフィックスパイプライン(PSO)
+	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> graphicsPipelineStates_ = { nullptr };
+	//グラフィックスパイプライン
+	GraphicsPipeline* makeGraphicsPipeline_ = nullptr;
+
+	//平行光源
+	DirectionalLight directionalLightData_ = {};
+	//点光源
+	PointLight pointLightDataList_[kMaxLightCount] = {};
+	//スポットライト
+	SpotLight spotLightDataList_[kMaxLightCount] = {};
+
+	//ワールド座標
+	TransformData transform_ = {};
+
+	//ワールド行列
+	Matrix4x4 worldMatrix_ = {};
+
+	//ブレンド
+	Blend* blend_ = nullptr;
+	BlendMode blendMode_ = BlendMode::kNone;
+
 	//UV座標
 	Transform2dData uvTransform_ = {
 		.scale = { 1.0f,1.0f },
 		.rotate = 0.0f,
 		.translate = {0.0f,0.0f}
 	};
-	//DirectXの基盤部分
-	DirectXBase* directXBase_ = nullptr;
-	//3Dモデル
-	Model* model_ = nullptr;
-	//ワールドトランスフォーム
-	WorldTransform* worldTransform_ = nullptr;
-	//ブレンドモード
-	BlendMode blendMode_ = BlendMode::kNone;
 
 	//マテリアル
-	Material material_ = {};
-	//DirectionalLight
-	DirectionalLight directionalLight_ = {};
+	Material materialData_ = {};
 };

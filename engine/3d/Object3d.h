@@ -101,7 +101,7 @@ public://メンバ関数
 	/// uv回転のセッター
 	/// </summary>
 	/// <param name="uvRotate">回転</param>
-	void SetUVRotate(const float uvRotate);
+	void SetUVRotate(float uvRotate);
 
 	/// <summary>
 	/// uv平行移動のセッター
@@ -204,7 +204,5 @@ private://メンバ変数
 
 	//マテリアル
 	Material material_ = {};
-	//DirectionalLight
-	DirectionalLight directionalLight_ = {};
 };
 

@@ -16,11 +16,11 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directoryPat
 	directXBase_ = modelCommon_->GetDirectXBase();
 	//モデルの読み込み
 	modelData_ = LoadObjFile(directoryPath, storedFilePath, filename);
-	//頂点データの生成
+	//頂点リソースの生成
 	CreateVertexResource();
-	//インデックスデータの生成
+	//インデックスリソースの生成
 	CreateIndexResource();
-	//マテリアルデータの生成
+	//マテリアルリソースの生成
 	CreateMaterialResource();
 	//テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
@@ -41,7 +41,7 @@ void Model::Draw() {
 
 //uv変換
 void Model::UVTransform(Transform2dData uvTransform) {
-	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix({ uvTransform.scale.x,uvTransform.scale.y,1.0f }, uvTransform.rotate, { uvTransform.translate.x,uvTransform.translate.y,1.0f });
+	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform.scale, uvTransform.rotate, uvTransform.translate);
 }
 
 // 色を変更

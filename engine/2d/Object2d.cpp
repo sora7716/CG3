@@ -23,7 +23,7 @@ void Object2d::Initialize(const std::string& textureName) {
 	//マテリアルデータの生成
 	CreateMaterialResource();
 	//テクスチャのファイルパスの記録
-	modelData_.material.textureFilePath = "engine/resources/textures/"+textureName;
+	modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
 	//テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
 	//uvTransform変数を作る
@@ -50,7 +50,7 @@ void Object2d::Update() {
 	//ワールドトランスフォームの更新
 	worldTransform_->Update();
 	//UVTransform
-	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix({ uvTransform_.scale.x,uvTransform_.scale.y,1.0f }, uvTransform_.rotate, { uvTransform_.translate.x,uvTransform_.translate.y,1.0f });
+	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform_.scale, uvTransform_.rotate, uvTransform_.translate);
 }
 
 //描画
@@ -77,7 +77,7 @@ void Object2d::Draw() {
 
 //テクスチャの変更
 void Object2d::ChangeTexture(std::string textureName) {
-	modelData_.material.textureFilePath = "engine/resources/textures/"+textureName;
+	modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
 	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
 }
 
@@ -132,7 +132,7 @@ WorldTransform* Object2d::GetWorldTransform() {
 
 //サイズのセッター
 void Object2d::SetScale(const Vector2& scale) {
-	transform_.scale=scale;
+	transform_.scale = scale;
 }
 
 //回転のセッター
@@ -246,7 +246,7 @@ void Object2d::InitializeMaterialData() {
 	//色を書き込む
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	materialData_->enableLighting = false;
-	materialData_->uvMatrix =Matrix4x4::Identity4x4();
+	materialData_->uvMatrix = Matrix4x4::Identity4x4();
 }
 
 //マテリアルリソースの生成

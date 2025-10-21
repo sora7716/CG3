@@ -6,8 +6,13 @@ const RGB Vector4::GetRGB()const {
 }
 
 //RGBのセッター
-void Vector4::SetRGB(const RGB& rgb){
+void Vector4::SetRGB(const RGB& rgb) {
 	x = rgb.r;
 	y = rgb.g;
 	z = rgb.b;
+}
+
+//白のゲッター
+Vector4 Vector4::GetWhite() {
+	return Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 }

@@ -46,31 +46,6 @@ public://メンバ関数
 	void Debug();
 
 	/// <summary>
-	/// 平行光源の生成
-	/// </summary>
-	void CreateDirectionLight();
-
-	/// <summary>
-	/// 点光源の生成
-	/// </summary>
-	void CreatePointLight();
-
-	/// <summary>
-	/// 点光源のストラクチャバッファの生成
-	/// </summary>
-	void CreateStructuredBufferForPoint();
-
-	/// <summary>
-	/// スポットライトの生成
-	/// </summary>
-	void CreateSpotLight();
-
-	/// <summary>
-	/// スポットライトのストラクチャバッファの生成
-	/// </summary>
-	void CreateStructuredBufferForSpot();
-
-	/// <summary>
 	/// カメラリソースの生成
 	/// </summary>
 	void CreateCameraResource(const Vector3& cameraTranslate);
@@ -102,7 +77,7 @@ public://メンバ関数
 	/// SpotLightのリソースのゲッター
 	/// </summary>
 	/// <returns>SpotLightのリソース</returns>
-	ID3D12Resource* GetSpotLight()const;
+	ID3D12Resource* GetSpotLightResource()const;
 
 	/// <summary>
 	/// DirectXの基盤のゲッター
@@ -139,6 +114,24 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>SRVインデックス</returns>
 	uint32_t GetSrvIndexSpot()const;
+
+	/// <summary>
+	/// 平行光源のゲッター
+	/// </summary>
+	/// <returns>平行光源</returns>
+	const DirectionalLight& GetDirectionalLight()const;
+
+	/// <summary>
+	/// 点光源のセッター
+	/// </summary>
+	/// <returns>点光源</returns>
+	PointLight* GetPointLight();
+
+	/// <summary>
+	/// スポットライトのゲッター
+	/// </summary>
+	/// <returns>スポットライト</returns>
+	SpotLight* GetSpotLight();
 private://メンバ関数
 	//コンストラクタの封印
 	Object3dCommon() = default;
@@ -148,6 +141,31 @@ private://メンバ関数
 	Object3dCommon(const Object3dCommon&) = delete;
 	//代入演算子の禁止
 	Object3dCommon operator=(const Object3dCommon&) = delete;
+
+	/// <summary>
+	/// 平行光源の生成
+	/// </summary>
+	void CreateDirectionLight();
+
+	/// <summary>
+	/// 点光源の生成
+	/// </summary>
+	void CreatePointLight();
+
+	/// <summary>
+	/// 点光源のストラクチャバッファの生成
+	/// </summary>
+	void CreateStructuredBufferForPoint();
+
+	/// <summary>
+	/// スポットライトの生成
+	/// </summary>
+	void CreateSpotLight();
+
+	/// <summary>
+	/// スポットライトのストラクチャバッファの生成
+	/// </summary>
+	void CreateStructuredBufferForSpot();
 private://静的メンバ変数
 	//インスタンス
 	static inline Object3dCommon* instance = nullptr;

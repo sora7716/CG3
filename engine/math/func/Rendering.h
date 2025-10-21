@@ -95,7 +95,7 @@ public://メンバ関数
 	/// <param name="rotate">回転</param>
 	/// <param name="translate">移動</param>
 	/// <returns></returns>
-	static Matrix4x4 MakeUVAffineMatrix(const Vector3& scale, float rotate, const Vector3& translate);
+	static Matrix4x4 MakeUVAffineMatrix(const Vector2& scale, float rotate, const Vector2& translate);
 
 	/// <summary>
 	/// 正射影行列

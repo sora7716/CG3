@@ -25,4 +25,10 @@ struct Vector4 final {
 	/// </summary>
 	/// <param name="rgb"></param>
 	void SetRGB(const RGB& rgb);
+
+	/// <summary>
+	/// 白のゲッター
+	/// </summary>
+	/// <returns>白</returns>
+	static Vector4 GetWhite();
 };

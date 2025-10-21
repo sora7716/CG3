@@ -125,7 +125,7 @@ void Object3d::SetUVScale(const Vector2& uvScale) {
 }
 
 // uv回転のセッター
-void Object3d::SetUVRotate(const float uvRotate) {
+void Object3d::SetUVRotate(float uvRotate) {
 	uvTransform_.rotate = uvRotate;
 }
 
