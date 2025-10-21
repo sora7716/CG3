@@ -110,6 +110,7 @@ void GameScene::Update() {
 	player_->SetCamera(camera_);
 	ground_->SetCamera(camera_);
 	object3d_->SetCamera(camera_);
+	mapChip_->SetCamera(camera_);
 #endif // _DEBUG
 
 }
