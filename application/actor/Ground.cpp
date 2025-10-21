@@ -23,8 +23,8 @@ void Ground::Initialize(Camera* camera, const std::string& modelName) {
 			groundDates_[i][j].transform.scale = Vector3::MakeAllOne();
 			groundDates_[i][j].transform.rotate = {};
 			groundDates_[i][j].transform.translate.y = -2.0f;
-			groundDates_[i][j].transform.translate.x = (j + 0.5f * (i % 2)) * groundDates_[i][j].transform.scale.x * std::sqrt(blank_); // x座標の計算
-			groundDates_[i][j].transform.translate.z = i * (1.5f * groundDates_[i][j].transform.scale.z);                        // z座標の計算
+			groundDates_[i][j].transform.translate.x = (groundDates_[i][j].transform.scale.x + 1.0f) * i; // x座標の計算
+			groundDates_[i][j].transform.translate.z = (groundDates_[i][j].transform.scale.z + 1.0f) * j; // z座標の計算
 		}
 	}
 

@@ -69,12 +69,10 @@ public://メンバ関数
 	void SetTexture(const std::string& textureName);
 private://定数
 	//ブロックの数
-	static inline const Vector2Int kBlockCount = { 20,20 };
+	static inline const Vector2Int kBlockCount = { 5,5 };
 private://メンバ変数
 	//地面のデータ
 	std::vector<std::vector<GroundData>>groundDates_;
-	//距離感
-	float blank_ = 3.2f;
 	//マテリアル
 	Material material_ = {};
 };
