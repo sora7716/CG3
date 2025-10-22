@@ -19,6 +19,8 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	cameraController_->SetTarget(player_.get());
 	cameraController_->Reset();
 	cameraController_->SetMovableArea({ 0.0f,30.0f,0.0f,30.0f });
+	//追従カメラ
+	cameraController_->Update();
 
 	//地面
 	ground_ = std::make_unique<Ground>();
