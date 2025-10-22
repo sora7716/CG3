@@ -21,9 +21,9 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 
 	//3Dオブジェクトの生成と初期化
 	object3d_ = new Object3d();
-	object3d_->Initialize();
-	object3d_->SetModel(modelName);
+	object3d_->Initialize(camera);
 	object3d_->SetCamera(camera);
+	object3d_->SetModel(modelName);
 
 	//マテリアルの初期化
 	material_.color = { 1.0f,1.0f,1.0f,1.0f };

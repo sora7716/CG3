@@ -37,6 +37,11 @@ public://メンバ関数
 	void CreateRootSignatureBlobForObject3d();
 
 	/// <summary>
+	/// ルートシグネイチャBlobの生成(マップチップ用)
+	/// </summary>
+	void CreateRootSignatureBlobForMapChip();
+
+	/// <summary>
 	/// ルートシグネイチャBlobの生成(Particle用)
 	/// </summary>
 	void CreateRootSignatureBlobForParticle();

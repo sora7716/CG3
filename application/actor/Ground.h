@@ -69,7 +69,7 @@ public://メンバ関数
 	void SetTexture(const std::string& textureName);
 private://定数
 	//ブロックの数
-	static inline const Vector2Int kBlockCount = { 5,5 };
+	static inline const Vector2Int kBlockCount = { 50,50 };
 private://メンバ変数
 	//地面のデータ
 	std::vector<std::vector<GroundData>>groundDates_;

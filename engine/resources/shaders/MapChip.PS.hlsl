@@ -1,4 +1,4 @@
-#include "MapChip.hlsli"
+#include "Object3d.hlsli"
 
 //マテリアル
 struct Material {

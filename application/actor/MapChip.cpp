@@ -11,6 +11,17 @@
 #include "engine/base/Blend.h"
 #include "engine/base/GraphicsPipeline.h"
 #include <cassert>
+#include <fstream>
+#include <sstream>
+#include <map>
+
+namespace {
+	//マップチップテーブル
+	std::map<std::string, MapChipType> mapChipTable = {
+		{"0",MapChipType::kBlank},
+		{"1",MapChipType::kBlock},
+	};
+}
 
 //初期化
 void MapChip::Initialize(DirectXBase* directXBase, Camera* camera) {
@@ -39,7 +50,7 @@ void MapChip::Initialize(DirectXBase* directXBase, Camera* camera) {
 	makeGraphicsPipeline_->SetDirectXBase(directXBase_);
 
 	//シグネイチャBlobの初期化
-	makeGraphicsPipeline_->CreateRootSignatureBlobForObject3d();
+	makeGraphicsPipeline_->CreateRootSignatureBlobForMapChip();
 
 	//ルートシグネイチャの保存
 	makeGraphicsPipeline_->CreateRootSignature();
@@ -86,9 +97,34 @@ void MapChip::Initialize(DirectXBase* directXBase, Camera* camera) {
 	//カメラリソースの生成
 	CreateCameraResource(camera_->GetTranslate());
 
-	//ワールド座標
-	transform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+	// 連番で詰める
+	generatedBlockCount_ = 0;
 
+	//マップのサイズを指定
+	mapChipData_.data.resize(mapSize.y);
+	for (int32_t i = 0; i < mapSize.y; i++) {
+		mapChipData_.data[i].resize(mapSize.x);
+	}
+
+	//マップのロード
+	LoadMapCsv("map.csv");
+
+	//ブロックの位置の初期化
+	for (int32_t z = 0; z < mapSize.y; ++z) {
+		for (int32_t x = 0; x < mapSize.x; ++x) {
+			if (mapChipData_.data[z][x].mapChipType == MapChipType::kBlock) {
+				// 連番インデックスに“だけ”書く
+				transforms_[generatedBlockCount_].scale = Vector3::MakeAllOne();
+				transforms_[generatedBlockCount_].rotate = {};
+				transforms_[generatedBlockCount_].translate = {
+					transforms_[generatedBlockCount_].scale.x * 2.0f * x,
+				   -2.0f,
+					transforms_[generatedBlockCount_].scale.z * 2.0f * z
+				};
+				generatedBlockCount_++;
+			}
+		}
+	}
 	//モデルデータの読み込み
 	modelData_ = ModelManager::GetInstance()->FindModel("ground")->GetModelData();
 
@@ -97,6 +133,9 @@ void MapChip::Initialize(DirectXBase* directXBase, Camera* camera) {
 
 	//wvpリソースの生成
 	CreateTransformationMatrixResource();
+
+	//wvpのSRVの生成
+	CreateStructuredBufferForWvp();
 
 	//頂点リソースの生成
 	CreateVertexResource();
@@ -178,6 +217,48 @@ void MapChip::Debug() {
 	ImGuiManager::CheckBoxToInt("enableLighting", materialData_.enableLighting);
 }
 
+//マップチップの読み込み(csv)
+void MapChip::LoadMapCsv(const std::string& fileName) {
+	std::ifstream file;
+
+	//ファイルを開く
+	file.open("engine/resources/csv/" + fileName);
+
+	//ファイルが開かなかったら止める
+	assert(file.is_open());
+
+	std::stringstream mapChipCsv;
+
+	//ファイルの中身をすべてコピー
+	mapChipCsv << file.rdbuf();
+
+	//ファイルを閉じる
+	file.close();
+
+	for (int32_t i = 0; i < mapSize.y; i++) {
+		std::string line;
+
+		//一行分読み取る
+		std::getline(mapChipCsv, line);
+
+		//読み込んだ1行分の文字列を文字列ストリーム化する
+		std::istringstream line_stream(line);
+
+		for (int32_t j = 0; j < mapSize.x; j++) {
+			std::string word;
+
+			//位置も自分読み取る
+			std::getline(line_stream, word, ',');
+
+			//マップチップのテーブルに存在していたら
+			if (mapChipTable.contains(word)) {
+				//マップチップタイプを格納
+				mapChipData_.data[i][j].mapChipType = mapChipTable[word];
+			}
+		}
+	}
+}
+
 //描画
 void MapChip::Draw() {
 	//ルートシグネイチャをセットするコマンド
@@ -195,8 +276,8 @@ void MapChip::Draw() {
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 
-	//座標変換行列CBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());//wvp
+	//座標変換行列SRVの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, SRVManager::GetInstance()->GetGPUDescriptorHandle(srvIndexWvp_));//wvp
 
 	//平光源CBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
@@ -220,7 +301,7 @@ void MapChip::Draw() {
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVHandleGPU(modelData_.material.textureFilePath));
 
 	//描画
-	directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.vertices.size()), 1, 0, 0, 0);
+	directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.vertices.size()), generatedBlockCount_, 0, 0, 0);
 }
 
 //終了
@@ -268,35 +349,53 @@ void MapChip::SetCameraForGPU(const Vector3& cameraTranslate) {
 
 //座標変換行列リソースの生成
 void MapChip::CreateTransformationMatrixResource() {
-	//座標変換行列リソースを作成する
-	wvpResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix));
+	// 配列サイズで確保
+	wvpResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * kMaxBlockCount);
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
 	//書き込むためのアドレス
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpPtr_));
 	//単位行列を書き込んでおく
-	wvpPtr_->wvp = Matrix4x4::Identity4x4();
-	wvpPtr_->world = Matrix4x4::Identity4x4();
-	wvpPtr_->worldInverseTranspose = Matrix4x4::Identity4x4();
+	for (uint32_t i = 0; i < kMaxBlockCount; i++) {
+		wvpPtr_[i].wvp = Matrix4x4::Identity4x4();
+		wvpPtr_[i].world = Matrix4x4::Identity4x4();
+		wvpPtr_[i].worldInverseTranspose = Matrix4x4::Identity4x4();
+	}
+}
+
+//座標変換行列リソースのストラクチャバッファの生成
+void MapChip::CreateStructuredBufferForWvp() {
+	//ストラクチャバッファを生成
+	srvIndexWvp_ = SRVManager::GetInstance()->Allocate() + TextureManager::kSRVIndexTop;
+	SRVManager::GetInstance()->CreateSRVForStructuredBuffer(
+		srvIndexWvp_,
+		wvpResource_.Get(),
+		kMaxBlockCount,
+		sizeof(TransformationMatrix)
+	);
 }
 
 //座標の更新
 void MapChip::UpdateTransform() {
-	Matrix4x4 local = Rendering::MakeAffineMatrix(transform_);
-	//TransformからWorldMatrixを作る
-	worldMatrix_ = Rendering::MakeAffineMatrix(transform_);
+	for (uint32_t i = 0; i < kMaxBlockCount; i++) {
 
-	//wvpの書き込み
-	if (camera_) {
-		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
-		wvpPtr_->wvp = worldMatrix_ * viewProjectionMatrix;
-	} else {
-		wvpPtr_->wvp = worldMatrix_;
+		//TransformからWorldMatrixを作る
+		wvpDataList_[i].world = Rendering::MakeAffineMatrix(transforms_[i]);
+
+		//wvpの書き込み
+		if (camera_) {
+			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+			wvpDataList_[i].wvp = wvpDataList_[i].world * viewProjectionMatrix;
+		} else {
+			wvpDataList_[i].wvp = wvpDataList_[i].world;
+		}
+
+		//逆行列の転置行列
+		wvpDataList_[i].worldInverseTranspose = wvpDataList_[i].world.InverseTranspose();
+
+		//ポインタに送信
+		wvpPtr_[i] = wvpDataList_[i];
 	}
 
-	//ワールド行列を送信
-	wvpPtr_->world = worldMatrix_;
-	//逆行列の転置行列を送信
-	wvpPtr_->worldInverseTranspose = worldMatrix_.InverseTranspose();
 }
 
 //uv変換

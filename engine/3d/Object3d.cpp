@@ -16,7 +16,7 @@ Object3d::~Object3d() {
 }
 
 //初期化
-void Object3d::Initialize() {
+void Object3d::Initialize(Camera* camera) {
 	//DirectXの基盤部分を受け取る
 	directXBase_ = Object3dCommon::GetInstance()->GetDirectXBase();
 
@@ -28,7 +28,7 @@ void Object3d::Initialize() {
 	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
 
 	//カメラにデフォルトカメラを代入
-	worldTransform_->SetCamera(Object3dCommon::GetInstance()->GetDefaultCamera());
+	worldTransform_->SetCamera(camera);
 	//カメラをセット
 	Object3dCommon::GetInstance()->CreateCameraResource(worldTransform_->GetCamera()->GetTranslate());
 

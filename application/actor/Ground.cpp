@@ -13,7 +13,7 @@ void Ground::Initialize(Camera* camera, const std::string& modelName) {
 		for (int32_t j = 0; j < kBlockCount.x; j++) {
 			//3Dモデル
 			groundDates_[i][j].object = new Object3d();
-			groundDates_[i][j].object->Initialize();
+			groundDates_[i][j].object->Initialize(camera);
 			groundDates_[i][j].object->SetModel(modelName);
 
 			//カメラの設定

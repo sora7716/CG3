@@ -29,7 +29,7 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	material_.shininess = 10.0f;
 	material_.uvMatrix = Matrix4x4::Identity4x4();
 	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize();
+	object3d_->Initialize(camera_);
 	object3d_->SetModel("field");
 	object3d_->SetTransform(transformData_);
 	object3d_->SetCamera(camera_);
@@ -128,7 +128,7 @@ void GameScene::Draw() {
 	player_->Draw();
 
 	//地面
-	ground_->Draw();
+	//ground_->Draw();
 
 	//フィールド
 	//object3d_->Draw();

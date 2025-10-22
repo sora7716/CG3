@@ -14,6 +14,23 @@ class DirectXBase;
 class GraphicsPipeline;
 class Blend;
 
+//マップチップのタイプ
+enum class MapChipType {
+	kBlock,
+	kBlank
+};
+
+//セルのデータ
+struct CellData {
+	MapChipType mapChipType;
+	Vector4 color;
+};
+
+//マップチップデータ
+struct MapChipData {
+	std::vector<std::vector<CellData>>data;
+};
+
 /// <summary>
 /// マップチップ
 /// </summary>
@@ -32,11 +49,11 @@ public://メンバ関数
 	~MapChip() = default;
 
 	/// <summary>
-    /// 初期化
-    /// </summary>
-    /// <param name="directXBase">DirectXの基盤部分</param>
+	/// 初期化
+	/// </summary>
+	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="camera">カメラ</param>
-	void Initialize(DirectXBase*directXBase,Camera*camera);
+	void Initialize(DirectXBase* directXBase, Camera* camera);
 
 	/// <summary>
 	/// 更新
@@ -57,6 +74,12 @@ public://メンバ関数
 	/// デバッグ
 	/// </summary>
 	void Debug();
+
+	/// <summary>
+	/// マップチップの読み込み(csv)
+	/// </summary>
+	/// <param name="fileName">ファイル名(ディレクトリパスはいらない)</param>
+	void LoadMapCsv(const std::string& fileName);
 
 	/// <summary>
 	/// カメラのセッター
@@ -103,6 +126,11 @@ private://メンバ関数
 	/// 座標変換行列リソースの生成
 	/// </summary>
 	void CreateTransformationMatrixResource();
+
+	/// <summary>
+	/// 座標変換行列リソースのストラクチャバッファの生成
+	/// </summary>
+	void CreateStructuredBufferForWvp();
 
 	/// <summary>
 	/// 座標の更新
@@ -156,6 +184,8 @@ private://メンバ関数
 private://定数
 	//ライトの最大値
 	static inline const int32_t kMaxLightCount = 64;
+	//ブロックの際打数
+	static inline const int32_t kMaxBlockCount = 1024;
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
@@ -189,6 +219,7 @@ private://メンバ変数
 	//SRVインデックス
 	uint32_t srvIndexPoint_ = 0;//PointLight
 	uint32_t srvIndexSpot_ = 0;//SpotLight
+	uint32_t srvIndexWvp_ = 0;//Transformation
 
 	//VertexBufferView
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};
@@ -211,10 +242,10 @@ private://メンバ変数
 	SpotLight spotLightDataList_[kMaxLightCount] = {};
 
 	//ワールド座標
-	TransformData transform_ = {};
+	TransformData transforms_[kMaxBlockCount] = {};
 
 	//ワールド行列
-	Matrix4x4 worldMatrix_ = {};
+	TransformationMatrix wvpDataList_[kMaxBlockCount] = {};
 
 	//ブレンド
 	Blend* blend_ = nullptr;
@@ -229,4 +260,12 @@ private://メンバ変数
 
 	//マテリアル
 	Material materialData_ = {};
+
+	//マップのサイズ
+	Vector2Int mapSize = { 20,20 };
+	//生成されるブロック数
+	uint32_t generatedBlockCount_ = 0;
+
+	//マップ
+	MapChipData mapChipData_;
 };

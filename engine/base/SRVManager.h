@@ -109,7 +109,7 @@ private://メンバ関数
 	//代入演算子の禁止
 	SRVManager operator=(const SRVManager&) = delete;
 public://定数
-	static inline const uint32_t kMaxSRVCount = 512;
+	static inline const uint32_t kMaxSRVCount = 65536;
 private://静的メンバ変数
 	//インスタンス
 	static inline SRVManager* instance = nullptr;

@@ -5,7 +5,7 @@ struct TransformationMatrix {
     float32_t4x4 world;
     float32_t4x4 worldInverseTranspose;
 };
-ConstantBuffer<TransformationMatrix> gTrasformationMatrix : register(b0);
+StructuredBuffer<TransformationMatrix> gTrasformationMatrix : register(t0);
 
 struct VertexShaderInput {
     float32_t4 position : POSITION0;
@@ -13,11 +13,11 @@ struct VertexShaderInput {
     float32_t3 normal : NORMAL0;
 };
 
-VertexShaderOutput main(VertexShaderInput input) {
+VertexShaderOutput main(VertexShaderInput input, uint32_t instanceId : SV_InstanceID) {
     VertexShaderOutput output;
-    output.position = mul(input.position, gTrasformationMatrix.wvp);
+    output.position = mul(input.position, gTrasformationMatrix[instanceId].wvp);
     output.texcoord = input.texcoord;
-    output.normal = normalize(mul(input.normal, (float32_t3x3) gTrasformationMatrix.worldInverseTranspose));
-    output.worldPosition = mul(input.position, gTrasformationMatrix.world).xyz;
+    output.normal = normalize(mul(input.normal, (float32_t3x3) gTrasformationMatrix[instanceId].worldInverseTranspose));
+    output.worldPosition = mul(input.position, gTrasformationMatrix[instanceId].world).xyz;
     return output;
 }
