@@ -3,6 +3,7 @@
 #include "engine/math/ResourceData.h"
 #include "engine/math/RenderingData.h"
 #include "engine/base/BlendMode.h"
+#include "actor/MapChipData.h"
 #include <vector>
 #include <string>
 #include <wrl.h>
@@ -13,23 +14,6 @@ class Camera;
 class DirectXBase;
 class GraphicsPipeline;
 class Blend;
-
-//マップチップのタイプ
-enum class MapChipType {
-	kBlock,
-	kBlank
-};
-
-//セルのデータ
-struct CellData {
-	MapChipType mapChipType;
-	Vector4 color;
-};
-
-//マップチップデータ
-struct MapChipData {
-	std::vector<std::vector<CellData>>data;
-};
 
 /// <summary>
 /// マップチップ
@@ -53,7 +37,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="camera">カメラ</param>
-	void Initialize(DirectXBase* directXBase, Camera* camera);
+	/// <param name="mapChipType">マップチップのタイプ</param>
+	/// <param name="mapName">マップ名</param>
+	/// <param name="modelName">使うモデル名</param>
+	/// <param name="posY">描画開始位置のY座標</param>
+	/// <param name="mapSize">マップサイズ</param>
+	void Initialize(DirectXBase* directXBase, Camera* camera, MapChipType mapChipType, const std::string& mapName, const std::string& modelName, float posY, const Vector2Int& mapSize);
 
 	/// <summary>
 	/// 更新
@@ -74,12 +63,6 @@ public://メンバ関数
 	/// デバッグ
 	/// </summary>
 	void Debug();
-
-	/// <summary>
-	/// マップチップの読み込み(csv)
-	/// </summary>
-	/// <param name="fileName">ファイル名(ディレクトリパスはいらない)</param>
-	void LoadMapCsv(const std::string& fileName);
 
 	/// <summary>
 	/// カメラのセッター
@@ -116,7 +99,19 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="spotLight">スポットライト</param>
 	void SetSpotLight(const SpotLight* spotLight);
+
+	/// <summary>
+	/// テクスチャのセッター
+	/// </summary>
+	/// <param name="textureName">テクスチャ名</param>
+	void SetTexture(const std::string& textureName);
 private://メンバ関数
+	/// <summary>
+	/// マップチップの読み込み(csv)
+	/// </summary>
+	/// <param name="fileName">ファイル名(ディレクトリパスはいらない)</param>
+	void LoadMapCsv(const std::string& fileName);
+
 	/// <summary>
 	/// カメラリソースの生成
 	/// </summary>
@@ -262,7 +257,7 @@ private://メンバ変数
 	Material materialData_ = {};
 
 	//マップのサイズ
-	Vector2Int mapSize = { 20,20 };
+	Vector2Int mapSize_ = { 0,0 };
 	//生成されるブロック数
 	uint32_t generatedBlockCount_ = 0;
 

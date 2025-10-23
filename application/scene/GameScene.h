@@ -1,9 +1,9 @@
 #pragma once
 #include "engine/scene/IScene.h"
-#include "application/actor/Player.h"
-#include "application/actor/CameraController.h"
-#include "application/actor/Ground.h"
-#include "application/actor/MapChip.h"
+#include "actor/Player.h"
+#include "actor/CameraController.h"
+#include "actor/Field.h"
+#include "actor/MapChip.h"
 
 /// <summary>
 /// ゲームシーン
@@ -51,16 +51,13 @@ private://メンバ変数
 	//追従カメラ
 	std::unique_ptr<CameraController>cameraController_ = nullptr;
 
-	//地面
-	std::unique_ptr<Ground>ground_ = nullptr;
+	//フィールド
+	std::unique_ptr<Field>field_ = nullptr;
 
 	//フィールド
 	std::unique_ptr<Object3d>object3d_ = nullptr;
 	TransformData transformData_ = { {1.0f,1.0f,1.0f},{},{} };
 	Material material_ = {};
-
-	//マップチップ
-	std::unique_ptr<MapChip>mapChip_ = nullptr;
 
 };
 

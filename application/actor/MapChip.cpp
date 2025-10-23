@@ -13,18 +13,10 @@
 #include <cassert>
 #include <fstream>
 #include <sstream>
-#include <map>
-
-namespace {
-	//マップチップテーブル
-	std::map<std::string, MapChipType> mapChipTable = {
-		{"0",MapChipType::kBlank},
-		{"1",MapChipType::kBlock},
-	};
-}
+#include "Field.h"
 
 //初期化
-void MapChip::Initialize(DirectXBase* directXBase, Camera* camera) {
+void MapChip::Initialize(DirectXBase* directXBase, Camera* camera, MapChipType mapChipType, const std::string& mapName, const std::string& modelName, float posY, const Vector2Int& mapSize) {
 	//DirectXの基盤部分の記録
 	directXBase_ = directXBase;
 
@@ -34,6 +26,9 @@ void MapChip::Initialize(DirectXBase* directXBase, Camera* camera) {
 	//ブレンド
 	blend_ = new Blend();
 
+	//マップサイズを設定
+	mapSize_ = mapSize;
+
 	//グラフィックスパイプラインの生成と初期化
 	makeGraphicsPipeline_ = new GraphicsPipeline();
 	//シェーダを設定
@@ -41,7 +36,7 @@ void MapChip::Initialize(DirectXBase* directXBase, Camera* camera) {
 	makeGraphicsPipeline_->SetVertexShaderFileName(L"MapChip.VS.hlsl");
 
 	//ピクセルシェーダ
-	makeGraphicsPipeline_->SetPixelShaderFileName(L"MapChip.PS.hlsl");
+	makeGraphicsPipeline_->SetPixelShaderFileName(L"Object3d.PS.hlsl");
 
 	//デプスステンシルステート
 	directXBase_->InitializeDepthStencilForObject3d();
@@ -101,32 +96,34 @@ void MapChip::Initialize(DirectXBase* directXBase, Camera* camera) {
 	generatedBlockCount_ = 0;
 
 	//マップのサイズを指定
-	mapChipData_.data.resize(mapSize.y);
-	for (int32_t i = 0; i < mapSize.y; i++) {
-		mapChipData_.data[i].resize(mapSize.x);
+	mapChipData_.data.resize(mapSize_.y);
+	for (int32_t i = 0; i < mapSize_.y; i++) {
+		mapChipData_.data[i].resize(mapSize_.x);
 	}
 
 	//マップのロード
-	LoadMapCsv("map.csv");
+	LoadMapCsv(mapName);
 
 	//ブロックの位置の初期化
-	for (int32_t z = 0; z < mapSize.y; ++z) {
-		for (int32_t x = 0; x < mapSize.x; ++x) {
-			if (mapChipData_.data[z][x].mapChipType == MapChipType::kBlock) {
+	for (int32_t z = 0; z < mapSize_.y; ++z) {
+		for (int32_t x = 0; x < mapSize_.x; ++x) {
+			if (mapChipData_.data[z][x].mapChipType == mapChipType) {
 				// 連番インデックスに“だけ”書く
 				transforms_[generatedBlockCount_].scale = Vector3::MakeAllOne();
 				transforms_[generatedBlockCount_].rotate = {};
 				transforms_[generatedBlockCount_].translate = {
 					transforms_[generatedBlockCount_].scale.x * 2.0f * x,
-				   -2.0f,
+					posY,
 					transforms_[generatedBlockCount_].scale.z * 2.0f * z
 				};
+				//描画するブロック数を設定
 				generatedBlockCount_++;
 			}
 		}
 	}
+
 	//モデルデータの読み込み
-	modelData_ = ModelManager::GetInstance()->FindModel("ground")->GetModelData();
+	modelData_ = ModelManager::GetInstance()->FindModel(modelName)->GetModelData();
 
 	//テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
@@ -217,48 +214,6 @@ void MapChip::Debug() {
 	ImGuiManager::CheckBoxToInt("enableLighting", materialData_.enableLighting);
 }
 
-//マップチップの読み込み(csv)
-void MapChip::LoadMapCsv(const std::string& fileName) {
-	std::ifstream file;
-
-	//ファイルを開く
-	file.open("engine/resources/csv/" + fileName);
-
-	//ファイルが開かなかったら止める
-	assert(file.is_open());
-
-	std::stringstream mapChipCsv;
-
-	//ファイルの中身をすべてコピー
-	mapChipCsv << file.rdbuf();
-
-	//ファイルを閉じる
-	file.close();
-
-	for (int32_t i = 0; i < mapSize.y; i++) {
-		std::string line;
-
-		//一行分読み取る
-		std::getline(mapChipCsv, line);
-
-		//読み込んだ1行分の文字列を文字列ストリーム化する
-		std::istringstream line_stream(line);
-
-		for (int32_t j = 0; j < mapSize.x; j++) {
-			std::string word;
-
-			//位置も自分読み取る
-			std::getline(line_stream, word, ',');
-
-			//マップチップのテーブルに存在していたら
-			if (mapChipTable.contains(word)) {
-				//マップチップタイプを格納
-				mapChipData_.data[i][j].mapChipType = mapChipTable[word];
-			}
-		}
-	}
-}
-
 //描画
 void MapChip::Draw() {
 	//ルートシグネイチャをセットするコマンド
@@ -342,8 +297,65 @@ void MapChip::SetSpotLight(const SpotLight* spotLight) {
 	}
 }
 
+//テクスチャのセッター
+void MapChip::SetTexture(const std::string& textureName) {
+	modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
+	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
+}
+
 //カメラの位置のセッター
 void MapChip::SetCameraForGPU(const Vector3& cameraTranslate) {
+	cameraForGPU_->worldPosition = cameraTranslate;
+}
+
+//マップチップの読み込み(csv)
+void MapChip::LoadMapCsv(const std::string& fileName) {
+	std::ifstream file;
+
+	//ファイルを開く
+	file.open("engine/resources/csv/" + fileName);
+
+	//ファイルが開かなかったら止める
+	assert(file.is_open());
+
+	std::stringstream mapChipCsv;
+
+	//ファイルの中身をすべてコピー
+	mapChipCsv << file.rdbuf();
+
+	//ファイルを閉じる
+	file.close();
+
+	for (int32_t i = 0; i < mapSize_.y; i++) {
+		std::string line;
+
+		//一行分読み取る
+		std::getline(mapChipCsv, line);
+
+		//読み込んだ1行分の文字列を文字列ストリーム化する
+		std::istringstream line_stream(line);
+
+		for (int32_t j = 0; j < mapSize_.x; j++) {
+			std::string word;
+
+			//位置も自分読み取る
+			std::getline(line_stream, word, ',');
+
+			//マップチップのテーブルに存在していたら
+			if (mapChipTable.contains(word)) {
+				//マップチップタイプを格納
+				mapChipData_.data[i][j].mapChipType = mapChipTable[word];
+			}
+		}
+	}
+}
+
+//カメラリソースの生成
+void MapChip::CreateCameraResource(const Vector3& cameraTranslate) {
+	//光源のリソースを作成
+	cameraResource_ = directXBase_->CreateBufferResource(sizeof(CameraForGPU));
+	//光源データの書きこみ
+	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPU_));
 	cameraForGPU_->worldPosition = cameraTranslate;
 }
 
@@ -438,15 +450,6 @@ void MapChip::CreateIndexResource() {
 		indexPtr_[i] = i; indexPtr_[i + 1] = i + 1; indexPtr_[i + 2] = i + 2;
 		indexPtr_[i + 3] = i + 1; indexPtr_[i + 4] = i + 3; indexPtr_[i + 5] = i + 2;
 	}
-}
-
-//カメラリソースの生成
-void MapChip::CreateCameraResource(const Vector3& cameraTranslate) {
-	//光源のリソースを作成
-	cameraResource_ = directXBase_->CreateBufferResource(sizeof(CameraForGPU));
-	//光源データの書きこみ
-	cameraResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPU_));
-	cameraForGPU_->worldPosition = cameraTranslate;
 }
 
 //マテリアルリソースの生成

@@ -39,7 +39,7 @@ struct Vector3 final {
 	/// <param name="end">最後のベクトル</param>
 	/// <param name="frame">フレーム</param>
 	/// <returns>現在のベクトル</returns>
-	Vector3 Lerp(const Vector3& begin, const Vector3& end, float frame);
+	static Vector3 Lerp(const Vector3& begin, const Vector3& end, float frame);
 
 	// 円関数を使用した線形補間
 	//加法

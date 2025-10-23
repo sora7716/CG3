@@ -222,11 +222,11 @@
     <ClCompile Include="application\actor\CameraController.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\Ground.cpp">
+    <ClCompile Include="application\actor\Field.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
     <ClCompile Include="application\actor\MapChip.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>application\actor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -395,11 +395,14 @@
     <ClInclude Include="application\actor\CameraController.h">
       <Filter>application\actor</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\Ground.h">
+    <ClInclude Include="application\actor\Field.h">
       <Filter>application\actor</Filter>
     </ClInclude>
     <ClInclude Include="application\actor\MapChip.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\MapChipData.h">
+      <Filter>application\actor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

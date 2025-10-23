@@ -18,14 +18,15 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	cameraController_->Initialize(camera_);
 	cameraController_->SetTarget(player_.get());
 	cameraController_->Reset();
-	cameraController_->SetMovableArea({ 0.0f,30.0f,0.0f,30.0f });
+	cameraController_->SetMovableArea({ 0.0f,30.0f,0.0f,30.0f,30.0f,0.0f});
 	//追従カメラ
 	cameraController_->Update();
 
-	//地面
-	ground_ = std::make_unique<Ground>();
-	ground_->Initialize(camera_, "ground");
+	//フィールド
+	field_ = std::make_unique<Field>();
+	field_->Initialize(camera_);
 
+	//obj
 	material_.color = { 1.0f,1.0f,1.0f,1.0f };
 	material_.enableLighting = true;
 	material_.shininess = 10.0f;
@@ -36,10 +37,6 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	object3d_->SetTransform(transformData_);
 	object3d_->SetCamera(camera_);
 	object3d_->GetModel()->SetMaterial(material_);
-
-	//マップチップ
-	mapChip_ = std::make_unique<MapChip>();
-	mapChip_->Initialize(Object3dCommon::GetInstance()->GetDirectXBase(),camera_);
 }
 
 //更新
@@ -53,19 +50,15 @@ void GameScene::Update() {
 	//追従カメラ
 	cameraController_->Update();
 
-	//地面
-	ground_->Update();
-
 	//フィールド
+	field_->SetDirectionalLight(Object3dCommon::GetInstance()->GetDirectionalLight());
+	field_->SetPointLight(Object3dCommon::GetInstance()->GetPointLight());
+	field_->SetSpotLight(Object3dCommon::GetInstance()->GetSpotLight());
+	field_->Update();
+
+	//obj
 	object3d_->GetModel()->SetMaterial(material_);
 	object3d_->Update();
-
-	//マップチップ
-	mapChip_->SetDirectionalLight(Object3dCommon::GetInstance()->GetDirectionalLight());
-	mapChip_->SetPontLight(Object3dCommon::GetInstance()->GetPointLight());
-	mapChip_->SetSpotLight(Object3dCommon::GetInstance()->GetSpotLight());
-	mapChip_->Update();
-
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
 	ImGuiManager::GetInstance()->Begin();
@@ -75,9 +68,9 @@ void GameScene::Update() {
 	player_->Debug();
 	ImGui::End();
 
-	//地面
-	ImGui::Begin("ground");
-	ground_->Debug();
+	//フィールド
+	ImGui::Begin("field");
+	field_->Debug();
 	ImGui::End();
 
 	//デバッグカメラ
@@ -90,16 +83,11 @@ void GameScene::Update() {
 	cameraController_->Debug();
 	ImGui::End();
 
-	//フィールド
-	ImGui::Begin("field");
+	//obj
+	ImGui::Begin("obj");
 	ImGui::ColorEdit4("color", &material_.color.x);
 	ImGui::DragFloat("shiness", &material_.shininess);
 	ImGuiManager::CheckBoxToInt("enableLighting", material_.enableLighting);
-	ImGui::End();
-
-	//マップチップ
-	ImGui::Begin("mapChip");
-	mapChip_->Debug();
 	ImGui::End();
 
 	//Object3dCommon
@@ -117,9 +105,8 @@ void GameScene::Update() {
 		camera_ = CameraManager::GetInstance()->FindCamera("gameCamera");
 	}
 	player_->SetCamera(camera_);
-	ground_->SetCamera(camera_);
+	field_->SetCamera(camera_);
 	object3d_->SetCamera(camera_);
-	mapChip_->SetCamera(camera_);
 #endif // _DEBUG
 
 }
@@ -129,14 +116,14 @@ void GameScene::Draw() {
 	//プレイヤー
 	player_->Draw();
 
-	//地面
+	//フィールド
 	//ground_->Draw();
 
-	//フィールド
+	//obj
 	//object3d_->Draw();
 
 	//マップチップ
-	mapChip_->Draw();
+	field_->Draw();
 }
 
 //終了
@@ -144,11 +131,8 @@ void GameScene::Finalize() {
 	//プレイヤー
 	player_->Finalize();
 
-	//地面
-	ground_->Finalize();
-
-	//マップチップ
-	mapChip_->Finalize();
+	//フィールド
+	field_->Finalize();
 
 	//シーンのインターフェース
 	IScene::Finalize();

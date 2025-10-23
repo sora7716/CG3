@@ -1,40 +1,36 @@
 #pragma once
 #include "engine/math/RenderingData.h"
 #include "engine/math/ResourceData.h"
+#include "MapChipData.h"
 #include <string>
 #include <vector>
 
 //カメラ
 class Camera;
 class Object3d;
-
-//地面に必要なデータ
-struct GroundData {
-	Object3d* object;
-	TransformData transform;
-};
+class MapChip;
 
 /// <summary>
-/// 地面
+/// フィールド
 /// </summary>
-class Ground {
+class Field {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Ground() = default;
+	Field() = default;
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Ground() = default;
+	~Field() = default;
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	/// <param name="modelName">モデル名</param>
-	void Initialize(Camera* camera, const std::string& modelName);
+	void Initialize(Camera* camera);
 
 	/// <summary>
 	/// 更新
@@ -67,14 +63,29 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="textureName">テクスチャ名</param>
 	void SetTexture(const std::string& textureName);
-private://定数
-	//ブロックの数
-	static inline const Vector2Int kBlockCount = { 50,50 };
+
+	/// <summary>
+	/// 平行光源のセッター
+	/// </summary>
+	/// <param name="directional">平行光源</param>
+	void SetDirectionalLight(const DirectionalLight& directional);
+
+	/// <summary>
+	/// 点光源のセッター
+	/// </summary>
+	/// <param name="point">点光源</param>
+	void SetPointLight(const PointLight* point);
+
+	/// <summary>
+	/// スポットライトのセッター
+	/// </summary>
+	/// <param name="spot">スポットライト</param>
+	void SetSpotLight(const SpotLight* spot);
 private://メンバ変数
-	//地面のデータ
-	std::vector<std::vector<GroundData>>groundDates_;
-	//マテリアル
-	Material material_ = {};
+	//マップチップ
+	MapChip* mapChip_ = nullptr;
+	//マップのサイズ
+	Vector2Int mapSize_ = { 20,20 };
 };
 
 

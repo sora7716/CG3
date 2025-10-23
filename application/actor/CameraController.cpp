@@ -26,17 +26,19 @@ void CameraController::Update() {
 	goalPosition_ = targetTransformData.translate + targetOffset_ + target_->GetVelocity() * kVelocityBias;
 
 	//座標補間によりゆったり追従
-	Vector3 cameraTranslate = cameraTranslate.Lerp(camera_->GetTranslate(), goalPosition_, kInterpolationRate);
+	Vector3 cameraTranslate = Vector3::Lerp(camera_->GetTranslate(), goalPosition_, kInterpolationRate);
 
 	//追従対象が画面外に出ないように補正
 	cameraTranslate.x = std::clamp(cameraTranslate.x, target_->GetTransformData().translate.x + margin.left, target_->GetTransformData().translate.x + margin.right);
 	cameraTranslate.y = std::clamp(cameraTranslate.y, target_->GetTransformData().translate.y + margin.bottom, target_->GetTransformData().translate.y + margin.top);
+	cameraTranslate.z = std::clamp(cameraTranslate.z, target_->GetTransformData().translate.z + margin.back, target_->GetTransformData().translate.z + margin.front);
 	//追従対象が画面外に出ないように補正を設定
 	camera_->SetTranslate(cameraTranslate);
 
 	//移動範囲の制限
 	cameraTranslate.x = std::clamp(cameraTranslate.x, movableArea_.left, movableArea_.right);
 	cameraTranslate.y = std::clamp(cameraTranslate.y, movableArea_.bottom, movableArea_.top);
+	cameraTranslate.z = std::clamp(cameraTranslate.z, movableArea_.back, movableArea_.front);
 	//制限した移動範囲を設定
 	camera_->SetTranslate(cameraTranslate);
 
