@@ -48,11 +48,6 @@ void GameScene::Update() {
 	//ImGuiの受付開始
 	ImGuiManager::GetInstance()->Begin();
 
-	//プレイヤー
-	ImGui::Begin("player");
-	player_->Debug();
-	ImGui::End();
-
 	//フィールド
 	ImGui::Begin("field");
 	field_->Debug();
@@ -61,11 +56,6 @@ void GameScene::Update() {
 	//デバッグカメラ
 	ImGui::Begin("debugCamera");
 	debugCamera_->Debug();
-	ImGui::End();
-
-	//追従カメラ
-	ImGui::Begin("cameraController");
-	cameraController_->Debug();
 	ImGui::End();
 
 	//グローバル変数の更新

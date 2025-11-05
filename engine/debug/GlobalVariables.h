@@ -1,5 +1,6 @@
 #pragma once
-#include "engine/math/Vector3.h"
+#include "engine/math/RenderingData.h"
+#include "engine/math/Vector4.h"
 #include "externals/nlohmann/json.hpp"
 #include <variant>
 #include <cstdint>
@@ -11,15 +12,10 @@
 using json = nlohmann::json;
 
 //項目
-struct Item {
-	//項目の値
-	std::variant<int32_t, float, Vector3>value;
-};
+using Item = std::variant<int32_t, float,TransformData,Vector3,Vector4>;
 
 //グループ
-struct Group {
-	std::map<std::string, Item>items;
-};
+using Group = std::map<std::string, Item>;
 
 /// <summary>
 /// グローバル変数
@@ -44,8 +40,8 @@ public://メンバ関数
 	void Update();
 
 	/// <summary>
-    /// ディレクトリの全ファイル読み込み
-    /// </summary>
+	/// ディレクトリの全ファイル読み込み
+	/// </summary>
 	void LoadFiles();
 
 	/// <summary>
@@ -93,14 +89,14 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="groupName">グループ名</param>
 	void LoadFile(const std::string& groupName);
-	
+
 	/// <summary>
-    /// 値のセッター
-    /// </summary>
-    /// <typeparam name="T">テンプレート</typeparam>
-    /// <param name="groupName">グループ名</param>
-    /// <param name="key">検索キー</param>
-    /// <param name="value">値</param>
+	/// 値のセッター
+	/// </summary>
+	/// <typeparam name="T">テンプレート</typeparam>
+	/// <param name="groupName">グループ名</param>
+	/// <param name="key">検索キー</param>
+	/// <param name="value">値</param>
 	template <typename T>
 	void SetValue(const std::string& groupName, const std::string& key, T value);
 public://静的メンバ変数
@@ -124,16 +120,16 @@ void GlobalVariables::SetValue(const std::string& groupName, const std::string& 
 
 	//新しい項目データの設定
 	Item newItem = {};
-	newItem.value = value;
+	newItem = value;
 
 	//設定した項目をstd::mapに追加
-	group.items[key] = newItem;
+	group[key] = newItem;
 }
 
 //項目の追加
 template<typename T>
 void GlobalVariables::AddItem(const std::string& groupName, const std::string& key, T value) {
-	if (dataList_[groupName].items.contains(key)) {
+	if (dataList_[groupName].contains(key)) {
 		return;
 	}
 	SetValue(groupName, key, value);
@@ -149,8 +145,8 @@ inline T GlobalVariables::GetValue(const std::string& groupName, const std::stri
 	const Group& group = dataList_.at(groupName);
 
 	//項目が存在するか
-	assert(group.items.contains(key));
+	assert(group.contains(key));
 
 	//戻り値として検索キーの項目の値を返す
-	return std::get<T>(group.items.at(key).value);
+	return std::get<T>(group.at(key));
 }

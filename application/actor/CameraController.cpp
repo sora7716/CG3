@@ -18,17 +18,20 @@ void CameraController::Initialize(Camera* camera) {
 	//FovY
 	fovY_ = 1.0f;
 
+	//調整項目を登録
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	const char* groupName = "CameraController";
-	GlobalVariables::GetInstance()->CreateGroup(groupName);
-	GlobalVariables::GetInstance()->LoadFiles();
-	globalVariables->AddItem(groupName, "rotate", cameraRotate_);
-	globalVariables->AddItem(groupName, "offset", targetOffset_);
-	globalVariables->AddItem(groupName, "fovY", fovY_);
+	//項目を生成
+	globalVariables->CreateGroup(groupName_);
+	//各調整項目を登録
+	globalVariables->AddItem(groupName_, "rotate", cameraRotate_);
+	globalVariables->AddItem(groupName_, "offset", targetOffset_);
+	globalVariables->AddItem(groupName_, "fovY", fovY_);
 }
 
 //更新
 void CameraController::Update() {
+	//調整項目を適応
+	ApplyGlobalVariables();
 	//追従対象のトランスフォームデータを参照
 	TransformData targetTransformData = target_->GetTransformData();
 	//追従対象とオフセットと追従対象の速度から目的地を計算
@@ -54,10 +57,6 @@ void CameraController::Update() {
 	//FovYのセッター
 	camera_->SetFovY(fovY_);
 
-	fovY_ = GlobalVariables::GetInstance()->GetValue<float>("CameraController", "fovY");
-	cameraRotate_ = GlobalVariables::GetInstance()->GetValue<Vector3>("CameraController", "rotate");
-	targetOffset_ = GlobalVariables::GetInstance()->GetValue<Vector3>("CameraController", "offset");
-
 	//行列を更新
 	camera_->Update();
 }
@@ -68,15 +67,6 @@ void CameraController::Reset() {
 	TransformData targetTransformData = target_->GetTransformData();
 	//追従対象とオフセットからカメラの座標を計算
 	camera_->SetTranslate(targetTransformData.translate + targetOffset_);
-}
-
-//デバッグ
-void CameraController::Debug() {
-#ifdef USE_IMGUI
-	ImGui::DragFloat3("rotate", &cameraRotate_.x, 0.01f);
-	ImGui::DragFloat3("position", &targetOffset_.x, 0.1f);
-	ImGui::DragFloat("fovY", &fovY_, 0.01f);
-#endif // USE_IMGUI
 }
 
 //追従対象
@@ -97,4 +87,12 @@ void CameraController::SetOffset(const Vector3& offset) {
 //回転のセッター
 void CameraController::SetRotate(const Vector3& rotate) {
 	cameraRotate_ = rotate;
+}
+
+//調整項目を適応
+void CameraController::ApplyGlobalVariables() {
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	fovY_ = globalVariables->GetValue<float>(groupName_, "fovY");
+	cameraRotate_ = globalVariables->GetValue<Vector3>(groupName_, "rotate");
+	targetOffset_ = globalVariables->GetValue<Vector3>(groupName_, "offset");
 }

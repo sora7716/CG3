@@ -46,11 +46,6 @@ public://メンバ関数
 	void Reset();
 
 	/// <summary>
-	/// デバッグ
-	/// </summary>
-	void Debug();
-
-	/// <summary>
 	/// 追従対象のセッター
 	/// </summary>
 	/// <param name="target">追従対象</param>
@@ -73,6 +68,11 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="rotate">回転</param>
 	void SetRotate(const Vector3& rotate);
+private://メンバ関数
+	/// <summary>
+    /// 調整項目を適応
+    /// </summary>
+	void ApplyGlobalVariables();
 private://定数
 	//座標補間割合
 	static inline const float kInterpolationRate = 0.1f;
@@ -97,5 +97,7 @@ private://メンバ変数
 	Vector3 goalPosition_ = {};
 	//FovY
 	float fovY_ = 0.45f;
+	//グローバル変数のグループ名
+	const char* groupName_ = "CameraController";
 };
 

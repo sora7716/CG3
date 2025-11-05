@@ -32,20 +32,21 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	material_.shininess = 10.0f;
 	material_.uvMatrix = Matrix4x4::Identity4x4();
 
+	//調整項目
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	const char* groupName = "Player";
-	GlobalVariables::GetInstance()->LoadFiles();
-	GlobalVariables::GetInstance()->CreateGroup(groupName);
-	int32_t testInt = 90;
-	float testFloat = 90.0f;
-	Vector3 testVector3 = { 90.0f,100.0f,20.0f };
-	globalVariables->AddItem(groupName, "testInt", testInt);
-	globalVariables->AddItem(groupName, "testFloat", testFloat);
-	globalVariables->AddItem(groupName, "testVector3", testVector3);
+	//調整項目のグループの生成
+	GlobalVariables::GetInstance()->CreateGroup(groupName_);
+	globalVariables->AddItem(groupName_, "transform", gameObject_.transfromData);
+	globalVariables->AddItem(groupName_, "color", material_.color);
+	globalVariables->AddItem(groupName_, "enableLighting", material_.enableLighting);
+	globalVariables->AddItem(groupName_, "shininess", material_.shininess);
 }
 
 //更新
 void Player::Update() {
+	//調整項目を適応
+	ApplyGlobalVariables();
+
 	//トランスフォームのセット
 	object3d_->SetTransform(gameObject_.transfromData);
 
@@ -65,15 +66,15 @@ void Player::Draw() {
 }
 
 //デバッグ
-void Player::Debug() {
-	ImGuiManager::GetInstance()->DragTransform(gameObject_.transfromData);
-#ifdef USE_IMGUI
-	ImGui::ColorEdit4("color", &material_.color.x);
-	ImGui::DragFloat("shininess", &material_.shininess, 0.1f);
-	ImGuiManager::CheckBoxToInt("enableLighting", material_.enableLighting);
-#endif // USE_IMGUI
-
-}
+//void Player::Debug() {
+//	ImGuiManager::GetInstance()->DragTransform(gameObject_.transfromData);
+//#ifdef USE_IMGUI
+//	ImGui::ColorEdit4("color", &material_.color.x);
+//	ImGui::DragFloat("shininess", &material_.shininess, 0.1f);
+//	ImGuiManager::CheckBoxToInt("enableLighting", material_.enableLighting);
+//#endif // USE_IMGUI
+//
+//}
 
 //終了
 void Player::Finalize() {
@@ -120,4 +121,14 @@ void Player::Move() {
 	//移動
 	//gameObject_.velocity += gameObject_.acceleration;
 	gameObject_.transfromData.translate += (gameObject_.velocity * gameObject_.direction.Normalize()) * Math::kDeltaTime;
+}
+
+//調整項目を適応
+void Player::ApplyGlobalVariables() {
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	//各調整項目を適応
+	/*gameObject_.transfromData = globalVariables->GetValue<TransformData>(groupName_, "transform");*/
+	material_.color = globalVariables->GetValue<Vector4>(groupName_, "color");
+	material_.enableLighting = globalVariables->GetValue<int32_t>(groupName_, "enableLighting");
+	material_.shininess = globalVariables->GetValue<float>(groupName_, "shininess");
 }

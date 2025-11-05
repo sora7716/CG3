@@ -41,11 +41,6 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// デバッグ
-	/// </summary>
-	void Debug();
-
-	/// <summary>
 	/// 終了
 	/// </summary>
 	void Finalize();
@@ -72,6 +67,11 @@ private://メンバ関数
 	/// 移動
 	/// </summary>
 	void Move();
+
+	/// <summary>
+	/// 調整項目を適応
+	/// </summary>
+	void ApplyGlobalVariables();
 private://メンバ変数
 	//入力
 	Input* input_ = nullptr;
@@ -84,5 +84,8 @@ private://メンバ変数
 
 	//マテリアル
 	Material material_ = {};
+
+	//調整項目のグループ名
+	const char* groupName_ = "Player";
 };
 

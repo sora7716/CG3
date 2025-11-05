@@ -1,6 +1,7 @@
 #include "IScene.h"
 #include "engine/scene/SceneManager.h"
 #include "engine/scene/SceneFactory.h"
+#include "engine/debug/GlobalVariables.h"
 
 //初期化
 void IScene::Initialize(DirectXBase* directXBase) {
@@ -13,6 +14,8 @@ void IScene::Initialize(DirectXBase* directXBase) {
 	sceneFactory_ = new SceneFactory();
 	//シーンファクトリーのセット
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
+	//調整ファイルの読み込み
+	GlobalVariables::GetInstance()->LoadFiles();
 }
 
 //更新
