@@ -21,9 +21,10 @@ void CameraController::Initialize(Camera* camera) {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "CameraController";
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
-	globalVariables->SetValue(groupName, "rotate", cameraRotate_);
-	globalVariables->SetValue(groupName, "offset", targetOffset_);
-	globalVariables->SetValue(groupName, "fovY", fovY_);
+	GlobalVariables::GetInstance()->LoadFiles();
+	globalVariables->AddItem(groupName, "rotate", cameraRotate_);
+	globalVariables->AddItem(groupName, "offset", targetOffset_);
+	globalVariables->AddItem(groupName, "fovY", fovY_);
 }
 
 //更新
@@ -53,8 +54,9 @@ void CameraController::Update() {
 	//FovYのセッター
 	camera_->SetFovY(fovY_);
 
-	cameraRotate_ = GlobalVariables::GetInstance()->GetValue("CameraController", "rotate");
-	targetOffset_ = GlobalVariables::GetInstance()->GetValue("CameraController", "offset");
+	fovY_ = GlobalVariables::GetInstance()->GetValue<float>("CameraController", "fovY");
+	cameraRotate_ = GlobalVariables::GetInstance()->GetValue<Vector3>("CameraController", "rotate");
+	targetOffset_ = GlobalVariables::GetInstance()->GetValue<Vector3>("CameraController", "offset");
 
 	//行列を更新
 	camera_->Update();

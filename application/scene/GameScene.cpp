@@ -108,6 +108,8 @@ void GameScene::Finalize() {
 	//フィールド
 	field_->Finalize();
 
+	GlobalVariables::GetInstance()->Finalize();
+
 	//シーンのインターフェース
 	IScene::Finalize();
 }

@@ -17,7 +17,7 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 		.rotate = {},
 		.translate = {}
 	};
-	gameObject_.velocity = {5.0f,0.0f,5.0f};
+	gameObject_.velocity = { 5.0f,0.0f,5.0f };
 	gameObject_.acceleration = { 0.1f,0.0f,0.1f };
 
 	//3Dオブジェクトの生成と初期化
@@ -34,10 +34,14 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "Player";
+	GlobalVariables::GetInstance()->LoadFiles();
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
-	/*globalVariables->SetValue(groupName, "testInt", 90);
-	globalVariables->SetValue(groupName, "testFloat", 90.0f);
-	globalVariables->SetValue(groupName, "testVector3", { 90.0f,100.0f,20.0f });*/
+	int32_t testInt = 90;
+	float testFloat = 90.0f;
+	Vector3 testVector3 = { 90.0f,100.0f,20.0f };
+	globalVariables->AddItem(groupName, "testInt", testInt);
+	globalVariables->AddItem(groupName, "testFloat", testFloat);
+	globalVariables->AddItem(groupName, "testVector3", testVector3);
 }
 
 //更新
@@ -79,7 +83,7 @@ void Player::Finalize() {
 }
 
 //カメラのセッター
-void Player::SetCamera(Camera*camera) {
+void Player::SetCamera(Camera* camera) {
 	object3d_->SetCamera(camera);
 }
 

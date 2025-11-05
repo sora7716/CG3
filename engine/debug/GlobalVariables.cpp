@@ -1,7 +1,8 @@
 #include "GlobalVariables.h"
 #include "ImGuiManager.h"
-#include <cassert>
+#include <fstream>
 
+//インスタンスのゲッター
 GlobalVariables* GlobalVariables::GetInstance() {
 	assert(!isFinalize && "GetInstance() called after Finalize()");
 	if (instance == nullptr) {
@@ -55,7 +56,7 @@ void GlobalVariables::Update() {
 			//項目の参照を取得
 			Item& item = itItem->second;
 
-			//項目の型によって表示を変える
+			//項目の方によって処理を変える
 			if (std::holds_alternative<int32_t>(item.value)) {
 				//int32_t型の値を保持してれば
 				int32_t* ptr = std::get_if<int32_t>(&item.value);
@@ -71,6 +72,16 @@ void GlobalVariables::Update() {
 			}
 		}
 
+		//改行
+		ImGui::Text("\n");
+
+		//ファイルの保存ボタン
+		if (ImGui::Button("save")) {
+			SaveFile(groupName);
+			std::string message = std::format("{}.json saved.", groupName);
+			MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
+		}
+
 		ImGui::EndMenu();
 	}
 
@@ -78,56 +89,153 @@ void GlobalVariables::Update() {
 	ImGui::End();
 }
 
-//値のセット(int32_t)
-void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, int32_t value) {
-	//グループの参照を取得
-	Group& group = dataList_[groupName];
-
-	//新しい項目データの設定
-	Item newItem = {};
-	newItem.value = value;
-
-	//設定した項目をstd::mapに追加
-	group.items[key] = newItem;
-}
-
-//値のセット(float)
-void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, float value) {
-	//グループの参照を取得
-	Group& group = dataList_[groupName];
-
-	//新しい項目データの設定
-	Item newItem = {};
-	newItem.value = value;
-
-	//設定した項目をstd::mapに追加
-	group.items[key] = newItem;
-}
-
-//値のセット(Vector3)
-void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, Vector3 value) {
-	//グループの参照を取得
-	Group& group = dataList_[groupName];
-
-	//新しい項目データの設定
-	Item newItem = {};
-	newItem.value = value;
-
-	//設定した項目をstd::mapに追加
-	group.items[key] = newItem;
-}
-
-Vector3 GlobalVariables::GetValue(const std::string& groupName, const std::string& key) {
-
-	Item item = dataList_[groupName].items[key];
-	if (!std::holds_alternative<Vector3>(item.value)) {
-		return Vector3{};
-	}
-	return *(std::get_if<Vector3>(&item.value));
-}
-
 void GlobalVariables::Finalize() {
 	delete instance;
 	instance = nullptr;
 	isFinalize = true;
+}
+
+//設定ファイルの書き出し
+void GlobalVariables::SaveFile(const std::string& groupName) {
+	std::map<std::string, Group>::iterator itGroup = dataList_.find(groupName);
+
+	//未登録チェック
+	assert(itGroup != dataList_.end());
+
+	json root;
+
+	root = json::object();
+
+	//jsonオブジェクトを登録
+	root[groupName] = json::object();
+
+	//各項目について
+	for (std::map<std::string, Item>::iterator itItem = itGroup->second.items.begin(); itItem != itGroup->second.items.end(); itItem++) {
+		//項目名を取得
+		const std::string& itemName = itItem->first;
+		//項目の参照を取得
+		Item& item = itItem->second;
+		//項目の方によって処理を変える
+		if (std::holds_alternative<int32_t>(item.value)) {
+			//int32_t型の値を登録
+			root[groupName][itemName] = std::get<int32_t>(item.value);
+		} else if (std::holds_alternative<float>(item.value)) {
+			//float型の値を登録
+			root[groupName][itemName] = std::get<float>(item.value);
+		} else if (std::holds_alternative<Vector3>(item.value)) {
+			//float型のjson配列を登録
+			Vector3 value = std::get<Vector3>(item.value);
+			root[groupName][itemName] = json::array({ value.x,value.y,value.z });
+		}
+	}
+
+	//ファイルの書き出し
+	//ディレクトリが無ければ作成
+	std::filesystem::path dir(kDirectoryPath);
+	if (!std::filesystem::exists(kDirectoryPath)) {
+		std::filesystem::create_directories(dir);
+	}
+
+	//書き込むJSONファイルのフルパスを合成する
+	std::string filePath = kDirectoryPath + groupName + ".json";
+	//書き込み用ファイルストリーム
+	std::ofstream ofs;
+	//ファイルを書き込み用に開く
+	ofs.open(filePath);
+
+	//ファイルオープン失敗をチェック
+	if (ofs.fail()) {
+		std::string message = "Failed open data file for write";
+		MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
+		assert(0);
+		return;
+	}
+
+	//ファイルにjson文字列を書き込む(インデント幅4)
+	ofs << std::setw(4) << root << std::endl;
+
+	//ファイルを閉じる
+	ofs.close();
+}
+
+//ディレクトリの全ファイル読み込み
+void GlobalVariables::LoadFiles() {
+	//保存先のディレクトリのパスをローカル変数に宣言する
+	std::string directoryPath = kDirectoryPath;
+	//ディレクトリがなければスキップ
+	if (!std::filesystem::exists(kDirectoryPath)) {
+		return;
+	}
+
+	std::filesystem::directory_iterator dir_it(directoryPath);
+	for (const std::filesystem::directory_entry& entry : dir_it) {
+		//ファイルパスを取得
+		const std::filesystem::path& filePath = entry.path();
+
+		//ファイルの拡張子を取得
+		std::string extension = filePath.extension().string();
+
+		//.jsonファイル以外はスキップ
+		if (extension.compare(".json") != 0) {
+			continue;
+		}
+
+		//ファイルの読み込み
+		LoadFile(filePath.stem().string());
+	}
+}
+
+//設定ファイルの読み込み
+void GlobalVariables::LoadFile(const std::string& groupName) {
+	//読み込むJSONファイルのフルパスを合成する
+	std::string filePath = kDirectoryPath + groupName + ".json";
+
+	//読み込み用ファイルストリーム
+	std::ifstream ifs;
+
+	//ファイルを読み込み用に開く
+	ifs.open(filePath);
+
+	//ファイルオープン失敗をチェック
+	if (ifs.fail()) {
+		std::string message = "Failed open data file for write";
+		MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
+		assert(0);
+		return;
+	}
+
+	json root;
+
+	//json文字列からjsonのデータ構造に展開
+	ifs >> root;
+
+	//ファイルを閉じる
+	ifs.close();
+
+	//グループを検索
+	json::iterator itGroup = root.find(groupName);
+
+	//未登録チェック
+	assert(itGroup != root.end());
+
+	//各項目について
+	for (json::iterator itItem = itGroup->begin(); itItem != itGroup->end(); itItem++) {
+		//項目名を取得
+		const std::string& itemName = itItem.key();
+
+		//項目の型によって処理を変える
+		if (itItem->is_number_integer()) {
+			//int32_tの値を保持していれば
+			int32_t value = itItem->get<int32_t>();
+			SetValue(groupName, itemName, value);
+		} else if (itItem->is_number_float()) {
+			//float型の値を保持していれば
+			double value = itItem->get<double>();
+			SetValue(groupName, itemName, static_cast<float>(value));
+		} else if (itItem->is_array() && itItem->size() == 3) {
+			//要素数3の配列であれば
+			Vector3 value = { itItem->at(0),itItem->at(1),itItem->at(2) };
+			SetValue(groupName, itemName, value);
+		}
+	}
 }
