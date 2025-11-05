@@ -140,6 +140,12 @@ public://メンバ関数
 	const Vector3& GetTranslate()const;
 
 	/// <summary>
+	/// トランスフォームデータのゲッター
+	/// </summary>
+	/// <returns>トランスフォームデータ</returns>
+	const TransformData& GetTransform()const;
+
+	/// <summary>
 	/// カメラのゲッター
 	/// </summary>
 	/// <returns>カメラ</returns>

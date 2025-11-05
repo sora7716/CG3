@@ -50,6 +50,12 @@ public://メンバ関数
 	void Finalize();
 
 	/// <summary>
+	/// 読み込みをしたかのフラグのゲッター
+	/// </summary>
+	/// <returns>読み込みをしたか</returns>
+	bool IsLoaded()const;
+
+	/// <summary>
 	/// 項目の追加
 	/// </summary>
 	/// <typeparam name="T">テンプレート</typeparam>
@@ -58,6 +64,16 @@ public://メンバ関数
 	/// <param name="value">値</param>
 	template <typename T>
 	void AddItem(const std::string& groupName, const std::string& key, T value);
+
+	/// <summary>
+	/// 値のセッター
+	/// </summary>
+	/// <typeparam name="T">テンプレート</typeparam>
+	/// <param name="groupName">グループ名</param>
+	/// <param name="key">検索キー</param>
+	/// <param name="value">値</param>
+	template <typename T>
+	void SetValue(const std::string& groupName, const std::string& key, T value);
 
 	/// <summary>
 	/// 値のゲッター
@@ -89,16 +105,6 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="groupName">グループ名</param>
 	void LoadFile(const std::string& groupName);
-
-	/// <summary>
-	/// 値のセッター
-	/// </summary>
-	/// <typeparam name="T">テンプレート</typeparam>
-	/// <param name="groupName">グループ名</param>
-	/// <param name="key">検索キー</param>
-	/// <param name="value">値</param>
-	template <typename T>
-	void SetValue(const std::string& groupName, const std::string& key, T value);
 public://静的メンバ変数
 	//カメラのインスタンス
 	static inline GlobalVariables* instance = nullptr;
@@ -110,6 +116,8 @@ private://定数
 private://メンバ変数
 	//全データ
 	std::map<std::string, Group>dataList_;
+	//読み込みしたか
+	bool isLoaded_ = false;
 };
 
 //値のセッター

@@ -12,7 +12,7 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	input_ = Input::GetInstance();
 
 	//トランスフォームの初期化
-	gameObject_.transfromData = {
+	gameObject_.transformData = {
 		.scale = Vector3::MakeAllOne(),
 		.rotate = {},
 		.translate = {}
@@ -36,7 +36,7 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	//調整項目のグループの生成
 	GlobalVariables::GetInstance()->CreateGroup(groupName_);
-	globalVariables->AddItem(groupName_, "transform", gameObject_.transfromData);
+	globalVariables->AddItem(groupName_, "transform", gameObject_.transformData);
 	globalVariables->AddItem(groupName_, "color", material_.color);
 	globalVariables->AddItem(groupName_, "enableLighting", material_.enableLighting);
 	globalVariables->AddItem(groupName_, "shininess", material_.shininess);
@@ -48,7 +48,7 @@ void Player::Update() {
 	ApplyGlobalVariables();
 
 	//トランスフォームのセット
-	object3d_->SetTransform(gameObject_.transfromData);
+	object3d_->SetTransform(gameObject_.transformData);
 
 	//マテリアルのセット
 	object3d_->GetModel()->SetMaterial(material_);
@@ -90,7 +90,7 @@ void Player::SetCamera(Camera* camera) {
 
 //トランスフォームデータのゲッター
 TransformData Player::GetTransformData() {
-	return gameObject_.transfromData;
+	return gameObject_.transformData;
 }
 
 //速度のゲッター
@@ -120,14 +120,17 @@ void Player::Move() {
 
 	//移動
 	//gameObject_.velocity += gameObject_.acceleration;
-	gameObject_.transfromData.translate += (gameObject_.velocity * gameObject_.direction.Normalize()) * Math::kDeltaTime;
+	gameObject_.transformData.translate += (gameObject_.velocity * gameObject_.direction.Normalize()) * Math::kDeltaTime;
 }
 
 //調整項目を適応
 void Player::ApplyGlobalVariables() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	//各調整項目を適応
-	/*gameObject_.transfromData = globalVariables->GetValue<TransformData>(groupName_, "transform");*/
+	//読み込みが完了していれば
+	if (globalVariables->IsLoaded()) {
+		gameObject_.transformData = globalVariables->GetValue<TransformData>(groupName_, "transform");
+	}
 	material_.color = globalVariables->GetValue<Vector4>(groupName_, "color");
 	material_.enableLighting = globalVariables->GetValue<int32_t>(groupName_, "enableLighting");
 	material_.shininess = globalVariables->GetValue<float>(groupName_, "shininess");

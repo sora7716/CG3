@@ -183,6 +183,12 @@ public://メンバ関数
 	const WorldTransform* GetWorldTransform()const;
 
 	/// <summary>
+	/// トランスフォームデータのゲッター
+	/// </summary>
+	/// <returns>トランスフォームデータ</returns>
+	const TransformData& GetTransformData()const;
+
+	/// <summary>
 	/// モデルのゲッター
 	/// </summary>
 	/// <returns>モデル</returns>

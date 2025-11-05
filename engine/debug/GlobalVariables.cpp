@@ -28,6 +28,9 @@ void GlobalVariables::CreateGroup(const std::string& groupName) {
 
 //更新
 void GlobalVariables::Update() {
+	//読み込みフラグをオフ
+	isLoaded_ = false;
+
 	if (!ImGui::Begin("Global Variables", nullptr, ImGuiWindowFlags_MenuBar)) {
 		ImGui::End();
 		return;
@@ -112,6 +115,11 @@ void GlobalVariables::Finalize() {
 	delete instance;
 	instance = nullptr;
 	isFinalize = true;
+}
+
+//読み込みをしたかのフラグのゲッター
+bool GlobalVariables::IsLoaded()const {
+	return isLoaded_;
 }
 
 //ディレクトリの全ファイル読み込み
@@ -218,6 +226,9 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 
 //設定ファイルの読み込み
 void GlobalVariables::LoadFile(const std::string& groupName) {
+	//読み込みフラグをオン
+	isLoaded_ = true;
+
 	//読み込むJSONファイルのフルパスを合成する
 	std::string filePath = kDirectoryPath + groupName + ".json";
 

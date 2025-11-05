@@ -3,7 +3,7 @@
 
 //ゲームオブジェクト
 struct GameObect {
-	TransformData transfromData;
+	TransformData transformData;
 	Vector3 velocity;
 	Vector3 acceleration;
 	Vector3 direction;

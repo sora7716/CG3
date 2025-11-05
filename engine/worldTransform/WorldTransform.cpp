@@ -118,6 +118,12 @@ const Vector3& WorldTransform::GetTranslate() const {
 	return transform_.translate;
 }
 
+//トランスフォームデータのゲッター
+const TransformData& WorldTransform::GetTransform() const {
+	// TODO: return ステートメントをここに挿入します
+	return transform_;
+}
+
 //カメラのゲッター
 Camera* WorldTransform::GetCamera() {
 	return camera_;

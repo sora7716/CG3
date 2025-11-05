@@ -210,6 +210,12 @@ const WorldTransform* Object3d::GetWorldTransform() const {
 	return worldTransform_;
 }
 
+//トランスフォームデータのゲッター
+const TransformData& Object3d::GetTransformData() const {
+	// TODO: return ステートメントをここに挿入します
+	return worldTransform_->GetTransform();
+}
+
 //モデルのゲッター
 Model* Object3d::GetModel() {
 	if (model_) {
