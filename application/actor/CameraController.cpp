@@ -75,3 +75,13 @@ void CameraController::SetTarget(Player* target) {
 void CameraController::SetMovableArea(const Rect& area) {
 	movableArea_ = area;
 }
+
+//オフセットのセッター
+void CameraController::SetOffset(const Vector3& offset) {
+	targetOffset_ = offset;
+}
+
+//回転のセッター
+void CameraController::SetRotate(const Vector3& rotate) {
+	cameraRotate_ = rotate;
+}

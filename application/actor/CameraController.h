@@ -61,6 +61,18 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="area">移動範囲</param>
 	void SetMovableArea(const Rect& area);
+
+	/// <summary>
+	/// オフセットのセッター
+	/// </summary>
+	/// <param name="offset">オフセット</param>
+	void SetOffset(const Vector3& offset);
+
+	/// <summary>
+	/// 回転のセッター
+	/// </summary>
+	/// <param name="rotate">回転</param>
+	void SetRotate(const Vector3& rotate);
 private://定数
 	//座標補間割合
 	static inline const float kInterpolationRate = 0.1f;
