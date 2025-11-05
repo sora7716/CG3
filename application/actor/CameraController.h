@@ -10,8 +10,6 @@ class Player;
 struct Rect {
 	float left = 0.0f;//左端
 	float right = 1.0f;//右端
-	float bottom = 0.0f; //下端
-	float top = 1.0f;//上端
 	float front = 0.0f;//手前
 	float back = 1.0f;//後ろ
 };
@@ -71,18 +69,18 @@ private://定数
 	static inline const float kVelocityBias = 0.1f;
 
 	//追従対象の各方向へのカメラ移動範囲
-	static inline const Rect margin = { -5.0f,5.0f,-5.0f,5.0f,5.0f,-5.0f };
+	static inline const Rect margin = { -5.0f,5.0f,5.0f,-5.0f };
 private://メンバ変数
 	//カメラ
 	Camera* camera_ = nullptr;
 	//追従対象
 	Player* target_ = nullptr;
 	//追従対象とカメラの座標の差(オフセット)
-	Vector3 targetOffset_ = { 0.0f,0.0f,-15.0f };
+	Vector3 targetOffset_ = {};
 	//カメラの角度
 	Vector3 cameraRotate_ = {};
 	//移動範囲
-	Rect movableArea_ = { 0.0f,100.0f,0.0f,100.0f ,0.0f,100.0f };
+	Rect movableArea_ = { 0.0f,100.0f,0.0f,100.0f };
 	//目的地
 	Vector3 goalPosition_ = {};
 	//FovY

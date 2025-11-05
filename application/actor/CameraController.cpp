@@ -13,7 +13,7 @@ void CameraController::Initialize(Camera* camera) {
 	//角度
 	cameraRotate_ = { 0.51f,0.0f,0.0f };
 	//位置のオフセット
-	targetOffset_ = { 0.0f,30.1f,-8.0f };
+	targetOffset_ = { 0.0f,3.0f,-8.0f };
 	//FovY
 	fovY_ = 1.0f;
 }
@@ -30,14 +30,11 @@ void CameraController::Update() {
 
 	//追従対象が画面外に出ないように補正
 	cameraTranslate.x = std::clamp(cameraTranslate.x, target_->GetTransformData().translate.x + margin.left, target_->GetTransformData().translate.x + margin.right);
-	cameraTranslate.y = std::clamp(cameraTranslate.y, target_->GetTransformData().translate.y + margin.bottom, target_->GetTransformData().translate.y + margin.top);
+	cameraTranslate.y = targetOffset_.y;
 	cameraTranslate.z = std::clamp(cameraTranslate.z, target_->GetTransformData().translate.z + margin.back, target_->GetTransformData().translate.z + margin.front);
-	//追従対象が画面外に出ないように補正を設定
-	camera_->SetTranslate(cameraTranslate);
 
 	//移動範囲の制限
 	cameraTranslate.x = std::clamp(cameraTranslate.x, movableArea_.left, movableArea_.right);
-	cameraTranslate.y = std::clamp(cameraTranslate.y, movableArea_.bottom, movableArea_.top);
 	cameraTranslate.z = std::clamp(cameraTranslate.z, movableArea_.back, movableArea_.front);
 	//制限した移動範囲を設定
 	camera_->SetTranslate(cameraTranslate);
