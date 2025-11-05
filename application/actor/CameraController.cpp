@@ -2,6 +2,7 @@
 #include "engine/camera/Camera.h"
 #include "application/actor/Player.h"
 #include "engine/math/RenderingData.h"
+#include "engine/debug/GlobalVariables.h"
 #include "engine/debug/ImGuiManager.h"
 #include "engine/3d/Object3d.h"
 #include <algorithm>
@@ -16,6 +17,13 @@ void CameraController::Initialize(Camera* camera) {
 	targetOffset_ = { 0.0f,3.0f,-8.0f };
 	//FovY
 	fovY_ = 1.0f;
+
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	const char* groupName = "CameraController";
+	GlobalVariables::GetInstance()->CreateGroup(groupName);
+	globalVariables->SetValue(groupName, "rotate", cameraRotate_);
+	globalVariables->SetValue(groupName, "offset", targetOffset_);
+	globalVariables->SetValue(groupName, "fovY", fovY_);
 }
 
 //更新
@@ -44,6 +52,9 @@ void CameraController::Update() {
 
 	//FovYのセッター
 	camera_->SetFovY(fovY_);
+
+	cameraRotate_ = GlobalVariables::GetInstance()->GetValue("CameraController", "rotate");
+	targetOffset_ = GlobalVariables::GetInstance()->GetValue("CameraController", "offset");
 
 	//行列を更新
 	camera_->Update();

@@ -41,6 +41,7 @@
     <ClCompile Include="engine\camera\Camera.cpp" />
     <ClCompile Include="engine\camera\CameraManager.cpp" />
     <ClCompile Include="engine\debug\DebugCamera.cpp" />
+    <ClCompile Include="engine\debug\GlobalVariables.cpp" />
     <ClCompile Include="engine\debug\ImGuiManager.cpp" />
     <ClCompile Include="engine\debug\Log.cpp" />
     <ClCompile Include="engine\framework\Framework.cpp" />
@@ -98,6 +99,7 @@
     <ClInclude Include="engine\camera\Camera.h" />
     <ClInclude Include="engine\camera\CameraManager.h" />
     <ClInclude Include="engine\debug\DebugCamera.h" />
+    <ClInclude Include="engine\debug\GlobalVariables.h" />
     <ClInclude Include="engine\debug\ImGuiManager.h" />
     <ClInclude Include="engine\debug\Log.h" />
     <ClInclude Include="engine\framework\Framework.h" />

@@ -21,10 +21,10 @@ public://メンバ関数
 	void Update();
 
 	/// <summary>
-	/// カメラを追加
+	/// カメラの生成
 	/// </summary>
 	/// <param name="name">カメラの名前</param>
-	void AddCamera(const std::string& name);
+	void CreateCamera(const std::string& name);
 
 	/// <summary>
 	/// カメラを検索
@@ -40,10 +40,8 @@ public://メンバ関数
 private://メンバ関数
 	//コンストラクタを封印
 	CameraManager() = default;
-
 	//デストラクタを封印
 	~CameraManager() = default;
-
 	//コピーコンストラクタ禁止
 	CameraManager(const CameraManager&) = delete;
 	//代入演算子を禁止

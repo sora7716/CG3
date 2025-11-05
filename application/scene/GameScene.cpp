@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "engine/input/Input.h"
 #include "engine/3d/Object3dCommon.h"
+#include "engine/debug/GlobalVariables.h"
 
 //初期化
 void GameScene::Initialize(DirectXBase* directXBase) {
@@ -66,6 +67,9 @@ void GameScene::Update() {
 	ImGui::Begin("cameraController");
 	cameraController_->Debug();
 	ImGui::End();
+
+	//グローバル変数の更新
+	GlobalVariables::GetInstance()->Update();
 
 	//Object3dCommon
 	Object3dCommon::GetInstance()->Debug();

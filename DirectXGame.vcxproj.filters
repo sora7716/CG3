@@ -228,6 +228,9 @@
     <ClCompile Include="application\actor\MapChip.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
+    <ClCompile Include="engine\debug\GlobalVariables.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\math\Matrix4x4.h">
@@ -403,6 +406,9 @@
     </ClInclude>
     <ClInclude Include="application\actor\MapChipData.h">
       <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\GlobalVariables.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

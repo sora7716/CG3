@@ -17,8 +17,8 @@ void CameraManager::Update(){
 	}
 }
 
-//カメラの追加
-void CameraManager::AddCamera(const std::string& name){
+//カメラの生成
+void CameraManager::CreateCamera(const std::string& name){
 	//読み込み済みならカメラを検索
 	if (cameras_.contains(name)) {
 		//読み込み済みなら早期return

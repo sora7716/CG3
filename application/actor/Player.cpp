@@ -4,6 +4,7 @@
 #include "engine/debug/ImGuiManager.h"
 #include "engine/input/Input.h"
 #include "engine/math/func/Math.h"
+#include "engine/debug/GlobalVariables.h"
 
 //初期化
 void Player::Initialize(Camera* camera, const std::string& modelName) {
@@ -30,6 +31,13 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	material_.enableLighting = true;
 	material_.shininess = 10.0f;
 	material_.uvMatrix = Matrix4x4::Identity4x4();
+
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	const char* groupName = "Player";
+	GlobalVariables::GetInstance()->CreateGroup(groupName);
+	/*globalVariables->SetValue(groupName, "testInt", 90);
+	globalVariables->SetValue(groupName, "testFloat", 90.0f);
+	globalVariables->SetValue(groupName, "testVector3", { 90.0f,100.0f,20.0f });*/
 }
 
 //更新

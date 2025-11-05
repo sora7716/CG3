@@ -54,11 +54,11 @@ void GameObjectList::LoadModel() {
 //カメラの生成
 void GameObjectList::CreateCamera() {
 	//カメラの管理
-	CameraManager::GetInstance()->AddCamera("defaultCamera");
+	CameraManager::GetInstance()->CreateCamera("defaultCamera");
 	//デバッグカメラ
-	CameraManager::GetInstance()->AddCamera("debugCamera");
+	CameraManager::GetInstance()->CreateCamera("debugCamera");
 	//タイトルカメラ
-	CameraManager::GetInstance()->AddCamera("titleCamera");
+	CameraManager::GetInstance()->CreateCamera("titleCamera");
 	//ゲームカメラ
-	CameraManager::GetInstance()->AddCamera("gameCamera");
+	CameraManager::GetInstance()->CreateCamera("gameCamera");
 }
