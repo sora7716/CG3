@@ -82,6 +82,16 @@ void GlobalVariables::Update() {
 			MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
 		}
 
+		//改行
+		ImGui::Text("\n");
+
+		//ファイルの読み込みボタン
+		if (ImGui::Button("load")) {
+			LoadFile(groupName);
+			std::string message = std::format("{}.json loaded.", groupName);
+			MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
+		}
+
 		ImGui::EndMenu();
 	}
 
@@ -89,10 +99,38 @@ void GlobalVariables::Update() {
 	ImGui::End();
 }
 
+//終了
 void GlobalVariables::Finalize() {
 	delete instance;
 	instance = nullptr;
 	isFinalize = true;
+}
+
+//ディレクトリの全ファイル読み込み
+void GlobalVariables::LoadFiles() {
+	//保存先のディレクトリのパスをローカル変数に宣言する
+	std::string directoryPath = kDirectoryPath;
+	//ディレクトリがなければスキップ
+	if (!std::filesystem::exists(kDirectoryPath)) {
+		return;
+	}
+
+	std::filesystem::directory_iterator dir_it(directoryPath);
+	for (const std::filesystem::directory_entry& entry : dir_it) {
+		//ファイルパスを取得
+		const std::filesystem::path& filePath = entry.path();
+
+		//ファイルの拡張子を取得
+		std::string extension = filePath.extension().string();
+
+		//.jsonファイル以外はスキップ
+		if (extension.compare(".json") != 0) {
+			continue;
+		}
+
+		//ファイルの読み込み
+		LoadFile(filePath.stem().string());
+	}
 }
 
 //設定ファイルの書き出し
@@ -156,33 +194,6 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 
 	//ファイルを閉じる
 	ofs.close();
-}
-
-//ディレクトリの全ファイル読み込み
-void GlobalVariables::LoadFiles() {
-	//保存先のディレクトリのパスをローカル変数に宣言する
-	std::string directoryPath = kDirectoryPath;
-	//ディレクトリがなければスキップ
-	if (!std::filesystem::exists(kDirectoryPath)) {
-		return;
-	}
-
-	std::filesystem::directory_iterator dir_it(directoryPath);
-	for (const std::filesystem::directory_entry& entry : dir_it) {
-		//ファイルパスを取得
-		const std::filesystem::path& filePath = entry.path();
-
-		//ファイルの拡張子を取得
-		std::string extension = filePath.extension().string();
-
-		//.jsonファイル以外はスキップ
-		if (extension.compare(".json") != 0) {
-			continue;
-		}
-
-		//ファイルの読み込み
-		LoadFile(filePath.stem().string());
-	}
 }
 
 //設定ファイルの読み込み
