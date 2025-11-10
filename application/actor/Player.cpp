@@ -62,6 +62,7 @@ void Player::Draw() {
 	//3Dオブジェクトの描画
 	object3d_->Draw();
 
+	//移動
 	Move();
 }
 
