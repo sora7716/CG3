@@ -193,6 +193,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>モデル</returns>
 	Model* GetModel();
+
+	/// <summary>
+	/// ワールド座標のゲッター
+	/// </summary>
+	/// <returns>ワールド座標</returns>
+	Vector3 GetWorldPos();
 private://メンバ変数
 	//UV座標
 	Transform2dData uvTransform_ = {

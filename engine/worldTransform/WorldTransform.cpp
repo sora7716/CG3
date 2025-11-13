@@ -94,6 +94,11 @@ void WorldTransform::SetTranslate(const Vector3& translate) {
 	transform_.translate = translate;
 }
 
+//ワールドマトリックスのセッター
+void WorldTransform::SetWorldMatrix(const Matrix4x4& worldMatrix) {
+	worldMatrix_ = worldMatrix;
+}
+
 //ワールド行列のゲッター
 const Matrix4x4& WorldTransform::GetWorldMatrix() const {
 	// TODO: return ステートメントをここに挿入します
@@ -129,6 +134,12 @@ Camera* WorldTransform::GetCamera() {
 	return camera_;
 }
 
+//ワールド座標のゲッター
+Vector3 WorldTransform::GetWorldPos(){
+	Vector3 result = { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] };
+	return result;
+}
+
 //座標変換行列リソースの生成
 void WorldTransform::CreateTransformationMatrixResource() {
 	//座標変換行列リソースを作成する
@@ -144,16 +155,10 @@ void WorldTransform::CreateTransformationMatrixResource() {
 
 //座標の更新
 void WorldTransform::UpdateTransform() {
-	Matrix4x4 local = Rendering::MakeAffineMatrix(transform_);
+	worldMatrix_ = Rendering::MakeAffineMatrix(transform_);
 	//TransformからWorldMatrixを作る
 	if (parent_) {
-		Matrix4x4 childLocal = parent_->worldMatrix_.Inverse() * worldMatrix_;
-		transform_ = Rendering::DecomposeMatrix(childLocal);
-		local = Rendering::MakeAffineMatrix(transform_);
-		worldMatrix_ = local;
-		worldMatrix_ = parent_->worldMatrix_ * worldMatrix_;
-	} else {
-		worldMatrix_ = local;
+		worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;
 	}
 	//wvpの書き込み
 	if (camera_) {

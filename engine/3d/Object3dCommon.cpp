@@ -7,6 +7,7 @@
 #include "engine/2d/TextureManager.h"
 #include <cassert>
 #include "engine/math/func/Math.h"
+#include "engine/debug/GlobalVariables.h"
 using namespace Microsoft::WRL;
 
 //インスタンスのゲッター
@@ -96,10 +97,19 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	//スポットライトの生成
 	CreateSpotLight();
 	CreateStructuredBufferForSpot();
+
+	//調整項目に設定
+	AddItemForPointLight(pointLightGroupNames_[0].c_str(),pointLightDataList_[0]);
+	AddItemForSpotLight(spotLightGroupNames_[0].c_str(),spotLightDataList_[0]);
 }
 
 //更新
 void Object3dCommon::Update() {
+	//調整項目を適応
+	ApplyGlobalVariablesForPointLight(pointLightGroupNames_[0].c_str(), pointLightDataList_[0]);
+	ApplyGlobalVariablesForSpotLight(spotLightGroupNames_[0].c_str(), spotLightDataList_[0]);
+
+	//ライトデータを転送
 	*directionalLightPtr_ = directionalLightData_;
 	for (int i = 0; i < kMaxLightCount; i++) {
 		pointLightPtr_[i] = pointLightDataList_[i];
@@ -119,6 +129,7 @@ void Object3dCommon::DrawSetting() {
 
 //デバッグ
 void Object3dCommon::Debug() {
+#ifdef USE_IMGUI
 	ImGui::Begin("Lighting");
 	ImGui::ColorEdit4("directional.color", &directionalLightData_.color.x);
 	ImGui::DragFloat3("directional.direction", &directionalLightData_.direction.x, 0.1f);
@@ -127,63 +138,7 @@ void Object3dCommon::Debug() {
 	ImGuiManager::CheckBoxToInt("directional.isBlingPhong", directionalLightData_.isBlinnPhong);
 	ImGuiManager::CheckBoxToInt("directional.enableDirectionalLight", directionalLightData_.enableDirectionalLighting);
 	ImGui::End();
-
-	ImGui::Begin("point");
-	ImGui::ColorEdit4("0.color", &pointLightDataList_[0].color.x);
-	ImGui::DragFloat3("0.position", &pointLightDataList_[0].position.x, 0.1f);
-	ImGui::DragFloat("0.intensity", &pointLightDataList_[0].intensity, 0.1f);
-	ImGui::DragFloat("0.distance", &pointLightDataList_[0].distance, 0.1f);
-	ImGui::DragFloat("0.decay", &pointLightDataList_[0].decay, 0.1f);
-	ImGuiManager::CheckBoxToInt("0.isBlingPhong", pointLightDataList_[0].isBlinnPhong);
-	ImGuiManager::CheckBoxToInt("0.enablePointLight", pointLightDataList_[0].enablePointLighting);
-	ImGui::ColorEdit4("1.color", &pointLightDataList_[1].color.x);
-	ImGui::DragFloat3("1.position", &pointLightDataList_[1].position.x, 0.1f);
-	ImGui::DragFloat("1.intensity", &pointLightDataList_[1].intensity, 0.1f);
-	ImGui::DragFloat("1.distance", &pointLightDataList_[1].distance, 0.1f);
-	ImGui::DragFloat("1.decay", &pointLightDataList_[1].decay, 0.1f);
-	ImGuiManager::CheckBoxToInt("1.isBlingPhong", pointLightDataList_[1].isBlinnPhong);
-	ImGuiManager::CheckBoxToInt("1.enablePointLight", pointLightDataList_[1].enablePointLighting);
-	ImGui::ColorEdit4("2.color", &pointLightDataList_[2].color.x);
-	ImGui::DragFloat3("2.position", &pointLightDataList_[2].position.x, 0.1f);
-	ImGui::DragFloat("2.intensity", &pointLightDataList_[2].intensity, 0.1f);
-	ImGui::DragFloat("2.distance", &pointLightDataList_[2].distance, 0.1f);
-	ImGui::DragFloat("2.decay", &pointLightDataList_[2].decay, 0.1f);
-	ImGuiManager::CheckBoxToInt("2.isBlingPhong", pointLightDataList_[2].isBlinnPhong);
-	ImGuiManager::CheckBoxToInt("2.enablePointLight", pointLightDataList_[2].enablePointLighting);
-	ImGui::End();
-
-	ImGui::Begin("spot");
-	ImGui::ColorEdit4("0.color", &spotLightDataList_[0].color.x);
-	ImGui::DragFloat3("0.position", &spotLightDataList_[0].position.x, 0.1f);
-	ImGui::DragFloat3("0.direction", &spotLightDataList_[0].direction.x, 0.1f);
-	ImGui::DragFloat("0.cosFolloffStart", &spotLightDataList_[0].cosFolloffStart, 0.1f);
-	ImGui::DragFloat("0.cosAngle", &spotLightDataList_[0].cosAngle, 0.1f);
-	ImGui::DragFloat("0.decay", &spotLightDataList_[0].decay, 0.1f);
-	ImGui::DragFloat("0.distance", &spotLightDataList_[0].distance, 0.1f);
-	ImGui::DragFloat("0.intensity", &spotLightDataList_[0].intensity, 0.1f);
-	ImGuiManager::CheckBoxToInt("0.isBlingPhong", spotLightDataList_[0].isBlinnPhong);
-	ImGuiManager::CheckBoxToInt("0.enableSpotLight", spotLightDataList_[0].enableSpotLighting);
-	ImGui::ColorEdit4("1.color", &spotLightDataList_[1].color.x);
-	ImGui::DragFloat3("1.position", &spotLightDataList_[1].position.x, 0.1f);
-	ImGui::DragFloat3("1.direction", &spotLightDataList_[1].direction.x, 0.1f);
-	ImGui::DragFloat("1.cosFolloffStart", &spotLightDataList_[1].cosFolloffStart, 0.1f);
-	ImGui::DragFloat("1.cosAngle", &spotLightDataList_[1].cosAngle, 0.1f);
-	ImGui::DragFloat("1.decay", &spotLightDataList_[1].decay, 0.1f);
-	ImGui::DragFloat("1.distance", &spotLightDataList_[1].distance, 0.1f);
-	ImGui::DragFloat("1.intensity", &spotLightDataList_[1].intensity, 0.1f);
-	ImGuiManager::CheckBoxToInt("1.isBlingPhong", spotLightDataList_[1].isBlinnPhong);
-	ImGuiManager::CheckBoxToInt("1.enableSpotLight", spotLightDataList_[1].enableSpotLighting);
-	ImGui::ColorEdit4("2.color", &spotLightDataList_[2].color.x);
-	ImGui::DragFloat3("2.position", &spotLightDataList_[2].position.x, 0.1f);
-	ImGui::DragFloat3("2.direction", &spotLightDataList_[2].direction.x, 0.1f);
-	ImGui::DragFloat("2.cosFolloffStart", &spotLightDataList_[2].cosFolloffStart, 0.1f);
-	ImGui::DragFloat("2.cosAngle", &spotLightDataList_[2].cosAngle, 0.1f);
-	ImGui::DragFloat("2.decay", &spotLightDataList_[2].decay, 0.1f);
-	ImGui::DragFloat("2.distance", &spotLightDataList_[2].distance, 0.1f);
-	ImGui::DragFloat("2.intensity", &spotLightDataList_[2].intensity, 0.1f);
-	ImGuiManager::CheckBoxToInt("2.isBlingPhong", spotLightDataList_[2].isBlinnPhong);
-	ImGuiManager::CheckBoxToInt("2.enableSpotLight", spotLightDataList_[2].enableSpotLighting);
-	ImGui::End();
+#endif // USE_IMGUi
 }
 
 //カメラリソースの生成
@@ -349,4 +304,60 @@ void Object3dCommon::CreateStructuredBufferForSpot() {
 		kMaxLightCount,
 		sizeof(SpotLight)
 	);
+}
+
+//グローバル変数に追加(PointLight)
+void Object3dCommon::AddItemForPointLight(const char* groupName, const PointLight& pointLight) {
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	globalVariables->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "color", pointLight.color);
+	globalVariables->AddItem(groupName, "position", pointLight.position);
+	globalVariables->AddItem(groupName, "intensity", pointLight.intensity);
+	globalVariables->AddItem(groupName, "distance", pointLight.distance);
+	globalVariables->AddItem(groupName, "decay", pointLight.decay);
+	globalVariables->AddItem(groupName, "isBlinnPhong", pointLight.isBlinnPhong);
+	globalVariables->AddItem(groupName, "enablePointLighting", pointLight.enablePointLighting);
+}
+
+//グローバル変数に追加(SpotLight)
+void Object3dCommon::AddItemForSpotLight(const char* groupName, const SpotLight& spotLight) {
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	globalVariables->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "color", spotLight.color);
+	globalVariables->AddItem(groupName, "cosAngle", spotLight.cosAngle);
+	globalVariables->AddItem(groupName, "cosFolloffStart", spotLight.cosFolloffStart);
+	globalVariables->AddItem(groupName, "decay", spotLight.decay);
+	globalVariables->AddItem(groupName, "direction", spotLight.direction);
+	globalVariables->AddItem(groupName, "distance", spotLight.distance);
+	globalVariables->AddItem(groupName, "enableSpotLighting", spotLight.enableSpotLighting);
+	globalVariables->AddItem(groupName, "intensity", spotLight.intensity);
+	globalVariables->AddItem(groupName, "isBlinnPhong", spotLight.isBlinnPhong);
+	globalVariables->AddItem(groupName, "position", spotLight.position);
+}
+
+//グローバル変数を適用(PointLight)
+void Object3dCommon::ApplyGlobalVariablesForPointLight(const char* groupName, PointLight& pointLight) {
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	pointLight.color = globalVariables->GetValue<Vector4>(groupName, "color");
+	pointLight.decay = globalVariables->GetValue<float>(groupName, "decay");
+	pointLight.distance = globalVariables->GetValue<float>(groupName, "distance");
+	pointLight.enablePointLighting = globalVariables->GetValue<int32_t>(groupName, "enablePointLighting");
+	pointLight.intensity = globalVariables->GetValue<float>(groupName, "intensity");
+	pointLight.isBlinnPhong = globalVariables->GetValue<int32_t>(groupName, "isBlinnPhong");
+	pointLight.position = globalVariables->GetValue<Vector3>(groupName, "position");
+}
+
+//グローバル変数を適用(SpotLight)
+void Object3dCommon::ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLight& spotLight) {
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	spotLight.color = globalVariables->GetValue<Vector4>(groupName, "color");
+	spotLight.cosAngle = globalVariables->GetValue<float>(groupName, "cosAngle");
+	spotLight.cosFolloffStart = globalVariables->GetValue<float>(groupName, "cosFolloffStart");
+	spotLight.decay = globalVariables->GetValue<float>(groupName, "decay");
+	spotLight.direction = globalVariables->GetValue<Vector3>(groupName, "direction");
+	spotLight.distance = globalVariables->GetValue<float>(groupName, "distance");
+	spotLight.enableSpotLighting = globalVariables->GetValue<int32_t>(groupName, "enableSpotLighting");
+	spotLight.intensity = globalVariables->GetValue<float>(groupName, "intensity");
+	spotLight.isBlinnPhong = globalVariables->GetValue<int32_t>(groupName, "isBlinnPhong");
+	spotLight.position = globalVariables->GetValue<Vector3>(groupName, "position");
 }

@@ -223,3 +223,8 @@ Model* Object3d::GetModel() {
 	}
 	return nullptr;
 }
+
+//ワールド座標のゲッター
+Vector3 Object3d::GetWorldPos(){
+	return worldTransform_->GetWorldPos();
+}

@@ -209,9 +209,16 @@ void MapChip::Update() {
 
 //デバッグ
 void MapChip::Debug() {
+#ifdef USE_IMGUI
 	ImGui::ColorEdit4("color", &materialData_.color.x);
 	ImGui::DragFloat("shininess", &materialData_.shininess, 0.1f);
+#endif // USE_IMGUI
 	ImGuiManager::CheckBoxToInt("enableLighting", materialData_.enableLighting);
+}
+
+//マテリアルのゲッター
+Material MapChip::GetMaterial() {
+	return materialData_;
 }
 
 //描画
@@ -306,6 +313,11 @@ void MapChip::SetTexture(const std::string& textureName) {
 //カメラの位置のセッター
 void MapChip::SetCameraForGPU(const Vector3& cameraTranslate) {
 	cameraForGPU_->worldPosition = cameraTranslate;
+}
+
+//マテリアルのセッター
+void MapChip::SetMaterial(const Material& material) {
+	materialData_ = material;
 }
 
 //マップチップの読み込み(csv)

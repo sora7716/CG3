@@ -114,6 +114,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="translate">平行移動</param>
 	void SetTranslate(const Vector3& translate);
+	
+	/// <summary>
+	/// ワールドマトリックスのセッター
+	/// </summary>
+	/// <param name="worldMatrix">ワールドマトリックス</param>
+	void SetWorldMatrix(const Matrix4x4& worldMatrix);
 
 	/// <summary>
 	/// ワールド行列のゲッター
@@ -150,6 +156,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>カメラ</returns>
 	Camera* GetCamera();
+
+	/// <summary>
+	/// ワールド座標のゲッター
+	/// </summary>
+	/// <returns>ワールド座標</returns>
+	Vector3 GetWorldPos();
 private://メンバ関数
 	/// <summary>
 	/// 座標変換行列リソースの生成

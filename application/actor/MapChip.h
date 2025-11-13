@@ -65,6 +65,12 @@ public://メンバ関数
 	void Debug();
 
 	/// <summary>
+	/// マテリアルのゲッター
+	/// </summary>
+	/// <returns>マテリアル</returns>
+	Material GetMaterial();
+
+	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera">カメラ</param>
@@ -105,6 +111,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="textureName">テクスチャ名</param>
 	void SetTexture(const std::string& textureName);
+
+	/// <summary>
+	/// マテリアルのセッター
+	/// </summary>
+	/// <param name="material">マテリアル</param>
+	void SetMaterial(const Material& material);
 private://メンバ関数
 	/// <summary>
 	/// マップチップの読み込み(csv)

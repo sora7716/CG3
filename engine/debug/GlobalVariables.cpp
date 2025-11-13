@@ -28,6 +28,7 @@ void GlobalVariables::CreateGroup(const std::string& groupName) {
 
 //更新
 void GlobalVariables::Update() {
+#ifdef USE_IMGUI
 	//読み込みフラグをオフ
 	isLoaded_ = false;
 
@@ -108,6 +109,7 @@ void GlobalVariables::Update() {
 
 	ImGui::EndMenuBar();
 	ImGui::End();
+#endif // USE_IMGUI
 }
 
 //終了
@@ -212,7 +214,9 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 	//ファイルオープン失敗をチェック
 	if (ofs.fail()) {
 		std::string message = "Failed open data file for write";
+#ifdef USE_IMGUI
 		MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
+#endif // USE_IMGUI
 		assert(0);
 		return;
 	}
@@ -241,7 +245,9 @@ void GlobalVariables::LoadFile(const std::string& groupName) {
 	//ファイルオープン失敗をチェック
 	if (ifs.fail()) {
 		std::string message = "Failed open data file for write";
+#ifdef USE_IMGUI
 		MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
+#endif // USE_IMGUI
 		assert(0);
 		return;
 	}

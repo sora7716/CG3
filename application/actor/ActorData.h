@@ -2,9 +2,8 @@
 #include "engine/math/RenderingData.h"
 
 //ゲームオブジェクト
-struct GameObect {
+struct GameObject {
 	TransformData transformData;
 	Vector3 velocity;
-	Vector3 acceleration;
 	Vector3 direction;
 };

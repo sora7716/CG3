@@ -48,9 +48,9 @@ public://メンバ関数
 	void Finalize();
 
 	/// <summary>
-	/// デバッグ
+	/// 調整項目を適応
 	/// </summary>
-	void Debug();
+	void ApplyGlobalVariables();
 
 	/// <summary>
 	/// カメラのセッター
@@ -86,6 +86,8 @@ private://メンバ変数
 	MapChip* mapChip_ = nullptr;
 	//マップのサイズ
 	Vector2Int mapSize_ = { 20,20 };
+	//調整項目のグループ名
+	const char* groundGroupName_ = "ground";
 };
 
 

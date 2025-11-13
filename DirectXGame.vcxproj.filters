@@ -229,7 +229,10 @@
       <Filter>application\actor</Filter>
     </ClCompile>
     <ClCompile Include="engine\debug\GlobalVariables.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>engine\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\RailCamera.cpp">
+      <Filter>application\actor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -408,7 +411,10 @@
       <Filter>application\actor</Filter>
     </ClInclude>
     <ClInclude Include="engine\debug\GlobalVariables.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\RailCamera.h">
+      <Filter>application\actor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

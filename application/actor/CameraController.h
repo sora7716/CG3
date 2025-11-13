@@ -98,6 +98,6 @@ private://メンバ変数
 	//FovY
 	float fovY_ = 0.45f;
 	//グローバル変数のグループ名
-	const char* groupName_ = "CameraController";
+	const char* groupName_ = "cameraController";
 };
 

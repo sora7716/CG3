@@ -16,6 +16,7 @@
     <ClCompile Include="application\actor\GameObjectList.cpp" />
     <ClCompile Include="application\actor\MapChip.cpp" />
     <ClCompile Include="application\actor\Player.cpp" />
+    <ClCompile Include="application\actor\RailCamera.cpp" />
     <ClCompile Include="application\scene\GameScene.cpp" />
     <ClCompile Include="application\scene\TitleScene.cpp" />
     <ClCompile Include="engine\2d\Object2d.cpp" />
@@ -73,6 +74,7 @@
     <ClInclude Include="application\actor\MapChip.h" />
     <ClInclude Include="application\actor\MapChipData.h" />
     <ClInclude Include="application\actor\Player.h" />
+    <ClInclude Include="application\actor\RailCamera.h" />
     <ClInclude Include="application\scene\GameScene.h" />
     <ClInclude Include="application\scene\TitleScene.h" />
     <ClInclude Include="engine\2d\Object2d.h" />
