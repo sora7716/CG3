@@ -86,6 +86,11 @@ private://メンバ関数
 	void Move();
 
 	/// <summary>
+	/// 攻撃
+	/// </summary>
+	void Attack();
+
+	/// <summary>
 	/// 調整項目を適応
 	/// </summary>
 	void ApplyGlobalVariables();
@@ -104,5 +109,8 @@ private://メンバ変数
 
 	//弾
 	Bullet* bullet_ = nullptr;
+
+	//ヘッドライト
+	SpotLightData headlight_ = {};
 };
 

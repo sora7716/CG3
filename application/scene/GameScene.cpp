@@ -20,10 +20,6 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	player_->Initialize(railCamera_->GetCamera(), "player");
 	player_->SetPosition({ 0.0f,0.0f,10.0f });
 
-	Object3dCommon::GetInstance()->AddSpotLight("spot");
-	spot_ = std::make_unique<SpotLight>();
-	spot_->Initialize(camera_);
-
 	//追従カメラ
 	railCamera_->Update();
 
@@ -43,8 +39,6 @@ void GameScene::Update() {
 
 	//追従カメラ
 	railCamera_->Update();
-
-	spot_->Update();
 
 	//フィールド
 	field_->SetDirectionalLight(Object3dCommon::GetInstance()->GetDirectionalLight());
@@ -67,13 +61,6 @@ void GameScene::Update() {
 	player_->Debug();
 	ImGui::End();
 
-	//プレイヤー
-	ImGui::Begin("spot");
-	spot_->Debug();
-	ImGui::End();
-
-	Object3dCommon::GetInstance()->SetSpotLight("spot",spot_->GetSpotLightData());
-
 	//Object3dCommon
 	Object3dCommon::GetInstance()->Debug();
 
@@ -87,11 +74,9 @@ void GameScene::Update() {
 		player_->SetCamera(debugCamera_->GetCamera());
 		field_->SetCamera(debugCamera_->GetCamera());
 		railCamera_->SetCamera(debugCamera_->GetCamera());
-		spot_->SetCamera(debugCamera_->GetCamera());
 	} else {
 		player_->SetCamera(railCamera_->GetCamera());
 		field_->SetCamera(railCamera_->GetCamera());
-		spot_->SetCamera(railCamera_->GetCamera());
 	}
 
 #endif // _DEBUG
@@ -112,8 +97,6 @@ void GameScene::Draw() {
 
 	//マップチップ
 	field_->Draw();
-
-	spot_->Draw();
 }
 
 //終了
@@ -126,8 +109,6 @@ void GameScene::Finalize() {
 
 	//レールカメラ
 	railCamera_->Finalize();
-
-	spot_->Finalize();
 
 	//グローバル変数
 	GlobalVariables::GetInstance()->Finalize();

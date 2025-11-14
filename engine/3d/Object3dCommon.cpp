@@ -248,7 +248,7 @@ void Object3dCommon::AddSpotLight(const std::string& name) {
 	spotLight.intensity = 4.0f;
 	spotLight.decay = 2.0f;
 	spotLight.cosAngle = std::cos(Math::kPi / 3.0f);
-	spotLight.cosFolloffStart = 0.0f;
+	spotLight.cosFolloffStart = 1.0f;
 	spotLight.isBlinnPhong = true;
 	spotLight.enableSpotLighting = true;
 
@@ -330,7 +330,7 @@ void Object3dCommon::CreateSpotLight() {
 		spotLightPtr_[i].intensity = 4.0f;
 		spotLightPtr_[i].decay = 2.0f;
 		spotLightPtr_[i].cosAngle = std::cos(Math::kPi / 3.0f);
-		spotLightPtr_[i].cosFolloffStart = 0.0f;
+		spotLightPtr_[i].cosFolloffStart = 1.0f;
 		spotLightPtr_[i].isBlinnPhong = true;
 		spotLightPtr_[i].enableSpotLighting = false;
 	}

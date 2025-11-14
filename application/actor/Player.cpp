@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "engine/3d/Object3d.h"
+#include "engine/3d/Object3dCommon.h"
 #include "engine/camera/Camera.h"
 #include "engine/debug/ImGuiManager.h"
 #include "engine/input/Input.h"
@@ -43,6 +44,10 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	bullet_->SetSize({ 0.5f,0.5f,0.5f });
 	bullet_->SetMaxBulletCount(10);
 
+	//スポットライトを設定
+	Object3dCommon::GetInstance()->AddSpotLight("headlight");
+	headlight_ = Object3dCommon::GetInstance()->GetSpotLight("headlight");
+
 	//調整項目
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	//調整項目のグループの生成
@@ -52,6 +57,9 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	globalVariables->AddItem(groupName_, "shininess", playerData_.gameObject.material.shininess);
 	globalVariables->AddItem(groupName_, "velocity", playerData_.gameObject.velocity);
 	globalVariables->AddItem(groupName_, "translate", playerData_.gameObject.transformData.translate);
+	globalVariables->AddItem(groupName_, "light.direction", headlight_.direction);
+	globalVariables->AddItem(groupName_, "light.cosAngle", headlight_.cosAngle);
+	globalVariables->AddItem(groupName_, "light.cosFolloffStart", headlight_.cosFolloffStart);
 }
 
 //更新
@@ -62,14 +70,27 @@ void Player::Update() {
 	//移動
 	Move();
 
+	//攻撃
+	Attack();
+
 	//マテリアルのセット
 	playerData_.object3d->GetModel()->SetMaterial(playerData_.gameObject.material);
 
-	//弾の発射
-	bullet_->SetShootingPosition(playerData_.object3d->GetWorldPos());
-	bullet_->SetSourceWorldMatrix(playerData_.object3d->GetWorldTransform()->GetWorldMatrix());
-	bullet_->Fire(input_->TriggerKey(DIK_SPACE));
-	bullet_->Update();
+	//ライトの位置をプレイヤーの前に設定
+	headlight_.position = playerData_.object3d->GetWorldPos();
+	// ローカル空間での“前”の向き
+	Vector3 localForward = { 0.0f, 0.0f, -1.0f };
+
+	//プレイヤーのワールド行列を取得
+	Matrix4x4 world = playerData_.object3d->GetWorldTransform()->GetWorldMatrix();
+
+	//前方向ベクトルだけをワールド空間に変換
+	Vector3 worldForward = Math::TransformNormal(localForward, world);
+
+	//正規化してライトの方向に設定
+	headlight_.direction = worldForward.Normalize();
+	//ライトのセッター
+	Object3dCommon::GetInstance()->SetSpotLight("headlight", headlight_);
 
 	//3Dオブジェクトの更新
 	playerData_.object3d->Update();
@@ -87,7 +108,8 @@ void Player::Draw() {
 void Player::Debug() {
 #ifdef USE_IMGUI
 	ImGui::DragFloat3("rotate", &playerData_.gameObject.transformData.rotate.x, 0.1f);
-	ImGui::DragFloat3("position", &playerData_.gameObject.transformData.translate.x, 0.1f);
+	ImGui::DragFloat3("light.pos", &headlight_.position.x, 0.1f);
+	ImGui::DragFloat3("light.direction", &headlight_.direction.x, 0.1f);
 #endif // USE_IMGUI
 }
 
@@ -161,6 +183,15 @@ void Player::Move() {
 	playerData_.object3d->SetTransform(playerData_.gameObject.transformData);
 }
 
+//攻撃
+void Player::Attack() {
+	//弾の発射
+	bullet_->SetShootingPosition(playerData_.object3d->GetWorldPos());
+	bullet_->SetSourceWorldMatrix(playerData_.object3d->GetWorldTransform()->GetWorldMatrix());
+	bullet_->Fire(input_->TriggerKey(DIK_SPACE));
+	bullet_->Update();
+}
+
 //調整項目を適応
 void Player::ApplyGlobalVariables() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
@@ -172,4 +203,8 @@ void Player::ApplyGlobalVariables() {
 		globalVariables->SetValue(groupName_, "translate", playerData_.gameObject.transformData.translate);
 	}
 	playerData_.gameObject.transformData.translate = globalVariables->GetValue<Vector3>(groupName_, "translate");
+
+	//headlight_.direction = globalVariables->GetValue<Vector3>(groupName_, "light.direction");
+	headlight_.cosAngle = globalVariables->GetValue<float>(groupName_, "light.cosAngle");
+	headlight_.cosFolloffStart = globalVariables->GetValue<float>(groupName_, "light.cosFolloffStart");
 }
