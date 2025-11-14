@@ -8,6 +8,7 @@
 #include <cassert>
 #include "engine/math/func/Math.h"
 #include "engine/debug/GlobalVariables.h"
+#include "SpotLightManager.h"
 using namespace Microsoft::WRL;
 
 //インスタンスのゲッター
@@ -61,7 +62,7 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	directionalLightData_.intensity = 1.0f;
 	directionalLightData_.isLambert = false;
 	directionalLightData_.isBlinnPhong = true;
-	directionalLightData_.enableDirectionalLighting = true;
+	directionalLightData_.enableDirectionalLighting = false;
 
 	//PointLightの初期化
 	for (int i = 0; i < kMaxLightCount; i++) {
@@ -74,19 +75,19 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 		pointLightDataList_[i].enablePointLighting = false;
 	}
 
-	//SpotLightの初期化
-	for (int i = 0; i < kMaxLightCount; i++) {
-		spotLightDataList_[i].color = { 1.0f,1.0f,1.0f,1.0f };
-		spotLightDataList_[i].position = { 2.0f,1.25f,0.0f };
-		spotLightDataList_[i].distance = 7.0f;
-		spotLightDataList_[i].direction = Vector3({ -1.0f,-1.0f,0.0f }).Normalize();
-		spotLightDataList_[i].intensity = 4.0f;
-		spotLightDataList_[i].decay = 2.0f;
-		spotLightDataList_[i].cosFolloffStart = 1.0f;
-		spotLightDataList_[i].cosAngle = std::cos(Math::kPi / 3.0f);
-		spotLightDataList_[i].isBlinnPhong = false;
-		spotLightDataList_[i].enableSpotLighting = false;
-	}
+	////SpotLightの初期化
+	//for (int i = 0; i < kMaxLightCount; i++) {
+	//	spotLightDataList_[i].color = { 1.0f,1.0f,1.0f,1.0f };
+	//	spotLightDataList_[i].position = { 2.0f,1.25f,0.0f };
+	//	spotLightDataList_[i].distance = 7.0f;
+	//	spotLightDataList_[i].direction = Vector3({ -1.0f,-1.0f,0.0f }).Normalize();
+	//	spotLightDataList_[i].intensity = 4.0f;
+	//	spotLightDataList_[i].decay = 2.0f;
+	//	spotLightDataList_[i].cosFolloffStart = 1.0f;
+	//	spotLightDataList_[i].cosAngle = std::cos(Math::kPi / 3.0f);
+	//	spotLightDataList_[i].isBlinnPhong = false;
+	//	spotLightDataList_[i].enableSpotLighting = false;
+	//}
 
 	//ライティング
 	//平行光源の生成
@@ -99,21 +100,27 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	CreateStructuredBufferForSpot();
 
 	//調整項目に設定
-	AddItemForPointLight(pointLightGroupNames_[0].c_str(),pointLightDataList_[0]);
-	AddItemForSpotLight(spotLightGroupNames_[0].c_str(),spotLightDataList_[0]);
+	AddItemForPointLight(pointLightGroupNames_[0].c_str(), pointLightDataList_[0]);
+	//AddItemForSpotLight(spotLightGroupNames_[0].c_str(), spotLightDataList_[0]);
 }
 
 //更新
 void Object3dCommon::Update() {
 	//調整項目を適応
 	ApplyGlobalVariablesForPointLight(pointLightGroupNames_[0].c_str(), pointLightDataList_[0]);
-	ApplyGlobalVariablesForSpotLight(spotLightGroupNames_[0].c_str(), spotLightDataList_[0]);
+	//ApplyGlobalVariablesForSpotLight(spotLightGroupNames_[0].c_str(), spotLightDataList_[0]);
 
 	//ライトデータを転送
 	*directionalLightPtr_ = directionalLightData_;
-	for (int i = 0; i < kMaxLightCount; i++) {
+	for (int32_t i = 0; i < kMaxLightCount; i++) {
 		pointLightPtr_[i] = pointLightDataList_[i];
-		spotLightPtr_[i] = spotLightDataList_[i];
+	}
+
+	//スポットライトのポインタにデータを転送
+	int32_t index = 0;
+	for (auto& [key, value] : spotLightDataList_) {
+		spotLightPtr_[index] = value;
+		index++;
 	}
 }
 
@@ -221,8 +228,43 @@ PointLight* Object3dCommon::GetPointLight() {
 }
 
 //スポットライトのゲッター
-SpotLight* Object3dCommon::GetSpotLight() {
-	return spotLightDataList_;
+SpotLightData* Object3dCommon::GetSpotLightPtr() {
+	return spotLightPtr_;
+}
+
+//スポットライトを追加
+void Object3dCommon::AddSpotLight(const std::string& name) {
+	//読み込み済みならカメラを検索
+	if (spotLightDataList_.contains(name)) {
+		//読み込み済みなら早期return
+		return;
+	}
+	//スポットライトを生成
+	SpotLightData spotLight = {};
+	spotLight.color = { 1.0f,1.0f,1.0f,1.0f };
+	spotLight.position = { 2.0f,1.25f,0.0f };
+	spotLight.distance = 7.0f;
+	spotLight.direction = Vector3({ -1.0f,-1.0f,0.0f }).Normalize();
+	spotLight.intensity = 4.0f;
+	spotLight.decay = 2.0f;
+	spotLight.cosAngle = std::cos(Math::kPi / 3.0f);
+	spotLight.cosFolloffStart = 0.0f;
+	spotLight.isBlinnPhong = true;
+	spotLight.enableSpotLighting = true;
+
+	//スポットライトをmapコンテナに格納する
+	spotLightDataList_.insert(std::make_pair(name, spotLight));
+}
+
+//スポットライトのセッター
+void Object3dCommon::SetSpotLight(const std::string& name, const SpotLightData& spotLight) {
+	spotLightDataList_.at(name) = spotLight;
+}
+
+//スポットライトのゲッター
+SpotLightData& Object3dCommon::GetSpotLight(const std::string& name){
+	// TODO: return ステートメントをここに挿入します
+	return spotLightDataList_.at(name);
 }
 
 //平行光源の生成
@@ -274,7 +316,7 @@ void Object3dCommon::CreateStructuredBufferForPoint() {
 //スポットライトの生成
 void Object3dCommon::CreateSpotLight() {
 	// 配列サイズで確保
-	spotLightResource_ = directXBase_->CreateBufferResource(sizeof(SpotLight) * kMaxLightCount);
+	spotLightResource_ = directXBase_->CreateBufferResource(sizeof(SpotLightData) * kMaxLightCount);
 
 	//光源データの書きこみ
 	spotLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&spotLightPtr_));
@@ -302,7 +344,7 @@ void Object3dCommon::CreateStructuredBufferForSpot() {
 		srvIndexSpot_,
 		spotLightResource_.Get(),
 		kMaxLightCount,
-		sizeof(SpotLight)
+		sizeof(SpotLightData)
 	);
 }
 
@@ -320,7 +362,7 @@ void Object3dCommon::AddItemForPointLight(const char* groupName, const PointLigh
 }
 
 //グローバル変数に追加(SpotLight)
-void Object3dCommon::AddItemForSpotLight(const char* groupName, const SpotLight& spotLight) {
+void Object3dCommon::AddItemForSpotLight(const char* groupName, const SpotLightData& spotLight) {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	globalVariables->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "color", spotLight.color);
@@ -348,7 +390,7 @@ void Object3dCommon::ApplyGlobalVariablesForPointLight(const char* groupName, Po
 }
 
 //グローバル変数を適用(SpotLight)
-void Object3dCommon::ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLight& spotLight) {
+void Object3dCommon::ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLightData& spotLight) {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	spotLight.color = globalVariables->GetValue<Vector4>(groupName, "color");
 	spotLight.cosAngle = globalVariables->GetValue<float>(groupName, "cosAngle");

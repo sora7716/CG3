@@ -73,6 +73,6 @@ void Field::SetPointLight(const PointLight* point) {
 }
 
 //スポットライトのセッターk
-void Field::SetSpotLight(const SpotLight* spot) {
+void Field::SetSpotLight(const SpotLightData* spot) {
 	mapChip_->SetSpotLight(spot);
 }

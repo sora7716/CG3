@@ -46,7 +46,7 @@ struct PointLight {
 };
 
 //スポットライト
-struct SpotLight {
+struct SpotLightData {
 	Vector4 color;//ライト色
 	Vector3 position;//ライトの位置
 	float intensity;//輝度

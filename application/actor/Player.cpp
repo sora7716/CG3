@@ -6,6 +6,7 @@
 #include "engine/math/func/Math.h"
 #include "engine/debug/GlobalVariables.h"
 #include "engine/worldTransform/WorldTransform.h"
+#include "Bullet.h"
 
 //初期化
 void Player::Initialize(Camera* camera, const std::string& modelName) {
@@ -24,23 +25,31 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	playerData_.gameObject.velocity = { 5.0f,5.0f,0.0f };
 
 	//3Dオブジェクトの生成と初期化
-	object3d_ = new Object3d();
-	object3d_->Initialize(camera_);
-	object3d_->SetModel(modelName);
+	playerData_.object3d = new Object3d();
+	playerData_.object3d->Initialize(camera_);
+	playerData_.object3d->SetModel(modelName);
 
 	//マテリアルの初期化
-	material_.color = { 1.0f,1.0f,1.0f,1.0f };
-	material_.enableLighting = true;
-	material_.shininess = 10.0f;
-	material_.uvMatrix = Matrix4x4::Identity4x4();
+	playerData_.gameObject.material.color = { 1.0f,1.0f,1.0f,1.0f };
+	playerData_.gameObject.material.enableLighting = true;
+	playerData_.gameObject.material.shininess = 10.0f;
+	playerData_.gameObject.material.uvMatrix = Matrix4x4::Identity4x4();
+
+	//弾
+	bullet_ = new Bullet();
+	bullet_->Initialize(camera_);
+	bullet_->SetAliveRange(200.0f);
+	bullet_->SetSpeed(50.0f);
+	bullet_->SetSize({ 0.5f,0.5f,0.5f });
+	bullet_->SetMaxBulletCount(10);
 
 	//調整項目
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	//調整項目のグループの生成
 	GlobalVariables::GetInstance()->CreateGroup(groupName_);
-	globalVariables->AddItem(groupName_, "color", material_.color);
-	globalVariables->AddItem(groupName_, "enableLighting", material_.enableLighting);
-	globalVariables->AddItem(groupName_, "shininess", material_.shininess);
+	globalVariables->AddItem(groupName_, "color", playerData_.gameObject.material.color);
+	globalVariables->AddItem(groupName_, "enableLighting", playerData_.gameObject.material.enableLighting);
+	globalVariables->AddItem(groupName_, "shininess", playerData_.gameObject.material.shininess);
 	globalVariables->AddItem(groupName_, "velocity", playerData_.gameObject.velocity);
 	globalVariables->AddItem(groupName_, "translate", playerData_.gameObject.transformData.translate);
 }
@@ -50,58 +59,28 @@ void Player::Update() {
 	//調整項目を適応
 	ApplyGlobalVariables();
 
-	//トランスフォームのセット
-	object3d_->SetTransform(playerData_.gameObject.transformData);
+	//移動
+	Move();
 
 	//マテリアルのセット
-	object3d_->GetModel()->SetMaterial(material_);
+	playerData_.object3d->GetModel()->SetMaterial(playerData_.gameObject.material);
 
-	//スペースを押した瞬間
-	if (input_->TriggerKey(DIK_SPACE)) {
-		bulletList_.push_back(CreateBullet());
-	}
-
-	for (std::list<Bullet>::iterator itBullet = bulletList_.begin(); itBullet != bulletList_.end(); itBullet++) {
-		if (itBullet->isAlive) {
-			//飛ばす
-			itBullet->gameObject.transformData.translate += itBullet->gameObject.velocity;
-
-			//弾の情報を設定
-			itBullet->object3d->SetTransform(itBullet->gameObject.transformData);
-			itBullet->object3d->GetModel()->SetMaterial(material_);
-
-			//弾の生存させるか
-			Vector3 currentPos = itBullet->gameObject.transformData.translate;
-			float length = (currentPos - itBullet->shootingPoint).Length();
-			if (itBullet->aliveRange < length) {
-				itBullet->isAlive = false;
-				//itBullet = bulletList_.erase(itBullet);
-				continue;
-			}
-
-			//弾の更新
-			itBullet->object3d->Update();
-		}
-	}
+	//弾の発射
+	bullet_->SetShootingPosition(playerData_.object3d->GetWorldPos());
+	bullet_->SetSourceWorldMatrix(playerData_.object3d->GetWorldTransform()->GetWorldMatrix());
+	bullet_->Fire(input_->TriggerKey(DIK_SPACE));
+	bullet_->Update();
 
 	//3Dオブジェクトの更新
-	object3d_->Update();
+	playerData_.object3d->Update();
 }
 
 //描画
 void Player::Draw() {
 	//3Dオブジェクトの描画
-	object3d_->Draw();
-
+	playerData_.object3d->Draw();
 	//弾の描画
-	for (const Bullet& bullet : bulletList_) {
-		if (bullet.isAlive) {
-			bullet.object3d->Draw();
-		}
-	}
-
-	//移動
-	Move();
+	bullet_->Draw();
 }
 
 //デバッグ用
@@ -115,18 +94,17 @@ void Player::Debug() {
 //終了
 void Player::Finalize() {
 	//3Dオブジェクトの解放
-	delete object3d_;
-	object3d_ = nullptr;
-	for (Bullet& bullet : bulletList_) {
-		delete bullet.object3d;
-		bullet.object3d = nullptr;
-	}
-	bulletList_.clear();
+	delete playerData_.object3d;
+	playerData_.object3d = nullptr;
+	//弾の解放
+	bullet_->Finalize();
+	delete bullet_;
+	bullet_ = nullptr;
 }
 
 //カメラのセッター
 void Player::SetCamera(Camera* camera) {
-	object3d_->SetCamera(camera);
+	playerData_.object3d->SetCamera(camera);
 }
 
 //位置のセッター
@@ -136,7 +114,7 @@ void Player::SetPosition(const Vector3& positBulletion) {
 
 //オブジェクト3dのゲッター
 Object3d* Player::GetObject3d() {
-	return object3d_;
+	return playerData_.object3d;
 }
 
 //トランスフォームデータのゲッター
@@ -178,40 +156,20 @@ void Player::Move() {
 
 	//移動
 	playerData_.gameObject.transformData.translate += (playerData_.gameObject.velocity * playerData_.gameObject.direction.Normalize()) * Math::kDeltaTime;
+
+	//トランスフォームのセット
+	playerData_.object3d->SetTransform(playerData_.gameObject.transformData);
 }
 
 //調整項目を適応
 void Player::ApplyGlobalVariables() {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	//各調整項目を適応
-	material_.color = globalVariables->GetValue<Vector4>(groupName_, "color");
-	material_.enableLighting = globalVariables->GetValue<int32_t>(groupName_, "enableLighting");
+	playerData_.gameObject.material.color = globalVariables->GetValue<Vector4>(groupName_, "color");
+	playerData_.gameObject.material.enableLighting = globalVariables->GetValue<int32_t>(groupName_, "enableLighting");
 	playerData_.gameObject.velocity = globalVariables->GetValue<Vector3>(groupName_, "velocity");
 	if (playerData_.isMove) {
 		globalVariables->SetValue(groupName_, "translate", playerData_.gameObject.transformData.translate);
 	}
 	playerData_.gameObject.transformData.translate = globalVariables->GetValue<Vector3>(groupName_, "translate");
-}
-
-//弾の生成
-Bullet Player::CreateBullet() {
-	Bullet bullet = {};
-	bullet.gameObject.transformData.scale = Vector3::MakeAllOne();
-	bullet.isAlive = true;
-	//弾の位置を設定
-	bullet.gameObject.transformData.translate = object3d_->GetWorldPos();
-	//射撃地点を取得
-	bullet.shootingPoint = bullet.gameObject.transformData.translate;
-
-	//3Dモデルの生成
-	bullet.object3d = new Object3d();
-	bullet.object3d->Initialize(camera_);
-	bullet.aliveRange = 10.0f;
-	bullet.object3d->SetModel("bullet");
-
-	//弾の速度を設定
-	const float kBulletSpeed = 0.1f;
-	bullet.gameObject.velocity = { 0.0f,0.0f,kBulletSpeed };
-	bullet.gameObject.velocity = Math::TransformNormal(bullet.gameObject.velocity, object3d_->GetWorldTransform()->GetWorldMatrix());
-	return bullet;
 }

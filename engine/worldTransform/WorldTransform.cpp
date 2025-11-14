@@ -8,6 +8,7 @@
 void(WorldTransform::* WorldTransform::UpdateTransformTable[])() = {
 	&UpdateTransform,
 	&UpdateTransform2d,
+	& UpdateTransformBillboard
 };
 
 //初期化
@@ -135,7 +136,7 @@ Camera* WorldTransform::GetCamera() {
 }
 
 //ワールド座標のゲッター
-Vector3 WorldTransform::GetWorldPos(){
+Vector3 WorldTransform::GetWorldPos() {
 	Vector3 result = { worldMatrix_.m[3][0],worldMatrix_.m[3][1],worldMatrix_.m[3][2] };
 	return result;
 }
@@ -193,6 +194,27 @@ void WorldTransform::UpdateTransform2d() {
 	}*/
 	//ワールド行列を送信
 	wvpData_->world = worldMatrix_;
+}
+
+//ビルボード行列での更新
+void WorldTransform::UpdateTransformBillboard() {
+	//カメラがなかったら
+	if (!camera_) {
+		wvpData_->wvp = worldMatrix_;
+		return;
+	}
+	worldMatrix_ = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), transform_);
+	//TransformからWorldMatrixを作る
+	if (parent_) {
+		worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;
+	}
+	//wvpの書き込み
+	const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+	wvpData_->wvp = worldMatrix_ * viewProjectionMatrix;
+	//ワールド行列を送信
+	wvpData_->world = worldMatrix_;
+	//逆行列の転置行列を送信
+	wvpData_->worldInverseTranspose = worldMatrix_.InverseTranspose();
 }
 
 

@@ -4,6 +4,8 @@
 #include <wrl.h>
 #include <d3d12.h>
 #include <array>
+#include <map>
+
 //前方宣言
 class DirectXBase;
 class Camera;
@@ -131,7 +133,26 @@ public://メンバ関数
 	/// スポットライトのゲッター
 	/// </summary>
 	/// <returns>スポットライト</returns>
-	SpotLight* GetSpotLight();
+	SpotLightData* GetSpotLightPtr();
+
+	/// <summary>
+	/// スポットライトを追加
+	/// </summary>
+	/// <param name="name">スポットライトの名前</param>
+	void AddSpotLight(const std::string& name);
+
+	/// <summary>
+	/// スポットライトのセッター
+	/// </summary>
+	/// <param name="name">スポットライトの名前</param>
+	void SetSpotLight(const std::string& name,const SpotLightData&spotLight);
+
+	/// <summary>
+	/// スポットライトのゲッター
+	/// </summary>
+	/// <param name="name">スポットライトの名前</param>
+	/// <returns>スポットライト</returns>
+	SpotLightData& GetSpotLight(const std::string& name);
 private://メンバ関数
 	//コンストラクタの封印
 	Object3dCommon() = default;
@@ -172,14 +193,14 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="groupName">グループ名</param>
 	/// <param name="pointLight">スポットライト</param>
-	void AddItemForPointLight(const char* groupName,const PointLight& pointLight);
+	void AddItemForPointLight(const char* groupName, const PointLight& pointLight);
 
 	/// <summary>
 	/// グローバル変数に追加(SpotLight)
 	/// </summary>
 	/// <param name="groupName">グループ名</param>
 	/// <param name="spotLight">スポットライト</param>
-	void AddItemForSpotLight(const char* groupName, const SpotLight& spotLight);
+	void AddItemForSpotLight(const char* groupName, const SpotLightData& spotLight);
 
 	/// <summary>
 	/// グローバル変数を適用(PointLight)
@@ -193,7 +214,7 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="groupName">グループ名</param>
 	/// <param name="spotLight">スポットライト</param>
-	void ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLight& spotLight);
+	void ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLightData& spotLight);
 private://静的メンバ変数
 	//インスタンス
 	static inline Object3dCommon* instance = nullptr;
@@ -221,7 +242,7 @@ private://メンバ変数
 	//バッファリソース内のデータを指すポインタ
 	DirectionalLight* directionalLightPtr_ = nullptr;//平行光源
 	PointLight* pointLightPtr_ = nullptr;//点光源
-	SpotLight* spotLightPtr_ = nullptr;//スポットライト
+	SpotLightData* spotLightPtr_ = nullptr;//スポットライト
 	CameraForGPU* cameraForGPU_ = nullptr;//カメラ
 
 	//平行光源
@@ -229,7 +250,7 @@ private://メンバ変数
 	//点光源
 	PointLight pointLightDataList_[kMaxLightCount] = {};
 	//スポットライト
-	SpotLight spotLightDataList_[kMaxLightCount] = {};
+	std::map<std::string, SpotLightData>spotLightDataList_ = {};
 
 	//ブレンド
 	Blend* blend_ = nullptr;

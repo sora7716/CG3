@@ -234,6 +234,15 @@
     <ClCompile Include="application\actor\RailCamera.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
+    <ClCompile Include="application\actor\Bullet.cpp">
+      <Filter>application\actor</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\SpotLight.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\SpotLightManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\math\Matrix4x4.h">
@@ -415,6 +424,15 @@
     </ClInclude>
     <ClInclude Include="application\actor\RailCamera.h">
       <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\Bullet.h">
+      <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\SpotLight.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\SpotLightManager.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

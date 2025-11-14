@@ -3,6 +3,7 @@
 #include "engine/3d/Object3dCommon.h"
 #include "engine/debug/GlobalVariables.h"
 
+
 //初期化
 void GameScene::Initialize(DirectXBase* directXBase) {
 	//シーンのインタフェースの初期化
@@ -11,13 +12,17 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	camera_ = CameraManager::GetInstance()->FindCamera("gameCamera");
 
 	//追従カメラ
-	railCamera_ = std::make_unique<RailCamera>();
+	railCamera_ = std::make_unique<RailCamera>();  
 	railCamera_->Initialize(camera_, {}, {});
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();
 	player_->Initialize(railCamera_->GetCamera(), "player");
 	player_->SetPosition({ 0.0f,0.0f,10.0f });
+
+	Object3dCommon::GetInstance()->AddSpotLight("spot");
+	spot_ = std::make_unique<SpotLight>();
+	spot_->Initialize(camera_);
 
 	//追従カメラ
 	railCamera_->Update();
@@ -39,10 +44,12 @@ void GameScene::Update() {
 	//追従カメラ
 	railCamera_->Update();
 
+	spot_->Update();
+
 	//フィールド
 	field_->SetDirectionalLight(Object3dCommon::GetInstance()->GetDirectionalLight());
 	field_->SetPointLight(Object3dCommon::GetInstance()->GetPointLight());
-	field_->SetSpotLight(Object3dCommon::GetInstance()->GetSpotLight());
+	field_->SetSpotLight(Object3dCommon::GetInstance()->GetSpotLightPtr());
 	field_->Update();
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
@@ -60,6 +67,13 @@ void GameScene::Update() {
 	player_->Debug();
 	ImGui::End();
 
+	//プレイヤー
+	ImGui::Begin("spot");
+	spot_->Debug();
+	ImGui::End();
+
+	Object3dCommon::GetInstance()->SetSpotLight("spot",spot_->GetSpotLightData());
+
 	//Object3dCommon
 	Object3dCommon::GetInstance()->Debug();
 
@@ -73,10 +87,11 @@ void GameScene::Update() {
 		player_->SetCamera(debugCamera_->GetCamera());
 		field_->SetCamera(debugCamera_->GetCamera());
 		railCamera_->SetCamera(debugCamera_->GetCamera());
+		spot_->SetCamera(debugCamera_->GetCamera());
 	} else {
 		player_->SetCamera(railCamera_->GetCamera());
 		field_->SetCamera(railCamera_->GetCamera());
-		railCamera_->SetCamera(debugCamera_->GetCamera());
+		spot_->SetCamera(railCamera_->GetCamera());
 	}
 
 #endif // _DEBUG
@@ -97,6 +112,8 @@ void GameScene::Draw() {
 
 	//マップチップ
 	field_->Draw();
+
+	spot_->Draw();
 }
 
 //終了
@@ -109,6 +126,8 @@ void GameScene::Finalize() {
 
 	//レールカメラ
 	railCamera_->Finalize();
+
+	spot_->Finalize();
 
 	//グローバル変数
 	GlobalVariables::GetInstance()->Finalize();

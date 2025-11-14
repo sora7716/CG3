@@ -1,29 +1,12 @@
 #pragma once
 #include "ActorData.h"
-#include "engine/math/ResourceData.h"
 #include <string>
-#include <list>
 
 // 前方宣言
-class Object3d;
 class Camera;
 class Input;
 class WorldTransform;
-
-//弾
-struct Bullet {
-	GameObject gameObject;
-	Object3d* object3d;
-	Vector3 shootingPoint;
-	float aliveRange;
-	bool isAlive;
-};
-
-//プレイヤーデータ
-struct PlayerData {
-	GameObject gameObject;
-	bool isMove;
-};
+class Bullet;
 
 /// <summary>
 /// プレイヤー
@@ -106,12 +89,6 @@ private://メンバ関数
 	/// 調整項目を適応
 	/// </summary>
 	void ApplyGlobalVariables();
-
-	/// <summary>
-	/// 弾の生成
-	/// </summary>
-	/// <returns>弾</returns>
-	Bullet CreateBullet();
 private://メンバ変数
 	//入力
 	Input* input_ = nullptr;
@@ -119,19 +96,13 @@ private://メンバ変数
 	//カメラ
 	Camera* camera_ = nullptr;
 
-	//3Dオブジェクト
-	Object3d* object3d_ = nullptr;
-
 	//プレイヤーデータ
 	PlayerData playerData_ = {};
 
-	//マテリアル
-	Material material_ = {};
-
-	//弾
-	std::list<Bullet> bulletList_ = {};
-
 	//調整項目のグループ名
 	const char* groupName_ = "player";
+
+	//弾
+	Bullet* bullet_ = nullptr;
 };
 

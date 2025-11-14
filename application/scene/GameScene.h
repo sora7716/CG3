@@ -4,6 +4,7 @@
 #include "actor/RailCamera.h"
 #include "actor/Field.h"
 #include "actor/MapChip.h"
+#include "engine/3d/SpotLight.h"
 
 /// <summary>
 /// ゲームシーン
@@ -53,5 +54,7 @@ private://メンバ変数
 
 	//フィールド
 	std::unique_ptr<Field>field_ = nullptr;
+
+	std::unique_ptr<SpotLight> spot_ = nullptr;
 };
 

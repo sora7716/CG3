@@ -3,12 +3,12 @@
 #include "engine/math/ResourceData.h"
 #include "engine/math/RenderingData.h"
 #include "engine/base/BlendMode.h"
+#include "engine/worldTransform/WorldTransform.h"
 #include <vector>
 #include <string>
 #include <wrl.h>
 #include <d3d12.h>
 //前方宣言
-class WorldTransform;
 class Camera;
 class DirectXBase;
 
@@ -33,7 +33,8 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Initialize(Camera*camera);
+	/// <param name="transformMode">トランスフォームモード</param>
+	void Initialize(Camera* camera, TransformMode transformMode = TransformMode::k3d);
 
 	/// <summary>
 	/// 更新

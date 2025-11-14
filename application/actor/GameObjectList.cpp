@@ -49,6 +49,8 @@ void GameObjectList::LoadModel() {
 	ModelManager::GetInstance()->LoadOBJModel("sphere", "sphere", "sphere");
 	//平面
 	ModelManager::GetInstance()->LoadOBJModel("plane", "plane", "plane");
+	//スポットライト
+	ModelManager::GetInstance()->LoadOBJModel("spotLight", "plane", "plane");
 	//軸
 	ModelManager::GetInstance()->LoadOBJModel("test", "base", "axis");
 }

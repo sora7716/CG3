@@ -12,7 +12,8 @@ class Camera;
 //列挙型
 enum class TransformMode :uint32_t {
 	k3d,
-	k2d
+	k2d,
+	kBilboard
 };
 /// <summary>
 /// ワールドトランスフォーム
@@ -177,6 +178,11 @@ private://メンバ関数
 	/// 座標の更新(2次元)
 	/// </summary>
 	void UpdateTransform2d();
+
+	/// <summary>
+	/// ビルボード行列での更新
+	/// </summary>
+	void UpdateTransformBillboard();
 private://メンバ関数テーブル
 	//座標の更新をまとめた
 	static void (WorldTransform::* UpdateTransformTable[])();

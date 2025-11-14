@@ -4,7 +4,6 @@
 #include "engine/base/DirectXBase.h"
 #include "engine/math/func/Math.h"
 #include "engine/3d/ModelManager.h"
-#include "engine/worldTransform/WorldTransform.h"
 #include "engine/math/func/Rendering.h"
 #include "engine/debug/ImGuiManager.h"
 #include "engine/base/SRVManager.h"
@@ -16,13 +15,13 @@ Object3d::~Object3d() {
 }
 
 //初期化
-void Object3d::Initialize(Camera* camera) {
+void Object3d::Initialize(Camera* camera, TransformMode transformMode) {
 	//DirectXの基盤部分を受け取る
 	directXBase_ = Object3dCommon::GetInstance()->GetDirectXBase();
 
 	//ワールドトランスフォームの生成、初期化
 	worldTransform_ = new WorldTransform();
-	worldTransform_->Initialize(directXBase_, TransformMode::k3d);
+	worldTransform_->Initialize(directXBase_, transformMode);
 
 	//uv座標
 	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };

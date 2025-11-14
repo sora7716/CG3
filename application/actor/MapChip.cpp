@@ -298,7 +298,7 @@ void MapChip::SetPontLight(const PointLight* pointLight) {
 }
 
 //スポットライトのセッター
-void MapChip::SetSpotLight(const SpotLight* spotLight) {
+void MapChip::SetSpotLight(const SpotLightData* spotLight) {
 	for (uint32_t i = 0; i < kMaxLightCount; i++) {
 		spotLightDataList_[i] = spotLight[i];
 	}
@@ -526,7 +526,7 @@ void MapChip::CreateStructuredBufferForPoint() {
 //スポットライトの生成
 void MapChip::CreateSpotLight() {
 	// 配列サイズで確保
-	spotLightResource_ = directXBase_->CreateBufferResource(sizeof(SpotLight) * kMaxLightCount);
+	spotLightResource_ = directXBase_->CreateBufferResource(sizeof(SpotLightData) * kMaxLightCount);
 
 	//光源データの書きこみ
 	spotLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&spotLightPtr_));
@@ -554,7 +554,7 @@ void MapChip::CreateStructuredBufferForSpot() {
 		srvIndexSpot_,
 		spotLightResource_.Get(),
 		kMaxLightCount,
-		sizeof(SpotLight)
+		sizeof(SpotLightData)
 	);
 }
 
