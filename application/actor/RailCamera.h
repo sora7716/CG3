@@ -1,7 +1,9 @@
 #pragma once
 #include "engine/math/Vector3.h"
 #include "engine/math/Matrix4x4.h"
+#include "engine/math/ResourceData.h"
 #include <string>
+#include <vector>
 
 // 前方宣言
 class Camera;
@@ -63,7 +65,17 @@ public://メンバ関数
 	/// <returns>カメラ</returns>
 	Camera* GetCamera();
 
+	/// <summary>
+	/// カメラのセッター
+	/// </summary>
+	/// <param name="camera">カメラ</param>
 	void SetCamera(Camera* camera);
+
+	/// <summary>
+	/// 制御ポイントのセッター
+	/// </summary>
+	/// <param name="controlPoints">制御ポイント</param>
+	void SetControlPoints(std::vector<Vector3>controlPoints);
 private://メンバ変数
 	//カメラ
 	Camera* camera_ = nullptr;
@@ -75,6 +87,17 @@ private://メンバ変数
 	Vector3 rotate_ = { 0.0f,0.0f,0.0f };
 	//平行移動
 	Vector3 translate_ = { 0.0f,0.0f,0.0f };
+	//マテリアル
+	Material material_ = {};
+	//制御ポイント
+	std::vector<Vector3>controlPoints_;
+
+	//フレーム数
+	float frame_ = 0.0f;
+	float endFrame_ = 120.0f;
+
+	//レールカメラスタートフラグ
+	bool isMovingCamera_ = false;
 
 	//調整項目のグループ名
 	std::string groupName_ = "railCamera";

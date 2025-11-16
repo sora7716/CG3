@@ -4,6 +4,7 @@
 #include "actor/RailCamera.h"
 #include "actor/Field.h"
 #include "actor/MapChip.h"
+#include "actor/ControlPoint.h"
 
 /// <summary>
 /// ゲームシーン
@@ -53,5 +54,8 @@ private://メンバ変数
 
 	//フィールド
 	std::unique_ptr<Field>field_ = nullptr;
+
+	//制御ポイント
+	std::unique_ptr<ControlPoint>controlPoint_ = nullptr;
 };
 

@@ -4,16 +4,24 @@
 #include "engine/worldTransform/WorldTransform.h"
 #include "engine/3d/Object3dCommon.h"
 #include "engine/3d/Object3d.h"
+#include "engine/math/func/Math.h"
+#include "engine/input/Input.h"
 
 //初期化
-void RailCamera::Initialize(Camera* camera, const Vector3& rotate, const Vector3& position){
+void RailCamera::Initialize(Camera* camera, const Vector3& rotate, const Vector3& position) {
 	//カメラを記録
 	camera_ = camera;
 
 	//カメラのオブジェクト
 	cameraObject_ = new Object3d();
 	cameraObject_->Initialize(camera_);
-	cameraObject_->SetModel("bullet");
+	cameraObject_->SetModel("camera");
+
+	//マテリアル
+	material_.color = { 1.0f,1.0f,1.0f,1.0f };
+	material_.enableLighting = true;
+	material_.shininess = 10.0f;
+	material_.uvMatrix = Matrix4x4::Identity4x4();
 
 	//回転を記録
 	rotate_ = rotate;
@@ -25,6 +33,7 @@ void RailCamera::Initialize(Camera* camera, const Vector3& rotate, const Vector3
 	globalVariables->CreateGroup(groupName_);
 	globalVariables->AddItem(groupName_, "rotate", rotate_);
 	globalVariables->AddItem(groupName_, "translate", translate_);
+	globalVariables->AddItem(groupName_, "endFrame", endFrame_);
 }
 
 //更新
@@ -32,11 +41,33 @@ void RailCamera::Update() {
 	//調整項目を適応
 	ApplyGlobalVariables();
 
+	//カメラを動かすフラグのスイッチ
+	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
+		isMovingCamera_ = !isMovingCamera_;
+	}
+
+	//カメラを動かす
+	if (isMovingCamera_) {
+		if (frame_ < endFrame_ - 1.0f) {
+			frame_++;
+		} else {
+			frame_ = 0.0f;
+		}
+	}
+
+	//カメラの動き
+	translate_ = Math::CatmullRomPosition(controlPoints_, frame_ / endFrame_);
+
+	//カメラの設定
 	camera_->SetRotate(rotate_);
 	camera_->SetTranslate(translate_);
 	//カメラのオブジェクト
 	cameraObject_->SetRotate(rotate_);
 	cameraObject_->SetTranslate(translate_);
+	//マテリアルの適応
+	cameraObject_->GetModel()->SetMaterial(material_);
+
+	//カメラのオブジェクトの更新
 	cameraObject_->Update();
 }
 
@@ -48,6 +79,7 @@ void RailCamera::Draw() {
 //終了
 void RailCamera::Finalize() {
 	delete cameraObject_;
+	cameraObject_ = nullptr;
 }
 
 //調整項目の適応
@@ -57,10 +89,12 @@ void RailCamera::ApplyGlobalVariables() {
 	rotate_ = globalVariables->GetValue<Vector3>(groupName_, "rotate");
 	//位置の取得
 	translate_ = globalVariables->GetValue<Vector3>(groupName_, "translate");
+	//エンドフレーム
+	endFrame_ = globalVariables->GetValue<float>(groupName_, "endFrame");
 }
 
 //ワールドトランスフォームのゲッター
-const WorldTransform* RailCamera::GetWorldTransform() const{
+const WorldTransform* RailCamera::GetWorldTransform() const {
 	return cameraObject_->GetWorldTransform();
 }
 
@@ -69,6 +103,13 @@ Camera* RailCamera::GetCamera() {
 	return camera_;
 }
 
+//カメラのセッター
 void RailCamera::SetCamera(Camera* camera) {
 	cameraObject_->SetCamera(camera);
+}
+
+//制御ポイントのセッター
+void RailCamera::SetControlPoints(std::vector<Vector3> controlPoints) {
+	controlPoints_.resize(controlPoints_.size());
+	controlPoints_ = controlPoints;
 }

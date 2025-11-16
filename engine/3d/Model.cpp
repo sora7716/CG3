@@ -219,5 +219,5 @@ void Model::CreateMaterialResource() {
 	materialData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	materialData_->enableLighting = true;
 	materialData_->uvMatrix = Matrix4x4::Identity4x4();
-	materialData_->shininess = 0.1f;
+	materialData_->shininess = 10.0f;
 }

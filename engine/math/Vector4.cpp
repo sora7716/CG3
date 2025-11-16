@@ -13,6 +13,6 @@ void Vector4::SetRGB(const RGB& rgb) {
 }
 
 //白のゲッター
-Vector4 Vector4::GetWhite() {
+Vector4 Vector4::MakeWhiteColor() {
 	return Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 }

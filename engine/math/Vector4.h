@@ -30,5 +30,5 @@ struct Vector4 final {
 	/// 白のゲッター
 	/// </summary>
 	/// <returns>白</returns>
-	static Vector4 GetWhite();
+	static Vector4 MakeWhiteColor();
 };

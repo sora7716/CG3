@@ -147,7 +147,7 @@ void MapChip::Initialize(DirectXBase* directXBase, Camera* camera, MapChipType m
 	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
 
 	//マテリアルの初期化
-	materialData_.color = Vector4::GetWhite();
+	materialData_.color = Vector4::MakeWhiteColor();
 	materialData_.enableLighting = true;
 	materialData_.shininess = 10.0f;
 

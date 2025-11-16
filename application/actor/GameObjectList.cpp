@@ -39,8 +39,12 @@ void GameObjectList::LoadModel() {
 	//モデルの読み込み
 	//プレイヤー
 	ModelManager::GetInstance()->LoadOBJModel("player", "player", "player");
+	//球
+	ModelManager::GetInstance()->LoadOBJModel("sphere", "sphere", "sphere");
 	//弾
 	ModelManager::GetInstance()->LoadOBJModel("bullet", "sphere", "sphere");
+	//カメラ
+	ModelManager::GetInstance()->LoadOBJModel("camera", "camera", "camera");
 	//地面
 	ModelManager::GetInstance()->LoadOBJModel("ground", "cube", "cube");
 	//フィールド

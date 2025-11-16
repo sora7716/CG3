@@ -12,7 +12,7 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	camera_ = CameraManager::GetInstance()->FindCamera("gameCamera");
 
 	//追従カメラ
-	railCamera_ = std::make_unique<RailCamera>();  
+	railCamera_ = std::make_unique<RailCamera>();
 	railCamera_->Initialize(camera_, {}, {});
 
 	//プレイヤー
@@ -20,12 +20,15 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	player_->Initialize(railCamera_->GetCamera(), "player");
 	player_->SetPosition({ 0.0f,0.0f,10.0f });
 
-	//追従カメラ
-	railCamera_->Update();
-
 	//フィールド
 	field_ = std::make_unique<Field>();
 	field_->Initialize(railCamera_->GetCamera());
+
+#ifdef _DEBUG
+	//制御ポイント
+	controlPoint_ = std::make_unique<ControlPoint>();
+	controlPoint_->Initialize(camera_);
+#endif // _DEBUG
 }
 
 //更新
@@ -37,7 +40,11 @@ void GameScene::Update() {
 	player_->GetObject3d()->SetParent(railCamera_->GetWorldTransform());
 	player_->Update();
 
+	//制御ポイント
+	controlPoint_->Update();
+
 	//追従カメラ
+	railCamera_->SetControlPoints(controlPoint_->GetControlPoints());
 	railCamera_->Update();
 
 	//フィールド
@@ -45,6 +52,7 @@ void GameScene::Update() {
 	field_->SetPointLight(Object3dCommon::GetInstance()->GetPointLight());
 	field_->SetSpotLight(Object3dCommon::GetInstance()->GetSpotLightPtr());
 	field_->Update();
+
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
 	ImGuiManager::GetInstance()->Begin();
@@ -74,11 +82,13 @@ void GameScene::Update() {
 		player_->SetCamera(debugCamera_->GetCamera());
 		field_->SetCamera(debugCamera_->GetCamera());
 		railCamera_->SetCamera(debugCamera_->GetCamera());
+		controlPoint_->SetCamera(debugCamera_->GetCamera());
 	} else {
 		player_->SetCamera(railCamera_->GetCamera());
 		field_->SetCamera(railCamera_->GetCamera());
+		railCamera_->SetCamera(railCamera_->GetCamera());
+		controlPoint_->SetCamera(railCamera_->GetCamera());
 	}
-
 #endif // _DEBUG
 
 }
@@ -97,6 +107,11 @@ void GameScene::Draw() {
 
 	//マップチップ
 	field_->Draw();
+
+#ifdef _DEBUG
+	//制御ポイント
+	controlPoint_->Draw();
+#endif // _DEBUG
 }
 
 //終了
@@ -109,6 +124,12 @@ void GameScene::Finalize() {
 
 	//レールカメラ
 	railCamera_->Finalize();
+
+#ifdef _DEBUG
+	//制御ポイント
+	controlPoint_->Finalize();
+#endif // _DEBUG
+
 
 	//グローバル変数
 	GlobalVariables::GetInstance()->Finalize();

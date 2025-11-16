@@ -94,7 +94,7 @@ public://定数
 	//FovYの最大値
 	static inline const float kMaxFovY = 2.0f;
 	//カメラの移動速度
-	static inline const float kMoveSpeed = 0.1f;
+	static inline const float kMoveSpeed = 1.0f;
 
 	//XboxPad
 	//回転速度

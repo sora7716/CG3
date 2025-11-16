@@ -1,0 +1,20 @@
+{
+    "pointLightGroup": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "decay": 4.0,
+        "distance": 7.0,
+        "enablePointLighting": 1,
+        "intensity": 1.7000000476837158,
+        "isBlinnPhong": 1,
+        "position": [
+            0.0,
+            20.0,
+            0.0
+        ]
+    }
+}

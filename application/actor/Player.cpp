@@ -57,9 +57,10 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	globalVariables->AddItem(groupName_, "shininess", playerData_.gameObject.material.shininess);
 	globalVariables->AddItem(groupName_, "velocity", playerData_.gameObject.velocity);
 	globalVariables->AddItem(groupName_, "translate", playerData_.gameObject.transformData.translate);
-	globalVariables->AddItem(groupName_, "light.direction", headlight_.direction);
 	globalVariables->AddItem(groupName_, "light.cosAngle", headlight_.cosAngle);
 	globalVariables->AddItem(groupName_, "light.cosFolloffStart", headlight_.cosFolloffStart);
+	globalVariables->AddItem(groupName_, "light.color", headlight_.color);
+	globalVariables->AddItem(groupName_, "light.isBlinnPhong", headlight_.isBlinnPhong);
 }
 
 //更新
@@ -203,8 +204,8 @@ void Player::ApplyGlobalVariables() {
 		globalVariables->SetValue(groupName_, "translate", playerData_.gameObject.transformData.translate);
 	}
 	playerData_.gameObject.transformData.translate = globalVariables->GetValue<Vector3>(groupName_, "translate");
-
-	//headlight_.direction = globalVariables->GetValue<Vector3>(groupName_, "light.direction");
 	headlight_.cosAngle = globalVariables->GetValue<float>(groupName_, "light.cosAngle");
 	headlight_.cosFolloffStart = globalVariables->GetValue<float>(groupName_, "light.cosFolloffStart");
+	headlight_.color = globalVariables->GetValue<Vector4>(groupName_, "light.color");
+	headlight_.isBlinnPhong = globalVariables->GetValue<int32_t>(groupName_, "light.isBlinnPhong");
 }
