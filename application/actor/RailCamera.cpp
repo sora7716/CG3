@@ -42,7 +42,7 @@ void RailCamera::Update() {
 	ApplyGlobalVariables();
 
 	//カメラを動かすフラグのスイッチ
-	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
+	if (Input::GetInstance()->TriggerKey(DIK_RETURN)&&Input::GetInstance()->PressKey(DIK_LSHIFT)) {
 		isMovingCamera_ = !isMovingCamera_;
 	}
 

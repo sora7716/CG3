@@ -103,9 +103,12 @@ private://メンバ変数
 
 	//プレイヤーデータ
 	PlayerData playerData_ = {};
-
 	//調整項目のグループ名
 	const char* groupName_ = "player";
+
+	//回転中心
+	//Object3d* rotateCenter_ = nullptr;
+	//TransformData rotateCenterTransformData_ = {};
 
 	//弾
 	Bullet* bullet_ = nullptr;

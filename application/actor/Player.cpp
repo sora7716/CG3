@@ -30,6 +30,11 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	playerData_.object3d->Initialize(camera_);
 	playerData_.object3d->SetModel(modelName);
 
+	//回転中心の生成と初期化
+	//rotateCenter_ = new Object3d();
+	//rotateCenter_->Initialize(camera_);
+	//rotateCenter_->SetModel(modelName);
+
 	//マテリアルの初期化
 	playerData_.gameObject.material.color = { 1.0f,1.0f,1.0f,1.0f };
 	playerData_.gameObject.material.enableLighting = true;
@@ -57,6 +62,7 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	globalVariables->AddItem(groupName_, "shininess", playerData_.gameObject.material.shininess);
 	globalVariables->AddItem(groupName_, "velocity", playerData_.gameObject.velocity);
 	globalVariables->AddItem(groupName_, "translate", playerData_.gameObject.transformData.translate);
+	globalVariables->AddItem(groupName_, "scale",playerData_.gameObject.transformData.scale);
 	globalVariables->AddItem(groupName_, "light.cosAngle", headlight_.cosAngle);
 	globalVariables->AddItem(groupName_, "light.cosFolloffStart", headlight_.cosFolloffStart);
 	globalVariables->AddItem(groupName_, "light.color", headlight_.color);
@@ -93,7 +99,12 @@ void Player::Update() {
 	//ライトのセッター
 	Object3dCommon::GetInstance()->SetSpotLight("headlight", headlight_);
 
+	//回転中心の更新
+	//rotateCenter_->SetTransform(rotateCenterTransformData_);
+	//rotateCenter_->Update();
+
 	//3Dオブジェクトの更新
+	//playerData_.object3d->SetParent(rotateCenter_->GetWorldTransform());
 	playerData_.object3d->Update();
 }
 
@@ -111,6 +122,8 @@ void Player::Debug() {
 	ImGui::DragFloat3("rotate", &playerData_.gameObject.transformData.rotate.x, 0.1f);
 	ImGui::DragFloat3("light.pos", &headlight_.position.x, 0.1f);
 	ImGui::DragFloat3("light.direction", &headlight_.direction.x, 0.1f);
+
+	//ImGui::DragFloat3("rotateCenter.rotate", &rotateCenterTransformData_.rotate.x, 0.1f);
 #endif // USE_IMGUI
 }
 
@@ -204,6 +217,7 @@ void Player::ApplyGlobalVariables() {
 		globalVariables->SetValue(groupName_, "translate", playerData_.gameObject.transformData.translate);
 	}
 	playerData_.gameObject.transformData.translate = globalVariables->GetValue<Vector3>(groupName_, "translate");
+	playerData_.gameObject.transformData.scale = globalVariables->GetValue<Vector3>(groupName_, "scale");
 	headlight_.cosAngle = globalVariables->GetValue<float>(groupName_, "light.cosAngle");
 	headlight_.cosFolloffStart = globalVariables->GetValue<float>(groupName_, "light.cosFolloffStart");
 	headlight_.color = globalVariables->GetValue<Vector4>(groupName_, "light.color");
