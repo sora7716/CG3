@@ -49,11 +49,6 @@ public://メンバ関数
 	void Finalize();
 
 	/// <summary>
-	/// 調整項目の適応
-	/// </summary>
-	void ApplyGlobalVariables();
-
-	/// <summary>
 	/// ワールドトランスフォームのゲッター
 	/// </summary>
 	/// <returns>ワールドトランスフォーム</returns>

@@ -13,7 +13,7 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 
 	//追従カメラ
 	railCamera_ = std::make_unique<RailCamera>();
-	railCamera_->Initialize(camera_, {}, {});
+	railCamera_->Initialize(camera_, {}, {15.5f,11.7f,0.0f});
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();

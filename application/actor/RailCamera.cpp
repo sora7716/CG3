@@ -27,20 +27,10 @@ void RailCamera::Initialize(Camera* camera, const Vector3& rotate, const Vector3
 	rotate_ = rotate;
 	//位置を記録
 	translate_ = position;
-	//調整項目
-	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	//調整項目のグループの生成
-	globalVariables->CreateGroup(groupName_);
-	globalVariables->AddItem(groupName_, "rotate", rotate_);
-	globalVariables->AddItem(groupName_, "translate", translate_);
-	globalVariables->AddItem(groupName_, "endFrame", endFrame_);
 }
 
 //更新
 void RailCamera::Update() {
-	//調整項目を適応
-	ApplyGlobalVariables();
-
 	//カメラを動かすフラグのスイッチ
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN)&&Input::GetInstance()->PressKey(DIK_LSHIFT)) {
 		isMovingCamera_ = !isMovingCamera_;
@@ -80,17 +70,6 @@ void RailCamera::Draw() {
 void RailCamera::Finalize() {
 	delete cameraObject_;
 	cameraObject_ = nullptr;
-}
-
-//調整項目の適応
-void RailCamera::ApplyGlobalVariables() {
-	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	//回転の取得
-	rotate_ = globalVariables->GetValue<Vector3>(groupName_, "rotate");
-	//位置の取得
-	translate_ = globalVariables->GetValue<Vector3>(groupName_, "translate");
-	//エンドフレーム
-	endFrame_ = globalVariables->GetValue<float>(groupName_, "endFrame");
 }
 
 //ワールドトランスフォームのゲッター

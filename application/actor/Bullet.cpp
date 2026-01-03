@@ -31,7 +31,7 @@ void Bullet::Update() {
 	for (BulletData& bulletData : bulletDataList_) {
 		if (bulletData.isAlive) {
 			//飛ばす
-			bulletData.gameObject.transformData.translate += bulletData.gameObject.velocity * Math::kDeltaTime;
+			bulletData.gameObject.transformData.translate += bulletData.gameObject.velocity;
 
 			//弾の情報を設定
 			bulletData.object3d->SetTransform(bulletData.gameObject.transformData);
@@ -146,6 +146,7 @@ BulletData Bullet::CreateBullet() {
 
 	//弾の速度を設定
 	bullet.gameObject.velocity = { 0.0f,0.0f,speed_ };
-	bullet.gameObject.velocity = Math::TransformNormal(bullet.gameObject.velocity, sourceWorldMatrix_);
+	bullet.direction = Math::TransformNormal(bullet.gameObject.velocity, sourceWorldMatrix_);
+	bullet.gameObject.velocity = bullet.direction * Math::kDeltaTime;
 	return bullet;
 }

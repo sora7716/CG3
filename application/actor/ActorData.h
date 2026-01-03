@@ -22,6 +22,7 @@ struct PlayerData {
 //弾
 struct BulletData {
 	GameObject gameObject;
+	Vector3 direction;
 	Object3d* object3d;
 	Vector3 shootingPoint;
 	float aliveRange;

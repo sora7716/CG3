@@ -5,7 +5,6 @@
 #include "engine/debug/ImGuiManager.h"
 #include "engine/input/Input.h"
 #include "engine/math/func/Math.h"
-#include "engine/debug/GlobalVariables.h"
 #include "engine/worldTransform/WorldTransform.h"
 #include "Bullet.h"
 
@@ -52,28 +51,10 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	//スポットライトを設定
 	Object3dCommon::GetInstance()->AddSpotLight("headlight");
 	headlight_ = Object3dCommon::GetInstance()->GetSpotLight("headlight");
-
-	//調整項目
-	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	//調整項目のグループの生成
-	GlobalVariables::GetInstance()->CreateGroup(groupName_);
-	globalVariables->AddItem(groupName_, "color", playerData_.gameObject.material.color);
-	globalVariables->AddItem(groupName_, "enableLighting", playerData_.gameObject.material.enableLighting);
-	globalVariables->AddItem(groupName_, "shininess", playerData_.gameObject.material.shininess);
-	globalVariables->AddItem(groupName_, "velocity", playerData_.gameObject.velocity);
-	globalVariables->AddItem(groupName_, "translate", playerData_.gameObject.transformData.translate);
-	globalVariables->AddItem(groupName_, "scale",playerData_.gameObject.transformData.scale);
-	globalVariables->AddItem(groupName_, "light.cosAngle", headlight_.cosAngle);
-	globalVariables->AddItem(groupName_, "light.cosFolloffStart", headlight_.cosFolloffStart);
-	globalVariables->AddItem(groupName_, "light.color", headlight_.color);
-	globalVariables->AddItem(groupName_, "light.isBlinnPhong", headlight_.isBlinnPhong);
 }
 
 //更新
 void Player::Update() {
-	//調整項目を適応
-	ApplyGlobalVariables();
-
 	//移動
 	Move();
 
@@ -86,7 +67,7 @@ void Player::Update() {
 	//ライトの位置をプレイヤーの前に設定
 	headlight_.position = playerData_.object3d->GetWorldPos();
 	// ローカル空間での“前”の向き
-	Vector3 localForward = { 0.0f, 0.0f, -1.0f };
+	Vector3 localForward = { 0.0f, 0.0f, 1.0f };
 
 	//プレイヤーのワールド行列を取得
 	Matrix4x4 world = playerData_.object3d->GetWorldTransform()->GetWorldMatrix();
@@ -120,9 +101,7 @@ void Player::Draw() {
 void Player::Debug() {
 #ifdef USE_IMGUI
 	ImGui::DragFloat3("rotate", &playerData_.gameObject.transformData.rotate.x, 0.1f);
-	ImGui::DragFloat3("light.pos", &headlight_.position.x, 0.1f);
-	ImGui::DragFloat3("light.direction", &headlight_.direction.x, 0.1f);
-
+	ImGui::DragFloat3("translate", &playerData_.gameObject.transformData.translate.x, 0.1f);
 	//ImGui::DragFloat3("rotateCenter.rotate", &rotateCenterTransformData_.rotate.x, 0.1f);
 #endif // USE_IMGUI
 }
@@ -204,22 +183,4 @@ void Player::Attack() {
 	bullet_->SetSourceWorldMatrix(playerData_.object3d->GetWorldTransform()->GetWorldMatrix());
 	bullet_->Fire(input_->TriggerKey(DIK_SPACE));
 	bullet_->Update();
-}
-
-//調整項目を適応
-void Player::ApplyGlobalVariables() {
-	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	//各調整項目を適応
-	playerData_.gameObject.material.color = globalVariables->GetValue<Vector4>(groupName_, "color");
-	playerData_.gameObject.material.enableLighting = globalVariables->GetValue<int32_t>(groupName_, "enableLighting");
-	playerData_.gameObject.velocity = globalVariables->GetValue<Vector3>(groupName_, "velocity");
-	if (playerData_.isMove) {
-		globalVariables->SetValue(groupName_, "translate", playerData_.gameObject.transformData.translate);
-	}
-	playerData_.gameObject.transformData.translate = globalVariables->GetValue<Vector3>(groupName_, "translate");
-	playerData_.gameObject.transformData.scale = globalVariables->GetValue<Vector3>(groupName_, "scale");
-	headlight_.cosAngle = globalVariables->GetValue<float>(groupName_, "light.cosAngle");
-	headlight_.cosFolloffStart = globalVariables->GetValue<float>(groupName_, "light.cosFolloffStart");
-	headlight_.color = globalVariables->GetValue<Vector4>(groupName_, "light.color");
-	headlight_.isBlinnPhong = globalVariables->GetValue<int32_t>(groupName_, "light.isBlinnPhong");
 }
