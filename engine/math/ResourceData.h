@@ -76,3 +76,12 @@ struct ModelData {
 struct CameraForGPU {
 	Vector3 worldPosition;
 };
+
+//リムライトの構造体
+struct RimLight {
+	Vector4 color;//リムライトの色
+	float power; //リムライトの強さ
+	float outLinePower; //リムライトの外側の強さ
+	int32_t enableRimLighting; //リムライトを有効にするか
+	float padding;
+};

@@ -110,5 +110,8 @@ private://メンバ変数
 
 	//ヘッドライト
 	SpotLightData headlight_ = {};
+
+	//リムライト
+	RimLight rimLight_ = {};
 };
 

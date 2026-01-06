@@ -36,7 +36,7 @@ void MapChip::Initialize(DirectXBase* directXBase, Camera* camera, MapChipType m
 	makeGraphicsPipeline_->SetVertexShaderFileName(L"MapChip.VS.hlsl");
 
 	//ピクセルシェーダ
-	makeGraphicsPipeline_->SetPixelShaderFileName(L"Object3d.PS.hlsl");
+	makeGraphicsPipeline_->SetPixelShaderFileName(L"MapChip.PS.hlsl");
 
 	//デプスステンシルステート
 	directXBase_->InitializeDepthStencilForObject3d();

@@ -43,6 +43,15 @@ struct SpotLight {
     int32_t enablSpotLighting; //点光源を有効にするか
 };
 
+//リムライト
+struct RimLight {
+    float32_t4 color; //ライトの色
+    float32_t power; //リムライトの強さ
+    float32_t outLinePower; //リムライトの外側の強さ
+    int32_t enableRimLighting; //リムライトを有効にするか
+    float padding;
+};
+
 //カメラ
 struct Camera {
     float32_t3 worldPosition;
@@ -53,6 +62,7 @@ Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 ConstantBuffer<Camera> gCamera : register(b2);
+ConstantBuffer<RimLight> gRimLight : register(b3);
 StructuredBuffer<PointLight> gPointLight : register(t1);
 StructuredBuffer<SpotLight> gSpotLight : register(t2);
 
@@ -60,6 +70,11 @@ StructuredBuffer<SpotLight> gSpotLight : register(t2);
 struct Lighting {
     float32_t3 diffuse;
     float32_t3 specular;
+};
+
+struct PixelShaderOutput
+{
+    float32_t4 color : SV_TARGET0;
 };
 
 //平行光源
@@ -242,9 +257,18 @@ float32_t3 SetLightingMode(VertexShaderOutput input, float32_t4 textureColor, fl
     return directionalRgb + pointLighting + spotLight;
 }
 
-struct PixelShaderOutput {
-    float32_t4 color : SV_TARGET0;
-};
+//リムライト
+float32_t4 RimLighting(VertexShaderOutput input, float32_t3 toEye){
+    //リムライト
+    float32_t4 rimColor = { 0.0f, 0.0f, 0.0f, 0.0f };
+    if (!gRimLight.enableRimLighting){
+        return rimColor;
+    }
+    float32_t rim = 1.0f - saturate(dot(toEye, input.normal));
+    rim = step(gRimLight.outLinePower, pow(rim, gRimLight.power));
+    rimColor = gRimLight.color * rim;
+    return rimColor;
+}
 
 PixelShaderOutput main(VertexShaderOutput input) {
     float32_t4 transformedUV = mul(float32_t4(input.texcoord, 0.0f, 1.0f), gMaterial.uvMatrix);
@@ -256,9 +280,14 @@ PixelShaderOutput main(VertexShaderOutput input) {
         //カメラの視点を取得
         float32_t3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
         
+        //リムライト
+        float32_t4 rimColor = RimLighting(input, toEye);
         
         //ライティングをRGBに適応
         output.color.rgb = SetLightingMode(input, textureColor, toEye);
+        
+        //リムライトを加算
+        output.color.rgb += rimColor.rgb;
       
         //アルファ  
         output.color.a = gMaterial.color.a * textureColor.a;
@@ -267,15 +296,15 @@ PixelShaderOutput main(VertexShaderOutput input) {
         output.color = gMaterial.color * textureColor;
     }
     //textureのα値が0.5f以下の時にPixelを棄却
-    if (textureColor.a <= 0.5) {
+    if (textureColor.a <= 0.5f) {
         discard;
     }
     //textureのα値の0の時にPixelを棄却
-    if (textureColor.a == 0.0) {
+    if (textureColor.a == 0.0f) {
         discard;
     }
     //output.colorのα値が0の時にPixelを棄却
-    if (output.color.a == 0.0) {
+    if (output.color.a == 0.0f) {
         discard;
     }
     return output;

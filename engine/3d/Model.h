@@ -92,6 +92,11 @@ public://メンバ関数
 	/// <param name="materialData">マテリアルデータ</param>
 	void SetMaterial(const Material& materialData);
 
+	/// <summary>
+	/// リムライトのセッター
+	/// </summary>
+	/// <param name="rimLight">リムライト</param>
+	void SetRimLight(const RimLight& rimLight);
 private://メンバ関数
 	/// <summary>
 	/// 頂点リソースの生成
@@ -107,6 +112,11 @@ private://メンバ関数
 	/// マテリアルリソースの生成
 	/// </summary>
 	void CreateMaterialResource();
+
+	/// <summary>
+	/// リムライトのリソースを生成
+	/// </summary>
+	void CreateRimLightResource();
 private://メンバ変数
 	//ModelCommonのポインタ
 	ModelCommon* modelCommon_ = nullptr;
@@ -123,12 +133,16 @@ private://メンバ変数
 	//マテリアルリソース
 	ComPtr<ID3D12Resource>materialResource_ = nullptr;
 	//マテリアルリソースにデータを書き込むためのポインタ
-	Material* materialData_ = nullptr;
+	Material* materialPtr_ = nullptr;
 	//IndexResource
 	ComPtr<ID3D12Resource>indexResource_ = nullptr;
 	//IndexResourceにデータを書き込むためのポインタ
 	uint32_t* indexData_ = nullptr;
 	//IndexBufferView
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス	
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス
+	//リムライト
+	RimLight* rimLightPtr_ = nullptr;
+	//リムライトリソース
+	ComPtr<ID3D12Resource>rimLightResource_ = nullptr;
 };
 

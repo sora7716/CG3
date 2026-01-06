@@ -40,6 +40,12 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	playerData_.gameObject.material.shininess = 10.0f;
 	playerData_.gameObject.material.uvMatrix = Matrix4x4::Identity4x4();
 
+	//リムライトの初期化
+	rimLight_.color = { 1.0f,1.0f,1.0f,1.0f };
+	rimLight_.power = 1.0f;
+	rimLight_.outLinePower = 1.0f;
+	rimLight_.enableRimLighting = false;
+
 	//弾
 	bullet_ = new Bullet();
 	bullet_->Initialize(camera_);
@@ -63,6 +69,9 @@ void Player::Update() {
 
 	//マテリアルのセット
 	playerData_.object3d->GetModel()->SetMaterial(playerData_.gameObject.material);
+
+	//リムライトのセット
+	playerData_.object3d->GetModel()->SetRimLight(rimLight_);
 
 	//ライトの位置をプレイヤーの前に設定
 	headlight_.position = playerData_.object3d->GetWorldPos();
@@ -102,7 +111,10 @@ void Player::Debug() {
 #ifdef USE_IMGUI
 	ImGui::DragFloat3("rotate", &playerData_.gameObject.transformData.rotate.x, 0.1f);
 	ImGui::DragFloat3("translate", &playerData_.gameObject.transformData.translate.x, 0.1f);
-	//ImGui::DragFloat3("rotateCenter.rotate", &rotateCenterTransformData_.rotate.x, 0.1f);
+	ImGui::ColorEdit4("limColor", &rimLight_.color.x);
+	ImGui::DragFloat("limPower", &rimLight_.power, 0.1f, 0.0f, 10.0f);
+	ImGui::DragFloat("limOutLinePower", &rimLight_.outLinePower, 0.1f, 0.0f, 10.0f);
+	ImGuiManager::GetInstance()->CheckBoxToInt("enableLimLighting", rimLight_.enableRimLighting);
 #endif // USE_IMGUI
 }
 
