@@ -264,6 +264,7 @@ float32_t4 RimLighting(VertexShaderOutput input, float32_t3 toEye){
     if (!gRimLight.enableRimLighting){
         return rimColor;
     }
+    
     float32_t rim = 1.0f - saturate(dot(toEye, input.normal));
     rim = step(gRimLight.outLinePower, pow(rim, gRimLight.power));
     rimColor = gRimLight.color * rim;

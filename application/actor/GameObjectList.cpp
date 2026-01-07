@@ -44,7 +44,7 @@ void GameObjectList::LoadModel() {
 	//弾
 	ModelManager::GetInstance()->LoadOBJModel("bullet", "sphere", "sphere");
 	//カメラ
-	ModelManager::GetInstance()->LoadOBJModel("camera", "camera", "camera");
+	ModelManager::GetInstance()->LoadOBJModel("camera", "cube", "cube");
 	//地面
 	ModelManager::GetInstance()->LoadOBJModel("ground", "cube", "cube");
 	//フィールド
