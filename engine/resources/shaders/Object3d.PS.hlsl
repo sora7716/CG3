@@ -48,8 +48,8 @@ struct RimLight {
     float32_t4 color; //ライトの色
     float32_t power; //リムライトの強さ
     float32_t outLinePower; //リムライトの外側の強さ
+    float32_t softness; //リムライトの柔らかさ
     int32_t enableRimLighting; //リムライトを有効にするか
-    float padding;
 };
 
 //カメラ
@@ -265,9 +265,14 @@ float32_t4 RimLighting(VertexShaderOutput input, float32_t3 toEye){
         return rimColor;
     }
     
+    //カメラ基準
     float32_t rim = 1.0f - saturate(dot(toEye, input.normal));
-    rim = step(gRimLight.outLinePower, pow(rim, gRimLight.power));
-    rimColor = gRimLight.color * rim;
+    
+    //合成
+    float32_t rimValue = pow(rim, gRimLight.power);
+    rimValue = smoothstep(gRimLight.outLinePower - gRimLight.softness, gRimLight.outLinePower + gRimLight.softness, rimValue);
+    rimColor = gRimLight.color * rimValue;
+    
     return rimColor;
 }
 

@@ -82,6 +82,6 @@ struct RimLight {
 	Vector4 color;//リムライトの色
 	float power; //リムライトの強さ
 	float outLinePower; //リムライトの外側の強さ
+	float softness;//リムライトの柔らかさ
 	int32_t enableRimLighting; //リムライトを有効にするか
-	float padding;
 };

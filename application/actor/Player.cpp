@@ -42,9 +42,10 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 
 	//リムライトの初期化
 	rimLight_.color = { 1.0f,1.0f,1.0f,1.0f };
-	rimLight_.power = 1.0f;
-	rimLight_.outLinePower = 1.0f;
-	rimLight_.enableRimLighting = false;
+	rimLight_.power = 3.4f;
+	rimLight_.outLinePower = 0.3f;
+	rimLight_.softness = 0.2f;
+	rimLight_.enableRimLighting = true;
 
 	//弾
 	bullet_ = new Bullet();
@@ -111,10 +112,11 @@ void Player::Debug() {
 #ifdef USE_IMGUI
 	ImGui::DragFloat3("rotate", &playerData_.gameObject.transformData.rotate.x, 0.1f);
 	ImGui::DragFloat3("translate", &playerData_.gameObject.transformData.translate.x, 0.1f);
-	ImGui::ColorEdit4("limColor", &rimLight_.color.x);
-	ImGui::DragFloat("limPower", &rimLight_.power, 0.1f, 0.0f, 10.0f);
-	ImGui::DragFloat("limOutLinePower", &rimLight_.outLinePower, 0.1f, 0.0f, 10.0f);
-	ImGuiManager::GetInstance()->CheckBoxToInt("enableLimLighting", rimLight_.enableRimLighting);
+	ImGui::ColorEdit4("rimColor", &rimLight_.color.x);
+	ImGui::DragFloat("rimPower", &rimLight_.power, 0.1f, 0.0f, 10.0f);
+	ImGui::DragFloat("rimSoftness", &rimLight_.softness, 0.1f, 0.0f, 10.0f);
+	ImGui::DragFloat("rimOutLinePower", &rimLight_.outLinePower, 0.1f, 0.0f, 10.0f);
+	ImGuiManager::GetInstance()->CheckBoxToInt("enableRimLighting", rimLight_.enableRimLighting);
 #endif // USE_IMGUI
 }
 

@@ -181,6 +181,7 @@ void Model::SetRimLight(const RimLight& rimLight) {
 	rimLightPtr_->color = rimLight.color;
 	rimLightPtr_->outLinePower = rimLight.outLinePower;
 	rimLightPtr_->power = rimLight.power;
+	rimLightPtr_->softness = rimLight.softness;
 	rimLightPtr_->enableRimLighting = rimLight.enableRimLighting;
 }
 
@@ -244,5 +245,6 @@ void Model::CreateRimLightResource() {
 	rimLightPtr_->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	rimLightPtr_->outLinePower = 0.1f;
 	rimLightPtr_->power = 0.1f;
+	rimLightPtr_->softness = 5.0f;
 	rimLightPtr_->enableRimLighting = false;
 }
