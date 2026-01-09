@@ -7,7 +7,7 @@
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
-using namespace Microsoft::WRL;
+using namespace Microsoft::WRL;	
 //初期化
 TextureManager* TextureManager::instance = nullptr;
 //ImGuiで0番目を使用するため、1番目から使用

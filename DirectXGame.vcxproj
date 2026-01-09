@@ -258,12 +258,15 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
+      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreLinkEvent>
       <Command>
@@ -286,7 +289,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)engine\base;$(ProjectDir)engine\2d;$(ProjectDir)externals;$(ProjectDir)engine\math;$(ProjectDir)engine\debug;$(ProjectDir)engine\input;$(ProjectDir)engine\audio;$(SolutionDir)DirectXTex;$(SolutionDir)imgui;$(ProjectDir)engine\resource;$(ProjectDir)application;$(ProjectDir)application\scene;$(ProjectDir)application\actor;$(ProjectDir)externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MinSpace</Optimization>
     </ClCompile>
     <Link>
@@ -294,6 +297,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)externals\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
