@@ -17,7 +17,7 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directoryPat
 	modelCommon_ = modelCommon;
 	directXBase_ = modelCommon_->GetDirectXBase();
 	//モデルの読み込み
-	modelData_ = LoadObjFile(directoryPath, storedFilePath, filename);
+	modelData_ = LoadModelFile(directoryPath, storedFilePath, filename);
 	//頂点リソースの生成
 	CreateVertexResource();
 	//インデックスリソースの生成
@@ -98,8 +98,8 @@ MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, c
 	return materialData;
 }
 
-//.objファイル読み取り
-ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename) {
+//モデルファイルの読み込み
+ModelData Model::LoadModelFile(const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename) {
 	//構築するModelData
 	ModelData modelData;
 
@@ -146,7 +146,7 @@ ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
 			aiString textureFilePath;
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
-			modelData.material.textureFilePath = directoryPath + "/" + storedFilePath + "/" + textureFilePath.C_Str();
+			modelData.material.textureFilePath = directoryPath + "/" + storedFilePath + "/" +textureFilePath.C_Str();
 		}
 	}
 

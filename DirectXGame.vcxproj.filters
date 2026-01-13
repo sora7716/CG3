@@ -237,14 +237,8 @@
     <ClCompile Include="application\actor\Bullet.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
-    <ClCompile Include="engine\3d\SpotLight.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\3d\SpotLightManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="application\actor\ControlPoint.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>application\actor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -431,14 +425,8 @@
     <ClInclude Include="application\actor\Bullet.h">
       <Filter>application\actor</Filter>
     </ClInclude>
-    <ClInclude Include="engine\3d\SpotLight.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\3d\SpotLightManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="application\actor\ControlPoint.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>application\actor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

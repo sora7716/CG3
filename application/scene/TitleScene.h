@@ -37,5 +37,7 @@ public://メンバ関数
 	/// </summary>
 	void Finalize()override;
 private://メンバ変数
-	
+	std::unique_ptr<Object3d> object3d_ = nullptr;
+	TransformData transform_ = {};
+	Material material_ = {};	
 };

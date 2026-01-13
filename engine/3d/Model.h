@@ -78,13 +78,13 @@ public://メンバ関数
 	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
-    /// .objファイル読み取り
+    /// モデルファイルの読み込み
     /// </summary>
 	/// <param name="directoryPath">ディレクトリファイルパス(最後に"/"はいらない)</param>
 	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
 	/// <param name="filename">ファイル名(最初に"/"入らない</param>
     /// <returns>モデルデータ</returns>
-	static ModelData LoadObjFile(const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename);
+	static ModelData LoadModelFile(const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename);
 
 	/// <summary>
 	/// マテリアルのセッター

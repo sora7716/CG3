@@ -8,7 +8,6 @@
 #include <cassert>
 #include "engine/math/func/Math.h"
 #include "engine/debug/GlobalVariables.h"
-#include "SpotLightManager.h"
 using namespace Microsoft::WRL;
 
 //インスタンスのゲッター
@@ -63,6 +62,10 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	directionalLightData_.isLambert = false;
 	directionalLightData_.isBlinnPhong = true;
 	directionalLightData_.enableDirectionalLighting = false;
+#ifdef _DEBUG
+	directionalLightData_.enableDirectionalLighting = true;
+#endif // _DEBUG
+
 
 	//PointLightの初期化
 	for (int i = 0; i < kMaxLightCount; i++) {
