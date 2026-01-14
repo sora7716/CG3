@@ -123,6 +123,12 @@ public://メンバ関数
 	void SetWorldMatrix(const Matrix4x4& worldMatrix);
 
 	/// <summary>
+	/// ノードのセッター
+	/// </summary>
+	/// <param name="node">ノード</param>
+	void SetNode(const Node& node);
+
+	/// <summary>
 	/// ワールド行列のゲッター
 	/// </summary>
 	/// <returns>ワールド行列</returns>
@@ -205,6 +211,8 @@ private://メンバ変数
 	Matrix4x4 worldMatrix_ = {};
 	//親
 	const WorldTransform* parent_ = nullptr;
+	//ノード
+	Node node_ = {};
 };
 
 

@@ -44,11 +44,12 @@ void Object3d::Update() {
 	//Object3dの共通部分の更新
 	Object3dCommon::GetInstance()->Update();
 
-	//ワールドトランスフォーム
-	worldTransform_->Update();
 	if (model_) {
+		worldTransform_->SetNode(model_->GetModelData().rootNode);
 		model_->UVTransform(uvTransform_);
 	}
+	//ワールドトランスフォーム
+	worldTransform_->Update();
 }
 
 //描画

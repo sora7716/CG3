@@ -1,9 +1,6 @@
 #pragma once
-#include "Vector2.h"
+#include "RenderingData.h"
 #include "Vector4.h"
-#include "Vector3.h"
-#include "Matrix3x3.h"
-#include "Matrix4x4.h"
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -70,6 +67,7 @@ struct MaterialData {
 struct ModelData {
 	std::vector<VertexData> vertices;
 	MaterialData material;
+	Node rootNode;
 };
 
 //カメラのデータの構造体

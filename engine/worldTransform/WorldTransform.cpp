@@ -8,7 +8,7 @@
 void(WorldTransform::* WorldTransform::UpdateTransformTable[])() = {
 	&UpdateTransform,
 	&UpdateTransform2d,
-	& UpdateTransformBillboard
+	&UpdateTransformBillboard
 };
 
 //初期化
@@ -100,6 +100,11 @@ void WorldTransform::SetWorldMatrix(const Matrix4x4& worldMatrix) {
 	worldMatrix_ = worldMatrix;
 }
 
+//ノードのセッター
+void WorldTransform::SetNode(const Node& node) {
+	node_ = node;
+}
+
 //ワールド行列のゲッター
 const Matrix4x4& WorldTransform::GetWorldMatrix() const {
 	// TODO: return ステートメントをここに挿入します
@@ -164,12 +169,12 @@ void WorldTransform::UpdateTransform() {
 	//wvpの書き込み
 	if (camera_) {
 		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
-		wvpData_->wvp = worldMatrix_ * viewProjectionMatrix;
+		wvpData_->wvp = node_.localMatrix * worldMatrix_ * viewProjectionMatrix;
 	} else {
 		wvpData_->wvp = worldMatrix_;
 	}
 	//ワールド行列を送信
-	wvpData_->world = worldMatrix_;
+	wvpData_->world = node_.localMatrix * worldMatrix_;
 	//逆行列の転置行列を送信
 	wvpData_->worldInverseTranspose = worldMatrix_.InverseTranspose();
 }
@@ -214,7 +219,7 @@ void WorldTransform::UpdateTransformBillboard() {
 	//ワールド行列を送信
 	wvpData_->world = worldMatrix_;
 	//逆行列の転置行列を送信
-	wvpData_->worldInverseTranspose = worldMatrix_.InverseTranspose();
+	wvpData_->worldInverseTranspose = wvpData_->world.InverseTranspose();
 }
 
 
