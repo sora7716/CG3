@@ -12,17 +12,17 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	camera_ = CameraManager::GetInstance()->FindCamera("gameCamera");
 
 	//追従カメラ
-	railCamera_ = std::make_unique<RailCamera>();
-	railCamera_->Initialize(camera_, {}, {15.5f,11.7f,0.0f});
+	gameCamera_ = std::make_unique<GameCamera>();
+	gameCamera_->Initialize(camera_, { 0.0f,5.0f,0.0f });
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();
-	player_->Initialize(railCamera_->GetCamera(), "player");
+	player_->Initialize(gameCamera_->GetCamera(), "player");
 	player_->SetPosition({ 0.0f,0.0f,10.0f });
 
 	//フィールド
 	field_ = std::make_unique<Field>();
-	field_->Initialize(railCamera_->GetCamera());
+	field_->Initialize(gameCamera_->GetCamera());
 
 #ifdef _DEBUG
 	//制御ポイント
@@ -37,15 +37,15 @@ void GameScene::Update() {
 	IScene::Update();
 
 	//プレイヤー
-	player_->GetObject3d()->SetParent(railCamera_->GetWorldTransform());
+	//player_->GetObject3d()->SetParent(railCamera_->GetWorldTransform());
 	player_->Update();
+
+	//追従カメラ
+	gameCamera_->Update();
+	gameCamera_->SetTragetPos(player_->GetTransformData().translate);
 
 	//制御ポイント
 	controlPoint_->Update();
-
-	//追従カメラ
-	railCamera_->SetControlPoints(controlPoint_->GetControlPoints());
-	railCamera_->Update();
 
 	//フィールド
 	field_->SetDirectionalLight(Object3dCommon::GetInstance()->GetDirectionalLight());
@@ -69,6 +69,11 @@ void GameScene::Update() {
 	player_->Debug();
 	ImGui::End();
 
+	//レイルカメラ
+	ImGui::Begin("gameCamera");
+	gameCamera_->Debug();
+	ImGui::End();
+
 	//Object3dCommon
 	Object3dCommon::GetInstance()->Debug();
 
@@ -81,13 +86,12 @@ void GameScene::Update() {
 	if (debugCamera_->IsDebug()) {
 		player_->SetCamera(debugCamera_->GetCamera());
 		field_->SetCamera(debugCamera_->GetCamera());
-		railCamera_->SetCamera(debugCamera_->GetCamera());
 		controlPoint_->SetCamera(debugCamera_->GetCamera());
 	} else {
-		player_->SetCamera(railCamera_->GetCamera());
-		field_->SetCamera(railCamera_->GetCamera());
-		railCamera_->SetCamera(railCamera_->GetCamera());
-		controlPoint_->SetCamera(railCamera_->GetCamera());
+		player_->SetCamera(gameCamera_->GetCamera());
+		field_->SetCamera(gameCamera_->GetCamera());
+		gameCamera_->SetCamera(gameCamera_->GetCamera());
+		controlPoint_->SetCamera(gameCamera_->GetCamera());
 	}
 #endif // _DEBUG
 
@@ -95,13 +99,6 @@ void GameScene::Update() {
 
 //描画
 void GameScene::Draw() {
-#ifdef _DEBUG
-	if (debugCamera_->IsDebug()) {
-		//レイルカメラ
-		railCamera_->Draw();
-	}
-#endif // _DEBUG
-
 	//プレイヤー
 	player_->Draw();
 
@@ -123,7 +120,7 @@ void GameScene::Finalize() {
 	field_->Finalize();
 
 	//レールカメラ
-	railCamera_->Finalize();
+	//railCamera_->Finalize();
 
 #ifdef _DEBUG
 	//制御ポイント

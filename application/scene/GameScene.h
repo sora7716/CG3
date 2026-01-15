@@ -1,7 +1,7 @@
 #pragma once
 #include "engine/scene/IScene.h"
 #include "actor/Player.h"
-#include "actor/RailCamera.h"
+#include "actor/GameCamera.h"
 #include "actor/Field.h"
 #include "actor/MapChip.h"
 #include "actor/ControlPoint.h"
@@ -50,7 +50,7 @@ private://メンバ変数
 	std::unique_ptr<Player>player_ = nullptr;
 
 	//レールカメラ
-	std::unique_ptr<RailCamera>railCamera_ = nullptr;
+	std::unique_ptr<GameCamera>gameCamera_ = nullptr;
 
 	//フィールド
 	std::unique_ptr<Field>field_ = nullptr;

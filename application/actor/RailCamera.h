@@ -39,6 +39,11 @@ public://メンバ関数
 	void Update();
 
 	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void Debug();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw();
@@ -82,6 +87,8 @@ private://メンバ変数
 	Vector3 rotate_ = { 0.0f,0.0f,0.0f };
 	//平行移動
 	Vector3 translate_ = { 0.0f,0.0f,0.0f };
+	//FovY
+	float fovY_ = 0.45f;
 	//マテリアル
 	Material material_ = {};
 	//制御ポイント

@@ -1,8 +1,7 @@
 #include "RailCamera.h"
 #include "engine/camera/Camera.h"
-#include "engine/debug/GlobalVariables.h"
+#include "engine/debug/ImGuiManager.h"
 #include "engine/worldTransform/WorldTransform.h"
-#include "engine/3d/Object3dCommon.h"
 #include "engine/3d/Object3d.h"
 #include "engine/math/func/Math.h"
 #include "engine/input/Input.h"
@@ -46,11 +45,12 @@ void RailCamera::Update() {
 	}
 
 	//カメラの動き
-	translate_ = Math::CatmullRomPosition(controlPoints_, frame_ / endFrame_);
+	//translate_ = Math::CatmullRomPosition(controlPoints_, frame_ / endFrame_);
 
 	//カメラの設定
 	camera_->SetRotate(rotate_);
 	camera_->SetTranslate(translate_);
+	camera_->SetFovY(fovY_);
 	//カメラのオブジェクト
 	cameraObject_->SetRotate(rotate_);
 	cameraObject_->SetTranslate(translate_);
@@ -59,6 +59,13 @@ void RailCamera::Update() {
 
 	//カメラのオブジェクトの更新
 	cameraObject_->Update();
+}
+
+//デバッグ
+void RailCamera::Debug() {
+	ImGui::DragFloat3("rotate", &rotate_.x, 0.1f);
+	ImGui::DragFloat3("translate", &translate_.x, 0.1f);
+	ImGui::DragFloat("FovY", &fovY_, 0.1f);
 }
 
 //描画

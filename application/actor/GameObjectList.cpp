@@ -37,26 +37,26 @@ void GameObjectList::LoadAudio() {
 //OBJファイルの読み込み
 void GameObjectList::LoadModel() {
 	//モデルの読み込み
-	////プレイヤー
-	//ModelManager::GetInstance()->LoadModel("player", "sphere", "sphere.obj");
-	////球
-	//ModelManager::GetInstance()->LoadModel("sphere", "sphere", "sphere.obj");
-	////弾
-	//ModelManager::GetInstance()->LoadModel("bullet", "sphere", "sphere.obj");
-	////カメラ
-	//ModelManager::GetInstance()->LoadModel("camera", "cube", "cube.obj");
-	////地面
-	//ModelManager::GetInstance()->LoadModel("ground", "cube", "cube.obj");
-	////フィールド
-	//ModelManager::GetInstance()->LoadModel("field", "terrain", "terrain.obj");
-	////球
-	//ModelManager::GetInstance()->LoadModel("sphere", "sphere", "sphere.obj");
+	//プレイヤー
+	ModelManager::GetInstance()->LoadModel("player", "sphere", "sphere.gltf");
+	//球
+	ModelManager::GetInstance()->LoadModel("sphere", "sphere", "sphere.gltf");
+	//弾
+	ModelManager::GetInstance()->LoadModel("bullet", "sphere", "sphere.gltf");
+	//カメラ
+	ModelManager::GetInstance()->LoadModel("camera", "cube", "cube.obj");
+	//地面
+	ModelManager::GetInstance()->LoadModel("ground", "cube", "cube.obj");
+	//フィールド
+	ModelManager::GetInstance()->LoadModel("field", "terrain", "terrain.obj");
+	//球
+	ModelManager::GetInstance()->LoadModel("sphere", "sphere", "sphere.gltf");
 	//平面
 	ModelManager::GetInstance()->LoadModel("plane", "base", "plane.gltf");
-	////スポットライト
-	//ModelManager::GetInstance()->LoadModel("spotLight", "plane", "plane.obj");
-	////軸
-	//ModelManager::GetInstance()->LoadModel("test", "base", "axis.obj");
+	//スポットライト
+	ModelManager::GetInstance()->LoadModel("spotLight", "plane", "plane.obj");
+	//軸
+	ModelManager::GetInstance()->LoadModel("test", "base", "axis.obj");
 }
 
 //カメラの生成
