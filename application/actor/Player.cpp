@@ -75,7 +75,8 @@ void Player::Update() {
 	//マウスの位置
 	Vector3 mousePos = input_->GetWorldMousePosition(camera_);
 	Vector3 dir = mousePos - gameObject_.object3d->GetWorldPos();
-	gameObject_.object3d->GetWorldTransform()->SetFromAndToPos(gameObject_.object3d->GetWorldPos(),dir);
+
+	gameObject_.object3d->GetWorldTransform()->SetFromAndToPos(gameObject_.object3d->GetWorldPos(),mousePos);
 	//3Dオブジェクトの更新
 	gameObject_.object3d->Update();
 }

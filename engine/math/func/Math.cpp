@@ -157,3 +157,5 @@ Vector3 Math::LissajousCurve(const Vector3& theta, const Vector3& center, const 
 float Math::Cont(float theta) {
 	return (1.0f / tanf(theta));
 }
+
+
