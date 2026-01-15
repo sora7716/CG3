@@ -38,7 +38,7 @@ void GameObjectList::LoadAudio() {
 void GameObjectList::LoadModel() {
 	//モデルの読み込み
 	//プレイヤー
-	ModelManager::GetInstance()->LoadModel("player", "sphere", "sphere.gltf");
+	ModelManager::GetInstance()->LoadModel("player", "sphere", "sphereFlat.gltf");
 	//球
 	ModelManager::GetInstance()->LoadModel("sphere", "sphere", "sphere.gltf");
 	//弾
