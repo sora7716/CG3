@@ -13,7 +13,7 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 
 	//追従カメラ
 	gameCamera_ = std::make_unique<GameCamera>();
-	gameCamera_->Initialize(camera_, { 0.0f,5.0f,0.0f });
+	gameCamera_->Initialize(camera_, { 0.0f,15.1f,-12.5f });
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();
@@ -23,12 +23,6 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	//フィールド
 	field_ = std::make_unique<Field>();
 	field_->Initialize(gameCamera_->GetCamera());
-
-#ifdef _DEBUG
-	//制御ポイント
-	controlPoint_ = std::make_unique<ControlPoint>();
-	controlPoint_->Initialize(camera_);
-#endif // _DEBUG
 }
 
 //更新
@@ -37,15 +31,11 @@ void GameScene::Update() {
 	IScene::Update();
 
 	//プレイヤー
-	//player_->GetObject3d()->SetParent(railCamera_->GetWorldTransform());
 	player_->Update();
 
 	//追従カメラ
 	gameCamera_->Update();
 	gameCamera_->SetTragetPos(player_->GetTransformData().translate);
-
-	//制御ポイント
-	controlPoint_->Update();
 
 	//フィールド
 	field_->SetDirectionalLight(Object3dCommon::GetInstance()->GetDirectionalLight());
@@ -81,17 +71,21 @@ void GameScene::Update() {
 	ImGuiManager::GetInstance()->End();
 #endif // USE_IMGUI
 
+#ifndef Release
+	player_->SetCamera(gameCamera_->GetCamera());
+	field_->SetCamera(gameCamera_->GetCamera());
+	gameCamera_->SetCamera(gameCamera_->GetCamera());
+#endif // Release
+
 #ifdef _DEBUG
 	//カメラの切り替え
 	if (debugCamera_->IsDebug()) {
 		player_->SetCamera(debugCamera_->GetCamera());
 		field_->SetCamera(debugCamera_->GetCamera());
-		controlPoint_->SetCamera(debugCamera_->GetCamera());
 	} else {
 		player_->SetCamera(gameCamera_->GetCamera());
 		field_->SetCamera(gameCamera_->GetCamera());
 		gameCamera_->SetCamera(gameCamera_->GetCamera());
-		controlPoint_->SetCamera(gameCamera_->GetCamera());
 	}
 #endif // _DEBUG
 
@@ -104,11 +98,6 @@ void GameScene::Draw() {
 
 	//マップチップ
 	field_->Draw();
-
-#ifdef _DEBUG
-	//制御ポイント
-	controlPoint_->Draw();
-#endif // _DEBUG
 }
 
 //終了
@@ -118,15 +107,6 @@ void GameScene::Finalize() {
 
 	//フィールド
 	field_->Finalize();
-
-	//レールカメラ
-	//railCamera_->Finalize();
-
-#ifdef _DEBUG
-	//制御ポイント
-	controlPoint_->Finalize();
-#endif // _DEBUG
-
 
 	//グローバル変数
 	GlobalVariables::GetInstance()->Finalize();

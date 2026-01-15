@@ -16,21 +16,21 @@ struct Vector3 final {
 	//長さ(ノルム)
 	float Length();
 	// 正規化
-	Vector3 Normalize();
+	Vector3 Normalize()const;
 
 	/// <summary>
 	/// 内積
 	/// </summary>
 	/// <param name="v">ベクトル</param>
 	/// <returns>内積</returns>
-	float Dot(const Vector3& v);
+	float Dot(const Vector3& v)const;
 
 	/// <summary>
 	/// クロス積
 	/// </summary>
 	/// <param name="v">ベクトル</param>
 	/// <returns>クロス積</returns>
-	Vector3 Cross(const Vector3& v);
+	Vector3 Cross(const Vector3& v)const;
 
 	/// <summary>
 	/// 線形補間

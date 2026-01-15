@@ -30,6 +30,10 @@ void TitleScene::Update() {
 	object3d_->SetTransform(transform_);
 	object3d_->GetModel()->SetMaterial(material_);
 	object3d_->Update();
+
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		SceneManager::GetInstance()->ChangeScene("Game");
+	}
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
 	ImGuiManager::GetInstance()->Begin();

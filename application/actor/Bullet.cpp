@@ -29,38 +29,38 @@ void Bullet::Fire(bool isShooting) {
 //更新
 void Bullet::Update() {
 	for (BulletData& bulletData : bulletDataList_) {
-		if (bulletData.isAlive) {
+		if (bulletData.gameObject.isAlive) {
 			//飛ばす
 			bulletData.gameObject.transformData.translate += bulletData.gameObject.velocity;
 
 			//弾の情報を設定
-			bulletData.object3d->SetTransform(bulletData.gameObject.transformData);
-			bulletData.object3d->GetModel()->SetMaterial(bulletData.gameObject.material);
+			bulletData.gameObject.object3d->SetTransform(bulletData.gameObject.transformData);
+			bulletData.gameObject.object3d->GetModel()->SetMaterial(bulletData.gameObject.material);
 
 			//弾の生存させるか
 			Vector3 currentPos = bulletData.gameObject.transformData.translate;
 			float length = (currentPos - bulletData.shootingPoint).Length();
 			if (bulletData.aliveRange < length) {
-				bulletData.isAlive = false;
+				bulletData.gameObject.isAlive = false;
 				continue;
 			}
 
 			//弾の更新
-			bulletData.object3d->Update();
+			bulletData.gameObject.object3d->Update();
 		}
 	}
 
 	//弾の削除
 	for (BulletData& bulletData: bulletDataList_) {
-		if (!bulletData.isAlive) {
-			delete bulletData.object3d;
-			bulletData.object3d = nullptr;
+		if (!bulletData.gameObject.isAlive) {
+			delete bulletData.gameObject.object3d;
+			bulletData.gameObject.object3d = nullptr;
 		}
 	}
 
 	//リストから削除
 	bulletDataList_.remove_if([](const BulletData& b) {
-		return !b.isAlive;
+		return !b.gameObject.isAlive;
 	});
 }
 
@@ -68,8 +68,8 @@ void Bullet::Update() {
 void Bullet::Draw() {
 	//弾の描画
 	for (const BulletData& bulletData : bulletDataList_) {
-		if (bulletData.isAlive) {
-			bulletData.object3d->Draw();
+		if (bulletData.gameObject.isAlive) {
+			bulletData.gameObject.object3d->Draw();
 		}
 	}
 }
@@ -77,8 +77,8 @@ void Bullet::Draw() {
 //終了
 void Bullet::Finalize() {
 	for (BulletData& bulletData : bulletDataList_) {
-		delete bulletData.object3d;
-		bulletData.object3d = nullptr;
+		delete bulletData.gameObject.object3d;
+		bulletData.gameObject.object3d = nullptr;
 	}
 	bulletDataList_.clear();
 }
@@ -122,7 +122,7 @@ void Bullet::SetMaxBulletCount(uint32_t maxBulletCount) {
 BulletData Bullet::CreateBullet() {
 	BulletData bullet = {};
 	bullet.gameObject.transformData.scale = Vector3::MakeAllOne();
-	bullet.isAlive = true;
+	bullet.gameObject.isAlive = true;
 	//弾の位置を設定
 	bullet.gameObject.transformData.translate = shootingPosition_;
 	//射撃地点を取得
@@ -135,10 +135,10 @@ BulletData Bullet::CreateBullet() {
 	bullet.gameObject.material.uvMatrix = Matrix4x4::Identity4x4();
 
 	//3Dモデルの生成
-	bullet.object3d = new Object3d();
-	bullet.object3d->Initialize(camera_);
+	bullet.gameObject.object3d = new Object3d();
+	bullet.gameObject.object3d->Initialize(camera_);
 	bullet.aliveRange = aliveRange_;
-	bullet.object3d->SetModel("bullet");
+	bullet.gameObject.object3d->SetModel("bullet");
 
 	//サイズと角度の設定
 	bullet.gameObject.transformData.scale = size_;

@@ -55,14 +55,15 @@ struct RimLight {
 //カメラ
 struct Camera {
     float32_t3 worldPosition;
+    float32_t padding;
 };
 
-ConstantBuffer<Material> gMaterial : register(b0);
+ConstantBuffer<Material> gMaterial : register(b1);
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
-ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
-ConstantBuffer<Camera> gCamera : register(b2);
-ConstantBuffer<RimLight> gRimLight : register(b3);
+ConstantBuffer<DirectionalLight> gDirectionalLight : register(b2);
+ConstantBuffer<Camera> gCamera : register(b3);
+ConstantBuffer<RimLight> gRimLight : register(b4);
 StructuredBuffer<PointLight> gPointLight : register(t1);
 StructuredBuffer<SpotLight> gSpotLight : register(t2);
 
@@ -266,7 +267,7 @@ float32_t4 RimLighting(VertexShaderOutput input, float32_t3 toEye){
     }
     
     //カメラ基準
-    float32_t rim = 1.0f - saturate(dot(toEye, input.normal));
+    float32_t rim = 1.0f - saturate(dot(toEye,input.normal));
     
     //合成
     float32_t rimValue = pow(rim, gRimLight.power);

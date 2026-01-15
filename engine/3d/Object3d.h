@@ -181,7 +181,7 @@ public://メンバ関数
 	/// ワールドトランスフォームのゲッター
 	/// </summary>
 	/// <returns>ワールドトランスフォーム</returns>
-	const WorldTransform* GetWorldTransform()const;
+	WorldTransform* GetWorldTransform()const;
 
 	/// <summary>
 	/// トランスフォームデータのゲッター

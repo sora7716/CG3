@@ -63,9 +63,11 @@ void RailCamera::Update() {
 
 //デバッグ
 void RailCamera::Debug() {
+#ifdef USE_IMGUI
 	ImGui::DragFloat3("rotate", &rotate_.x, 0.1f);
 	ImGui::DragFloat3("translate", &translate_.x, 0.1f);
 	ImGui::DragFloat("FovY", &fovY_, 0.1f);
+#endif // USE_IMGUI
 }
 
 //描画

@@ -89,6 +89,11 @@ private://メンバ関数
 	/// 攻撃
 	/// </summary>
 	void Attack();
+
+	/// <summary>
+	/// ヘッドライトの更新
+	/// </summary>
+	void HeadlightUpdate();
 private://メンバ変数
 	//入力
 	Input* input_ = nullptr;
@@ -97,13 +102,9 @@ private://メンバ変数
 	Camera* camera_ = nullptr;
 
 	//プレイヤーデータ
-	PlayerData playerData_ = {};
+	GameObject gameObject_ = {};
 	//調整項目のグループ名
 	const char* groupName_ = "player";
-
-	//回転中心
-	//Object3d* rotateCenter_ = nullptr;
-	//TransformData rotateCenterTransformData_ = {};
 
 	//弾
 	Bullet* bullet_ = nullptr;

@@ -153,5 +153,13 @@ public://メンバ関数
 	/// <param name="mat">行列</param>
 	/// <returns>TransformData</returns>
 	static TransformData DecomposeMatrix(const Matrix4x4& mat);
+
+	/// <summary>
+	/// fromからtoの方向へ向く回転行列
+	/// </summary>
+	/// <param name="from">今のいる位置</param>
+	/// <param name="to">向いたい位置</param>
+	/// <returns></returns>
+	static Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
 };
 

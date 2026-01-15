@@ -8,23 +8,17 @@ class Object3d;
 struct GameObject {
 	TransformData transformData;
 	Vector3 velocity;
-	Vector3 direction;
+	Vector3 moveDirection;
+	Vector3 lookDirection;
 	Material material;
-};
-
-//プレイヤーデータ
-struct PlayerData {
-	GameObject gameObject;
 	Object3d* object3d;
-	bool isMove;
+	uint32_t isAlive;
 };
 
 //弾
 struct BulletData {
 	GameObject gameObject;
 	Vector3 direction;
-	Object3d* object3d;
 	Vector3 shootingPoint;
 	float aliveRange;
-	bool isAlive;
 };

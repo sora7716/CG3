@@ -134,26 +134,26 @@ public://メンバ関数
 	/// マウスの移動量のゲッター
 	/// </summary>
 	/// <returns>マウスの移動量</returns>
-	const Vector2Int GetMouseMoveAmount()const;
+	Vector2Int GetMouseMoveAmount()const;
 
 	/// <summary>
 	/// マウスホイールの回転量のゲッター
 	/// </summary>
 	/// <returns>マウスホイールの回転量</returns>
-	const int32_t GetWheelRotate()const;
+	int32_t GetWheelRotate()const;
 
 	/// <summary>
 	/// ワールド座標系のマウスの位置のゲッター
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	/// <returns>ワールド座標系のマウスの位置</returns>
-	const Vector3 GetWorldMousePosition(Camera* camera)const;
+    Vector3 GetWorldMousePosition(Camera* camera)const;
 
 	/// <summary>
 	/// スクリーン座標系のマウスの位置のゲッター
 	/// </summary>
 	/// <returns>スクリーン座標系のマウスの位置</returns>
-	const Vector2Int GetMousePosition()const;
+	Vector2Int GetMousePosition()const;
 
 	/// <summary>
 	/// Xboxが接続できたかどうか

@@ -73,6 +73,7 @@ struct ModelData {
 //カメラのデータの構造体
 struct CameraForGPU {
 	Vector3 worldPosition;
+	float padding;
 };
 
 //リムライトの構造体

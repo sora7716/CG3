@@ -205,7 +205,7 @@ const Vector4& Object3d::GetColor() const {
 }
 
 //ワールド行列のゲッター
-const WorldTransform* Object3d::GetWorldTransform() const {
+WorldTransform* Object3d::GetWorldTransform() const {
 	// TODO: return ステートメントをここに挿入します
 	return worldTransform_;
 }

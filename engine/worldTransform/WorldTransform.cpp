@@ -8,7 +8,8 @@
 void(WorldTransform::* WorldTransform::UpdateTransformTable[])() = {
 	&UpdateTransform,
 	&UpdateTransform2d,
-	&UpdateTransformBillboard
+	&UpdateTransformBillboard,
+	&UpdateTrasformDirectionToDirection
 };
 
 //初期化
@@ -146,6 +147,12 @@ Vector3 WorldTransform::GetWorldPos() {
 	return result;
 }
 
+//FromPosとToPosのセッター
+void WorldTransform::SetFromAndToPos(const Vector3& fromPos, const Vector3& toPos) {
+	fromPos_ = fromPos;
+	toPos_ = toPos;
+}
+
 //座標変換行列リソースの生成
 void WorldTransform::CreateTransformationMatrixResource() {
 	//座標変換行列リソースを作成する
@@ -162,6 +169,29 @@ void WorldTransform::CreateTransformationMatrixResource() {
 //座標の更新
 void WorldTransform::UpdateTransform() {
 	worldMatrix_ = Rendering::MakeAffineMatrix(transform_);
+	//TransformからWorldMatrixを作る
+	if (parent_) {
+		worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;
+	}
+	//wvpの書き込み
+	if (camera_) {
+		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+		wvpData_->wvp = node_.localMatrix * worldMatrix_ * viewProjectionMatrix;
+	} else {
+		wvpData_->wvp = worldMatrix_;
+	}
+	//ワールド行列を送信
+	wvpData_->world = node_.localMatrix * worldMatrix_;
+	//逆行列の転置行列を送信
+	wvpData_->worldInverseTranspose = worldMatrix_.InverseTranspose();
+}
+
+//座標の更新(向きたい方向に向かせる)
+void WorldTransform::UpdateTrasformDirectionToDirection() {
+	Matrix4x4 scaleMat = Rendering::MakeScaleMatrix(transform_.scale);
+	Matrix4x4 rotateMat = Rendering::DirectionToDirection(fromPos_, toPos_);
+	Matrix4x4 translateMat = Rendering::MakeTranslateMatrix(transform_.translate);
+	worldMatrix_ = scaleMat * rotateMat * translateMat;
 	//TransformからWorldMatrixを作る
 	if (parent_) {
 		worldMatrix_ = worldMatrix_ * parent_->worldMatrix_;

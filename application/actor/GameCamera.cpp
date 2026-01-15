@@ -7,6 +7,7 @@ void GameCamera::Initialize(Camera* camera, const Vector3& offset) {
 	//カメラとオフセットの記録
 	camera_ = camera;
 	offset_ = offset;
+	rotate_ = { 0.8f,0.0f,0.0f };
 }
 
 //更新
@@ -23,8 +24,10 @@ void GameCamera::Update() {
 
 //デバッグ
 void GameCamera::Debug() {
+#ifdef USE_IMGUI
 	ImGui::DragFloat3("rotate", &rotate_.x, 0.1f);
 	ImGui::DragFloat3("offset", &offset_.x, 0.1f);
+#endif // USE_IMGUI
 }
 
 //カメラのゲッター

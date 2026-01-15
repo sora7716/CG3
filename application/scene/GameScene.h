@@ -41,7 +41,6 @@ public://メンバ関数
 	/// 終了
 	/// </summary>
 	void Finalize()override;
-
 private://メンバ変数
 	//ゲームシーンのカメラ
 	Camera* camera_ = nullptr;
@@ -54,8 +53,5 @@ private://メンバ変数
 
 	//フィールド
 	std::unique_ptr<Field>field_ = nullptr;
-
-	//制御ポイント
-	std::unique_ptr<ControlPoint>controlPoint_ = nullptr;
 };
 

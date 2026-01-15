@@ -110,19 +110,19 @@ bool Input::ReleaseTriggerMouseButton(Click mouseClicPos) {
 }
 
 //マウスの移動量のゲッター
-const Vector2Int Input::GetMouseMoveAmount() const {
+Vector2Int Input::GetMouseMoveAmount() const {
 	Vector2Int result = { mouseState_.lX,mouseState_.lY };
 	return result;
 }
 
 //マウスホイールの回転量のゲッター
-const int32_t Input::GetWheelRotate() const {
+int32_t Input::GetWheelRotate() const {
 	int32_t result = mouseState_.lZ;
 	return result;
 }
 
 //ワールド座標系のマウスの位置のゲッター
-const Vector3 Input::GetWorldMousePosition(Camera* camera) const {
+Vector3 Input::GetWorldMousePosition(Camera* camera) const {
 	// マウスの座標
 	POINT mousePosition;
 	// マウス座標(スクリーン座標)を取得する
@@ -157,7 +157,7 @@ const Vector3 Input::GetWorldMousePosition(Camera* camera) const {
 }
 
 //スクリーン座標系のマウスの位置のゲッター
-const Vector2Int Input::GetMousePosition() const {
+Vector2Int Input::GetMousePosition() const {
 	// マウスの座標
 	POINT mousePosition;
 	// マウス座標(スクリーン座標)を取得する
@@ -166,7 +166,8 @@ const Vector2Int Input::GetMousePosition() const {
 	// クライアントエリア座標に変換する
 	HWND hwnd = WinApi::GetInstance()->GetHwnd();
 	ScreenToClient(hwnd, &mousePosition);
-	return Vector2Int(mousePosition.x, mousePosition.y);
+	Vector2Int result = { mousePosition.x,mousePosition.y };
+	return result;
 }
 
 //Xboxが接続できたかどうか

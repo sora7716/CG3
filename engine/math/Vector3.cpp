@@ -13,9 +13,9 @@ float Vector3::Length() {
 }
 
 //正規化
-Vector3 Vector3::Normalize() {
+Vector3 Vector3::Normalize()const {
 	Vector3 result = {};
-	float len = this->Length();
+	float len = Vector3(x,y,z).Length();
 	if (len != 0.0f) {
 		result.x = x / len;
 		result.y = y / len;
@@ -25,14 +25,14 @@ Vector3 Vector3::Normalize() {
 }
 
 //内積
-float Vector3::Dot(const Vector3& v) {
+float Vector3::Dot(const Vector3& v)const {
 	Vector3 tempVector = Vector3(x, y, z) * v;
 	float dot = tempVector.x + tempVector.y + tempVector.z;
 	return dot;
 }
 
 //クロス積
-Vector3 Vector3::Cross(const Vector3& v) {
+Vector3 Vector3::Cross(const Vector3& v)const {
 	// TODO: return ステートメントをここに挿入します
 	Vector3 result{};
 	result.x = y * v.z - z * v.y;

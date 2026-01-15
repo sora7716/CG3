@@ -13,7 +13,8 @@ class Camera;
 enum class TransformMode :uint32_t {
 	k3d,
 	k2d,
-	kBilboard
+	kBilboard,
+	kDirectionToDirection
 };
 /// <summary>
 /// ワールドトランスフォーム
@@ -169,6 +170,13 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>ワールド座標</returns>
 	Vector3 GetWorldPos();
+
+	/// <summary>
+	/// FromPosとToPosのセッター
+	/// </summary>
+	/// <param name="fromPos">fromPos</param>
+	/// <param name="toPos">toPos</param>
+	void SetFromAndToPos(const Vector3& fromPos, const Vector3& toPos);
 private://メンバ関数
 	/// <summary>
 	/// 座標変換行列リソースの生成
@@ -179,6 +187,11 @@ private://メンバ関数
 	/// 座標の更新
 	/// </summary>
 	void UpdateTransform();
+
+	/// <summary>
+	/// 座標の更新(向きたい方向に向かせる)
+	/// </summary>
+	void UpdateTrasformDirectionToDirection();
 
 	/// <summary>
 	/// 座標の更新(2次元)
@@ -213,6 +226,11 @@ private://メンバ変数
 	const WorldTransform* parent_ = nullptr;
 	//ノード
 	Node node_ = {};
+
+	//fromPos
+	Vector3 fromPos_ = {};
+	//toPos
+	Vector3 toPos_ = {};
 };
 
 
