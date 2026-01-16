@@ -1,5 +1,6 @@
 #pragma once
 #include "ActorData.h"
+#include <Windows.h>
 #include <string>
 
 // 前方宣言
@@ -79,6 +80,9 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>速度</returns>
 	Vector3 GetVelocity();
+private://定数
+	//カメラの移動速度
+	static inline const float kMoveSpeed = 4.0f;
 private://メンバ関数
 	/// <summary>
 	/// 移動
@@ -114,5 +118,8 @@ private://メンバ変数
 
 	//リムライト
 	RimLight rimLight_ = {};
+
+	//Xboxの番号
+	DWORD xBoxPadNumber_ = 0;
 };
 

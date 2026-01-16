@@ -26,7 +26,7 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 
 	//3Dオブジェクトの生成と初期化
 	gameObject_.object3d = new Object3d();
-	gameObject_.object3d->Initialize(camera_,TransformMode::kDirectionToDirection);
+	gameObject_.object3d->Initialize(camera_);
 	gameObject_.object3d->SetModel(modelName);
 
 	//マテリアルの初期化
@@ -53,6 +53,8 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	//スポットライトを設定
 	Object3dCommon::GetInstance()->AddSpotLight("headlight");
 	headlight_ = Object3dCommon::GetInstance()->GetSpotLight("headlight");
+	headlight_.cosAngle = 0.8f;
+	headlight_.cosFolloffStart = 1.0f;
 }
 
 //更新
@@ -72,11 +74,39 @@ void Player::Update() {
 	//ヘッドライトの更新
 	HeadlightUpdate();
 
-	//マウスの位置
-	Vector3 mousePos = input_->GetWorldMousePosition(camera_);
-	Vector3 dir = mousePos - gameObject_.object3d->GetWorldPos();
+	////マウスの位置
+	//Vector3 mousePos = input_->GetWorldMousePosition(camera_);
+	//Vector3 dir = mousePos - gameObject_.object3d->GetWorldPos();
 
-	gameObject_.object3d->GetWorldTransform()->SetFromAndToPos(gameObject_.object3d->GetWorldPos(),mousePos);
+	//gameObject_.object3d->GetWorldTransform()->SetFromAndToPos(gameObject_.object3d->GetWorldPos(),mousePos);
+	
+	// XboxPad
+	if (input_->IsXboxPadConnected(xBoxPadNumber_)) {
+
+		float stickX = input_->GetXboxPadRighttStick(xBoxPadNumber_).x; // -1..1
+
+		// デッドゾーン（スティックの微妙なブレ対策）
+		const float deadZone = 0.15f;
+		if (fabsf(stickX) < deadZone) {
+			stickX = 0.0f;
+		} else {
+			// デッドゾーン分を詰めて 0..1 に戻す（好み）
+			stickX = (stickX - copysignf(deadZone, stickX)) / (1.0f - deadZone);
+		}
+
+		// 回転速度（ラジアン/秒） 例：180度/秒
+		const float yawSpeed = 3.14159265f; // PI rad/s = 180deg/s
+
+		gameObject_.transformData.rotate.y += stickX * yawSpeed * Math::kDeltaTime;
+	}
+
+	// 必要なら 0..2PI に丸める（巨大化防止）
+	const float twoPi = 6.2831853f;
+	if (gameObject_.transformData.rotate.y > twoPi) gameObject_.transformData.rotate.y -= twoPi;
+	if (gameObject_.transformData.rotate.y < 0.0f)  gameObject_.transformData.rotate.y += twoPi;
+
+	gameObject_.object3d->SetRotate(gameObject_.transformData.rotate);
+
 	//3Dオブジェクトの更新
 	gameObject_.object3d->Update();
 }
@@ -99,6 +129,8 @@ void Player::Debug() {
 	ImGui::DragFloat("rimSoftness", &rimLight_.softness, 0.1f, 0.0f, 100.0f);
 	ImGui::DragFloat("rimOutLinePower", &rimLight_.outLinePower, 0.1f, 0.0f, 100.0f);
 	ImGuiManager::GetInstance()->CheckBoxToInt("enableRimLighting", rimLight_.enableRimLighting);
+	ImGui::DragFloat("cosAngle", &headlight_.cosAngle, 0.1f);
+	ImGui::DragFloat("cosFolloffStart", &headlight_.cosFolloffStart, 0.1f);
 #endif // USE_IMGUI
 }
 
@@ -159,8 +191,31 @@ void Player::Move() {
 	}
 
 	//移動
-	gameObject_.transformData.translate += (gameObject_.velocity * gameObject_.moveDirection.Normalize()) * Math::kDeltaTime;
+	//gameObject_.transformData.translate += (gameObject_.velocity * gameObject_.moveDirection.Normalize()) * Math::kDeltaTime;
 
+	////トランスフォームのセット
+	//gameObject_.object3d->SetTransform(gameObject_.transformData);
+
+	//XboxPadの平行移動
+	if (input_->IsXboxPadConnected(xBoxPadNumber_)) {
+		if (std::fabs(input_->GetXboxPadLeftStick(xBoxPadNumber_).x) > 0.0f
+			|| std::fabs(input_->GetXboxPadLeftStick(xBoxPadNumber_).y) > 0.0f) {
+			gameObject_.moveDirection.x = input_->GetXboxPadLeftStick(xBoxPadNumber_).x;
+			gameObject_.moveDirection.z = input_->GetXboxPadLeftStick(xBoxPadNumber_).y;
+		}
+	}
+
+	//プレイヤーの角度をもとに回転行列を求める
+	Matrix4x4 rotMat = Rendering::MakeRotateXYZMatrix(gameObject_.transformData.rotate);
+
+	//カメラの向いてる方向を正にする(XとZ軸限定)
+	Vector3 moveDirXZ = Math::TransformNormal(Vector3(gameObject_.moveDirection.x, 0.0f, gameObject_.moveDirection.z), rotMat);
+
+	//Y軸のそのまま
+	gameObject_.moveDirection = { moveDirXZ.x,gameObject_.moveDirection.y,moveDirXZ.z };
+
+	//カメラを移動させる
+	gameObject_.transformData.translate += gameObject_.moveDirection.Normalize() * kMoveSpeed * Math::kDeltaTime;
 	//トランスフォームのセット
 	gameObject_.object3d->SetTransform(gameObject_.transformData);
 }
@@ -170,14 +225,14 @@ void Player::Attack() {
 	//弾の発射
 	bullet_->SetShootingPosition(gameObject_.object3d->GetWorldPos());
 	bullet_->SetSourceWorldMatrix(gameObject_.object3d->GetWorldTransform()->GetWorldMatrix());
-	bullet_->Fire(input_->TriggerKey(DIK_SPACE));
+	bullet_->Fire(input_->TriggerXboxPad(xBoxPadNumber_,XboxInput::kRT));
 	bullet_->Update();
 }
 
 //ヘッドライトの更新
 void Player::HeadlightUpdate() {
 	//ライトの位置をプレイヤーの前に設定
-	Vector3 headlightOffset = { 0.0f, 0.0f, 1.0f };
+	Vector3 headlightOffset = { 0.0f, 0.0f, 0.5f };
 	headlight_.position = gameObject_.object3d->GetWorldPos() + headlightOffset;
 	// ローカル空間での“前”の向き
 	Vector3 localForward = { 0.0f, 0.0f, 1.0f };

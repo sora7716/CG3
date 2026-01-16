@@ -9,7 +9,6 @@ struct GameObject {
 	TransformData transformData;
 	Vector3 velocity;
 	Vector3 moveDirection;
-	Vector3 lookDirection;
 	Material material;
 	Object3d* object3d;
 	uint32_t isAlive;
