@@ -16,27 +16,7 @@ WireframeObject3d::~WireframeObject3d() {
 
 //初期化
 void WireframeObject3d::Initialize(Camera* camera, ModelType modelType) {
-#ifndef Release
-	(void)camera;
-	(void)modelType;
-#endif // !Release
-
 #ifdef _DEBUG
-	//DirectXの基盤部分を受け取る
-	directXBase_ = WireframeObject3dCommon::GetInstance()->GetDirectXBase();
-
-	//ワールドトランスフォームの生成、初期化
-	worldTransform_ = new WorldTransform();
-	worldTransform_->Initialize(directXBase_, TransformMode::k3d);
-
-	//uv座標
-	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
-
-	//カメラにデフォルトカメラを代入
-	worldTransform_->SetCamera(camera);
-	//カメラをセット
-	WireframeObject3dCommon::GetInstance()->CreateCameraResource(worldTransform_->GetCamera()->GetTranslate());
-
 	//マテリアルの初期化
 	material_.color = { 0.0f,0.0f,0.0f,1.0f };
 	material_.enableLighting = false;
@@ -52,8 +32,24 @@ void WireframeObject3d::Initialize(Camera* camera, ModelType modelType) {
 	//マテリアルの設定
 	model_->SetMaterial(material_);
 #endif // _DEBUG
-}
+	
+	//モデルタイプをリリース時でも使っている風にしている
+	(void)modelType;
 
+	//DirectXの基盤部分を受け取る
+	directXBase_ = WireframeObject3dCommon::GetInstance()->GetDirectXBase();
+	//ワールドトランスフォームの生成、初期化
+	worldTransform_ = new WorldTransform();
+	worldTransform_->Initialize(directXBase_, TransformMode::k3d);
+
+	//uv座標
+	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
+
+	//カメラにデフォルトカメラを代入
+	worldTransform_->SetCamera(camera);
+	//カメラをセット
+	WireframeObject3dCommon::GetInstance()->CreateCameraResource(worldTransform_->GetCamera()->GetTranslate());
+}
 
 //更新
 void WireframeObject3d::Update() {
@@ -62,13 +58,24 @@ void WireframeObject3d::Update() {
 	WireframeObject3dCommon::GetInstance()->Update();
 	//UVトランスフォーム更新
 	model_->UVTransform(uvTransform_);
-
 	//ノードの設定
 	worldTransform_->SetNode(model_->GetModelData().rootNode);
+#endif // _DEBUG
+
+	//Sphere
+	sphere_.center = WireframeObject3d::GetWorldPos();
+	sphere_.radius = radius_;
+	//AABB
+	aabb_.min = WireframeObject3d::GetWorldPos() * -worldTransform_->GetScale();
+	aabb_.max = WireframeObject3d::GetWorldPos() * worldTransform_->GetScale();
+	//OBB
+	obb_.center = WireframeObject3d::GetWorldPos();
+	obb_.rotate = worldTransform_->GetRotate();
+	Rendering::MakeOBBRotateMatrix(obb_.orientations, obb_.rotate);
+	obb_.size = worldTransform_->GetScale();
 
 	//ワールドトランスフォーム
 	worldTransform_->Update();
-#endif // _DEBUG
 }
 
 //描画
@@ -187,4 +194,19 @@ WorldTransform* WireframeObject3d::GetWorldTransform() const {
 //ワールド座標のゲッター
 Vector3 WireframeObject3d::GetWorldPos() {
 	return worldTransform_->GetWorldPos();
+}
+
+//球のゲッター
+Sphere WireframeObject3d::GetSphere() const {
+	return sphere_;
+}
+
+//AABBのゲッター
+AABB WireframeObject3d::GetAABB() const {
+	return aabb_;
+}
+
+//OBBのゲッター
+OBB WireframeObject3d::GetOBB() const {
+	return obb_;
 }

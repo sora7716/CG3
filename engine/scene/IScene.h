@@ -10,6 +10,7 @@
 #include "engine/2d/Sprite.h"
 #include "engine/3d/Object3d.h"
 #include "engine/particle/ParticleManager.h"
+#include "engine/debug/WireframeObject3d.h"
 #include <memory>
 
 // 前方宣言

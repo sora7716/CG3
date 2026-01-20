@@ -1,5 +1,6 @@
 #pragma once
 #include "engine/3d/Model.h"
+#include "engine/math/CollisionPrimitives.h"
 #include "engine/math/ResourceData.h"
 #include "engine/math/RenderingData.h"
 #include "engine/base/BlendMode.h"
@@ -152,6 +153,24 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>ワールド座標</returns>
 	Vector3 GetWorldPos();
+
+	/// <summary>
+	/// 球のゲッター
+	/// </summary>
+	/// <returns>球</returns>
+	Sphere GetSphere()const;
+
+	/// <summary>
+	/// AABBのゲッター
+	/// </summary>
+	/// <returns>AABB</returns>
+	AABB GetAABB()const;
+
+	/// <summary>
+	/// OBBのゲッター
+	/// </summary>
+	/// <returns></returns>
+	OBB GetOBB()const;
 private://メンバ変数
 	//UV座標
 	Transform2dData uvTransform_ = {
@@ -171,5 +190,10 @@ private://メンバ変数
 
 	//マテリアル
 	Material material_ = {};
+
+	//衝突判定に使用するプリミティブのデータ
+	Sphere sphere_ = {};//球
+	AABB aabb_ = {};//AABB
+	OBB obb_ = {};//OBB
 };
 

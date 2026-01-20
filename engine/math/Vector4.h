@@ -31,4 +31,28 @@ struct Vector4 final {
 	/// </summary>
 	/// <returns>白</returns>
 	static Vector4 MakeWhiteColor();
+
+	/// <summary>
+	/// 赤のゲッター
+	/// </summary>
+	/// <returns>赤</returns>
+	static Vector4 MakeRedColor();
+
+	/// <summary>
+	/// 緑のゲッター
+	/// </summary>
+	/// <returns>緑</returns>
+	static Vector4 MakeGreenColor();
+
+	/// <summary>
+	/// 青のゲッター
+	/// </summary>
+	/// <returns>青</returns>
+	static Vector4 MakeBlueColor();
+
+	/// <summary>
+	/// 黒のゲッター
+	/// </summary>
+	/// <returns>黒</returns>
+	static Vector4 MakeBlackColor();
 };

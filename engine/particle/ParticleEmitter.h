@@ -1,18 +1,13 @@
 #pragma once
 #include <list>
+#include <random>
 #include "engine/math/RenderingData.h"
 #include "engine/math/Vector4.h"
-#include <random>
+#include "engine/math/CollisionPrimitives.h"
 
 //前方宣言
 class Camera;
 class Model;
-
-//AABB
-struct AABB {
-	Vector3 min;//最小値
-	Vector3 max;//最大値
-};
 
 //パーティクルの情報をGPUに送るための構造体
 struct ParticleForGPU {

@@ -55,6 +55,7 @@
     <ClCompile Include="engine\input\Input.cpp" />
     <ClCompile Include="engine\main.cpp" />
     <ClCompile Include="engine\math\func\Aithmetic.cpp" />
+    <ClCompile Include="engine\math\func\Collision.cpp" />
     <ClCompile Include="engine\math\func\Math.cpp" />
     <ClCompile Include="engine\math\func\Rendering.cpp" />
     <ClCompile Include="engine\math\Matrix4x4.cpp" />
@@ -118,7 +119,9 @@
     <ClInclude Include="engine\framework\Framework.h" />
     <ClInclude Include="engine\framework\GameSystem.h" />
     <ClInclude Include="engine\input\Input.h" />
+    <ClInclude Include="engine\math\CollisionPrimitives.h" />
     <ClInclude Include="engine\math\func\Aithmetic.h" />
+    <ClInclude Include="engine\math\func\Collision.h" />
     <ClInclude Include="engine\math\func\Math.h" />
     <ClInclude Include="engine\math\func\Rendering.h" />
     <ClInclude Include="engine\math\Matrix3x3.h" />
