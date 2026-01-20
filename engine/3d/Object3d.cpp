@@ -115,8 +115,8 @@ void Object3d::SetTranslate(const Vector3& translate) {
 }
 
 //トランスフォームのセッター
-void Object3d::SetTransform(const TransformData& transform) {
-	worldTransform_->SetTransform(transform);
+void Object3d::SetTransformData(const TransformData& transform) {
+	worldTransform_->SetTransformData(transform);
 }
 
 // uvスケールのセッター

@@ -23,12 +23,20 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	//フィールド
 	field_ = std::make_unique<Field>();
 	field_->Initialize(gameCamera_->GetCamera());
+
+	wireframeObject3d_ = std::make_unique<WireframeObject3d>();
+	wireframeObject3d_->Initialize(camera_,ModelType::kSphere);
 }
 
 //更新
 void GameScene::Update() {
 	//シーンのインタフェースの初期化
 	IScene::Update();
+
+	//カメラの設定
+	player_->SetCamera(camera_);
+	field_->SetCamera(camera_);
+	wireframeObject3d_->SetCamera(camera_);
 
 	//プレイヤー
 	player_->Update();
@@ -42,6 +50,12 @@ void GameScene::Update() {
 	field_->SetPointLight(Object3dCommon::GetInstance()->GetPointLight());
 	field_->SetSpotLight(Object3dCommon::GetInstance()->GetSpotLightPtr());
 	field_->Update();
+
+	wireframeObject3d_->SetRadius(radius_);
+	//wireframeObject3d_->SetScale(transform_.scale);
+	wireframeObject3d_->SetRotate(transform_.rotate);
+	wireframeObject3d_->SetTranslate(transform_.translate);
+	wireframeObject3d_->Update();
 
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
@@ -64,6 +78,11 @@ void GameScene::Update() {
 	gameCamera_->Debug();
 	ImGui::End();
 
+	ImGui::Begin("wireframe");
+	ImGuiManager::GetInstance()->DragTransform(transform_);
+	ImGui::DragFloat("radius", &radius_);
+	ImGui::End();
+
 	//Object3dCommon
 	Object3dCommon::GetInstance()->Debug();
 
@@ -71,21 +90,12 @@ void GameScene::Update() {
 	ImGuiManager::GetInstance()->End();
 #endif // USE_IMGUI
 
-#ifndef Release
-	player_->SetCamera(gameCamera_->GetCamera());
-	field_->SetCamera(gameCamera_->GetCamera());
-	gameCamera_->SetCamera(gameCamera_->GetCamera());
-#endif // Release
-
 #ifdef _DEBUG
 	//カメラの切り替え
 	if (debugCamera_->IsDebug()) {
-		player_->SetCamera(debugCamera_->GetCamera());
-		field_->SetCamera(debugCamera_->GetCamera());
+		camera_ = debugCamera_->GetCamera();
 	} else {
-		player_->SetCamera(gameCamera_->GetCamera());
-		field_->SetCamera(gameCamera_->GetCamera());
-		gameCamera_->SetCamera(gameCamera_->GetCamera());
+		camera_ = gameCamera_->GetCamera();
 	}
 #endif // _DEBUG
 
@@ -98,6 +108,8 @@ void GameScene::Draw() {
 
 	//マップチップ
 	field_->Draw();
+
+	wireframeObject3d_->Draw();
 }
 
 //終了

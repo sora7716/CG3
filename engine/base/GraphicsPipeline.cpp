@@ -365,11 +365,11 @@ void GraphicsPipeline::InitializeBlendState(int32_t blendMode) {
 }
 
 //ラスタライザステートの初期化
-void GraphicsPipeline::InitializeRasterizerSatate() {
+void GraphicsPipeline::InitializeRasterizerSatate(FillMode fillMode) {
 	//裏面(時計周り)を表示しない
 	rasterizerDesc_.CullMode = D3D12_CULL_MODE_BACK;
 	//三角形の中を塗りつぶす
-	rasterizerDesc_.FillMode = D3D12_FILL_MODE_SOLID;
+	rasterizerDesc_.FillMode = static_cast<D3D12_FILL_MODE>(fillMode);
 }
 
 //頂点シェーダのコンパイル

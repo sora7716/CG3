@@ -1,4 +1,4 @@
-#include "Object3dCommon.h"
+#include "WireframeObject3dCommon.h"
 #include "engine/base/DirectXBase.h"
 #include "engine/camera/Camera.h"
 #include "engine/base/GraphicsPipeline.h"
@@ -11,16 +11,16 @@
 using namespace Microsoft::WRL;
 
 //インスタンスのゲッター
-Object3dCommon* Object3dCommon::GetInstance() {
+WireframeObject3dCommon* WireframeObject3dCommon::GetInstance() {
 	assert(!isFinalize && "GetInstance() called after Finalize()");
 	if (instance == nullptr) {
-		instance = new Object3dCommon();
+		instance = new WireframeObject3dCommon();
 	}
 	return instance;
 }
 
 //初期化
-void Object3dCommon::Initialize(DirectXBase* directXBase) {
+void WireframeObject3dCommon::Initialize(DirectXBase* directXBase) {
 	assert(directXBase);//Nullチェック
 	directXBase_ = directXBase;//DirectXの基盤を受け取る
 	//ブレンド
@@ -41,7 +41,7 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 	//インプットレイアウト
 	makeGraphicsPipeline_->InitializeInputLayoutDesc();
 	//ラスタライザステート
-	makeGraphicsPipeline_->InitializeRasterizerSatate(FillMode::kSolid);
+	makeGraphicsPipeline_->InitializeRasterizerSatate(FillMode::kWireframe);
 	//頂点シェーダBlob
 	makeGraphicsPipeline_->CompileVertexShader();
 	//ピクセルシェーダBlob
@@ -104,7 +104,7 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 }
 
 //更新
-void Object3dCommon::Update() {
+void WireframeObject3dCommon::Update() {
 	//調整項目を適応
 	ApplyGlobalVariablesForPointLight(pointLightGroupNames_[0].c_str(), pointLightDataList_[0]);
 	//ApplyGlobalVariablesForSpotLight(spotLightGroupNames_[0].c_str(), spotLightDataList_[0]);
@@ -124,7 +124,7 @@ void Object3dCommon::Update() {
 }
 
 //共通描画設定
-void Object3dCommon::DrawSetting() {
+void WireframeObject3dCommon::DrawSetting() {
 	//ルートシグネイチャをセットするコマンド
 	directXBase_->GetCommandList()->SetGraphicsRootSignature(rootSignature_.Get());
 	//カメラCBufferの場所を設定
@@ -134,7 +134,7 @@ void Object3dCommon::DrawSetting() {
 }
 
 //デバッグ
-void Object3dCommon::Debug() {
+void WireframeObject3dCommon::Debug() {
 #ifdef USE_IMGUI
 	ImGui::Begin("Lighting");
 	ImGui::ColorEdit4("directional.color", &directionalLightData_.color.x);
@@ -148,7 +148,7 @@ void Object3dCommon::Debug() {
 }
 
 //カメラリソースの生成
-void Object3dCommon::CreateCameraResource(const Vector3& cameraTranslate) {
+void WireframeObject3dCommon::CreateCameraResource(const Vector3& cameraTranslate) {
 	//光源のリソースを作成
 	cameraResource_ = directXBase_->CreateBufferResource(sizeof(CameraForGPU));
 	//光源データの書きこみ
@@ -157,37 +157,37 @@ void Object3dCommon::CreateCameraResource(const Vector3& cameraTranslate) {
 }
 
 //カメラの位置のセッター
-void Object3dCommon::SetCameraForGPU(const Vector3& cameraTranslate) {
+void WireframeObject3dCommon::SetCameraForGPU(const Vector3& cameraTranslate) {
 	cameraForGPU_->worldPosition = cameraTranslate;
 }
 
 //DirectionalLightのリソースのゲッター
-ID3D12Resource* Object3dCommon::GetDirectionalLightResource()const {
+ID3D12Resource* WireframeObject3dCommon::GetDirectionalLightResource()const {
 	return directionalLightResource_.Get();
 }
 
 //PointLightのリソースのゲッター
-ID3D12Resource* Object3dCommon::GetPointLightResource() const {
+ID3D12Resource* WireframeObject3dCommon::GetPointLightResource() const {
 	return pointLightResource_.Get();
 }
 
 //SpotLightのリソースのゲッター
-ID3D12Resource* Object3dCommon::GetSpotLightResource() const {
+ID3D12Resource* WireframeObject3dCommon::GetSpotLightResource() const {
 	return spotLightResource_.Get();
 }
 
 //DirectXの基盤のゲッター
-DirectXBase* Object3dCommon::GetDirectXBase() const {
+DirectXBase* WireframeObject3dCommon::GetDirectXBase() const {
 	return directXBase_;
 }
 
 //グラフィックパイプラインのゲッター
-std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> Object3dCommon::GetGraphicsPipelineStates() const {
+std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> WireframeObject3dCommon::GetGraphicsPipelineStates() const {
 	return graphicsPipelineStates_;
 }
 
 //終了
-void Object3dCommon::Finalize() {
+void WireframeObject3dCommon::Finalize() {
 	delete blend_;
 	delete makeGraphicsPipeline_;
 	delete instance;
@@ -196,43 +196,43 @@ void Object3dCommon::Finalize() {
 }
 
 // デフォルトカメラのセッター
-void Object3dCommon::SetDefaultCamera(Camera* camera) {
+void WireframeObject3dCommon::SetDefaultCamera(Camera* camera) {
 	defaultCamera_ = camera;
 }
 
 // デフォルトカメラのゲッター
-Camera* Object3dCommon::GetDefaultCamera() const {
+Camera* WireframeObject3dCommon::GetDefaultCamera() const {
 	return defaultCamera_;
 }
 
 //SRVインデックスのゲッター(PointLight)
-uint32_t Object3dCommon::GetSrvIndexPoint() const {
+uint32_t WireframeObject3dCommon::GetSrvIndexPoint() const {
 	return srvIndexPoint_;
 }
 
 //SRVインデックスのゲッター(SpotLight)
-uint32_t Object3dCommon::GetSrvIndexSpot() const {
+uint32_t WireframeObject3dCommon::GetSrvIndexSpot() const {
 	return srvIndexSpot_;
 }
 
 //平行光源のゲッター
-const DirectionalLight& Object3dCommon::GetDirectionalLight() const {
+const DirectionalLight& WireframeObject3dCommon::GetDirectionalLight() const {
 	// TODO: return ステートメントをここに挿入します
 	return directionalLightData_;
 }
 
 //点光源のセッター
-PointLight* Object3dCommon::GetPointLight() {
+PointLight* WireframeObject3dCommon::GetPointLight() {
 	return pointLightDataList_;
 }
 
 //スポットライトのゲッター
-SpotLightData* Object3dCommon::GetSpotLightPtr() {
+SpotLightData* WireframeObject3dCommon::GetSpotLightPtr() {
 	return spotLightPtr_;
 }
 
 //スポットライトを追加
-void Object3dCommon::AddSpotLight(const std::string& name) {
+void WireframeObject3dCommon::AddSpotLight(const std::string& name) {
 	//読み込み済みならカメラを検索
 	if (spotLightDataList_.contains(name)) {
 		//読み込み済みなら早期return
@@ -256,18 +256,18 @@ void Object3dCommon::AddSpotLight(const std::string& name) {
 }
 
 //スポットライトのセッター
-void Object3dCommon::SetSpotLight(const std::string& name, const SpotLightData& spotLight) {
+void WireframeObject3dCommon::SetSpotLight(const std::string& name, const SpotLightData& spotLight) {
 	spotLightDataList_.at(name) = spotLight;
 }
 
 //スポットライトのゲッター
-SpotLightData& Object3dCommon::GetSpotLight(const std::string& name) {
+SpotLightData& WireframeObject3dCommon::GetSpotLight(const std::string& name) {
 	// TODO: return ステートメントをここに挿入します
 	return spotLightDataList_.at(name);
 }
 
 //平行光源の生成
-void Object3dCommon::CreateDirectionLight() {
+void WireframeObject3dCommon::CreateDirectionLight() {
 	//光源のリソースを作成
 	directionalLightResource_ = directXBase_->CreateBufferResource(sizeof(DirectionalLight));
 	//光源データの書きこみ
@@ -281,7 +281,7 @@ void Object3dCommon::CreateDirectionLight() {
 }
 
 //点光源の生成
-void Object3dCommon::CreatePointLight() {
+void WireframeObject3dCommon::CreatePointLight() {
 	// 配列サイズで確保
 	pointLightResource_ = directXBase_->CreateBufferResource(sizeof(PointLight) * kMaxLightCount);
 
@@ -301,7 +301,7 @@ void Object3dCommon::CreatePointLight() {
 }
 
 //点光源のストラクチャバッファの生成
-void Object3dCommon::CreateStructuredBufferForPoint() {
+void WireframeObject3dCommon::CreateStructuredBufferForPoint() {
 	//ストラクチャバッファを生成
 	srvIndexPoint_ = SRVManager::GetInstance()->Allocate() + TextureManager::kSRVIndexTop;
 	SRVManager::GetInstance()->CreateSRVForStructuredBuffer(
@@ -313,7 +313,7 @@ void Object3dCommon::CreateStructuredBufferForPoint() {
 }
 
 //スポットライトの生成
-void Object3dCommon::CreateSpotLight() {
+void WireframeObject3dCommon::CreateSpotLight() {
 	// 配列サイズで確保
 	spotLightResource_ = directXBase_->CreateBufferResource(sizeof(SpotLightData) * kMaxLightCount);
 
@@ -336,7 +336,7 @@ void Object3dCommon::CreateSpotLight() {
 }
 
 //スポットライトのストラクチャバッファの生成
-void Object3dCommon::CreateStructuredBufferForSpot() {
+void WireframeObject3dCommon::CreateStructuredBufferForSpot() {
 	//ストラクチャバッファを生成
 	srvIndexSpot_ = SRVManager::GetInstance()->Allocate() + TextureManager::kSRVIndexTop;
 	SRVManager::GetInstance()->CreateSRVForStructuredBuffer(
@@ -348,7 +348,7 @@ void Object3dCommon::CreateStructuredBufferForSpot() {
 }
 
 //グローバル変数に追加(PointLight)
-void Object3dCommon::AddItemForPointLight(const char* groupName, const PointLight& pointLight) {
+void WireframeObject3dCommon::AddItemForPointLight(const char* groupName, const PointLight& pointLight) {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	globalVariables->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "color", pointLight.color);
@@ -361,7 +361,7 @@ void Object3dCommon::AddItemForPointLight(const char* groupName, const PointLigh
 }
 
 //グローバル変数に追加(SpotLight)
-void Object3dCommon::AddItemForSpotLight(const char* groupName, const SpotLightData& spotLight) {
+void WireframeObject3dCommon::AddItemForSpotLight(const char* groupName, const SpotLightData& spotLight) {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	globalVariables->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "color", spotLight.color);
@@ -377,7 +377,7 @@ void Object3dCommon::AddItemForSpotLight(const char* groupName, const SpotLightD
 }
 
 //グローバル変数を適用(PointLight)
-void Object3dCommon::ApplyGlobalVariablesForPointLight(const char* groupName, PointLight& pointLight) {
+void WireframeObject3dCommon::ApplyGlobalVariablesForPointLight(const char* groupName, PointLight& pointLight) {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	pointLight.color = globalVariables->GetValue<Vector4>(groupName, "color");
 	pointLight.decay = globalVariables->GetValue<float>(groupName, "decay");
@@ -389,7 +389,7 @@ void Object3dCommon::ApplyGlobalVariablesForPointLight(const char* groupName, Po
 }
 
 //グローバル変数を適用(SpotLight)
-void Object3dCommon::ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLightData& spotLight) {
+void WireframeObject3dCommon::ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLightData& spotLight) {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	spotLight.color = globalVariables->GetValue<Vector4>(groupName, "color");
 	spotLight.cosAngle = globalVariables->GetValue<float>(groupName, "cosAngle");

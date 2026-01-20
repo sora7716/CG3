@@ -217,7 +217,7 @@ void Player::Move() {
 	//カメラを移動させる
 	gameObject_.transformData.translate += gameObject_.moveDirection.Normalize() * kMoveSpeed * Math::kDeltaTime;
 	//トランスフォームのセット
-	gameObject_.object3d->SetTransform(gameObject_.transformData);
+	gameObject_.object3d->SetTransformData(gameObject_.transformData);
 }
 
 //攻撃

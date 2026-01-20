@@ -37,6 +37,14 @@ void GameObjectList::LoadAudio() {
 //OBJファイルの読み込み
 void GameObjectList::LoadModel() {
 	//モデルの読み込み
+	
+	//デバッグ用
+	//球
+	ModelManager::GetInstance()->LoadModel("sphere", "sphere", "sphere.gltf");
+	//キューブ
+	ModelManager::GetInstance()->LoadModel("cube", "cube", "cube.obj");
+
+	//ゲームで使用するモデル
 	//プレイヤー
 	ModelManager::GetInstance()->LoadModel("player", "sphere", "sphereFlat.gltf");
 	//球
@@ -49,8 +57,6 @@ void GameObjectList::LoadModel() {
 	ModelManager::GetInstance()->LoadModel("ground", "cube", "cube.obj");
 	//フィールド
 	ModelManager::GetInstance()->LoadModel("field", "terrain", "terrain.obj");
-	//球
-	ModelManager::GetInstance()->LoadModel("sphere", "sphere", "sphere.gltf");
 	//平面
 	ModelManager::GetInstance()->LoadModel("plane", "base", "plane.gltf");
 	//スポットライト

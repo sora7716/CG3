@@ -5,6 +5,7 @@
 #include "actor/Field.h"
 #include "actor/MapChip.h"
 #include "actor/ControlPoint.h"
+#include "engine/debug/WireframeObject3d.h"
 
 /// <summary>
 /// ゲームシーン
@@ -53,5 +54,9 @@ private://メンバ変数
 
 	//フィールド
 	std::unique_ptr<Field>field_ = nullptr;
+
+	std::unique_ptr<WireframeObject3d>wireframeObject3d_ = nullptr;
+	TransformData transform_ = { {1.0f,1.0f,1.0f},{},{} };
+	float radius_ = 1.0f;
 };
 

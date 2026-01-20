@@ -1,11 +1,13 @@
 #pragma once
 #include "engine/base/Blend.h"
+#include "engine/base/GraphicsPipelineData.h"
 #include <dxcapi.h>
 #include <wrl.h>
 #include <d3d12.h>
 #include <cstdint>
 #include <memory>
 #include <string>
+
 //前方宣言
 class DirectXBase;
 
@@ -55,7 +57,7 @@ public://メンバ関数
 	/// インプットレイアウトの初期化
 	/// </summary>
 	void InitializeInputLayoutDesc();
-	
+
 	/// <summary>
 	/// インプットレイアウトの初期化(スプライト)
 	/// </summary>
@@ -68,9 +70,10 @@ public://メンバ関数
 	void InitializeBlendState(int32_t blendMode);
 
 	/// <summary>
-	/// ラスタライザステートの初期化
-	/// </summary>
-	void InitializeRasterizerSatate();
+    /// ラスタライザステートの初期化
+    /// </summary>
+	/// <param name="fillMode">ポリゴンをどう描画するかの設定</param>
+	void InitializeRasterizerSatate(FillMode fillMode = FillMode::kSolid);
 
 	/// <summary>
 	/// 頂点シェーダのコンパイル

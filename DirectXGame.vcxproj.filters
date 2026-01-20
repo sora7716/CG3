@@ -243,6 +243,12 @@
     <ClCompile Include="application\actor\GameCamera.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
+    <ClCompile Include="engine\debug\WireframeObject3d.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\debug\WireframeObject3dCommon.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\math\Matrix4x4.h">
@@ -433,6 +439,15 @@
     </ClInclude>
     <ClInclude Include="application\actor\GameCamera.h">
       <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\WireframeObject3d.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\GraphicsPipelineData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\WireframeObject3dCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

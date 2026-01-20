@@ -11,30 +11,36 @@
 //前方宣言
 class Camera;
 class DirectXBase;
+class Model;
+
+enum class ModelType {
+	kSphere,
+	kCube
+};
 
 /// <summary>
 /// 3Dオブジェクト
 /// </summary>
-class Object3d {
+class WireframeObject3d{
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Object3d() = default;
+	WireframeObject3d() = default;
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Object3d();
+	~WireframeObject3d();
 
 	/// <summary>
-	/// 初期化
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	/// <param name="transformMode">トランスフォームモード</param>
-	void Initialize(Camera* camera, TransformMode transformMode = TransformMode::k3d);
+    /// 初期化
+    /// </summary>
+    /// <param name="camera">カメラ</param>
+	/// <param name="modelType">モデルタイプ</param>
+	void Initialize(Camera* camera,ModelType modelType);
 
 	/// <summary>
 	/// 更新
@@ -58,16 +64,16 @@ public://メンバ関数
 	void Decompose();
 
 	/// <summary>
-	/// モデルのセッター
-	/// </summary>
-	/// <param name="name">モデルの名前</param>
-	void SetModel(const std::string& name);
-
-	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	void SetCamera(Camera* camera);
+
+	/// <summary>
+	/// 半径のセッター
+	/// </summary>
+	/// <param name="radius">半径</param>
+	void SetRadius(float radius);
 
 	/// <summary>
 	/// スケールのセッター
@@ -88,30 +94,6 @@ public://メンバ関数
 	void SetTranslate(const Vector3& translate);
 
 	/// <summary>
-	/// トランスフォームのセッター
-	/// </summary>
-	/// <param name="transform">トランスフォーム</param>
-	void SetTransformData(const TransformData& transform);
-
-	/// <summary>
-	/// uvスケールのセッター
-	/// </summary>
-	/// <param name="uvScale">スケール</param>
-	void SetUVScale(const Vector2& uvScale);
-
-	/// <summary>
-	/// uv回転のセッター
-	/// </summary>
-	/// <param name="uvRotate">回転</param>
-	void SetUVRotate(float uvRotate);
-
-	/// <summary>
-	/// uv平行移動のセッター
-	/// </summary>
-	/// <param name="uvTranslate">平行移動</param>
-	void SetUVTranslate(const Vector2& uvTranslate);
-
-	/// <summary>
 	/// 色のセッター
 	/// </summary>
 	/// <param name="color">色</param>
@@ -124,12 +106,6 @@ public://メンバ関数
 	void SetParent(const WorldTransform* parent);
 
 	/// <summary>
-	/// テクスチャの変更
-	/// </summary>
-	/// <param name="filePath">ファイルパス</param>
-	void SetTexture(const std::string& filePath);
-
-	/// <summary>
 	/// ブレンドモードのセッター
 	/// </summary>
 	/// <param name="blendMode"></param>
@@ -139,61 +115,37 @@ public://メンバ関数
 	/// スケールのゲッター
 	/// </summary>
 	/// <returns>スケール</returns>
-	const Vector3& GetScale()const;
+	float GetRadius()const;
+
+	/// <summary>
+	/// スケールのゲッター
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetScale()const;
 
 	/// <summary>
 	/// 回転のゲッター
 	/// </summary>
 	/// <returns>回転</returns>
-	const Vector3& GetRotate()const;
+	Vector3 GetRotate()const;
 
 	/// <summary>
 	/// 平行移動のゲッター
 	/// </summary>
 	/// <returns>平行移動</returns>
-	const Vector3& GetTranslate()const;
-
-	/// <summary>
-	/// uvスケールのゲッター
-	/// </summary>
-	/// <returns>uvスケール</returns>
-	const Vector2& GetUVScale()const;
-
-	/// <summary>
-	/// uv回転のゲッター
-	/// </summary>
-	/// <returns>uv回転</returns>
-	const float GetUVRotate()const;
-
-	/// <summary>
-	/// uv平行移動のゲッター
-	/// </summary>
-	/// <returns>uv平行移動</returns>
-	const Vector2& GetUVTranslate()const;
+	Vector3 GetTranslate()const;
 
 	/// <summary>
 	/// 色のゲッター
 	/// </summary>
 	/// <returns>色</returns>
-	const Vector4& GetColor()const;
+	Vector4 GetColor()const;
 
 	/// <summary>
 	/// ワールドトランスフォームのゲッター
 	/// </summary>
 	/// <returns>ワールドトランスフォーム</returns>
 	WorldTransform* GetWorldTransform()const;
-
-	/// <summary>
-	/// トランスフォームデータのゲッター
-	/// </summary>
-	/// <returns>トランスフォームデータ</returns>
-	const TransformData& GetTransformData()const;
-
-	/// <summary>
-	/// モデルのゲッター
-	/// </summary>
-	/// <returns>モデル</returns>
-	Model* GetModel();
 
 	/// <summary>
 	/// ワールド座標のゲッター
@@ -213,6 +165,7 @@ private://メンバ変数
 	Model* model_ = nullptr;
 	//ワールドトランスフォーム
 	WorldTransform* worldTransform_ = nullptr;
+	float radius_ = 1.0f;
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
 

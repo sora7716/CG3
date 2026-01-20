@@ -91,7 +91,7 @@ public://メンバ関数
 	/// ワールド座標のセッター
 	/// </summary>
 	/// <param name="transform">ワールド座標</param>
-	void SetTransform(const TransformData& transform);
+	void SetTransformData(const TransformData& transform);
 
 	/// <summary>
 	/// ワールド座標のセッター(2D)

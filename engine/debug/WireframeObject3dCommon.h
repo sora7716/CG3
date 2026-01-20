@@ -15,7 +15,7 @@ class Blend;
 /// <summary>
 /// 3Dオブジェクトの共通部分
 /// </summary>
-class Object3dCommon {
+class WireframeObject3dCommon {
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
@@ -23,7 +23,7 @@ public://メンバ関数
 	/// インスタンスのゲッター
 	/// </summary>
 	/// <returns></returns>
-	static Object3dCommon* GetInstance();
+	static WireframeObject3dCommon* GetInstance();
 
 	/// <summary>
 	/// 初期化
@@ -154,13 +154,13 @@ public://メンバ関数
 	SpotLightData& GetSpotLight(const std::string& name);
 private://メンバ関数
 	//コンストラクタの封印
-	Object3dCommon() = default;
+	WireframeObject3dCommon() = default;
 	//デストラクタの封印
-	~Object3dCommon() = default;
+	~WireframeObject3dCommon() = default;
 	//コピーコンストラクタ禁止
-	Object3dCommon(const Object3dCommon&) = delete;
+	WireframeObject3dCommon(const WireframeObject3dCommon&) = delete;
 	//代入演算子の禁止
-	Object3dCommon operator=(const Object3dCommon&) = delete;
+	WireframeObject3dCommon operator=(const WireframeObject3dCommon&) = delete;
 
 	/// <summary>
 	/// 平行光源の生成
@@ -216,7 +216,7 @@ private://メンバ関数
 	void ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLightData& spotLight);
 private://静的メンバ変数
 	//インスタンス
-	static inline Object3dCommon* instance = nullptr;
+	static inline WireframeObject3dCommon* instance = nullptr;
 	//Finalizeをしたかどうかのフラグ
 	static inline bool isFinalize = false;
 	//ライトの最大値
@@ -266,3 +266,4 @@ private://メンバ変数
 	std::string pointLightGroupNames_[kMaxLightCount] = { "pointLightGroup" };
 	std::string spotLightGroupNames_[kMaxLightCount] = { "spotLightGroup" };
 };
+

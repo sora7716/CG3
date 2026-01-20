@@ -43,7 +43,7 @@ void Sprite::Initialize(const std::string& spriteName) {
 
 //更新
 void Sprite::Update() {
-	worldTransform_->SetTransform(transform_);
+	worldTransform_->SetTransformData(transform_);
 	//ワールドトランスフォームの更新
 	worldTransform_->Update();
 }

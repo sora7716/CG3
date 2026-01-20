@@ -68,7 +68,7 @@ void WorldTransform::Decompose() {
 }
 
 //ワールド座標のセッター
-void WorldTransform::SetTransform(const TransformData& transform) {
+void WorldTransform::SetTransformData(const TransformData& transform) {
 	transform_ = transform;
 }
 

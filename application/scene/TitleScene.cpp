@@ -27,7 +27,7 @@ void TitleScene::Update() {
 	//シーンのインタフェースの初期化
 	IScene::Update();
 
-	object3d_->SetTransform(transform_);
+	object3d_->SetTransformData(transform_);
 	object3d_->GetModel()->SetMaterial(material_);
 	object3d_->Update();
 

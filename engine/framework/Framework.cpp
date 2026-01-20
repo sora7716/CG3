@@ -31,6 +31,8 @@ void Framework::Initialize() {
 	Object2dCommon::GetInstance()->Initialize(directXBase_.get());
 	//3Dオブジェクトの共通部分
 	Object3dCommon::GetInstance()->Initialize(directXBase_.get());
+	//ワイヤーフレームオブジェクトの共通部分
+	WireframeObject3dCommon::GetInstance()->Initialize(directXBase_.get());
 	//パーティクルの共通部分の初期化
 	ParticleCommon::GetInstance()->Initialize(directXBase_.get());
 	//ゲームオブジェクトのリスト
@@ -38,6 +40,7 @@ void Framework::Initialize() {
 	//カメラの設定
 	Object2dCommon::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->FindCamera("defaultCamera"));
 	Object3dCommon::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->FindCamera("defaultCamera"));
+	WireframeObject3dCommon::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->FindCamera("defaultCamera"));
 	ParticleCommon::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->FindCamera("defaultCamera"));
 	//シーンの管理
 	SceneManager::GetInstance()->Initialize(directXBase_.get());
@@ -79,6 +82,8 @@ void Framework::Finalize() {
 	Object2dCommon::GetInstance()->Finalize();
 	//3Dオブジェクトの共通部分
 	Object3dCommon::GetInstance()->Finalize();
+	//ワイヤーフレームの共通部分
+	WireframeObject3dCommon::GetInstance()->Finalize();
 	//パーティクルの共通部分
 	ParticleCommon::GetInstance()->Finalize();
 	//パーティクルマネージャー

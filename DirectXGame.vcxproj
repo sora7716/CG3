@@ -48,6 +48,8 @@
     <ClCompile Include="engine\debug\GlobalVariables.cpp" />
     <ClCompile Include="engine\debug\ImGuiManager.cpp" />
     <ClCompile Include="engine\debug\Log.cpp" />
+    <ClCompile Include="engine\debug\WireframeObject3d.cpp" />
+    <ClCompile Include="engine\debug\WireframeObject3dCommon.cpp" />
     <ClCompile Include="engine\framework\Framework.cpp" />
     <ClCompile Include="engine\framework\GameSystem.cpp" />
     <ClCompile Include="engine\input\Input.cpp" />
@@ -101,6 +103,7 @@
     <ClInclude Include="engine\base\DirectXBase.h" />
     <ClInclude Include="engine\base\FixFPS.h" />
     <ClInclude Include="engine\base\GraphicsPipeline.h" />
+    <ClInclude Include="engine\base\GraphicsPipelineData.h" />
     <ClInclude Include="engine\base\SRVManager.h" />
     <ClInclude Include="engine\base\StringUtility.h" />
     <ClInclude Include="engine\base\WinApi.h" />
@@ -110,6 +113,8 @@
     <ClInclude Include="engine\debug\GlobalVariables.h" />
     <ClInclude Include="engine\debug\ImGuiManager.h" />
     <ClInclude Include="engine\debug\Log.h" />
+    <ClInclude Include="engine\debug\WireframeObject3d.h" />
+    <ClInclude Include="engine\debug\WireframeObject3dCommon.h" />
     <ClInclude Include="engine\framework\Framework.h" />
     <ClInclude Include="engine\framework\GameSystem.h" />
     <ClInclude Include="engine\input\Input.h" />
