@@ -9,7 +9,7 @@ void GameSystem::Initialize() {
 	//シーンファクトリーのセット
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
 	//タイトルシーンを呼び出す
-	SceneManager::GetInstance()->ChangeScene("Title");
+	SceneManager::GetInstance()->ChangeScene("Game");
 #ifdef _DEBUG
 	//シーンの管理
 	SceneManager::GetInstance()->Update();

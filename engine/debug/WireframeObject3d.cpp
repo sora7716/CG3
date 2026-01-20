@@ -16,6 +16,12 @@ WireframeObject3d::~WireframeObject3d() {
 
 //初期化
 void WireframeObject3d::Initialize(Camera* camera, ModelType modelType) {
+#ifndef Release
+	(void)camera;
+	(void)modelType;
+#endif // !Release
+
+#ifdef _DEBUG
 	//DirectXの基盤部分を受け取る
 	directXBase_ = WireframeObject3dCommon::GetInstance()->GetDirectXBase();
 
@@ -45,11 +51,13 @@ void WireframeObject3d::Initialize(Camera* camera, ModelType modelType) {
 	}
 	//マテリアルの設定
 	model_->SetMaterial(material_);
+#endif // _DEBUG
 }
 
 
 //更新
 void WireframeObject3d::Update() {
+#ifdef _DEBUG
 	//Object3dの共通部分の更新
 	WireframeObject3dCommon::GetInstance()->Update();
 	//UVトランスフォーム更新
@@ -60,10 +68,12 @@ void WireframeObject3d::Update() {
 
 	//ワールドトランスフォーム
 	worldTransform_->Update();
+#endif // _DEBUG
 }
 
 //描画
 void WireframeObject3d::Draw() {
+#ifdef _DEBUG
 	//3Dオブジェクトの共通部分
 	WireframeObject3dCommon::GetInstance()->DrawSetting();
 
@@ -83,6 +93,7 @@ void WireframeObject3d::Draw() {
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, SRVManager::GetInstance()->GetGPUDescriptorHandle(WireframeObject3dCommon::GetInstance()->GetSrvIndexSpot()));
 	//モデルの描画	
 	model_->Draw();
+#endif // _DEBUG
 }
 
 //親子付け

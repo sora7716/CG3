@@ -36,8 +36,6 @@ void GameScene::Update() {
 	//カメラの設定
 	player_->SetCamera(camera_);
 	field_->SetCamera(camera_);
-	wireframeObject3d_->SetCamera(camera_);
-
 	//プレイヤー
 	player_->Update();
 
@@ -50,12 +48,6 @@ void GameScene::Update() {
 	field_->SetPointLight(Object3dCommon::GetInstance()->GetPointLight());
 	field_->SetSpotLight(Object3dCommon::GetInstance()->GetSpotLightPtr());
 	field_->Update();
-
-	wireframeObject3d_->SetRadius(radius_);
-	//wireframeObject3d_->SetScale(transform_.scale);
-	wireframeObject3d_->SetRotate(transform_.rotate);
-	wireframeObject3d_->SetTranslate(transform_.translate);
-	wireframeObject3d_->Update();
 
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
@@ -97,6 +89,14 @@ void GameScene::Update() {
 	} else {
 		camera_ = gameCamera_->GetCamera();
 	}
+
+	//ワイヤーフレーム
+	wireframeObject3d_->SetCamera(camera_);
+	wireframeObject3d_->SetRadius(radius_);
+	//wireframeObject3d_->SetScale(transform_.scale);
+	wireframeObject3d_->SetRotate(transform_.rotate);
+	wireframeObject3d_->SetTranslate(transform_.translate);
+	wireframeObject3d_->Update();
 #endif // _DEBUG
 
 }
