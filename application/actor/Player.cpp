@@ -79,7 +79,7 @@ void Player::Update() {
 	//Vector3 dir = mousePos - gameObject_.object3d->GetWorldPos();
 
 	//gameObject_.object3d->GetWorldTransform()->SetFromAndToPos(gameObject_.object3d->GetWorldPos(),mousePos);
-	
+
 	// XboxPad
 	if (input_->IsXboxPadConnected(xBoxPadNumber_)) {
 
@@ -156,8 +156,8 @@ void Player::SetPosition(const Vector3& positBulletion) {
 }
 
 //オブジェクト3dのゲッター
-Object3d* Player::GetObject3d() {
-	return gameObject_.object3d;
+Vector3 Player::GetWorldPos() {
+	return gameObject_.object3d->GetWorldPos();
 }
 
 //トランスフォームデータのゲッター
@@ -225,7 +225,7 @@ void Player::Attack() {
 	//弾の発射
 	bullet_->SetShootingPosition(gameObject_.object3d->GetWorldPos());
 	bullet_->SetSourceWorldMatrix(gameObject_.object3d->GetWorldTransform()->GetWorldMatrix());
-	bullet_->Fire(input_->TriggerXboxPad(xBoxPadNumber_,XboxInput::kRT));
+	bullet_->Fire(input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kRT));
 	bullet_->Update();
 }
 

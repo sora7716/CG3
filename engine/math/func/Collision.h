@@ -12,7 +12,7 @@ public://静的メンバ関数
 	/// <param name="sphere1">球1</param>
 	/// <param name="sphere2">球2</param>
 	/// <returns>衝突したかどうか</returns>
-	bool IsCollision(const Sphere& sphere1, const Sphere& sphere2);
+	static bool IsCollision(const Sphere& sphere1, const Sphere& sphere2);
 
 	/// <summary>
 	/// AABB同士の衝突判定
@@ -20,7 +20,7 @@ public://静的メンバ関数
 	/// <param name="aabb1">aabb1</param>
 	/// <param name="aabb2">aabb2</param>
 	/// <returns>衝突したかのフラグ</returns>
-	bool IsCollision(const AABB& aabb1, const AABB& aabb2);
+	static bool IsCollision(const AABB& aabb1, const AABB& aabb2);
 
 	/// <summary>
 	/// AABBと球の衝突判定

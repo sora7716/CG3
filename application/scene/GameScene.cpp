@@ -24,8 +24,10 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	field_ = std::make_unique<Field>();
 	field_->Initialize(gameCamera_->GetCamera());
 
-	wireframeObject3d_ = std::make_unique<WireframeObject3d>();
-	wireframeObject3d_->Initialize(camera_,ModelType::kSphere);
+	//敵の実装
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize(camera_,"enemy");
+	enemy_->SetTranslate({ 0.0f,0.0f,20.0f });
 }
 
 //更新
@@ -33,15 +35,21 @@ void GameScene::Update() {
 	//シーンのインタフェースの初期化
 	IScene::Update();
 
-	//カメラの設定
-	player_->SetCamera(camera_);
-	field_->SetCamera(camera_);
-	//プレイヤー
-	player_->Update();
-
 	//追従カメラ
 	gameCamera_->Update();
 	gameCamera_->SetTragetPos(player_->GetTransformData().translate);
+
+	//カメラの設定
+	player_->SetCamera(camera_);
+	field_->SetCamera(camera_);
+	enemy_->SetCamera(camera_);
+
+	//プレイヤー
+	player_->Update();
+
+	//敵
+	enemy_->SetTarget(player_->GetWorldPos());
+	enemy_->Update();
 
 	//フィールド
 	field_->SetDirectionalLight(Object3dCommon::GetInstance()->GetDirectionalLight());
@@ -69,10 +77,10 @@ void GameScene::Update() {
 	ImGui::Begin("gameCamera");
 	gameCamera_->Debug();
 	ImGui::End();
-
-	ImGui::Begin("wireframe");
-	ImGuiManager::GetInstance()->DragTransform(transform_);
-	ImGui::DragFloat("radius", &radius_);
+	
+	//敵
+	ImGui::Begin("enemy");
+	enemy_->Debug();
 	ImGui::End();
 
 	//Object3dCommon
@@ -89,14 +97,6 @@ void GameScene::Update() {
 	} else {
 		camera_ = gameCamera_->GetCamera();
 	}
-
-	//ワイヤーフレーム
-	wireframeObject3d_->SetCamera(camera_);
-	wireframeObject3d_->SetRadius(radius_);
-	//wireframeObject3d_->SetScale(transform_.scale);
-	wireframeObject3d_->SetRotate(transform_.rotate);
-	wireframeObject3d_->SetTranslate(transform_.translate);
-	wireframeObject3d_->Update();
 #endif // _DEBUG
 
 }
@@ -109,7 +109,8 @@ void GameScene::Draw() {
 	//マップチップ
 	field_->Draw();
 
-	wireframeObject3d_->Draw();
+	//敵
+	enemy_->Draw();
 }
 
 //終了

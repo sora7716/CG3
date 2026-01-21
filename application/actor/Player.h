@@ -64,10 +64,10 @@ public://メンバ関数
 	void SetPosition(const Vector3& position);
 
 	/// <summary>
-	/// オブジェクト3dのゲッター
+	/// ワールド座標系での位置のゲッター
 	/// </summary>
-	/// <returns>object3d</returns>
-	Object3d* GetObject3d();
+	/// <returns>ワールド座標系での位置</returns>
+	Vector3 GetWorldPos();
 
 	/// <summary>
 	/// トランスフォームデータのゲッター
@@ -107,8 +107,6 @@ private://メンバ変数
 
 	//プレイヤーデータ
 	GameObject gameObject_ = {};
-	//調整項目のグループ名
-	const char* groupName_ = "player";
 
 	//弾
 	Bullet* bullet_ = nullptr;

@@ -87,6 +87,14 @@ public:
 	/// <returns>逆正接関数</returns>
 	static float Cont(float theta);
 
+	/// <summary>
+	/// 円運動(x,z)
+	/// </summary>
+	/// <param name="center">中心</param>
+	/// <param name="radius">円運動の半径</param>
+	/// <param name="theta">角度</param>
+	static Vector3 CircularMoveXZ(const Vector3& center,const Vector2& radius,float theta);
+
 	///// <summary>
 	///// 弧度法を度数法に変換
 	///// </summary>

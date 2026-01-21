@@ -174,8 +174,8 @@ public://メンバ関数
 	/// <summary>
 	/// FromPosとToPosのセッター
 	/// </summary>
-	/// <param name="fromPos">fromPos</param>
-	/// <param name="toPos">toPos</param>
+	/// <param name="fromPos">現在の位置</param>
+	/// <param name="toPos">目的の位置</param>
 	void SetFromAndToPos(const Vector3& fromPos, const Vector3& toPos);
 private://メンバ関数
 	/// <summary>

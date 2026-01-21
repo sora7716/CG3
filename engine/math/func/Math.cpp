@@ -158,4 +158,12 @@ float Math::Cont(float theta) {
 	return (1.0f / tanf(theta));
 }
 
-
+// 円運動XZ
+Vector3 Math::CircularMoveXZ(const Vector3& center, const Vector2& radius, float theta) {
+	Vector3 result{};
+	//円運動させる
+	result.x = center.x + cos(theta) * radius.x;
+	result.y = center.y;
+	result.z = center.z + sin(theta) * radius.y;
+	return result;
+}

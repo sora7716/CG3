@@ -243,14 +243,20 @@
     <ClCompile Include="application\actor\GameCamera.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
-    <ClCompile Include="engine\math\func\Collision.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="engine\debug\WireframeObject3dCommon.cpp">
       <Filter>engine\debug</Filter>
     </ClCompile>
     <ClCompile Include="engine\debug\WireframeObject3d.cpp">
       <Filter>engine\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\math\func\Collision.cpp">
+      <Filter>engine\math\func</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\Enemy.cpp">
+      <Filter>application\actor</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\EnemyState.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -443,12 +449,6 @@
     <ClInclude Include="application\actor\GameCamera.h">
       <Filter>application\actor</Filter>
     </ClInclude>
-    <ClInclude Include="engine\base\GraphicsPipelineData.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\math\func\Collision.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="engine\debug\WireframeObject3d.h">
       <Filter>engine\debug</Filter>
     </ClInclude>
@@ -457,6 +457,18 @@
     </ClInclude>
     <ClInclude Include="engine\math\CollisionPrimitives.h">
       <Filter>engine\math</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\func\Collision.h">
+      <Filter>engine\math\func</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\GraphicsPipelineData.h">
+      <Filter>engine\base</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\Enemy.h">
+      <Filter>application\actor</Filter>
+    </ClInclude>
+    <ClInclude Include="application\actor\EnemyState.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

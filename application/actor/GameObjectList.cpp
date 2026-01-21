@@ -47,6 +47,8 @@ void GameObjectList::LoadModel() {
 	//ゲームで使用するモデル
 	//プレイヤー
 	ModelManager::GetInstance()->LoadModel("player", "sphere", "sphereFlat.gltf");
+	//敵
+	ModelManager::GetInstance()->LoadModel("enemy", "enemy", "enemy.gltf");
 	//球
 	ModelManager::GetInstance()->LoadModel("sphere", "sphere", "sphere.gltf");
 	//弾

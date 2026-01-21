@@ -228,7 +228,7 @@ Matrix4x4 Rendering::DirectionToDirection(const Vector3& from, const Vector3& to
 	Matrix4x4 result = Matrix4x4::Identity4x4();
 	Vector3 u = from.Normalize();
 	Vector3 v = to.Normalize();
-	Vector3 n = (u.Cross(v)).Normalize();
+	Vector3 n = (v.Cross(u)).Normalize();
 	float cosTheta = u.Dot(v);
 	float sinTheta = u.Cross(v).Length();
 
