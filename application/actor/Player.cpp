@@ -73,12 +73,15 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	hpBar_ = new Sprite();
 	hpBar_->Initialize("playerHpBar.png");
 	hpBar_->SetBlendMode(BlendMode::kNormal);
-	hpBarTransform_.scale = { 100.0f,100.0f };
+	hpBarTransform_.scale = { hpBarWidth_,70.0f };
+	hpBarTransform_.translate = { 440.0f,630.0f };
+	hpColor_ = Vector4::ColorCodeTransform("#094206FF");
 	//アウトライン
 	hpOutLine_ = new Sprite();
 	hpOutLine_->Initialize("playerHpOutLine.png");
 	hpOutLine_->SetBlendMode(BlendMode::kNormal);
-	hpOutLineTransform_.scale = { 100.0f,100.0f };
+	hpOutLineTransform_.scale = { hpBarWidth_,70.0f };
+	hpOutLineTransform_.translate = { 440.0f,630.0f };
 
 }
 
@@ -198,16 +201,19 @@ void Player::Finalize() {
 
 //衝突したら
 void Player::OnCollision() {
-	hp_--;
 	if (hp_ < 0) {
 		//SceneManager::GetInstance()->ChangeScene("Result");
+	} else {
+		hp_--;
+		//Hpバーに適応
+		hpBarTransform_.scale.x -= hpBarWidth_ / static_cast<float>(kMaxHpCount);
 	}
 }
 
 //カメラのセッター
 void Player::SetCamera(Camera* camera) {
 	gameObject_.object3d->SetCamera(camera);
-	gameObject_.hitBox->SetCamera(camera_);
+	gameObject_.hitBox->SetCamera(camera);
 }
 
 //位置のセッター

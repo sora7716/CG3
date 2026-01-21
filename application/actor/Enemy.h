@@ -77,7 +77,7 @@ public://メンバ関数
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void SetCamera(Camera*camera);
+	void SetCamera(Camera* camera);
 
 	/// <summary>
 	/// ターゲットの位置のセッター
@@ -129,13 +129,15 @@ private://定数
 	static inline const float kBulletSize = 0.25f;
 	//生存エリアのサイズ
 	static inline const float kAliveAreaSize = 100.0f;
+	//HPの最大値
+	static inline const int32_t kMaxHpCout = 5;
 private://メンバ変数
 	//ゲームオブジェクト
 	GameObject gameObject_ = {};
-	
+
 	//ターゲットの位置
 	Vector3 targetPos_ = {};
-	
+
 	//敵の状態
 	IEnemyState* enemyState_ = nullptr;
 
@@ -160,6 +162,12 @@ private://メンバ変数
 	Vector3 hitBoxScale_ = { 1.0f,1.0f,1.0f };
 
 	//ヒットポイント
-	int32_t hp_ = 5;
+	int32_t hp_ = kMaxHpCout;
+	Object3d* hpBar_ = nullptr;
+	float hpBarPosX_ = 0.0f;
+	float hpBarWidth_ = 2.0f;
+	TransformData hpBarTransform_ = { {1.0f,1.0f,1.0f}, {},{} };
+	Object3d* hpOutLine_ = nullptr;
+	TransformData hpOutLineTransform_ = { {1.0f,1.0f,1.0f}, {},{} };
 };
 

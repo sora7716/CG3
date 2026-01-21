@@ -61,6 +61,10 @@ void GameObjectList::LoadModel() {
 	ModelManager::GetInstance()->LoadModel("field", "terrain", "terrain.obj");
 	//平面
 	ModelManager::GetInstance()->LoadModel("plane", "base", "plane.gltf");
+	//HPバー
+	ModelManager::GetInstance()->LoadModel("hpBar", "base", "plane.gltf");
+	//HPアウトライン
+	ModelManager::GetInstance()->LoadModel("hpOutLine", "base", "plane.gltf");
 	//スポットライト
 	ModelManager::GetInstance()->LoadModel("spotLight", "plane", "plane.obj");
 	//軸

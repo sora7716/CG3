@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 struct RGB final{
 	float r;
 	float g;
@@ -55,4 +56,11 @@ struct Vector4 final {
 	/// </summary>
 	/// <returns>黒</returns>
 	static Vector4 MakeBlackColor();
+
+	/// <summary>
+	/// カラーコードをVector4に変換
+	/// </summary>
+	/// <param name="colorCode">カラーコード</param>
+	/// <returns>Vector4</returns>
+	static Vector4 ColorCodeTransform(const std::string& colorCode);
 };

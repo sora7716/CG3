@@ -49,6 +49,28 @@ void Enemy::Initialize(Camera* camera, const std::string& modelName) {
 	gameObject_.hitBox = new WireframeObject3d();
 	gameObject_.hitBox->Initialize(camera, ModelType::kCube);
 	hitBoxScale_ = { 1.5f,1.5f,1.5f };
+
+	//HP
+	hpBar_ = new Object3d();
+	hpBar_->Initialize(camera, TransformMode::kBilboard);
+	hpBar_->SetModel("hpBar");
+	hpBar_->SetTexture("playerHpBar.png");
+	hpBarTransform_.scale = { hpBarWidth_,0.4f,1.0f };
+	Material hpMaterial;
+	hpMaterial.color = Vector4::MakeRedColor();
+	hpMaterial.enableLighting = false;
+	hpBar_->GetModel()->SetMaterial(hpMaterial);
+
+	Material hpOutLineMaterial;
+	hpOutLineMaterial.color = Vector4::MakeWhiteColor();
+	hpOutLineMaterial.enableLighting = false;
+
+	hpOutLine_ = new Object3d();
+	hpOutLine_->Initialize(camera, TransformMode::kBilboard);
+	hpOutLine_->SetModel("hpOutLine");
+	hpOutLine_->SetTexture("playerHpOutLine.png");
+	hpOutLine_->GetModel()->SetMaterial(hpOutLineMaterial);
+	hpOutLineTransform_.scale = { hpBarWidth_,0.4f,1.0f };
 }
 
 //更新
@@ -79,14 +101,29 @@ void Enemy::Update() {
 	gameObject_.hitBox->SetRotate(gameObject_.transformData.rotate);
 	gameObject_.hitBox->SetScale(hitBoxScale_);
 	gameObject_.hitBox->Update();
+
+	//HP
+	Vector3 worldPos = gameObject_.object3d->GetWorldPos();
+	hpOutLineTransform_.translate = { worldPos.x,worldPos.y + 2.0f,worldPos.z };
+	hpOutLine_->SetTransformData(hpOutLineTransform_);
+	hpOutLine_->Update();
+	hpBarTransform_.translate = { worldPos.x + hpBarPosX_,worldPos.y + 2.0f,worldPos.z };
+	hpBar_->SetTransformData(hpBarTransform_);
+	hpBar_->Update();
+
 }
 
 //デバッグ
 void Enemy::Debug() {
 #ifdef _DEBUG
-	ImGuiManager::GetInstance()->DragTransform(gameObject_.transformData);
-	ImGui::DragFloat3("hitBox.scale", &hitBoxScale_.x, 0.1f);
+	//ImGuiManager::GetInstance()->DragTransform(gameObject_.transformData);
+	//ImGui::DragFloat3("hitBox.scale", &hitBoxScale_.x, 0.1f);
 	ImGui::Text("hp:%d", hp_);
+	ImGui::DragFloat3("hp.translate", &hpBarTransform_.translate.x, 0.1f);
+	ImGui::DragFloat3("hp.scale", &hpBarTransform_.scale.x, 0.1f);
+	ImGui::DragFloat("hp.posX", &hpBarPosX_, 0.1f);
+	ImGui::DragFloat3("hpOutLine.translate", &hpOutLineTransform_.translate.x, 0.1f);
+	ImGui::DragFloat3("hpOutLine.scale", &hpOutLineTransform_.scale.x, 0.1f);
 #endif // _DEBUG
 }
 
@@ -106,6 +143,10 @@ void Enemy::Draw() {
 
 	//敵がこのエリアに入ったら動きが変わる
 	//attackArea->Draw();
+
+	//HP
+	hpBar_->Draw();
+	hpOutLine_->Draw();
 }
 
 //終了
@@ -120,11 +161,18 @@ void Enemy::Finalize() {
 	bullet_ = nullptr;
 	delete gameObject_.hitBox;
 	gameObject_.hitBox = nullptr;
+	delete hpBar_;
+	hpBar_ = nullptr;
+	delete hpOutLine_;
+	hpOutLine_ = nullptr;
 }
 
 //衝突したら
 void Enemy::OnCollision() {
 	hp_--;
+	//描画のHPにも適応
+	hpBarTransform_.scale.x -= hpBarWidth_ / kMaxHpCout;
+	hpBarPosX_ -= hpBarWidth_ / kMaxHpCout;
 	if (hp_ < 0) {
 		gameObject_.isAlive = false;
 	}
@@ -178,6 +226,8 @@ void Enemy::SetCamera(Camera* camera) {
 	sphere_->SetCamera(camera);
 	attackArea->SetCamera(camera);
 	gameObject_.hitBox->SetCamera(camera);
+	hpBar_->SetCamera(camera);
+	hpOutLine_->SetCamera(camera);
 }
 
 //ターゲットの位置

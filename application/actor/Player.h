@@ -127,6 +127,8 @@ private://メンバ関数
 	/// ヘッドライトの更新
 	/// </summary>
 	void HeadlightUpdate();
+private://定数
+	static inline const int32_t kMaxHpCount = 10;
 private://メンバ変数
 	//入力
 	Input* input_ = nullptr;
@@ -153,7 +155,8 @@ private://メンバ変数
 	Vector3 hitBoxScale_ = { 1.0f,1.0f,1.0f };
 
 	//ヒットポイント
-	int32_t hp_ = 10;
+	int32_t hp_ = kMaxHpCount;
+	float hpBarWidth_ = 400.0f;
 	Sprite* hpBar_ = nullptr;
 	Vector4 hpColor_ = Vector4::MakeGreenColor();
 	Transform2dData hpBarTransform_ = {};
