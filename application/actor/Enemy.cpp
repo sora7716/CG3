@@ -110,7 +110,6 @@ void Enemy::Update() {
 	hpBarTransform_.translate = { worldPos.x + hpBarPosX_,worldPos.y + 2.0f,worldPos.z };
 	hpBar_->SetTransformData(hpBarTransform_);
 	hpBar_->Update();
-
 }
 
 //デバッグ
