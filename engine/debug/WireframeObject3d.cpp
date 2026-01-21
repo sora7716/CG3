@@ -65,9 +65,11 @@ void WireframeObject3d::Update() {
 	//Sphere
 	sphere_.center = WireframeObject3d::GetWorldPos();
 	sphere_.radius = radius_;
+	
 	//AABB
 	aabb_.min = WireframeObject3d::GetWorldPos() * -worldTransform_->GetScale();
 	aabb_.max = WireframeObject3d::GetWorldPos() * worldTransform_->GetScale();
+	
 	//OBB
 	obb_.center = WireframeObject3d::GetWorldPos();
 	obb_.rotate = worldTransform_->GetRotate();

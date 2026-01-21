@@ -1,6 +1,5 @@
 #pragma once
 #include "engine/scene/IScene.h"
-#include <array>
 
 /// <summary>
 /// タイトルシーン
@@ -38,10 +37,5 @@ public://メンバ関数
 	/// </summary>
 	void Finalize()override;
 private://メンバ変数
-	std::array<std::unique_ptr<WireframeObject3d>, 2>wireframeObjects_ = { nullptr };
-
-	std::array<TransformData, 2>transformData_ = {};
-	std::array<float, 2>radius_ = {};
-
 	Camera* camera_ = nullptr;
 };
