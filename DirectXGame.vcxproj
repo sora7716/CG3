@@ -15,6 +15,7 @@
     <ClCompile Include="application\actor\CameraController.cpp" />
     <ClCompile Include="application\actor\ControlPoint.cpp" />
     <ClCompile Include="application\actor\Enemy.cpp" />
+    <ClCompile Include="application\actor\EnemyManager.cpp" />
     <ClCompile Include="application\actor\EnemyState.cpp" />
     <ClCompile Include="application\actor\Field.cpp" />
     <ClCompile Include="application\actor\GameCamera.cpp" />
@@ -81,6 +82,7 @@
     <ClInclude Include="application\actor\CameraController.h" />
     <ClInclude Include="application\actor\ControlPoint.h" />
     <ClInclude Include="application\actor\Enemy.h" />
+    <ClInclude Include="application\actor\EnemyManager.h" />
     <ClInclude Include="application\actor\EnemyState.h" />
     <ClInclude Include="application\actor\Field.h" />
     <ClInclude Include="application\actor\GameCamera.h" />
