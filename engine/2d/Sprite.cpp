@@ -101,6 +101,11 @@ void Sprite::SetTransform(const Transform2dData& transform) {
 	transform_.translate.y = transform.translate.y;
 }
 
+//ブレンドモードのセッター
+void Sprite::SetBlendMode(BlendMode blendMode) {
+	blendMode_ = blendMode;
+}
+
 //頂点データの初期化
 void Sprite::InitializeVertexData() {
 	//1枚目の三角形

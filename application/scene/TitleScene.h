@@ -38,4 +38,6 @@ public://メンバ関数
 	void Finalize()override;
 private://メンバ変数
 	Camera* camera_ = nullptr;
+	//Xboxの番号
+	DWORD xBoxPadNumber_ = 0;
 };

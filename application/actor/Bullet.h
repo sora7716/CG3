@@ -1,7 +1,9 @@
 #pragma once
 #include "ActorData.h"
 #include "engine/math/Matrix4x4.h"
+#include "engine/math/CollisionPrimitives.h"
 #include <list>
+#include <string>
 
 //前方宣言
 class Camera;
@@ -9,7 +11,7 @@ class Camera;
 /// <summary>
 /// 弾
 /// </summary>
-class Bullet{
+class Bullet {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -19,13 +21,13 @@ public://メンバ関数
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Bullet() = default;
+	~Bullet();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void Initialize(Camera*camera);
+	void Initialize(Camera* camera);
 
 	/// <summary>
 	/// 弾を発射する
@@ -37,6 +39,12 @@ public://メンバ関数
 	/// 更新
 	/// </summary>
 	void Update();
+
+	/// <summary>
+	/// 衝突したとき
+	/// </summary>
+	/// <param name="it">弾のデータリストのイテレータ</param>
+	void OnCollision(std::list<BulletData>::iterator it);
 
 	/// <summary>
 	/// 描画
@@ -89,10 +97,23 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="maxBulletCount">弾の発射できる最大値</param>
 	void SetMaxBulletCount(uint32_t maxBulletCount);
+
+	/// <summary>
+	/// モデルのセッター
+	/// </summary>
+	/// <param name="modelName">モデル名</param>
+	void SetModel(const std::string& modelName);
+
+
+	/// <summary>
+	/// 弾のデータリストのゲッター
+	/// </summary>
+	/// <returns>弾のデータリスト</returns>
+	std::list<BulletData>& GetBulletData();
 private://メンバ関数
 	/// <summary>
-    /// 弾の生成
-    /// </summary>
+	/// 弾の生成
+	/// </summary>
 	/// <returns>弾</returns>
 	BulletData CreateBullet();
 private://メンバ変数
@@ -116,5 +137,9 @@ private://メンバ変数
 	float aliveRange_ = 0.0f;
 	//弾が発射できる最大値
 	uint32_t maxBulletCount_ = 1;
+	//ヒットボックスのサイズ
+	Vector3 hitBoxScale_ = { 1.0f,1.0f,1.0f };
+	//モデル名
+	std::string modelName_ = "bullet";
 };
 

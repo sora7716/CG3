@@ -2,7 +2,8 @@
 #include "engine/input/Input.h"
 #include "engine/3d/Object3dCommon.h"
 #include "engine/debug/GlobalVariables.h"
-
+#include "engine/math/func/Collision.h"
+#include "actor/Bullet.h"
 
 //初期化
 void GameScene::Initialize(DirectXBase* directXBase) {
@@ -26,7 +27,7 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 
 	//敵の実装
 	enemy_ = std::make_unique<Enemy>();
-	enemy_->Initialize(camera_,"enemy");
+	enemy_->Initialize(camera_, "enemy");
 	enemy_->SetTranslate({ 0.0f,0.0f,20.0f });
 }
 
@@ -46,6 +47,8 @@ void GameScene::Update() {
 
 	//プレイヤー
 	player_->Update();
+	Vector3 playerPos = player_->GetTransformData().translate;
+	Object3dCommon::GetInstance()->SetPointLightPos({ playerPos.x,playerPos.y + 1.3f,playerPos.z });
 
 	//敵
 	enemy_->SetTarget(player_->GetWorldPos());
@@ -56,6 +59,22 @@ void GameScene::Update() {
 	field_->SetPointLight(Object3dCommon::GetInstance()->GetPointLight());
 	field_->SetSpotLight(Object3dCommon::GetInstance()->GetSpotLightPtr());
 	field_->Update();
+
+	//衝突判定
+	//敵とプレイヤーの弾
+	for (std::list<BulletData>::iterator it = player_->GetBullet()->GetBulletData().begin(); it != player_->GetBullet()->GetBulletData().end(); it++) {
+		if (Collision::IsCollision(enemy_->GetOBB(), it->gameObject.hitBox->GetOBB())) {
+			player_->GetBullet()->OnCollision(it);
+			enemy_->OnCollision();
+		}
+	}
+	//プレイヤーと敵の弾
+	for (std::list<BulletData>::iterator it = enemy_->GetBullet()->GetBulletData().begin(); it != enemy_->GetBullet()->GetBulletData().end(); it++) {
+		if (Collision::IsCollision(player_->GetOBB(), it->gameObject.hitBox->GetOBB())) {
+			enemy_->GetBullet()->OnCollision(it);
+			player_->OnCollision();
+		}
+	}
 
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
@@ -77,7 +96,7 @@ void GameScene::Update() {
 	ImGui::Begin("gameCamera");
 	gameCamera_->Debug();
 	ImGui::End();
-	
+
 	//敵
 	ImGui::Begin("enemy");
 	enemy_->Debug();
@@ -115,12 +134,6 @@ void GameScene::Draw() {
 
 //終了
 void GameScene::Finalize() {
-	//プレイヤー
-	player_->Finalize();
-
-	//フィールド
-	field_->Finalize();
-
 	//グローバル変数
 	GlobalVariables::GetInstance()->Finalize();
 

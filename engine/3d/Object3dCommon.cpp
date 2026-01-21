@@ -74,6 +74,13 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 		pointLightDataList_[i].enablePointLighting = false;
 	}
 
+	pointLightDataList_[0].position = {};
+	pointLightDataList_[0].intensity = 1.0f;
+	pointLightDataList_[0].distance = 9.5f;
+	pointLightDataList_[0].decay = 15.0f;
+	pointLightDataList_[0].isBlinnPhong = true;
+	pointLightDataList_[0].enablePointLighting = true;
+
 	////SpotLightの初期化
 	//for (int i = 0; i < kMaxLightCount; i++) {
 	//	spotLightDataList_[i].color = { 1.0f,1.0f,1.0f,1.0f };
@@ -106,11 +113,13 @@ void Object3dCommon::Initialize(DirectXBase* directXBase) {
 //更新
 void Object3dCommon::Update() {
 	//調整項目を適応
-	ApplyGlobalVariablesForPointLight(pointLightGroupNames_[0].c_str(), pointLightDataList_[0]);
+	//ApplyGlobalVariablesForPointLight(pointLightGroupNames_[0].c_str(), pointLightDataList_[0]);
 	//ApplyGlobalVariablesForSpotLight(spotLightGroupNames_[0].c_str(), spotLightDataList_[0]);
 
 	//ライトデータを転送
 	*directionalLightPtr_ = directionalLightData_;
+
+	pointLightDataList_[0].position = pointLightPos_;
 	for (int32_t i = 0; i < kMaxLightCount; i++) {
 		pointLightPtr_[i] = pointLightDataList_[i];
 	}
@@ -143,6 +152,10 @@ void Object3dCommon::Debug() {
 	ImGuiManager::CheckBoxToInt("directional.isLambert", directionalLightData_.isLambert);
 	ImGuiManager::CheckBoxToInt("directional.isBlingPhong", directionalLightData_.isBlinnPhong);
 	ImGuiManager::CheckBoxToInt("directional.enableDirectionalLight", directionalLightData_.enableDirectionalLighting);
+
+	ImGui::DragFloat("pointLight.decay", &pointLightDataList_[0].decay, 0.1f);
+	ImGui::DragFloat("pointLight.distance", &pointLightDataList_[0].distance, 0.1f);
+	ImGui::DragFloat("pointLight.intensity", &pointLightDataList_[0].intensity, 0.1f);
 	ImGui::End();
 #endif // USE_IMGUi
 }
@@ -264,6 +277,11 @@ void Object3dCommon::SetSpotLight(const std::string& name, const SpotLightData& 
 SpotLightData& Object3dCommon::GetSpotLight(const std::string& name) {
 	// TODO: return ステートメントをここに挿入します
 	return spotLightDataList_.at(name);
+}
+
+//ポイントライトの位置
+void Object3dCommon::SetPointLightPos(const Vector3& pointLightPos) {
+	pointLightPos_ = pointLightPos;
 }
 
 //平行光源の生成

@@ -7,6 +7,14 @@
 #include "engine/math/func/Math.h"
 #include "engine/worldTransform/WorldTransform.h"
 #include "Bullet.h"
+#include "engine/debug/WireframeObject3d.h"
+#include "engine/scene/SceneManager.h"
+#include "engine/2d/Sprite.h"
+
+//デストラクタ
+Player::~Player() {
+	Finalize();
+}
 
 //初期化
 void Player::Initialize(Camera* camera, const std::string& modelName) {
@@ -45,16 +53,33 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	//弾
 	bullet_ = new Bullet();
 	bullet_->Initialize(camera_);
-	bullet_->SetAliveRange(200.0f);
-	bullet_->SetSpeed(50.0f);
-	bullet_->SetSize({ 0.5f,0.5f,0.5f });
-	bullet_->SetMaxBulletCount(10);
+	bullet_->SetAliveRange(kAliveAreaSize);
+	bullet_->SetSpeed(kBulletSpeed);
+	bullet_->SetSize({ kBulletSize,kBulletSize,kBulletSize });
+	bullet_->SetMaxBulletCount(kBulletCount);
 
 	//スポットライトを設定
 	Object3dCommon::GetInstance()->AddSpotLight("headlight");
 	headlight_ = Object3dCommon::GetInstance()->GetSpotLight("headlight");
-	headlight_.cosAngle = 0.8f;
-	headlight_.cosFolloffStart = 1.0f;
+	headlight_.cosAngle = 0.9f;
+	headlight_.cosFolloffStart = 1.2f;
+
+	//ヒットボックス
+	gameObject_.hitBox = new WireframeObject3d();
+	gameObject_.hitBox->Initialize(camera_, ModelType::kCube);
+
+	//HPバー
+	//中身
+	hpBar_ = new Sprite();
+	hpBar_->Initialize("playerHpBar.png");
+	hpBar_->SetBlendMode(BlendMode::kNormal);
+	hpBarTransform_.scale = { 100.0f,100.0f };
+	//アウトライン
+	hpOutLine_ = new Sprite();
+	hpOutLine_->Initialize("playerHpOutLine.png");
+	hpOutLine_->SetBlendMode(BlendMode::kNormal);
+	hpOutLineTransform_.scale = { 100.0f,100.0f };
+
 }
 
 //更新
@@ -74,12 +99,6 @@ void Player::Update() {
 	//ヘッドライトの更新
 	HeadlightUpdate();
 
-	////マウスの位置
-	//Vector3 mousePos = input_->GetWorldMousePosition(camera_);
-	//Vector3 dir = mousePos - gameObject_.object3d->GetWorldPos();
-
-	//gameObject_.object3d->GetWorldTransform()->SetFromAndToPos(gameObject_.object3d->GetWorldPos(),mousePos);
-
 	// XboxPad
 	if (input_->IsXboxPadConnected(xBoxPadNumber_)) {
 
@@ -87,7 +106,7 @@ void Player::Update() {
 
 		// デッドゾーン（スティックの微妙なブレ対策）
 		const float deadZone = 0.15f;
-		if (fabsf(stickX) < deadZone) {
+		if (std::fabs(stickX) < deadZone) {
 			stickX = 0.0f;
 		} else {
 			// デッドゾーン分を詰めて 0..1 に戻す（好み）
@@ -95,13 +114,13 @@ void Player::Update() {
 		}
 
 		// 回転速度（ラジアン/秒） 例：180度/秒
-		const float yawSpeed = 3.14159265f; // PI rad/s = 180deg/s
+		const float yawSpeed = Math::kPi; // PI rad/s = 180deg/s
 
 		gameObject_.transformData.rotate.y += stickX * yawSpeed * Math::kDeltaTime;
 	}
 
 	// 必要なら 0..2PI に丸める（巨大化防止）
-	const float twoPi = 6.2831853f;
+	const float twoPi = Math::kPi * 2.0f;
 	if (gameObject_.transformData.rotate.y > twoPi) gameObject_.transformData.rotate.y -= twoPi;
 	if (gameObject_.transformData.rotate.y < 0.0f)  gameObject_.transformData.rotate.y += twoPi;
 
@@ -109,6 +128,19 @@ void Player::Update() {
 
 	//3Dオブジェクトの更新
 	gameObject_.object3d->Update();
+
+	//ヒットボックスの更新
+	gameObject_.hitBox->SetTranslate(gameObject_.object3d->GetWorldPos());
+	gameObject_.hitBox->SetRotate(gameObject_.transformData.rotate);
+	gameObject_.hitBox->SetScale(hitBoxScale_);
+	gameObject_.hitBox->Update();
+
+	//HP
+	hpBar_->SetTransform(hpBarTransform_);
+	hpBar_->SetColor(hpColor_);
+	hpBar_->Update();
+	hpOutLine_->SetTransform(hpOutLineTransform_);
+	hpOutLine_->Update();
 }
 
 //描画
@@ -117,12 +149,18 @@ void Player::Draw() {
 	gameObject_.object3d->Draw();
 	//弾の描画
 	bullet_->Draw();
+	//ヒットボックスの描画
+	gameObject_.hitBox->Draw();
+	//HP
+	hpBar_->Draw();
+	hpOutLine_->Draw();
 }
 
 //デバッグ用
 void Player::Debug() {
 #ifdef USE_IMGUI
-	ImGui::DragFloat3("rotate", &gameObject_.transformData.rotate.x, 0.1f);
+	ImGui::Text("hp:%d", hp_);
+	/*ImGui::DragFloat3("rotate", &gameObject_.transformData.rotate.x, 0.1f);
 	ImGui::DragFloat3("translate", &gameObject_.transformData.translate.x, 0.1f);
 	ImGui::ColorEdit4("rimColor", &rimLight_.color.x);
 	ImGui::DragFloat("rimPower", &rimLight_.power, 0.1f, 0.0f, 100.0f);
@@ -131,6 +169,12 @@ void Player::Debug() {
 	ImGuiManager::GetInstance()->CheckBoxToInt("enableRimLighting", rimLight_.enableRimLighting);
 	ImGui::DragFloat("cosAngle", &headlight_.cosAngle, 0.1f);
 	ImGui::DragFloat("cosFolloffStart", &headlight_.cosFolloffStart, 0.1f);
+	ImGui::DragFloat3("hitBox.scale", &hitBoxScale_.x, 0.1f);*/
+	ImGui::DragFloat2("hp.scale", &hpBarTransform_.scale.x, 0.1f);
+	ImGui::DragFloat2("hp.translate", &hpBarTransform_.translate.x, 0.1f);
+	ImGui::ColorEdit4("hp.color", &hpColor_.x);
+	ImGui::DragFloat2("hpOutLine.scale", &hpOutLineTransform_.scale.x, 0.1f);
+	ImGui::DragFloat2("hpOutLine.translate", &hpOutLineTransform_.translate.x, 0.1f);
 #endif // USE_IMGUI
 }
 
@@ -140,14 +184,30 @@ void Player::Finalize() {
 	delete gameObject_.object3d;
 	gameObject_.object3d = nullptr;
 	//弾の解放
-	bullet_->Finalize();
 	delete bullet_;
 	bullet_ = nullptr;
+	//ヒットボックスの解放
+	delete gameObject_.hitBox;
+	gameObject_.hitBox = nullptr;
+	//スプライトの開放
+	delete hpBar_;
+	hpBar_ = nullptr;
+	delete hpOutLine_;
+	hpOutLine_ = nullptr;
+}
+
+//衝突したら
+void Player::OnCollision() {
+	hp_--;
+	if (hp_ < 0) {
+		//SceneManager::GetInstance()->ChangeScene("Result");
+	}
 }
 
 //カメラのセッター
 void Player::SetCamera(Camera* camera) {
 	gameObject_.object3d->SetCamera(camera);
+	gameObject_.hitBox->SetCamera(camera_);
 }
 
 //位置のセッター
@@ -156,18 +216,28 @@ void Player::SetPosition(const Vector3& positBulletion) {
 }
 
 //オブジェクト3dのゲッター
-Vector3 Player::GetWorldPos() {
+Vector3 Player::GetWorldPos() const {
 	return gameObject_.object3d->GetWorldPos();
 }
 
 //トランスフォームデータのゲッター
-TransformData Player::GetTransformData() {
+TransformData Player::GetTransformData()const {
 	return gameObject_.transformData;
 }
 
 //速度のゲッター
-Vector3 Player::GetVelocity() {
+Vector3 Player::GetVelocity() const {
 	return gameObject_.velocity;
+}
+
+//OBBのゲッター
+OBB Player::GetOBB()const {
+	return gameObject_.hitBox->GetOBB();
+}
+
+//弾のゲッター
+Bullet* Player::GetBullet()const {
+	return bullet_;
 }
 
 //移動

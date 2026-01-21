@@ -19,10 +19,10 @@ public://メンバ変数
 	~IEnemyState() = default;
 
 	/// <summary>
-	/// 初期化
+	/// 敵のセッター
 	/// </summary>
 	/// <param name="enemy">敵</param>
-	void Initialize(Enemy* enemy);
+	void SetEnemy(Enemy* enemy);
 
 	/// <summary>
 	/// 実行(純粋仮想関数)

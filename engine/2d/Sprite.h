@@ -75,6 +75,11 @@ public://メンバ関数
     /// </summary>
 	/// <param name="transformData">トランスフォームデータ(scaleは100,100に初期設定してる)</param>
 	void SetTransform(const Transform2dData& transformData);
+
+	/// <summary>
+	/// ブレンドモードのセッター
+	/// </summary>
+	void SetBlendMode(BlendMode blendMode);
 private://メンバ関数
 	/// <summary>
 	/// 頂点データの初期化

@@ -1,8 +1,8 @@
 #include "EnemyState.h"
 #include "Enemy.h"
 
-//初期化
-void IEnemyState::Initialize(Enemy* enemy) {
+//敵のセッター
+void IEnemyState::SetEnemy(Enemy* enemy) {
 	enemy_ = enemy;
 }
 

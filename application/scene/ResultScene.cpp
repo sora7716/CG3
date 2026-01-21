@@ -1,23 +1,22 @@
-#include "TitleScene.h"
+#include "ResultScene.h"
 #include "engine/input/Input.h"
 #include "engine/scene/SceneManager.h"
-#include "engine/math/func/Collision.h"
 
 //初期化
-void TitleScene::Initialize(DirectXBase* directXBase) {
+void ResultScene::Initialize(DirectXBase* directXBase) {
 	//シーンのインタフェースの初期化
 	IScene::Initialize(directXBase);
 	camera_ = CameraManager::GetInstance()->FindCamera("titleCamera");
 }
 
 //更新ww
-void TitleScene::Update() {
+void ResultScene::Update() {
 	//シーンのインタフェースの初期化
 	IScene::Update();
 
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		SceneManager::GetInstance()->ChangeScene("Game");
-	}else if(Input::GetInstance()->TriggerXboxPad(xBoxPadNumber_,XboxInput::kB)) {
+	} else if (Input::GetInstance()->TriggerXboxPad(xBoxPadNumber_, XboxInput::kB)) {
 		SceneManager::GetInstance()->ChangeScene("Game");
 	}
 #ifdef USE_IMGUI
@@ -43,12 +42,12 @@ void TitleScene::Update() {
 }
 
 //描画
-void TitleScene::Draw() {
+void ResultScene::Draw() {
 
 }
 
 //終了
-void TitleScene::Finalize() {
+void ResultScene::Finalize() {
 	//シーンのインターフェースの終了
 	IScene::Finalize();
 }

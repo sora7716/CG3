@@ -3,6 +3,7 @@
 #include "engine/math/ResourceData.h"
 
 class Object3d;
+class WireframeObject3d;
 
 //ゲームオブジェクト
 struct GameObject {
@@ -11,6 +12,7 @@ struct GameObject {
 	Vector3 moveDirection;
 	Material material;
 	Object3d* object3d;
+	WireframeObject3d* hitBox;
 	uint32_t isAlive;
 };
 

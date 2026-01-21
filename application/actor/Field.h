@@ -23,7 +23,7 @@ public://メンバ関数
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Field() = default;
+	~Field();
 
 	/// <summary>
 	/// 初期化

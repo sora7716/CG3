@@ -2,12 +2,16 @@
 #include "ActorData.h"
 #include <Windows.h>
 #include <string>
+#include "engine/math/CollisionPrimitives.h"
+#include "engine/math/Vector4.h"
 
 // 前方宣言
 class Camera;
 class Input;
 class WorldTransform;
 class Bullet;
+class WireframeObject3d;
+class Sprite;
 
 /// <summary>
 /// プレイヤー
@@ -22,7 +26,7 @@ public://メンバ関数
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Player() = default;
+	~Player();
 
 	/// <summary>
 	/// 初期化
@@ -52,6 +56,11 @@ public://メンバ関数
 	void Finalize();
 
 	/// <summary>
+	/// 衝突したら
+	/// </summary>
+	void OnCollision();
+
+	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera">カメラ</param>
@@ -67,22 +76,42 @@ public://メンバ関数
 	/// ワールド座標系での位置のゲッター
 	/// </summary>
 	/// <returns>ワールド座標系での位置</returns>
-	Vector3 GetWorldPos();
+	Vector3 GetWorldPos()const;
 
 	/// <summary>
 	/// トランスフォームデータのゲッター
 	/// </summary>
 	/// <returns>トランスフォームデータ</returns>
-	TransformData GetTransformData();
+	TransformData GetTransformData()const;
 
 	/// <summary>
 	/// 速度のゲッター
 	/// </summary>
 	/// <returns>速度</returns>
-	Vector3 GetVelocity();
+	Vector3 GetVelocity()const;
+
+	/// <summary>
+	/// OBBのゲッター
+	/// </summary>
+	/// <returns>OBB</returns>
+	OBB GetOBB()const;
+
+	/// <summary>
+	/// 弾のゲッター
+	/// </summary>
+	/// <returns>弾</returns>
+	Bullet* GetBullet()const;
 private://定数
 	//カメラの移動速度
 	static inline const float kMoveSpeed = 4.0f;
+	//弾の数
+	static inline const uint32_t kBulletCount = 30;
+	//弾の速度
+	static inline const float kBulletSpeed = 30.0f;
+	//弾の大きさ
+	static inline const float kBulletSize = 0.25f;
+	//生存エリアのサイズ
+	static inline const float kAliveAreaSize = 100.0f;
 private://メンバ関数
 	/// <summary>
 	/// 移動
@@ -119,5 +148,16 @@ private://メンバ変数
 
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
+
+	//ヒットボックス
+	Vector3 hitBoxScale_ = { 1.0f,1.0f,1.0f };
+
+	//ヒットポイント
+	int32_t hp_ = 10;
+	Sprite* hpBar_ = nullptr;
+	Vector4 hpColor_ = Vector4::MakeGreenColor();
+	Transform2dData hpBarTransform_ = {};
+	Sprite* hpOutLine_ = nullptr;
+	Transform2dData hpOutLineTransform_ = {};
 };
 

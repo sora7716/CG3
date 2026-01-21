@@ -77,4 +77,6 @@ void GameObjectList::CreateCamera() {
 	CameraManager::GetInstance()->CreateCamera("titleCamera");
 	//ゲームカメラ
 	CameraManager::GetInstance()->CreateCamera("gameCamera");
+	//リザルトカメラ
+	CameraManager::GetInstance()->CreateCamera("resultCamera");
 }

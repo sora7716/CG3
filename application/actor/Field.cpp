@@ -6,6 +6,11 @@
 #include "MapChip.h"
 #include <cmath>
 
+//デストラクタ
+Field::~Field() {
+	Finalize();
+}
+
 //初期化
 void Field::Initialize(Camera* camera) {
 	mapChip_ = new MapChip();

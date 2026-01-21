@@ -152,6 +152,12 @@ public://メンバ関数
 	/// <param name="name">スポットライトの名前</param>
 	/// <returns>スポットライト</returns>
 	SpotLightData& GetSpotLight(const std::string& name);
+
+	/// <summary>
+    /// ポイントライトの位置のセッター
+    /// </summary>
+    /// <param name="pointLightPos">ポイントライトの位置</param>
+	void SetPointLightPos(const Vector3& pointLightPos);
 private://メンバ関数
 	//コンストラクタの封印
 	Object3dCommon() = default;
@@ -265,4 +271,7 @@ private://メンバ変数
 	//ライトのグループ名
 	std::string pointLightGroupNames_[kMaxLightCount] = { "pointLightGroup" };
 	std::string spotLightGroupNames_[kMaxLightCount] = { "spotLightGroup" };
+
+	//光源(追従するターゲット)
+	Vector3 pointLightPos_ = {};
 };

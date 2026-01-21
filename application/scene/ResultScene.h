@@ -1,24 +1,20 @@
 #pragma once
 #include "engine/scene/IScene.h"
-#include "actor/Player.h"
-#include "actor/GameCamera.h"
-#include "actor/Field.h"
-#include "actor/Enemy.h"
 
 /// <summary>
-/// ゲームシーン
+/// タイトルシーン
 /// </summary>
-class GameScene :public IScene {
+class ResultScene :public IScene {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	GameScene() = default;
+	ResultScene() = default;
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~GameScene()override = default;
+	~ResultScene()override = default;
 
 	/// <summary>
 	/// 初期化
@@ -41,19 +37,7 @@ public://メンバ関数
 	/// </summary>
 	void Finalize()override;
 private://メンバ変数
-	//ゲームシーンのカメラ
 	Camera* camera_ = nullptr;
-
-	//プレイヤー
-	std::unique_ptr<Player>player_ = nullptr;
-
-	//レールカメラ
-	std::unique_ptr<GameCamera>gameCamera_ = nullptr;
-
-	//フィールド
-	std::unique_ptr<Field>field_ = nullptr;
-
-	//敵
-	std::unique_ptr<Enemy>enemy_ = nullptr;
+	//Xboxの番号
+	DWORD xBoxPadNumber_ = 0;
 };
-

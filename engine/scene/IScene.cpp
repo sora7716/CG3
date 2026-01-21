@@ -14,8 +14,8 @@ void IScene::Initialize(DirectXBase* directXBase) {
 	sceneFactory_ = new SceneFactory();
 	//シーンファクトリーのセット
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
-	//調整ファイルの読み込み
-	GlobalVariables::GetInstance()->LoadFiles();
+	////調整ファイルの読み込み
+	//GlobalVariables::GetInstance()->LoadFiles();
 }
 
 //更新
