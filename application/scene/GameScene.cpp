@@ -3,6 +3,7 @@
 #include "engine/3d/Object3dCommon.h"
 #include "engine/debug/GlobalVariables.h"
 #include "engine/math/func/Collision.h"
+#include "engine/scene/SceneManager.h"
 #include "actor/Bullet.h"
 
 //初期化
@@ -14,7 +15,7 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 
 	//追従カメラ
 	gameCamera_ = std::make_unique<GameCamera>();
-	gameCamera_->Initialize(camera_, { 0.0f,15.1f,-12.5f });
+	gameCamera_->Initialize(camera_, { 0.0f,20.0f,-12.0f });
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();
@@ -26,9 +27,8 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	field_->Initialize(gameCamera_->GetCamera());
 
 	//敵の実装
-	enemy_ = std::make_unique<Enemy>();
-	enemy_->Initialize(camera_, "enemy");
-	enemy_->SetTranslate({ 0.0f,0.0f,20.0f });
+	enemyManager_ = EnemyManager::GetInstance();
+	enemyManager_->Initialize(camera_);
 }
 
 //更新
@@ -43,16 +43,15 @@ void GameScene::Update() {
 	//カメラの設定
 	player_->SetCamera(camera_);
 	field_->SetCamera(camera_);
-	enemy_->SetCamera(camera_);
+	enemyManager_->SetCamera(camera_);
 
 	//プレイヤー
 	player_->Update();
 	Vector3 playerPos = player_->GetTransformData().translate;
 	Object3dCommon::GetInstance()->SetPointLightPos({ playerPos.x,playerPos.y + 1.3f,playerPos.z });
-
+ 
 	//敵
-	enemy_->SetTarget(player_->GetWorldPos());
-	enemy_->Update();
+	enemyManager_->Update(player_->GetWorldPos());
 
 	//フィールド
 	field_->SetDirectionalLight(Object3dCommon::GetInstance()->GetDirectionalLight());
@@ -62,18 +61,29 @@ void GameScene::Update() {
 
 	//衝突判定
 	//敵とプレイヤーの弾
-	for (std::list<BulletData>::iterator it = player_->GetBullet()->GetBulletData().begin(); it != player_->GetBullet()->GetBulletData().end(); it++) {
-		if (Collision::IsCollision(enemy_->GetOBB(), it->gameObject.hitBox->GetOBB())) {
-			player_->GetBullet()->OnCollision(it);
-			enemy_->OnCollision();
+	for (Enemy* enemy : enemyManager_->GetEnemyList()) {
+		for (std::list<BulletData>::iterator itPlayerBullet = player_->GetBullet()->GetBulletData().begin(); itPlayerBullet != player_->GetBullet()->GetBulletData().end(); itPlayerBullet++) {
+			if (Collision::IsCollision(enemy->GetOBB(), itPlayerBullet->gameObject.hitBox->GetOBB())) {
+				player_->GetBullet()->OnCollision(itPlayerBullet);
+				enemy->OnCollision();
+			}
 		}
 	}
+
 	//プレイヤーと敵の弾
-	for (std::list<BulletData>::iterator it = enemy_->GetBullet()->GetBulletData().begin(); it != enemy_->GetBullet()->GetBulletData().end(); it++) {
-		if (Collision::IsCollision(player_->GetOBB(), it->gameObject.hitBox->GetOBB())) {
-			enemy_->GetBullet()->OnCollision(it);
-			player_->OnCollision();
+	for (Enemy* enemy : enemyManager_->GetEnemyList()) {
+		for (std::list<BulletData>::iterator itEnemyBullet = enemy->GetBullet()->GetBulletData().begin(); itEnemyBullet != enemy->GetBullet()->GetBulletData().end(); itEnemyBullet++) {
+			if (Collision::IsCollision(player_->GetOBB(), itEnemyBullet->gameObject.hitBox->GetOBB())) {
+				enemy->GetBullet()->OnCollision(itEnemyBullet);
+				player_->OnCollision();
+			}
 		}
+	}
+
+	//プレイヤーが死んだら
+	if (!player_->IsAlive()) {
+		//enemyManager_->Reset();
+		//SceneManager::GetInstance()->ChangeScene("Result");
 	}
 
 #ifdef USE_IMGUI
@@ -99,7 +109,7 @@ void GameScene::Update() {
 
 	//敵
 	ImGui::Begin("enemy");
-	enemy_->Debug();
+	enemyManager_->Debug();
 	ImGui::End();
 
 	//Object3dCommon
@@ -129,14 +139,11 @@ void GameScene::Draw() {
 	field_->Draw();
 
 	//敵
-	enemy_->Draw();
+	enemyManager_->Draw();
 }
 
 //終了
 void GameScene::Finalize() {
-	//グローバル変数
-	GlobalVariables::GetInstance()->Finalize();
-
 	//シーンのインターフェース
 	IScene::Finalize();
 }

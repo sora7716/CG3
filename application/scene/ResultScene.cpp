@@ -6,7 +6,7 @@
 void ResultScene::Initialize(DirectXBase* directXBase) {
 	//シーンのインタフェースの初期化
 	IScene::Initialize(directXBase);
-	camera_ = CameraManager::GetInstance()->FindCamera("titleCamera");
+	camera_ = CameraManager::GetInstance()->FindCamera("ResultCamera");
 }
 
 //更新ww
@@ -15,9 +15,9 @@ void ResultScene::Update() {
 	IScene::Update();
 
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-		SceneManager::GetInstance()->ChangeScene("Game");
+		SceneManager::GetInstance()->ChangeScene("Title");
 	} else if (Input::GetInstance()->TriggerXboxPad(xBoxPadNumber_, XboxInput::kB)) {
-		SceneManager::GetInstance()->ChangeScene("Game");
+		SceneManager::GetInstance()->ChangeScene("Title");
 	}
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
@@ -26,6 +26,7 @@ void ResultScene::Update() {
 	ImGui::Begin("debugCamera");
 	debugCamera_->Debug();
 	ImGui::End();
+	ImGui::Text("Result");
 	//ImGuiの受付終了
 	ImGuiManager::GetInstance()->End();
 #endif // USE_IMGUI
@@ -34,7 +35,7 @@ void ResultScene::Update() {
 	if (debugCamera_->IsDebug()) {
 		camera_ = debugCamera_->GetCamera();
 	} else {
-		camera_ = CameraManager::GetInstance()->FindCamera("titleCamera");
+		camera_ = CameraManager::GetInstance()->FindCamera("ResultCamera");
 	}
 #endif // _DEBUG
 

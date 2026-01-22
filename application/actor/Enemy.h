@@ -102,6 +102,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>OBB</returns>
 	OBB GetOBB()const;
+
+	/// <summary>
+	/// 生存フラグのゲッター
+	/// </summary>
+	/// <returns></returns>
+	bool IsAlive();
 private://メンバ関数
 	/// <summary>
 	/// ターゲットの方向を向く
@@ -113,18 +119,14 @@ private://メンバ関数
 	/// </summary>
 	void Behavior();
 private://定数
-	//移動速度
-	static inline const float kSpeed = 0.1f;
 	//待機時の回転速度
 	static inline const float kIdolRotSpeed = 0.5f;
 	//弾を撃つタイマーのリミット
-	static inline const float kBulletShotTimerLimit = 0.5f;
+	static inline const float kBulletShotTimerLimit = 2.0f;
 	//攻撃タイマーのリミット
 	static inline const float kAttackTimerLimit = 5.0f;
 	//弾の数
-	static inline const uint32_t kBulletCount = 100;
-	//弾の速度
-	static inline const float kBulletSpeed = -8.0f;
+	static inline const uint32_t kBulletCount = 20;
 	//弾の大きさ
 	static inline const float kBulletSize = 0.25f;
 	//生存エリアのサイズ
@@ -132,6 +134,10 @@ private://定数
 	//HPの最大値
 	static inline const int32_t kMaxHpCout = 5;
 private://メンバ変数
+	//移動速度
+	float bulletShotSpeed = 0.1f;
+	//弾の速度
+	float kBulletSpeed = -8.0f;
 	//ゲームオブジェクト
 	GameObject gameObject_ = {};
 
@@ -156,7 +162,7 @@ private://メンバ変数
 	float sphereRadius_ = 0.0f;
 	//行動が変化するエリア
 	WireframeObject3d* attackArea = nullptr;
-	float behaviorAreaRadius_ = 0.0f;
+	float attackAreaRadius_ = 0.0f;
 
 	//ヒットボックス
 	Vector3 hitBoxScale_ = { 1.0f,1.0f,1.0f };

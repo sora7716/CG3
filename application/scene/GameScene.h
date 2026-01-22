@@ -3,7 +3,7 @@
 #include "actor/Player.h"
 #include "actor/GameCamera.h"
 #include "actor/Field.h"
-#include "actor/Enemy.h"
+#include "actor/EnemyManager.h"
 
 /// <summary>
 /// ゲームシーン
@@ -53,7 +53,7 @@ private://メンバ変数
 	//フィールド
 	std::unique_ptr<Field>field_ = nullptr;
 
-	//敵
-	std::unique_ptr<Enemy>enemy_ = nullptr;
+	//敵の管理
+	EnemyManager* enemyManager_ = nullptr;
 };
 

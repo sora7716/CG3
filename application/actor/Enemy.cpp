@@ -21,7 +21,8 @@ void Enemy::Initialize(Camera* camera, const std::string& modelName) {
 	gameObject_.object3d = new Object3d();
 	gameObject_.object3d->Initialize(camera, TransformMode::k3d);
 	gameObject_.object3d->SetModel(modelName);
-	gameObject_.transformData.scale = Vector3::MakeAllOne();
+	gameObject_.transformData.scale = Vector3::MakeAllOne() / 2.0f;
+	gameObject_.isAlive = true;
 
 	//弾の生成
 	bullet_ = new Bullet();
@@ -44,7 +45,9 @@ void Enemy::Initialize(Camera* camera, const std::string& modelName) {
 
 	attackArea = new WireframeObject3d();
 	attackArea->Initialize(camera, ModelType::kSphere);
-	behaviorAreaRadius_ = 3.0f;
+	attackAreaRadius_ = 3.0f;
+	attackArea->SetTranslate(targetPos_);
+	attackArea->Update();
 
 	gameObject_.hitBox = new WireframeObject3d();
 	gameObject_.hitBox->Initialize(camera, ModelType::kCube);
@@ -75,12 +78,6 @@ void Enemy::Initialize(Camera* camera, const std::string& modelName) {
 
 //更新
 void Enemy::Update() {
-	//振る舞い
-	Behavior();
-
-	//弾の更新
-	bullet_->Update();
-
 	//オブジェクト3Dの更新
 	gameObject_.object3d->SetTransformData(gameObject_.transformData);
 	gameObject_.object3d->Update();
@@ -92,9 +89,15 @@ void Enemy::Update() {
 	sphere_->Update();
 
 	//このエリアに敵が入ったら動きが変わる
-	attackArea->SetRadius(behaviorAreaRadius_);
+	attackArea->SetRadius(attackAreaRadius_);
 	attackArea->SetTranslate(targetPos_);
 	attackArea->Update();
+
+	//振る舞い
+	Behavior();
+
+	//弾の更新
+	bullet_->Update();
 
 	//ヒットボックス
 	gameObject_.hitBox->SetTranslate(gameObject_.object3d->GetWorldPos());
@@ -172,7 +175,7 @@ void Enemy::OnCollision() {
 	//描画のHPにも適応
 	hpBarTransform_.scale.x -= hpBarWidth_ / kMaxHpCout;
 	hpBarPosX_ -= hpBarWidth_ / kMaxHpCout;
-	if (hp_ < 0) {
+	if (hp_ <= 0) {
 		gameObject_.isAlive = false;
 	}
 }
@@ -193,7 +196,7 @@ void Enemy::Chase() {
 	//カメラの向いてる方向を正にする(XとZ軸限定)
 	moveDir = Math::TransformNormal(moveDir, rotMat);
 	//カメラを移動させる
-	gameObject_.transformData.translate += moveDir.Normalize() * kSpeed;
+	gameObject_.transformData.translate += moveDir.Normalize() * bulletShotSpeed;
 }
 
 //攻撃
@@ -247,6 +250,11 @@ Bullet* Enemy::GetBullet() const {
 //OBBのゲッター
 OBB Enemy::GetOBB()const {
 	return gameObject_.hitBox->GetOBB();
+}
+
+//生存フラグのゲッター
+bool Enemy::IsAlive() {
+	return gameObject_.isAlive;
 }
 
 //ターゲットの方向を向く

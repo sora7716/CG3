@@ -27,6 +27,9 @@ void TitleScene::Update() {
 	ImGui::Begin("debugCamera");
 	debugCamera_->Debug();
 	ImGui::End();
+
+	ImGui::Text("Title");
+
 	//ImGuiの受付終了
 	ImGuiManager::GetInstance()->End();
 #endif // USE_IMGUI

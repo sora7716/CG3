@@ -7,7 +7,7 @@ void GameCamera::Initialize(Camera* camera, const Vector3& offset) {
 	//カメラとオフセットの記録
 	camera_ = camera;
 	offset_ = offset;
-	rotate_ = { 0.8f,0.0f,0.0f };
+	rotate_ = { 1.0f,0.0f,0.0f };
 }
 
 //更新

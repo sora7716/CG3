@@ -62,6 +62,9 @@ void WireframeObject3d::Update() {
 	worldTransform_->SetNode(model_->GetModelData().rootNode);
 #endif // _DEBUG
 
+	//ワールドトランスフォーム
+	worldTransform_->Update();
+
 	//Sphere
 	sphere_.center = WireframeObject3d::GetWorldPos();
 	sphere_.radius = radius_;
@@ -75,9 +78,6 @@ void WireframeObject3d::Update() {
 	obb_.rotate = worldTransform_->GetRotate();
 	Rendering::MakeOBBRotateMatrix(obb_.orientations, obb_.rotate);
 	obb_.size = worldTransform_->GetScale();
-
-	//ワールドトランスフォーム
-	worldTransform_->Update();
 }
 
 //描画

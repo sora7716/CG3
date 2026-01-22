@@ -101,6 +101,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>弾</returns>
 	Bullet* GetBullet()const;
+
+	/// <summary>
+	/// 生存フラグのゲッター
+	/// </summary>
+	/// <returns>生存フラグ</returns>
+	bool IsAlive();
 private://定数
 	//カメラの移動速度
 	static inline const float kMoveSpeed = 4.0f;

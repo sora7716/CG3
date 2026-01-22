@@ -8,7 +8,6 @@
 #include "engine/worldTransform/WorldTransform.h"
 #include "Bullet.h"
 #include "engine/debug/WireframeObject3d.h"
-#include "engine/scene/SceneManager.h"
 #include "engine/2d/Sprite.h"
 
 //デストラクタ
@@ -36,6 +35,7 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	gameObject_.object3d = new Object3d();
 	gameObject_.object3d->Initialize(camera_);
 	gameObject_.object3d->SetModel(modelName);
+	gameObject_.isAlive = true;
 
 	//マテリアルの初期化
 	gameObject_.material.color = { 1.0f,1.0f,1.0f,1.0f };
@@ -67,6 +67,7 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	//ヒットボックス
 	gameObject_.hitBox = new WireframeObject3d();
 	gameObject_.hitBox->Initialize(camera_, ModelType::kCube);
+	hitBoxScale_ = Vector3::MakeAllOne() - 0.2f;
 
 	//HPバー
 	//中身
@@ -75,7 +76,7 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	hpBar_->SetBlendMode(BlendMode::kNormal);
 	hpBarTransform_.scale = { hpBarWidth_,70.0f };
 	hpBarTransform_.translate = { 440.0f,630.0f };
-	hpColor_ = Vector4::ColorCodeTransform("#094206FF");
+	hpColor_ = Vector4::ColorCodeTransform("#138A0DFF");
 	//アウトライン
 	hpOutLine_ = new Sprite();
 	hpOutLine_->Initialize("playerHpOutLine.png");
@@ -171,8 +172,8 @@ void Player::Debug() {
 	ImGui::DragFloat("rimOutLinePower", &rimLight_.outLinePower, 0.1f, 0.0f, 100.0f);
 	ImGuiManager::GetInstance()->CheckBoxToInt("enableRimLighting", rimLight_.enableRimLighting);
 	ImGui::DragFloat("cosAngle", &headlight_.cosAngle, 0.1f);
-	ImGui::DragFloat("cosFolloffStart", &headlight_.cosFolloffStart, 0.1f);
-	ImGui::DragFloat3("hitBox.scale", &hitBoxScale_.x, 0.1f);*/
+	ImGui::DragFloat("cosFolloffStart", &headlight_.cosFolloffStart, 0.1f*/
+	ImGui::DragFloat3("hitBox.scale", &hitBoxScale_.x, 0.1f);
 	ImGui::DragFloat2("hp.scale", &hpBarTransform_.scale.x, 0.1f);
 	ImGui::DragFloat2("hp.translate", &hpBarTransform_.translate.x, 0.1f);
 	ImGui::ColorEdit4("hp.color", &hpColor_.x);
@@ -201,8 +202,8 @@ void Player::Finalize() {
 
 //衝突したら
 void Player::OnCollision() {
-	if (hp_ < 0) {
-		//SceneManager::GetInstance()->ChangeScene("Result");
+	if (hp_ <= 0) {
+		gameObject_.isAlive = false;
 	} else {
 		hp_--;
 		//Hpバーに適応
@@ -246,6 +247,11 @@ Bullet* Player::GetBullet()const {
 	return bullet_;
 }
 
+//生存フラグのゲッター
+bool Player::IsAlive() {
+	return gameObject_.isAlive;
+}
+
 //移動
 void Player::Move() {
 	//前後
@@ -281,14 +287,14 @@ void Player::Move() {
 		}
 	}
 
-	//プレイヤーの角度をもとに回転行列を求める
-	Matrix4x4 rotMat = Rendering::MakeRotateXYZMatrix(gameObject_.transformData.rotate);
+	////プレイヤーの角度をもとに回転行列を求める
+	//Matrix4x4 rotMat = Rendering::MakeRotateXYZMatrix(gameObject_.transformData.rotate);
 
-	//カメラの向いてる方向を正にする(XとZ軸限定)
-	Vector3 moveDirXZ = Math::TransformNormal(Vector3(gameObject_.moveDirection.x, 0.0f, gameObject_.moveDirection.z), rotMat);
+	////カメラの向いてる方向を正にする(XとZ軸限定)
+	//Vector3 moveDirXZ = Math::TransformNormal(Vector3(gameObject_.moveDirection.x, 0.0f, gameObject_.moveDirection.z), rotMat);
 
-	//Y軸のそのまま
-	gameObject_.moveDirection = { moveDirXZ.x,gameObject_.moveDirection.y,moveDirXZ.z };
+	////Y軸のそのまま
+	//gameObject_.moveDirection = { moveDirXZ.x,gameObject_.moveDirection.y,moveDirXZ.z };
 
 	//カメラを移動させる
 	gameObject_.transformData.translate += gameObject_.moveDirection.Normalize() * kMoveSpeed * Math::kDeltaTime;
