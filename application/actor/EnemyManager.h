@@ -96,7 +96,7 @@ private://定数
 	static inline const int32_t kMaxEnemy = 10;
 
 	//最初に出てくる敵の数
-	static inline const int32_t kFirstSpawnEnemyCount = 3;
+	static inline const int32_t kFirstSpawnEnemyCount = 2;
 private://メンバ変数
 	//敵
 	std::list<Enemy*>enemyList_;
@@ -111,6 +111,6 @@ private://メンバ変数
 	//スポーンタイマー
 	float spawnTimer_ = 0;
 	//スポーンタイマーのリミット
-	float spawnInterval_ = 5;
+	float spawnInterval_ = 7;
 };
 

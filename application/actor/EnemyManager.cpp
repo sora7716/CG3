@@ -125,6 +125,14 @@ Enemy* EnemyManager::Create() {
 	std::uniform_real_distribution<float>distributionPositionX(spawnAreaMin.x, spawnAreaMax.x);
 	std::uniform_real_distribution<float>distributionPositionZ(spawnAreaMin.z, spawnAreaMax.z);
 	enemy->SetTranslate({ distributionPositionX(randomEngine_),0.0f,distributionPositionZ(randomEngine_) });
+
+	//移動速度をランダム
+	std::uniform_real_distribution<float>distributionMoveSpeed(0.1f, 0.15f);
+	enemy->SetMoveSpeed(distributionMoveSpeed(randomEngine_));
+
+	//弾の発射速度をランダム
+	std::uniform_real_distribution<float>distributionBulletShotSpeed(-64.0f,-8.0f);
+	enemy->SetBulletShotSpeed(distributionBulletShotSpeed(randomEngine_));
 	return enemy;
 }
 

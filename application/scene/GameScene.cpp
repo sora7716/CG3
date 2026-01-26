@@ -5,6 +5,7 @@
 #include "engine/math/func/Collision.h"
 #include "engine/scene/SceneManager.h"
 #include "actor/Bullet.h"
+#include "Score.h"
 
 //初期化
 void GameScene::Initialize(DirectXBase* directXBase) {
@@ -20,7 +21,7 @@ void GameScene::Initialize(DirectXBase* directXBase) {
 	//プレイヤー
 	player_ = std::make_unique<Player>();
 	player_->Initialize(gameCamera_->GetCamera(), "player");
-	player_->SetPosition({ 0.0f,0.0f,10.0f });
+	player_->SetPosition({ 25.0f,0.0f,25.0f });
 
 	//フィールド
 	field_ = std::make_unique<Field>();
@@ -82,8 +83,8 @@ void GameScene::Update() {
 
 	//プレイヤーが死んだら
 	if (!player_->IsAlive()) {
-		//enemyManager_->Reset();
-		//SceneManager::GetInstance()->ChangeScene("Result");
+		enemyManager_->Reset();
+		SceneManager::GetInstance()->ChangeScene("Result");
 	}
 
 #ifdef USE_IMGUI
@@ -111,6 +112,9 @@ void GameScene::Update() {
 	ImGui::Begin("enemy");
 	enemyManager_->Debug();
 	ImGui::End();
+
+	//スコア
+	ImGui::Text("score:%d", Score::score);
 
 	//Object3dCommon
 	Object3dCommon::GetInstance()->Debug();

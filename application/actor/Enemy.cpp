@@ -8,7 +8,7 @@
 #include "engine/debug/WireframeObject3d.h"
 #include "engine/math//func/Collision.h"
 #include "Bullet.h"
-#include "engine/input/Input.h"
+#include "Score.h"
 
 //デストラクタ
 Enemy::~Enemy() {
@@ -30,7 +30,7 @@ void Enemy::Initialize(Camera* camera, const std::string& modelName) {
 	bullet_ = new Bullet();
 	bullet_->Initialize(camera);
 	bullet_->SetAliveRange(kAliveAreaSize);
-	bullet_->SetSpeed(kBulletSpeed);
+	bullet_->SetSpeed(bulletShotSpeed_);
 	bullet_->SetSize({ kBulletSize,kBulletSize,kBulletSize });
 	bullet_->SetMaxBulletCount(kBulletCount);
 
@@ -58,7 +58,7 @@ void Enemy::Initialize(Camera* camera, const std::string& modelName) {
 	hpBar_->Initialize(camera, TransformMode::kBilboard);
 	hpBar_->SetModel("hpBar");
 	hpBar_->SetTexture("playerHpBar.png");
-	hpBarTransform_.scale = { hpBarWidth_,0.4f,1.0f };
+	hpBarTransform_.scale = { hpBarWidth_,0.2f,1.0f };
 	Material hpMaterial;
 	hpMaterial.color = Vector4::MakeRedColor();
 	hpMaterial.enableLighting = false;
@@ -73,7 +73,7 @@ void Enemy::Initialize(Camera* camera, const std::string& modelName) {
 	hpOutLine_->SetModel("hpOutLine");
 	hpOutLine_->SetTexture("playerHpOutLine.png");
 	hpOutLine_->GetModel()->SetMaterial(hpOutLineMaterial);
-	hpOutLineTransform_.scale = { hpBarWidth_,0.4f,1.0f };
+	hpOutLineTransform_.scale = { hpBarWidth_,0.2f,1.0f };
 }
 
 //更新
@@ -177,6 +177,8 @@ void Enemy::OnCollision() {
 	hpBarPosX_ -= hpBarWidth_ / kMaxHpCout;
 	if (hp_ <= 0) {
 		gameObject_.isAlive = false;
+		//スコアを加算
+		Score::AddScore(30);
 	}
 }
 
@@ -196,7 +198,7 @@ void Enemy::Chase() {
 	//カメラの向いてる方向を正にする(XとZ軸限定)
 	moveDir = Math::TransformNormal(moveDir, rotMat);
 	//カメラを移動させる
-	gameObject_.transformData.translate += moveDir.Normalize() * bulletShotSpeed;
+	gameObject_.transformData.translate += moveDir.Normalize() * moveSpeed_;
 }
 
 //攻撃
@@ -240,6 +242,16 @@ void Enemy::SetTarget(const Vector3& targetPos) {
 //平行移動のセッター
 void Enemy::SetTranslate(const Vector3& translate) {
 	gameObject_.transformData.translate = translate;
+}
+
+//移動速度のセッター
+void Enemy::SetMoveSpeed(float moveSpeed) {
+	moveSpeed_ = moveSpeed;
+}
+
+//弾の発射速度のセッター
+void Enemy::SetBulletShotSpeed(float bulletShotSpeed) {
+	bulletShotSpeed_ = bulletShotSpeed;
 }
 
 //弾のゲッター

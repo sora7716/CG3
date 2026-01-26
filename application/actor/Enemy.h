@@ -92,6 +92,18 @@ public://メンバ関数
 	void SetTranslate(const Vector3& translate);
 
 	/// <summary>
+	/// 移動速度のセッター
+	/// </summary>
+	/// <param name="moveSpeed">移動速度</param>
+	void SetMoveSpeed(float moveSpeed);
+
+	/// <summary>
+	/// 弾の発射速度のセッター
+	/// </summary>
+	/// <param name="bulletShotSpeed">弾の発射速度</param>
+	void SetBulletShotSpeed(float bulletShotSpeed);
+
+	/// <summary>
 	/// 弾のゲッター
 	/// </summary>
 	/// <returns>弾</returns>
@@ -135,9 +147,9 @@ private://定数
 	static inline const int32_t kMaxHpCout = 5;
 private://メンバ変数
 	//移動速度
-	float bulletShotSpeed = 0.1f;
+	float moveSpeed_ = 0.1f;
 	//弾の速度
-	float kBulletSpeed = -8.0f;
+	float bulletShotSpeed_ = -8.0f;
 	//ゲームオブジェクト
 	GameObject gameObject_ = {};
 

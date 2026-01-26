@@ -74,14 +74,14 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 	hpBar_ = new Sprite();
 	hpBar_->Initialize("playerHpBar.png");
 	hpBar_->SetBlendMode(BlendMode::kNormal);
-	hpBarTransform_.scale = { hpBarWidth_,70.0f };
+	hpBarTransform_.scale = { hpBarWidth_,50.0f };
 	hpBarTransform_.translate = { 440.0f,630.0f };
 	hpColor_ = Vector4::ColorCodeTransform("#138A0DFF");
 	//アウトライン
 	hpOutLine_ = new Sprite();
 	hpOutLine_->Initialize("playerHpOutLine.png");
 	hpOutLine_->SetBlendMode(BlendMode::kNormal);
-	hpOutLineTransform_.scale = { hpBarWidth_,70.0f };
+	hpOutLineTransform_.scale = { hpBarWidth_,50.0f };
 	hpOutLineTransform_.translate = { 440.0f,630.0f };
 
 }
@@ -90,6 +90,10 @@ void Player::Initialize(Camera* camera, const std::string& modelName) {
 void Player::Update() {
 	//移動
 	Move();
+
+	//移動の制限
+	gameObject_.transformData.translate.x = std::clamp(gameObject_.transformData.translate.x, 11.0f, 26.0f);
+	gameObject_.transformData.translate.z = std::clamp(gameObject_.transformData.translate.z, 3.0f, 29.0f);
 
 	//攻撃
 	Attack();
@@ -165,7 +169,6 @@ void Player::Debug() {
 #ifdef USE_IMGUI
 	ImGui::Text("hp:%d", hp_);
 	/*ImGui::DragFloat3("rotate", &gameObject_.transformData.rotate.x, 0.1f);
-	ImGui::DragFloat3("translate", &gameObject_.transformData.translate.x, 0.1f);
 	ImGui::ColorEdit4("rimColor", &rimLight_.color.x);
 	ImGui::DragFloat("rimPower", &rimLight_.power, 0.1f, 0.0f, 100.0f);
 	ImGui::DragFloat("rimSoftness", &rimLight_.softness, 0.1f, 0.0f, 100.0f);
@@ -173,6 +176,7 @@ void Player::Debug() {
 	ImGuiManager::GetInstance()->CheckBoxToInt("enableRimLighting", rimLight_.enableRimLighting);
 	ImGui::DragFloat("cosAngle", &headlight_.cosAngle, 0.1f);
 	ImGui::DragFloat("cosFolloffStart", &headlight_.cosFolloffStart, 0.1f*/
+	ImGui::DragFloat3("translate", &gameObject_.transformData.translate.x, 0.1f);
 	ImGui::DragFloat3("hitBox.scale", &hitBoxScale_.x, 0.1f);
 	ImGui::DragFloat2("hp.scale", &hpBarTransform_.scale.x, 0.1f);
 	ImGui::DragFloat2("hp.translate", &hpBarTransform_.translate.x, 0.1f);
