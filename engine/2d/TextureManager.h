@@ -50,6 +50,26 @@ public://メンバ関数
 	void UnloadTexture(const std::string& filePath);
 
 	/// <summary>
+	/// 文字テクスチャなどをCPUメモリから作成
+	/// </summary>
+	/// <param name="key">検索キー</param>
+	/// <param name="pixelsBGRA">CPUメモリ上にあるピクセル配列の先頭アドレス</param>
+	/// <param name="width">テクスチャの横幅(ピクセル単位)</param>
+	/// <param name="height">テクスチャの縦幅(ピクセル単位)</param>
+	/// <param name="strideBytes">1行当たりのバイト数</param>
+	void CreateTextureFromMemoryBGRA(const std::string& key, const void* pixelsBGRA, uint32_t width, uint32_t height, uint32_t strideBytes);
+
+	/// <summary>
+	/// 文字テクスチャなどをCPUメモリからの更新
+	/// </summary>
+	/// <param name="key">検索キー</param>
+	/// <param name="pixelsBGRA">CPUメモリ上にあるピクセル配列の先頭アドレス</param>
+	/// <param name="width">テクスチャの横幅(ピクセル単位)</param>
+	/// <param name="height">テクスチャの縦幅(ピクセル単位)</param>
+	/// <param name="strideBytes">1行当たりのバイト数</param>
+	void UpdateTextureFromMemotyBGRA(const std::string& key, const void* pixelsBGRA, uint32_t width, uint32_t height, uint32_t strideBytes);
+
+	/// <summary>
 	/// メタデータの取得
 	/// </summary>
 	/// <param name="filePath">ファイルパス</param>

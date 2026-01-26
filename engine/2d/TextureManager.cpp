@@ -7,7 +7,7 @@
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
-using namespace Microsoft::WRL;	
+using namespace Microsoft::WRL;
 //初期化
 TextureManager* TextureManager::instance = nullptr;
 //ImGuiで0番目を使用するため、1番目から使用
@@ -81,6 +81,78 @@ void TextureManager::UnloadTexture(const std::string& filePath) {
 	} else {
 		return;//存在しない場合何もしない
 	}
+}
+
+//文字テクスチャなどをCPUメモリから作成
+void TextureManager::CreateTextureFromMemoryBGRA(const std::string& key, const void* pixelsBGRA, uint32_t width, uint32_t height, uint32_t strideBytes) {
+	if (textureDatas_.contains(key)) {
+		return;//テクスチャデータに存在したら早期リターン
+	}
+
+	//SRV上限チェック
+	assert(srvManager_->TextureLimitCheck(kSRVIndexTop));
+
+	//ScratchImageを作ってピクセルを詰める
+	DirectX::ScratchImage img{};
+	HRESULT hr = img.Initialize2D(DXGI_FORMAT_B8G8R8A8_UNORM, width, height, 1, 1);
+	assert(SUCCEEDED(hr));
+
+	const DirectX::Image* im = img.GetImage(0, 0, 0);
+	uint8_t* dst = img.GetPixels();
+
+	//row by row copy (stride対応)
+	for (uint32_t y = 0; y < height; y++) {
+		memcpy(dst + size_t(im->rowPitch) * y,
+			(const uint8_t*)pixelsBGRA + size_t(strideBytes) * y,
+			size_t(width) * 4);
+	}
+
+	TextureData& textureData = textureDatas_[key];
+	textureData.metadata = img.GetMetadata();
+	textureData.resourece = directXBase_->CreateTextureResource(textureData.metadata);
+	textureData.intermediateResource = directXBase_->UploadTextureData(textureData.resourece.Get(), img);
+
+	textureData.srvIndex = srvManager_->Allocate() + kSRVIndexTop;
+	textureData.srvHandleCPU = srvManager_->GetCPUDescriptorHandle(textureData.srvIndex);
+	textureData.srvHandleGPU = srvManager_->GetGPUDescriptorHandle(textureData.srvIndex);
+
+	srvManager_->CreateSRVForTexture2D(textureData.srvIndex, textureData.resourece.Get(), textureData.metadata.format, UINT(textureData.metadata.mipLevels));
+}
+
+//文字テクスチャなどをCPUメモリからの更新
+void TextureManager::UpdateTextureFromMemotyBGRA(const std::string& key, const void* pixelsBGRA, uint32_t width, uint32_t height, uint32_t strideBytes) {
+
+	//まだ無ければ新規作成
+	if (!textureDatas_.contains(key)) {
+		CreateTextureFromMemoryBGRA(key, pixelsBGRA, width, height, strideBytes);
+		return;
+	}
+
+	TextureData& textureData = textureDatas_[key];
+
+	//サイズが違うなら作り直し
+	if (textureData.metadata.width != width || textureData.metadata.height != height) {
+		//一旦消して作り直す
+		UnloadTexture(key);
+		CreateTextureFromMemoryBGRA(key, pixelsBGRA, width, height, strideBytes);
+		return;
+	}
+
+	//同じサイズ(resourceは再利用してuploadだけやり直す)
+	DirectX::ScratchImage img{};
+	HRESULT hr = img.Initialize2D(DXGI_FORMAT_B8G8R8A8_UNORM, width, height, 1, 1);
+	assert(SUCCEEDED(hr));
+
+	const DirectX::Image* im = img.GetImage(0, 0, 0);
+	uint8_t* dst = img.GetPixels();
+	for (uint32_t y = 0; y < height; y++) {
+		memcpy(dst + size_t(im->rowPitch) * y,
+			(const uint8_t*)pixelsBGRA + size_t(strideBytes) * y,
+			size_t(width) * 4);
+	}
+
+	//ここでupload resourceを作り出す
+	textureData.intermediateResource = directXBase_->UploadTextureData(textureData.resourece.Get(), img);
 }
 
 // メタデータの取得

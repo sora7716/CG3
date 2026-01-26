@@ -40,4 +40,7 @@ private://メンバ変数
 	Camera* camera_ = nullptr;
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
+
+	//スプライト
+	std::unique_ptr<Sprite>sprite_ = nullptr;
 };

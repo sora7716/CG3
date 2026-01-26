@@ -12,10 +12,10 @@ void GameSystem::Initialize() {
 	//タイトルシーンを呼び出す
 	SceneManager::GetInstance()->ChangeScene("Title");
 #ifdef _DEBUG
-	//シーンの管理
-	SceneManager::GetInstance()->Update();
-	//デバッグしたいシーンを呼び出す
-	SceneManager::GetInstance()->ChangeScene("Game");
+	////シーンの管理
+	//SceneManager::GetInstance()->Update();
+	////デバッグしたいシーンを呼び出す
+	//SceneManager::GetInstance()->ChangeScene("Game");
 #endif // _DEBUG
 }
 

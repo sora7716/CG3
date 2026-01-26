@@ -2,18 +2,24 @@
 #include "engine/input/Input.h"
 #include "engine/scene/SceneManager.h"
 #include "engine/math/func/Collision.h"
+#include "engine/2d/TextureManager.h"
 
 //初期化
 void TitleScene::Initialize(DirectXBase* directXBase) {
 	//シーンのインタフェースの初期化
 	IScene::Initialize(directXBase);
 	camera_ = CameraManager::GetInstance()->FindCamera("titleCamera");
+
+	sprite_ = std::make_unique<Sprite>();
+	sprite_->Initialize("monsterBall.png");
 }
 
 //更新ww
 void TitleScene::Update() {
 	//シーンのインタフェースの初期化
 	IScene::Update();
+
+	sprite_->Update();
 
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		SceneManager::GetInstance()->ChangeScene("Game");
@@ -47,7 +53,7 @@ void TitleScene::Update() {
 
 //描画
 void TitleScene::Draw() {
-
+	sprite_->Draw();
 }
 
 //終了
