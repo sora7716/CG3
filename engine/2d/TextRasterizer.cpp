@@ -15,5 +15,6 @@ void TextRasterizer::Initialize() {
 	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, IID_PPV_ARGS(&d2dFactory_));
 	assert(SUCCEEDED(hr));
 
-	hr= DWrite	
+	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(dwrite_.GetAddressOf()));
+	assert(SUCCEEDED(hr));
 }

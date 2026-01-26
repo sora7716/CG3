@@ -36,6 +36,8 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	void Initialize();
+
+	CpuBitmap RenderTextToCpuBitmap(const std::wstring&text,uint32_t width)
 private://メンバ変数
 	ComPtr<IWICImagingFactory>wic_;
 	ComPtr<ID2D1Factory>d2dFactory_;
