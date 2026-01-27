@@ -24,7 +24,7 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 void TitleScene::Update() {
 	//シーンのインタフェースの初期化
 	IScene::Update();
-	CpuBitmap cpuBitmap = textRasterizer_->RenderTextToCpuBitmap(StringUtility::ConvertString(text_), width, height, StringUtility::ConvertString(fontType_), size);
+	CpuBitmap cpuBitmap = textRasterizer_->RenderTextToCpuBitmap(StringUtility::ConvertString(text_), width, height, StringUtility::ConvertString(fontType_), size, textColor);
 	TextureManager::GetInstance()->UpdateTextureFromMemotyBGRA("scoreText", cpuBitmap.bgra.data(), cpuBitmap.width, cpuBitmap.height, cpuBitmap.stride);
 
 	sprite_->SetText("scoreText");
@@ -58,7 +58,7 @@ void TitleScene::Update() {
 	}
 
 	char buffer2[256];
-	strncpy_s(buffer2,fontType_.c_str(), sizeof(buffer2));
+	strncpy_s(buffer2, fontType_.c_str(), sizeof(buffer2));
 
 	if (ImGui::InputText("fontType", buffer2, sizeof(buffer2))) {
 		fontType_ = buffer2;
@@ -69,6 +69,7 @@ void TitleScene::Update() {
 	ImGui::DragFloat2("sprite.scale", &spriteTransformData_.scale.x, 1.0f);
 	ImGui::DragFloat("sprite.rotate", &spriteTransformData_.rotate, 0.1f);
 	ImGui::DragFloat2("sprite.translate", &spriteTransformData_.translate.x, 0.1f);
+	ImGui::ColorEdit4("color", &textColor.x);
 	/*ImGui::DragFloat2("object2d.scale", &object2dTransformData_.scale.x, 1.0f);
 	ImGui::DragFloat("object2d.rotate", &object2dTransformData_.rotate, 0.1f);
 	ImGui::DragFloat2("object2d.translate", &object2dTransformData_.translate.x, 0.1f);*/

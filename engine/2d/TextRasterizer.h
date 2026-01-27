@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <vector>
 #include <string>
+#include "engine/math/Vector4.h"
 
 //CPUビットマップ
 struct CpuBitmap {
@@ -37,7 +38,17 @@ public://メンバ関数
 	/// </summary>
 	void Initialize();
 
-	CpuBitmap RenderTextToCpuBitmap(const std::wstring& text, uint32_t width, uint32_t height, const std::wstring& fontName = L"Yu Gothic UI", float fontSize = 32.0f);
+	/// <summary>
+	/// フォントの作成
+	/// </summary>
+	/// <param name="text">入力したい文字</param>
+	/// <param name="width">文字の描画範囲(横幅)</param>
+	/// <param name="height">文字の描画範囲(縦幅)</param>
+	/// <param name="fontName">使用するfontのファミリー名</param>
+	/// <param name="fontSize">文字のサイズ</param>
+	/// <param name="color">文字の色</param>
+	/// <returns></returns>
+	CpuBitmap RenderTextToCpuBitmap(const std::wstring& text, uint32_t width, uint32_t height, const std::wstring& fontName = L"Yu Gothic UI", float textSize = 32.0f,const Vector4& color={1.0f,1.0f,1.0f,1.0f});
 private://メンバ変数
 	ComPtr<IWICImagingFactory>wic_;
 	ComPtr<ID2D1Factory>d2dFactory_;

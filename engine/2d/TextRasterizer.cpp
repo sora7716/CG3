@@ -19,7 +19,7 @@ void TextRasterizer::Initialize() {
 	assert(SUCCEEDED(hr));
 }
 
-CpuBitmap TextRasterizer::RenderTextToCpuBitmap(const std::wstring& text, uint32_t width, uint32_t height, const std::wstring& fontName, float fontSize) {
+CpuBitmap TextRasterizer::RenderTextToCpuBitmap(const std::wstring& text, uint32_t width, uint32_t height, const std::wstring& fontName, float textSize, const Vector4& color) {
 	CpuBitmap out;
 	out.width = width;
 	out.height = height;
@@ -42,7 +42,7 @@ CpuBitmap TextRasterizer::RenderTextToCpuBitmap(const std::wstring& text, uint32
 		DWRITE_FONT_WEIGHT_NORMAL,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		fontSize,
+		textSize,
 		L"ja-jp",
 		&format);
 	assert(SUCCEEDED(hr));
@@ -51,7 +51,11 @@ CpuBitmap TextRasterizer::RenderTextToCpuBitmap(const std::wstring& text, uint32
 
 	//ブラシ(白)
 	ComPtr<ID2D1SolidColorBrush> brush;
-	hr = renderTarget->CreateSolidColorBrush(D2D1::ColorF(1, 1, 1, 1), &brush);
+	FLOAT r = color.x;
+	FLOAT g = color.y;
+	FLOAT b = color.z;
+	FLOAT a = color.w;
+	hr = renderTarget->CreateSolidColorBrush(D2D1::ColorF(r, g, b, a), &brush);
 	assert(SUCCEEDED(hr));
 
 	//描画

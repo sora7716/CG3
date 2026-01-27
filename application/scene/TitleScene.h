@@ -54,6 +54,7 @@ private://メンバ変数
 	std::unique_ptr<TextRasterizer>textRasterizer_ = nullptr;
 	std::string text_ = "Hello";
 	std::string fontType_ = "Hachi Maru Pop";
+	Vector4 textColor = Vector4::MakeWhiteColor();
 
 	int width = 1280;
 	int height = 720;
