@@ -75,6 +75,11 @@ void Object2d::Draw() {
 	directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(modelData_.vertices.size()), 1, 0, 0, 0);
 }
 
+//テキストのセッター
+void Object2d::SetText(const std::string& textName) {
+	modelData_.material.textureFilePath = textName;
+}
+
 //テクスチャの変更
 void Object2d::ChangeTexture(std::string textureName) {
 	modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
@@ -146,7 +151,7 @@ void Object2d::SetTranslate(const Vector2& translate) {
 }
 
 //トランスフォームのセッター
-void Object2d::SetTransform(const Transform2dData& transform) {
+void Object2d::SetTransformData(const Transform2dData& transform) {
 	transform_ = transform;
 }
 

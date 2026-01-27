@@ -44,10 +44,18 @@ private://メンバ変数
 
 	//スプライト
 	std::unique_ptr<Sprite>sprite_ = nullptr;
+
+	std::unique_ptr<Object2d>object2d_ = nullptr;
+	//スプライトのトランスフォームデータ
+	Transform2dData spriteTransformData_ = { {1280.0f,720.0f},0.0f,{0.0f,0.0f} };
+	Transform2dData object2dTransformData_ = { {1280.0f,720.0f},0.0f,{0.0f,0.0f} };
+
 	//文字のラスタライザ
 	std::unique_ptr<TextRasterizer>textRasterizer_ = nullptr;
+	std::string text_ = "Hello";
+	std::string fontType_ = "Hachi Maru Pop";
 
-	int width = 256;
-	int height = 64;
+	int width = 1280;
+	int height = 720;
 	float size = 32.0f;
 };

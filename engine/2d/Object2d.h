@@ -45,6 +45,12 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
+	/// テキストのセッター
+	/// </summary>
+	/// <param name="textName">テキストのテクスチャ名</param>
+	void SetText(const std::string& textName);
+
+	/// <summary>
 	/// テクスチャの変更
 	/// </summary>
 	/// <param name="textureName">テクスチャの名前</param>
@@ -120,7 +126,7 @@ public://メンバ関数
 	/// トランスフォームのセッター
 	/// </summary>
 	/// <param name="transform">トランスフォ-ム(scaleは100,100で初期設定)</param>
-	void SetTransform(const Transform2dData& transform);
+	void SetTransformData(const Transform2dData& transform);
 
 	/// <summary>
 	/// UVのサイズのセッター

@@ -47,10 +47,16 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
+	/// テキストのセッター
+	/// </summary>
+	/// <param name="textName">テキストのテクスチャ名</param>
+	void SetText(const std::string& textName);
+
+	/// <summary>
 	/// テクスチャの変更
 	/// </summary>
 	/// <param name="spriteName">スプライト名</param>
-	void ChangeTexture(std::string spriteName);
+	void ChangeTexture(const std::string& spriteName);
 
 	/// <summary>
 	/// UVの座標変換の更新
@@ -74,7 +80,7 @@ public://メンバ関数
     /// トランスフォームのセッター
     /// </summary>
 	/// <param name="transformData">トランスフォームデータ(scaleは100,100に初期設定してる)</param>
-	void SetTransform(const Transform2dData& transformData);
+	void SetTransformData(const Transform2dData& transformData);
 
 	/// <summary>
 	/// ブレンドモードのセッター

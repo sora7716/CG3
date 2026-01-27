@@ -70,9 +70,15 @@ void Sprite::Draw() {
 	directXBase_->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
+//テキストのセッター
+void Sprite::SetText(const std::string& textName) {
+	spriteName_ = textName;
+}
+
 //テクスチャの変更
-void Sprite::ChangeTexture(std::string spriteName) {
-	spriteName_ = spriteName;
+void Sprite::ChangeTexture(const std::string& spriteName) {
+	spriteName_ = "engine/resources/textures/" + spriteName;
+	TextureManager::GetInstance()->LoadTexture(spriteName_);
 }
 
 // UVの座標変換の更新
@@ -93,7 +99,7 @@ void Sprite::SetColor(const Vector4& color) {
 }
 
 //トランスフォームのセッター
-void Sprite::SetTransform(const Transform2dData& transform) {
+void Sprite::SetTransformData(const Transform2dData& transform) {
 	transform_.scale.x = transform.scale.x;
 	transform_.scale.y = transform.scale.y;
 	transform_.rotate.z = transform.rotate;

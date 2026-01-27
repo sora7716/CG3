@@ -144,10 +144,10 @@ void Player::Update() {
 	gameObject_.hitBox->Update();
 
 	//HP
-	hpBar_->SetTransform(hpBarTransform_);
+	hpBar_->SetTransformData(hpBarTransform_);
 	hpBar_->SetColor(hpColor_);
 	hpBar_->Update();
-	hpOutLine_->SetTransform(hpOutLineTransform_);
+	hpOutLine_->SetTransformData(hpOutLineTransform_);
 	hpOutLine_->Update();
 }
 
