@@ -19,6 +19,9 @@ void Framework::Initialize() {
 	SRVManager::GetInstance()->Initialize(directXBase_.get());
 	//入力処理
 	Input::GetInstance()->Initialize();
+	//文字のラスタライザの生成と初期化
+	textRasterizer_ = std::make_unique<TextRasterizer>();
+	textRasterizer_->Initialize();
 	//テクスチャ管理
 	TextureManager::GetInstance()->Initialize(directXBase_.get());
 	//モデルの管理

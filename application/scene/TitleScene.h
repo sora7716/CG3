@@ -1,5 +1,6 @@
 #pragma once
 #include "engine/scene/IScene.h"
+#include "engine/2d/TextRasterizer.h"
 
 /// <summary>
 /// タイトルシーン
@@ -43,4 +44,10 @@ private://メンバ変数
 
 	//スプライト
 	std::unique_ptr<Sprite>sprite_ = nullptr;
+	//文字のラスタライザ
+	std::unique_ptr<TextRasterizer>textRasterizer_ = nullptr;
+
+	int width = 256;
+	int height = 64;
+	float size = 32.0f;
 };

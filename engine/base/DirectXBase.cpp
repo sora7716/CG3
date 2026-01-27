@@ -127,7 +127,7 @@ void DirectXBase::InitializeDepthStencilForObject3d() {
 }
 
 //深度ステンシルビューの初期化(パーティクル用)
-void DirectXBase::InitializeDepthStencilForParticle(){
+void DirectXBase::InitializeDepthStencilForParticle() {
 	//Depthの機能を有効化
 	depthStencilDesc_.DepthEnable = true;
 	//書き込みをする
@@ -258,7 +258,7 @@ void DirectXBase::PostDraw() {
 }
 
 //終了処理
-void DirectXBase::Finalize(){
+void DirectXBase::Finalize() {
 	//オブジェクトの開放
 	CloseHandle(fenceEvent_);
 }
@@ -421,27 +421,34 @@ ComPtr<ID3D12Resource> DirectXBase::CreateTextureResource(const DirectX::TexMeta
 	return resource;
 }
 
-// TextureResourceにデータを転送する 
-ComPtr<ID3D12Resource> DirectXBase::UploadTextureData(ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages) {
-	std::vector<D3D12_SUBRESOURCE_DATA>subResources;
-	//PrePareUploadを利用して読み込んだデータからDirectX12用のSubresourceの配列を作成する
-	DirectX::PrepareUpload(device_.Get(), mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subResources);
-	//Subresourceの数を基にコピー元となるIntermediateResourceに必要なサイズを計算する
-	uint64_t intermediateSize = GetRequiredIntermediateSize(texture.Get(), 0, UINT(subResources.size()));
-	//計算したサイズでIntermediateResourceを作成する
-	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = CreateBufferResource(intermediateSize);
-	//UpdateSubresourcesを利用して、IntermediateResourceにSubresourceのデータを書き込み、textureに転送するコマンドを積む
-	UpdateSubresources(commandList_.Get(), texture.Get(), intermediateResource.Get(), 0, 0, UINT(subResources.size()), subResources.data());
-	//Textureへの転送後は利用できるよう、D3D12_RESOURCE_STATE_COPY_DESTからD3D12_RESOURCE_STATE_GENERIC_READへResourceStateを変更する
-	D3D12_RESOURCE_BARRIER barrier{};
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = texture.Get();
-	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
-	commandList_.Get()->ResourceBarrier(1, &barrier);
-	return intermediateResource;
+ComPtr<ID3D12Resource> DirectXBase::UploadTextureData(ID3D12Resource* texture,D3D12_RESOURCE_STATES& inOutState,const DirectX::ScratchImage& mipImages) {
+	// 必要なら COPY_DESTへ
+	if (inOutState != D3D12_RESOURCE_STATE_COPY_DEST) {
+		auto toCopy = CD3DX12_RESOURCE_BARRIER::Transition(
+			texture, inOutState, D3D12_RESOURCE_STATE_COPY_DEST);
+		commandList_.Get()->ResourceBarrier(1, &toCopy);
+		inOutState = D3D12_RESOURCE_STATE_COPY_DEST;
+	}
+
+	std::vector<D3D12_SUBRESOURCE_DATA> subResources;
+	DirectX::PrepareUpload(device_.Get(), mipImages.GetImages(),
+		mipImages.GetImageCount(), mipImages.GetMetadata(), subResources);
+
+	uint64_t size = GetRequiredIntermediateSize(texture, 0, (UINT)subResources.size());
+	auto intermediate = CreateBufferResource(size);
+
+	UpdateSubresources(commandList_.Get(), texture, intermediate.Get(),
+		0, 0, (UINT)subResources.size(), subResources.data());
+
+	// GENERIC_READへ戻す
+	{
+		auto toRead = CD3DX12_RESOURCE_BARRIER::Transition(
+			texture, inOutState, D3D12_RESOURCE_STATE_GENERIC_READ);
+		commandList_.Get()->ResourceBarrier(1, &toRead);
+		inOutState = D3D12_RESOURCE_STATE_GENERIC_READ;
+	}
+
+	return intermediate;
 }
 
 // RTVの指定番号のCPUデスクリプタハンドルを取得する
@@ -475,12 +482,12 @@ ID3D12GraphicsCommandList* DirectXBase::GetCommandList() const {
 }
 
 //深度ステンシルのゲッター
-D3D12_DEPTH_STENCIL_DESC DirectXBase::GetDepthStencil() const{
+D3D12_DEPTH_STENCIL_DESC DirectXBase::GetDepthStencil() const {
 	return depthStencilDesc_;
 }
 
 // スワップチェーンのリソース数のゲッター
-size_t DirectXBase::GetSwapChainResourceNum() const{
+size_t DirectXBase::GetSwapChainResourceNum() const {
 	return swapChainResources_.size();
 }
 

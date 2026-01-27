@@ -10,8 +10,12 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 	IScene::Initialize(directXBase);
 	camera_ = CameraManager::GetInstance()->FindCamera("titleCamera");
 
+	textRasterizer_ = std::make_unique<TextRasterizer>();
+	textRasterizer_->Initialize();
 	sprite_ = std::make_unique<Sprite>();
 	sprite_->Initialize("monsterBall.png");
+	
+
 }
 
 //更新ww
@@ -20,6 +24,9 @@ void TitleScene::Update() {
 	IScene::Update();
 
 	sprite_->Update();
+	CpuBitmap cpuBitmap = textRasterizer_->RenderTextToCpuBitmap(L"Hello", width, height, L"Yu Gothic UI", size);
+	TextureManager::GetInstance()->UpdateTextureFromMemotyBGRA("scoreText", cpuBitmap.bgra.data(), cpuBitmap.width, cpuBitmap.height, cpuBitmap.stride);
+	sprite_->ChangeTexture("scoreText");
 
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		SceneManager::GetInstance()->ChangeScene("Game");
@@ -35,6 +42,10 @@ void TitleScene::Update() {
 	ImGui::End();
 
 	ImGui::Text("Title");
+
+	ImGui::DragInt("width", &width,1.0f);
+	ImGui::DragInt("height", &height,1.0f);
+	ImGui::DragFloat("Size", &size,1.0f);
 
 	//ImGuiの受付終了
 	ImGuiManager::GetInstance()->End();

@@ -18,7 +18,7 @@ struct CpuBitmap {
 /// <summary>
 /// 文字のラスタライザ
 /// </summary>
-class TextRasterizer{
+class TextRasterizer {
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
@@ -37,7 +37,7 @@ public://メンバ関数
 	/// </summary>
 	void Initialize();
 
-	CpuBitmap RenderTextToCpuBitmap(const std::wstring&text,uint32_t width)
+	CpuBitmap RenderTextToCpuBitmap(const std::wstring& text, uint32_t width, uint32_t height, const std::wstring& fontName = L"Yu Gothic UI", float fontSize = 32.0f);
 private://メンバ変数
 	ComPtr<IWICImagingFactory>wic_;
 	ComPtr<ID2D1Factory>d2dFactory_;

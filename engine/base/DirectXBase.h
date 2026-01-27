@@ -156,7 +156,7 @@ public://メンバ関数
 	/// <param name="mipImages">ミップマップ</param>
 	/// <returns>TextureResourceにデータを転送する</returns>
 	[[nodiscard]]//属性という機能(戻り値を破棄してはならない)むやみやたらとつけてはいけない
-	ComPtr<ID3D12Resource> UploadTextureData(ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
+	ComPtr<ID3D12Resource> UploadTextureData(ID3D12Resource* texture,D3D12_RESOURCE_STATES& inOutState,const DirectX::ScratchImage& mipImages);
 
 	/// <summary>
 	/// RTVの指定番号のCPUデスクリプタハンドルを取得する

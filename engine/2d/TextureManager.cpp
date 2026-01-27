@@ -63,7 +63,7 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 	TextureData& textureData = textureDatas_[filePath];
 	textureData.metadata = mipImages.GetMetadata();
 	textureData.resourece = directXBase_->CreateTextureResource(textureData.metadata);
-	textureData.intermediateResource = directXBase_->UploadTextureData(textureData.resourece.Get(), mipImages);
+	textureData.intermediateResource = directXBase_->UploadTextureData(textureData.resourece.Get(), textureData.state,mipImages);
 	//SRVの確保
 	textureData.srvIndex = srvManager_->Allocate() + kSRVIndexTop;
 	textureData.srvHandleCPU = srvManager_->GetCPUDescriptorHandle(textureData.srvIndex);
@@ -110,7 +110,7 @@ void TextureManager::CreateTextureFromMemoryBGRA(const std::string& key, const v
 	TextureData& textureData = textureDatas_[key];
 	textureData.metadata = img.GetMetadata();
 	textureData.resourece = directXBase_->CreateTextureResource(textureData.metadata);
-	textureData.intermediateResource = directXBase_->UploadTextureData(textureData.resourece.Get(), img);
+	textureData.intermediateResource = directXBase_->UploadTextureData(textureData.resourece.Get(), textureData.state,img);
 
 	textureData.srvIndex = srvManager_->Allocate() + kSRVIndexTop;
 	textureData.srvHandleCPU = srvManager_->GetCPUDescriptorHandle(textureData.srvIndex);
@@ -151,8 +151,9 @@ void TextureManager::UpdateTextureFromMemotyBGRA(const std::string& key, const v
 			size_t(width) * 4);
 	}
 
+
 	//ここでupload resourceを作り出す
-	textureData.intermediateResource = directXBase_->UploadTextureData(textureData.resourece.Get(), img);
+	textureData.intermediateResource = directXBase_->UploadTextureData(textureData.resourece.Get(), textureData.state,img);
 }
 
 // メタデータの取得

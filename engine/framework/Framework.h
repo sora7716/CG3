@@ -10,6 +10,7 @@
 #include"engine/debug/ImGuiManager.h"
 #include "engine/scene/SceneManager.h"
 #include "engine/scene/AbstractSceneFactory.h"
+#include "engine/2d/TextRasterizer.h"
 
 /// <summary>
 /// ゲーム全体
@@ -61,5 +62,7 @@ protected://メンバ変数
 	std::unique_ptr<DirectXBase>directXBase_ = nullptr;
 	//シーンファクトリー
 	AbstractSceneFactory*sceneFactory_=nullptr;
+	//文字のラスタライザ
+	std::unique_ptr<TextRasterizer>textRasterizer_ = nullptr;
 };
 
