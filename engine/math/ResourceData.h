@@ -70,6 +70,12 @@ struct ModelData {
 	Node rootNode;
 };
 
+//テキストデータ
+struct TextData {
+	std::vector<VertexData>vertices;
+	std::string textKey;
+};
+
 //カメラのデータの構造体
 struct CameraForGPU {
 	Vector3 worldPosition;

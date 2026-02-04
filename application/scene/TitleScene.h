@@ -1,6 +1,7 @@
 #pragma once
 #include "engine/scene/IScene.h"
 #include "engine/2d/TextRasterizer.h"
+#include "engine/2d/Text.h"
 
 /// <summary>
 /// タイトルシーン
@@ -49,6 +50,8 @@ private://メンバ変数
 	//スプライトのトランスフォームデータ
 	Transform2dData spriteTransformData_ = { {1280.0f,720.0f},0.0f,{0.0f,0.0f} };
 	Transform2dData object2dTransformData_ = { {1280.0f,720.0f},0.0f,{0.0f,0.0f} };
+
+	std::unique_ptr<Text>textObj_ = nullptr;
 
 	//文字のラスタライザ
 	std::unique_ptr<TextRasterizer>textRasterizer_ = nullptr;

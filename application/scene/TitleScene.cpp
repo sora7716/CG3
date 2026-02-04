@@ -18,6 +18,9 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 
 	object2d_ = std::make_unique<Object2d>();
 	object2d_->Initialize("monsterBall.png");
+
+	textObj_ = std::make_unique<Text>();
+	textObj_->Initialize("testText");
 }
 
 //更新ww
@@ -34,6 +37,8 @@ void TitleScene::Update() {
 	object2d_->SetText("scoreText");
 	object2d_->SetTransformData(object2dTransformData_);
 	object2d_->Update();
+
+	textObj_->Update();
 
 	//if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 	//	SceneManager::GetInstance()->ChangeScene("Game");
@@ -94,6 +99,8 @@ void TitleScene::Update() {
 void TitleScene::Draw() {
 	//object2d_->Draw();
 	sprite_->Draw();
+
+	textObj_->Draw();
 }
 
 //終了

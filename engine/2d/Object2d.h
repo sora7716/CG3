@@ -5,7 +5,7 @@
 #include <string>
 #include <wrl.h>
 #include <d3d12.h>
-#include <memory>
+
 //前方宣言
 class WorldTransform;
 class Camera;
