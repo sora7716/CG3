@@ -13,6 +13,7 @@
 Text::~Text() {
 	Finalize();
 }
+
 //初期化
 void Text::Initialize(const std::string& textKey) {
 	//DirectXの基盤部分を記録する

@@ -35,6 +35,5 @@ private://メンバ関数
 
 private://メンバ変数
 	std::chrono::steady_clock::time_point reference_;//記録時間(FPS固定用)
-
 };
 

@@ -66,7 +66,6 @@ public://静的メンバ関数
 	/// <param name="lparam">メッセージの追加情報</param>
 	/// <returns></returns>
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-
 public://定数
 	//画面の横幅
 	static inline const int32_t kClientWidth = 1280;
