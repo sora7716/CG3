@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "Text.h"
 #include "Object2dCommon.h"
 #include "TextureManager.h"
@@ -8,6 +9,7 @@
 #include "engine/math/func/Math.h"
 #include "engine/camera/Camera.h"
 #include "engine/base/StringUtility.h"
+#include <algorithm>
 
 //デストラクタ
 Text::~Text() {
@@ -34,10 +36,6 @@ void Text::Initialize(const std::string& textKey) {
 	textStyle_.font = "\0";
 	textStyle_.size = 32.0f;
 	textStyle_.color = Vector4::MakeWhiteColor();
-	//テキストのテクスチャの生成
-	AcquireTextTexture();
-	//テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture(textData_.textKey);
 	//uvTransform変数を作る
 	uvTransform_ = { {1.0f,1.0f},Math::kPi,{0.0f,0.0f} };
 	//ワールドトランスフォームの生成と初期化
@@ -64,6 +62,7 @@ void Text::Update() {
 	//UVTransform
 	materialData_->uvMatrix = Rendering::MakeUVAffineMatrix(uvTransform_.scale, uvTransform_.rotate, uvTransform_.translate);
 	//テキストのテクスチャの取得
+	AcquireTextTexture();
 }
 
 //描画
@@ -92,6 +91,56 @@ void Text::Draw() {
 void Text::Finalize() {
 	delete worldTransform_;
 	delete textRasterizer_;
+}
+
+//スケールのセッター
+void Text::SetScale(const Vector2& textRange) {
+	transform_.scale = textRange;
+}
+
+//回転
+void Text::SetRotate(float rotate) {
+	transform_.rotate = rotate;
+}
+
+//平行移動
+void Text::SetTranslate(const Vector2& translate) {
+	transform_.translate = translate;
+}
+
+//トランスフォームデータのセッター
+void Text::SetTransformDate(const Transform2dData& transformData) {
+	transform_ = transformData;
+}
+
+//文字の大きさ
+void Text::SetTextSize(float size) {
+	textStyle_.size = size;
+}
+
+//表示するテキストのセッター
+void Text::SetText(const std::string& text) {
+	textStyle_.text = text;
+}
+
+//使用するフォントのセッター
+void Text::SetFont(const std::string& font) {
+	textStyle_.font = font;
+}
+
+//カラーのセッター
+void Text::SetColor(const Vector4& color) {
+	textStyle_.color = color;
+}
+
+//テキストスタイルのセッター
+void Text::SetTextStyle(const TextStyle& textStyle) {
+	textStyle_ = textStyle;
+}
+
+//カメラのセッター
+void Text::SetCamera(Camera* camera) {
+	worldTransform_->SetCamera(camera);
 }
 
 //頂点データの初期化
@@ -171,6 +220,10 @@ void Text::CreateMaterialResource() {
 
 //テキストのテクスチャを取得または生成
 void Text::AcquireTextTexture() {
+	//スケールが1未満にならないようにする
+	transform_.scale.x = std::max(transform_.scale.x, 1.0f);
+	transform_.scale.y = std::max(transform_.scale.y, 1.0f);
+
 	//CPUBitmapを作成
 	CpuBitmap cpuBitmap = textRasterizer_->RenderTextToCpuBitmap(StringUtility::ConvertString(textStyle_.text), static_cast<uint32_t>(transform_.scale.x), static_cast<uint32_t>(transform_.scale.y), StringUtility::ConvertString(textStyle_.font), textStyle_.size, textStyle_.color);
 

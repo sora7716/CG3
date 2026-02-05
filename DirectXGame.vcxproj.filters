@@ -267,11 +267,11 @@
     <ClCompile Include="application\actor\Score.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="engine\2d\TextRasterizer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="engine\2d\Text.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\2d\TextRasterizer.cpp">
+      <Filter>engine\2d</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -494,11 +494,11 @@
     <ClInclude Include="application\actor\Score.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="engine\2d\TextRasterizer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="engine\2d\Text.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\2d\TextRasterizer.h">
+      <Filter>engine\2d</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

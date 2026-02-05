@@ -61,6 +61,65 @@ public://メンバ関数
 	/// 終了処理
 	/// </summary>
 	void Finalize();
+
+	/// <summary>
+	/// スケールのセッター
+	/// </summary>
+	/// <param name="textRange">描画範囲</param>
+	void SetScale(const Vector2& textRange);
+
+	/// <summary>
+	/// 回転のセッター
+	/// </summary>
+	/// <param name="rotate">回転</param>
+	void SetRotate(float rotate);
+
+	/// <summary>
+	/// 平行移動のセッター
+	/// </summary>
+	/// <param name="translate">平行移動</param>
+	void SetTranslate(const Vector2& translate);
+
+	/// <summary>
+	/// トランスフォームデータのセッター
+	/// </summary>
+	/// <param name="transformData">トランスフォームデータ</param>
+	void SetTransformDate(const Transform2dData& transformData);
+
+	/// <summary>
+	/// 文字の大きさ
+	/// </summary>
+	void SetTextSize(float size);
+
+	/// <summary>
+	/// 表示するテキストのセッター
+	/// </summary>
+	/// <param name="text">テキスト</param>
+	void SetText(const std::string& text);
+
+	/// <summary>
+	/// 使用するフォントのセッター
+	/// </summary>
+	/// <param name="font">フォント</param>
+	void SetFont(const std::string& font);
+
+	/// <summary>
+	/// カラーのセッター
+	/// </summary>
+	/// <param name="color">カラー</param>
+	void SetColor(const Vector4& color);
+
+	/// <summary>
+	/// テキストスタイルのセッター
+	/// </summary>
+	/// <param name="textStyle">テキストスタイル</param>
+	void SetTextStyle(const TextStyle& textStyle);
+
+	/// <summary>
+	/// カメラのセッター
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void SetCamera(Camera* camera);
 private://メンバ関数
 	/// <summary>
 	/// 頂点データの初期化

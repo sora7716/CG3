@@ -85,7 +85,7 @@ CpuBitmap TextRasterizer::RenderTextToCpuBitmap(const std::wstring& text, uint32
 	out.stride = stride;
 	out.bgra.resize(size_t(stride) * height);
 
-	memcpy(out.bgra.data(), data, out.bgra.size());
+	memcpy(out.bgra.data(), data, bufferSize);
 
 	return out;
 }

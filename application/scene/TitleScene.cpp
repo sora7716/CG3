@@ -11,33 +11,24 @@ void TitleScene::Initialize(DirectXBase* directXBase) {
 	IScene::Initialize(directXBase);
 	camera_ = CameraManager::GetInstance()->FindCamera("titleCamera");
 
-	textRasterizer_ = std::make_unique<TextRasterizer>();
-	textRasterizer_->Initialize();
-	sprite_ = std::make_unique<Sprite>();
-	sprite_->Initialize("monsterBall.png");
-
-	object2d_ = std::make_unique<Object2d>();
-	object2d_->Initialize("monsterBall.png");
-
 	textObj_ = std::make_unique<Text>();
 	textObj_->Initialize("testText");
+	textStyele_.text = "飯塚 大空";
+	textStyele_.font = "Impact";
+	textStyele_.size = 128.0f;
+	textStyele_.color = Vector4::MakeWhiteColor();
+	textTransformData_.scale = { 200.0f,200.0f };
+	textTransformData_.rotate = 0.0f;
+	textTransformData_.translate = {};
 }
 
 //更新ww
 void TitleScene::Update() {
 	//シーンのインタフェースの初期化
 	IScene::Update();
-	CpuBitmap cpuBitmap = textRasterizer_->RenderTextToCpuBitmap(StringUtility::ConvertString(text_), width, height, StringUtility::ConvertString(fontType_), size, textColor);
-	TextureManager::GetInstance()->UpdateTextureFromMemotyBGRA("scoreText", cpuBitmap.bgra.data(), cpuBitmap.width, cpuBitmap.height, cpuBitmap.stride);
 
-	sprite_->SetText("scoreText");
-	sprite_->SetTransformData(spriteTransformData_);
-	sprite_->Update();
-
-	object2d_->SetText("scoreText");
-	object2d_->SetTransformData(object2dTransformData_);
-	object2d_->Update();
-
+	textObj_->SetTextStyle(textStyele_);
+	textObj_->SetTransformDate(textTransformData_);
 	textObj_->Update();
 
 	//if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
@@ -54,30 +45,26 @@ void TitleScene::Update() {
 	ImGui::End();
 
 	ImGui::Text("Title");
+
 	ImGui::Begin("text");
 	char buffer1[256];
-	strncpy_s(buffer1, text_.c_str(), sizeof(buffer1));
+	strncpy_s(buffer1, textStyele_.text.c_str(), sizeof(buffer1));
 
-	if (ImGui::InputText("inputText", buffer1, sizeof(buffer1))) {
-		text_ = buffer1;
+	if (ImGui::InputText("text", buffer1, sizeof(buffer1))) {
+		textStyele_.text = buffer1;
 	}
 
 	char buffer2[256];
-	strncpy_s(buffer2, fontType_.c_str(), sizeof(buffer2));
+	strncpy_s(buffer2, textStyele_.font.c_str(), sizeof(buffer2));
 
-	if (ImGui::InputText("fontType", buffer2, sizeof(buffer2))) {
-		fontType_ = buffer2;
+	if (ImGui::InputText("font", buffer2, sizeof(buffer2))) {
+		textStyele_.font = buffer2;
 	}
-	ImGui::DragInt("width", &width, 1.0f);
-	ImGui::DragInt("height", &height, 1.0f);
-	ImGui::DragFloat("Size", &size, 1.0f);
-	ImGui::DragFloat2("sprite.scale", &spriteTransformData_.scale.x, 1.0f);
-	ImGui::DragFloat("sprite.rotate", &spriteTransformData_.rotate, 0.1f);
-	ImGui::DragFloat2("sprite.translate", &spriteTransformData_.translate.x, 0.1f);
-	ImGui::ColorEdit4("color", &textColor.x);
-	/*ImGui::DragFloat2("object2d.scale", &object2dTransformData_.scale.x, 1.0f);
-	ImGui::DragFloat("object2d.rotate", &object2dTransformData_.rotate, 0.1f);
-	ImGui::DragFloat2("object2d.translate", &object2dTransformData_.translate.x, 0.1f);*/
+	ImGui::DragFloat2("scale", &textTransformData_.scale.x, 0.1f);
+	ImGui::DragFloat("rotate", &textTransformData_.rotate, 0.1f);
+	ImGui::DragFloat2("translate", &textTransformData_.translate.x, 0.1f);
+	ImGui::DragFloat("textSize", &textStyele_.size, 0.1f);
+	ImGui::ColorEdit4("color", &textStyele_.color.x);
 	ImGui::End();
 
 	//ImGuiの受付終了
@@ -97,9 +84,6 @@ void TitleScene::Update() {
 
 //描画
 void TitleScene::Draw() {
-	//object2d_->Draw();
-	sprite_->Draw();
-
 	textObj_->Draw();
 }
 
