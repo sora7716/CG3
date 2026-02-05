@@ -9,6 +9,8 @@
 //前方宣言
 class DirectXBase;
 class SRVManager;
+class WinApi;
+
 /// <summary>
 /// ImGuiの管理
 /// </summary>
@@ -19,12 +21,14 @@ public://メンバ関数
 	/// </summary>
 	/// <returns></returns>
 	static ImGuiManager* GetInstance();
+	
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	void Initialize(DirectXBase* directXBase);
+	/// <param name="winApi">ウィンドウズアプリケーション</param>
+	void Initialize(DirectXBase* directXBase,WinApi* winApi);
 
 	/// <summary>
 	/// ImGuiの受付開始

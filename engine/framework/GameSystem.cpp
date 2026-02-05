@@ -12,10 +12,10 @@ void GameSystem::Initialize() {
 	//タイトルシーンを呼び出す
 	SceneManager::GetInstance()->ChangeScene("Title");
 #ifdef _DEBUG
-	////シーンの管理
-	//SceneManager::GetInstance()->Update();
-	////デバッグしたいシーンを呼び出す
-	//SceneManager::GetInstance()->ChangeScene("Game");
+	//シーンの管理
+	SceneManager::GetInstance()->Update();
+	//デバッグしたいシーンを呼び出す
+	SceneManager::GetInstance()->ChangeScene("Game");
 #endif // _DEBUG
 }
 
@@ -27,7 +27,7 @@ void GameSystem::Update() {
 //描画
 void GameSystem::Draw() {
 	//描画開始位置
-	directXBase_->PreDraw();
+	core_->GetDirectXBase()->PreDraw();
 	//SRVの管理
 	SRVManager::GetInstance()->PreDraw();
 	//シーン
@@ -35,11 +35,11 @@ void GameSystem::Draw() {
 	//ImGuiの管理
 	ImGuiManager::GetInstance()->Draw();
 	//描画終了位置
-	directXBase_->PostDraw();
+	core_->GetDirectXBase()->PostDraw();
 }
 
 //終了
-void GameSystem::Finalize() {	
+void GameSystem::Finalize() {
 	//敵の解放
 	EnemyManager::GetInstance()->Finalize();
 

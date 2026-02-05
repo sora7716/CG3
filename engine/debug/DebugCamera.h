@@ -6,6 +6,7 @@
 //前方宣言
 class Camera;
 class Input;
+class CameraManager;
 
 /// <summary>
 /// デバックカメラ
@@ -21,11 +22,13 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~DebugCamera() = default;
+	
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	/// <param name="cameraManager">カメラマネージャー</param>
+	void Initialize(CameraManager* cameraManager);
 
 	/// <summary>
 	/// 更新
@@ -102,6 +105,8 @@ public://定数
 	//zoom速度
 	static inline const float kXboxPadZoomSpeed = 0.01f;
 private://メンバ変数
+	//カメラマネージャー
+	CameraManager* cameraManager_ = nullptr;
 	//カメラ
 	Camera* camera_ = nullptr;
 	//X,Y,Z軸回りのローカル回転角

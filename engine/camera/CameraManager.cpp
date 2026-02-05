@@ -1,13 +1,9 @@
 #include "CameraManager.h"
 #include <cassert>
 
-//インスタンスのゲッター
-CameraManager* CameraManager::GetInstance(){
-    assert(!isFinalize && "GetInstance() called after Finalize()");
-    if (instance == nullptr) {
-        instance = new CameraManager();
-    }
-    return instance;
+//デストラクタ
+CameraManager::~CameraManager() {
+	Finalize();
 }
 
 //更新
@@ -44,7 +40,9 @@ Camera* CameraManager::FindCamera(const std::string& name){
 
 //終了
 void CameraManager::Finalize(){
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
+
+}
+
+// PressKeyを受け取るコンストラクタ
+CameraManager::CameraManager(ConstructorKey) {
 }

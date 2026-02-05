@@ -10,10 +10,9 @@
 class CameraManager {
 public://メンバ関数
 	/// <summary>
-	/// インスタンスのゲッター
+	/// デストラクタ
 	/// </summary>
-	/// <returns>インスタンス</returns>
-	static CameraManager* GetInstance();
+	~CameraManager();
 
 	/// <summary>
 	/// 更新
@@ -37,20 +36,23 @@ public://メンバ関数
 	/// 終了
 	/// </summary>
 	void Finalize();
+public://PressKeyIdiom
+	class ConstructorKey {
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PressKeyを受け取る</param>
+	explicit CameraManager(ConstructorKey);
 private://メンバ関数
-	//コンストラクタを封印
-	CameraManager() = default;
-	//デストラクタを封印
-	~CameraManager() = default;
 	//コピーコンストラクタ禁止
 	CameraManager(const CameraManager&) = delete;
 	//代入演算子を禁止
 	CameraManager operator=(const CameraManager&) = delete;
-private://静的メンバ変数
-	//カメラのインスタンス
-	static inline CameraManager* instance = nullptr;
-	//終了処理をしたかのフラグ
-	static inline bool isFinalize = false;
 private://メンバ変数
 	//カメラ
 	std::map<std::string, std::unique_ptr<Camera>>cameras_;

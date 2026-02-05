@@ -12,6 +12,7 @@
 
 //前方宣言
 class WinApi;
+class Core;
 
 /// <summary>
 /// DirectXコモン
@@ -21,19 +22,15 @@ private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
 	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	DirectXBase() = default;
-
-	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~DirectXBase() = default;
+	~DirectXBase();
 
 	/// <summary>
 	/// DirectX12の初期化
 	/// </summary>
-	void Initialize();
+	/// <param name="winApi">ウィンドウズアプリケーション</param>
+	void Initialize(WinApi* winApi);
 
 	/// <summary>
 	/// デバイスの初期化
@@ -106,7 +103,7 @@ public://メンバ関数
 	void PostDraw();
 
 	/// <summary>
-	/// 終了処理
+	/// 終了
 	/// </summary>
 	void Finalize();
 
@@ -156,7 +153,7 @@ public://メンバ関数
 	/// <param name="mipImages">ミップマップ</param>
 	/// <returns>TextureResourceにデータを転送する</returns>
 	[[nodiscard]]//属性という機能(戻り値を破棄してはならない)むやみやたらとつけてはいけない
-	ComPtr<ID3D12Resource> UploadTextureData(ID3D12Resource* texture,D3D12_RESOURCE_STATES& inOutState,const DirectX::ScratchImage& mipImages);
+	ComPtr<ID3D12Resource> UploadTextureData(ID3D12Resource* texture, D3D12_RESOURCE_STATES& inOutState, const DirectX::ScratchImage& mipImages);
 
 	/// <summary>
 	/// RTVの指定番号のCPUデスクリプタハンドルを取得する
@@ -209,6 +206,16 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>スワップチェーンのリソース数</returns>
 	size_t GetSwapChainResourceNum()const;
+public://PressKeyIdiom
+	class ConstructorKey {
+		ConstructorKey() = default;
+		friend class Core;
+	};
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PressKeyを受け取る</param>
+	explicit DirectXBase(ConstructorKey);
 
 public://静的メンバ関数
 	/// <summary>

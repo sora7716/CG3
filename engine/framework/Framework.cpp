@@ -5,48 +5,42 @@
 #include "engine/audio/AudioManager.h"
 #include "engine/input/Input.h"
 #include "engine/3d/ModelManager.h"
-#include "engine/camera/CameraManager.h"
 #include "engine/particle/ParticleManager.h"
 
 //初期化
 void Framework::Initialize() {
-	//winApi
-	WinApi::GetInstance()->Initialize();
-	//DirectXの基盤部分
-	directXBase_ = std::make_unique<DirectXBase>();
-	directXBase_->Initialize();
+	//エンジンの核
+	core_ = std::make_unique<Core>();
+	core_->Initialize();
 	//SRVの管理
-	SRVManager::GetInstance()->Initialize(directXBase_.get());
+	SRVManager::GetInstance()->Initialize(core_->GetDirectXBase());
 	//入力処理
-	Input::GetInstance()->Initialize();
-	//文字のラスタライザの生成と初期化
-	textRasterizer_ = std::make_unique<TextRasterizer>();
-	textRasterizer_->Initialize();
+	Input::GetInstance()->Initialize(core_->GetWinApi());
 	//テクスチャ管理
-	TextureManager::GetInstance()->Initialize(directXBase_.get());
+	TextureManager::GetInstance()->Initialize(core_->GetDirectXBase());
 	//モデルの管理
-	ModelManager::GetInstance()->Initialize(directXBase_.get());
+	ModelManager::GetInstance()->Initialize(core_->GetDirectXBase());
 	//ImGuiの管理
-	ImGuiManager::GetInstance()->Initialize(directXBase_.get());
+	ImGuiManager::GetInstance()->Initialize(core_->GetDirectXBase(),core_->GetWinApi());
 	//スプライトの共通部分
-	SpriteCommon::GetInstance()->Initialize(directXBase_.get());
+	SpriteCommon::GetInstance()->Initialize(core_->GetDirectXBase());
 	//2Dオブジェクトの共通部分
-	Object2dCommon::GetInstance()->Initialize(directXBase_.get());
+	Object2dCommon::GetInstance()->Initialize(core_->GetDirectXBase());
 	//3Dオブジェクトの共通部分
-	Object3dCommon::GetInstance()->Initialize(directXBase_.get());
+	Object3dCommon::GetInstance()->Initialize(core_->GetDirectXBase());
 	//ワイヤーフレームオブジェクトの共通部分
-	WireframeObject3dCommon::GetInstance()->Initialize(directXBase_.get());
+	WireframeObject3dCommon::GetInstance()->Initialize(core_->GetDirectXBase());
 	//パーティクルの共通部分の初期化
-	ParticleCommon::GetInstance()->Initialize(directXBase_.get());
+	ParticleCommon::GetInstance()->Initialize(core_->GetDirectXBase());
 	//ゲームオブジェクトのリスト
-	GameObjectList::GetInstance()->Initialize();
+	GameObjectList::GetInstance()->Initialize(core_.get());
 	//カメラの設定
-	Object2dCommon::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->FindCamera("defaultCamera"));
-	Object3dCommon::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->FindCamera("defaultCamera"));
-	WireframeObject3dCommon::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->FindCamera("defaultCamera"));
-	ParticleCommon::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->FindCamera("defaultCamera"));
+	Object2dCommon::GetInstance()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
+	Object3dCommon::GetInstance()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
+	WireframeObject3dCommon::GetInstance()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
+	ParticleCommon::GetInstance()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
 	//シーンの管理
-	SceneManager::GetInstance()->Initialize(directXBase_.get());
+	SceneManager::GetInstance()->Initialize(core_->GetDirectXBase(),core_->GetCameraManager());
 }
 
 //更新
@@ -54,17 +48,13 @@ void Framework::Update() {
 	//入力処理
 	Input::GetInstance()->Update();
 	//カメラの管理
-	CameraManager::GetInstance()->Update();
+	core_->GetCameraManager()->Update();
 	//シーンの管理
 	SceneManager::GetInstance()->Update();
 }
 
 //終了
 void Framework::Finalize() {
-	//winApi
-	WinApi::GetInstance()->Finalize();
-	//DirectXの基盤部分
-	directXBase_->Finalize();
 	//SRVの管理
 	SRVManager::GetInstance()->Finalize();
 	//入力
@@ -75,8 +65,6 @@ void Framework::Finalize() {
 	ModelManager::GetInstance()->Finalize();
 	//ImGuiの管理
 	ImGuiManager::GetInstance()->Finalize();
-	//カメラの管理
-	CameraManager::GetInstance()->Finalize();
 	//オーディオの管理
 	AudioManager::GetInstance()->Finalize();
 	//スプライトの共通部分
@@ -122,5 +110,5 @@ void Framework::Run() {
 
 //終了リクエスト
 bool Framework::isEndRequest() {
-	return WinApi::GetInstance()->ProcesMessage();
+	return core_->GetWinApi()->ProcesMessage();
 }

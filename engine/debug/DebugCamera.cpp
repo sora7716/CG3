@@ -1,18 +1,17 @@
 #include "DebugCamera.h"
 #include "engine/input/Input.h"
-#include "engine/camera/CameraManager.h"
 #include "engine/math/func/Math.h"
+#include "engine/camera/CameraManager.h"
 #include "ImGuiManager.h"
 #include <algorithm>
 
 //初期化
-void DebugCamera::Initialize() {
+void DebugCamera::Initialize(CameraManager*cameraManager) {
 	//入力
 	input_ = Input::GetInstance();
-	input_->Initialize();
 
 	//カメラ
-	camera_ = CameraManager::GetInstance()->FindCamera("debugCamera");
+	camera_ = cameraManager->FindCamera("debugCamera");
 
 	//fovYの設定
 	fovY_ = camera_->GetFovY();

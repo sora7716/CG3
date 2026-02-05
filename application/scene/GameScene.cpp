@@ -4,15 +4,16 @@
 #include "engine/debug/GlobalVariables.h"
 #include "engine/math/func/Collision.h"
 #include "engine/scene/SceneManager.h"
+#include "engine/camera/CameraManager.h"
 #include "actor/Bullet.h"
 #include "Score.h"
 
 //初期化
-void GameScene::Initialize(DirectXBase* directXBase) {
+void GameScene::Initialize(DirectXBase* directXBase,CameraManager*cameraManager) {
 	//シーンのインタフェースの初期化
-	IScene::Initialize(directXBase);
+	IScene::Initialize(directXBase,cameraManager);
 	//カメラの設定
-	camera_ = CameraManager::GetInstance()->FindCamera("gameCamera");
+	camera_ = cameraManager_->FindCamera("gameCamera");
 
 	//追従カメラ
 	gameCamera_ = std::make_unique<GameCamera>();

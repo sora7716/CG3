@@ -3,16 +3,18 @@
 #include <cstdint>
 #include <string>
 
+//前方宣言
+class Core;
+
 /// <summary>
 /// ウィンドウズAPI
 /// </summary>
 class WinApi {
 public://メンバ関数
 	/// <summary>
-	/// インスタンスのゲッター
+	/// デストラクタ
 	/// </summary>
-	/// <returns></returns>
-	static WinApi* GetInstance();
+	~WinApi();
 	
 	/// <summary>
 	/// 初期化
@@ -46,16 +48,17 @@ public://メンバ関数
 	WinApi(const WinApi&) = delete;
 	//代入演算子禁止
 	const WinApi& operator=(const WinApi&) = delete;
-private://メンバ関数
+public://PressKeyIdiom
+	class ConstructorKey {
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	WinApi() = default;
-
-	/// <summary>
-	/// デストラクタ
-	/// </summary>
-	~WinApi() = default;
+	/// <param name="">PressKeyを受け取る</param>
+	explicit WinApi(ConstructorKey);
 public://静的メンバ関数
 	/// <summary>
 	/// ウィンドウプロシージャ

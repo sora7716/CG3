@@ -16,6 +16,7 @@
 // 前方宣言
 class SceneManager;
 class AbstractSceneFactory;
+class CameraManager;
 
 /// <summary>
 /// シーンのインターフェース
@@ -31,12 +32,13 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	virtual ~IScene() = default;
-
+	
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	virtual void Initialize(DirectXBase* directXBase);
+	/// <param name="cameraManager">カメラマネージャー</param>
+	virtual void Initialize(DirectXBase* directXBase,CameraManager*cameraManager);
 
 	/// <summary>
 	/// 更新
@@ -57,5 +59,7 @@ protected://メンバ変数
 	std::unique_ptr<DebugCamera>debugCamera_ = nullptr;
 	//シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
+	//カメラマネージャー
+	CameraManager* cameraManager_ = nullptr;
 };
 

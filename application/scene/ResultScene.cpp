@@ -3,10 +3,10 @@
 #include "engine/scene/SceneManager.h"
 
 //初期化
-void ResultScene::Initialize(DirectXBase* directXBase) {
+void ResultScene::Initialize(DirectXBase* directXBase,CameraManager*cameraManager) {
 	//シーンのインタフェースの初期化
-	IScene::Initialize(directXBase);
-	camera_ = CameraManager::GetInstance()->FindCamera("ResultCamera");
+	IScene::Initialize(directXBase,cameraManager);
+	camera_ =cameraManager_->FindCamera("ResultCamera");
 }
 
 //更新ww
@@ -35,7 +35,7 @@ void ResultScene::Update() {
 	if (debugCamera_->IsDebug()) {
 		camera_ = debugCamera_->GetCamera();
 	} else {
-		camera_ = CameraManager::GetInstance()->FindCamera("ResultCamera");
+		camera_ = cameraManager_->FindCamera("ResultCamera");
 	}
 #endif // _DEBUG
 

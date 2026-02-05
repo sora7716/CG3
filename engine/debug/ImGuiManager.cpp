@@ -13,7 +13,7 @@ ImGuiManager* ImGuiManager::GetInstance() {
 }
 
 //初期化
-void ImGuiManager::Initialize(DirectXBase* directXBase) {
+void ImGuiManager::Initialize(DirectXBase* directXBase, WinApi* winApi) {
 #ifdef USE_IMGUI
 	//DirectXの基盤部分を記録する
 	directXBase_ = directXBase;
@@ -24,7 +24,7 @@ void ImGuiManager::Initialize(DirectXBase* directXBase) {
 	ImGui::CreateContext();
 	//ImGuiのスタイルを設定
 	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(WinApi::GetInstance()->GetHwnd());
+	ImGui_ImplWin32_Init(winApi->GetHwnd());
 	//srvの確保
 	srvManager_->Allocate();
 	ImGui_ImplDX12_Init(
@@ -56,7 +56,6 @@ void ImGuiManager::End() {
 #endif // USE_IMGUI
 }
 
-
 //描画
 void ImGuiManager::Draw() {
 #ifdef USE_IMGUI
@@ -70,7 +69,7 @@ void ImGuiManager::Draw() {
 }
 
 //トランスフォームデータ用のImGui
-void ImGuiManager::DragTransform(TransformData& transfromData){
+void ImGuiManager::DragTransform(TransformData& transfromData) {
 #ifdef USE_IMGUI
 	ImGui::DragFloat3("scale", &transfromData.scale.x, 0.1f);
 	ImGui::DragFloat3("rotate", &transfromData.rotate.x, 0.1f);

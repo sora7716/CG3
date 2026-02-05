@@ -19,9 +19,9 @@ Input* Input::GetInstance() {
 }
 
 //初期化
-void Input::Initialize() {
+void Input::Initialize(WinApi* winApi) {
 	//ウィンドウズアプリケーションを受け取る
-	winApi_ = WinApi::GetInstance();
+	winApi_ = winApi;
 	//キーボード入力
 	KeyboardInitialize();
 	//マウス入力
@@ -129,7 +129,7 @@ Vector3 Input::GetWorldMousePosition(Camera* camera) const {
 	GetCursorPos(&mousePosition);
 
 	// クライアントエリア座標に変換する
-	HWND hwnd = WinApi::GetInstance()->GetHwnd();
+	HWND hwnd = winApi_->GetHwnd();
 	ScreenToClient(hwnd, &mousePosition);
 
 	// ビューポートサイズを取得
@@ -164,7 +164,7 @@ Vector2Int Input::GetMousePosition() const {
 	GetCursorPos(&mousePosition);
 
 	// クライアントエリア座標に変換する
-	HWND hwnd = WinApi::GetInstance()->GetHwnd();
+	HWND hwnd = winApi_->GetHwnd();
 	ScreenToClient(hwnd, &mousePosition);
 	Vector2Int result = { mousePosition.x,mousePosition.y };
 	return result;

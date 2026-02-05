@@ -76,7 +76,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="winApp">ウィンドウズアプリケーション</param>
-	void Initialize();
+	void Initialize(WinApi*winApi);
 
 	/// <summary>
 	/// 更新

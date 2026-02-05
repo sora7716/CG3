@@ -4,12 +4,14 @@
 #include "engine/debug/GlobalVariables.h"
 
 //初期化
-void IScene::Initialize(DirectXBase* directXBase) {
+void IScene::Initialize(DirectXBase* directXBase, CameraManager* cameraManager) {
 	//DirectXBaseを受け取る
 	directXBase_ = directXBase;
+	//カメラマネージャーを受け取る
+	cameraManager_ = cameraManager;
 	//デバックカメラ
 	debugCamera_ = std::make_unique<DebugCamera>();
-	debugCamera_->Initialize();
+	debugCamera_->Initialize(cameraManager_);
 	//シーンファクトリーの生成
 	sceneFactory_ = new SceneFactory();
 	//シーンファクトリーのセット

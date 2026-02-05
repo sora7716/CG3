@@ -1,7 +1,9 @@
 #pragma once
 #include "engine/audio/AudioManager.h"
 #include "engine/3d/ModelManager.h"
-#include "engine/camera/CameraManager.h"
+
+//前方宣言
+class Core;
 
 /// <summary>
 /// ゲームで使用するオブジェクトの読み込みのリスト
@@ -13,11 +15,13 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>インスタンス</returns>
 	static GameObjectList* GetInstance();
+	
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	/// <param name="core">エンジンの核</param>
+	void Initialize(Core*core);
 
 	/// <summary>
 	/// 終了
@@ -53,5 +57,7 @@ private://静的メンバ変数
 	static inline GameObjectList* instance = nullptr;
 	//Finalizeをしたかどうか
 	static inline bool isFinalize = false;
+	//エンジンの核
+	Core* core_ = nullptr;
 };
 

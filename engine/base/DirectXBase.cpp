@@ -10,12 +10,17 @@
 #pragma comment(lib,"dxcompiler.lib")
 using namespace Microsoft::WRL;
 
+//デストラクタ
+DirectXBase::~DirectXBase() {
+	Finalize();
+}
+
 // DirectX12の初期化
-void DirectXBase::Initialize() {
+void DirectXBase::Initialize(WinApi* winApi) {
 	//FPS固定初期化
 	FixFPS::GetInstance()->Initialize();
 	//ウィンドウズアプリケーションを受け取る
-	winApi_ = WinApi::GetInstance();
+	winApi_ = winApi;
 	//デバイスの初期化
 	InitializeDevice();
 	//コマンド関連の初期化
@@ -489,6 +494,10 @@ D3D12_DEPTH_STENCIL_DESC DirectXBase::GetDepthStencil() const {
 // スワップチェーンのリソース数のゲッター
 size_t DirectXBase::GetSwapChainResourceNum() const {
 	return swapChainResources_.size();
+}
+
+//コンストラクタ
+DirectXBase::DirectXBase(ConstructorKey) {
 }
 
 // デスクリプターCPUハンドルのゲッター

@@ -2,6 +2,9 @@
 #include "IScene.h"
 #include "AbstractSceneFactory.h"
 
+//前方宣言
+class CameraManager;
+
 /// <summary>
 /// シーン管理
 /// </summary>
@@ -17,7 +20,8 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	void Initialize(DirectXBase* directXBase);
+	/// <param name="cameraManager">カメラマネージャー</param>
+	void Initialize(DirectXBase* directXBase, CameraManager* cameraManager);
 
 	/// <summary>
 	/// 更新
@@ -68,5 +72,7 @@ private://メンバ変数
 	DirectXBase* directXBase_ = nullptr;
 	//シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
+	//カメラマネージャー
+	CameraManager* cameraManager_ = nullptr;
 };
 

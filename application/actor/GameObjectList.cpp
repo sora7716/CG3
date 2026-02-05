@@ -1,4 +1,5 @@
 #include "GameObjectList.h"
+#include "engine/base/Core.h"
 #include <cassert>
 
 //インスタンスのゲッター
@@ -11,7 +12,9 @@ GameObjectList* GameObjectList::GetInstance() {
 }
 
 //初期化
-void GameObjectList::Initialize() {
+void GameObjectList::Initialize(Core* core) {
+	//エンジンの核を記録する
+	core_ = core;
 	//オーディオの読み込み
 	LoadAudio();
 	//OBJファイルの読み込み
@@ -74,13 +77,13 @@ void GameObjectList::LoadModel() {
 //カメラの生成
 void GameObjectList::CreateCamera() {
 	//カメラの管理
-	CameraManager::GetInstance()->CreateCamera("defaultCamera");
+	core_->GetCameraManager()->CreateCamera("defaultCamera");
 	//デバッグカメラ
-	CameraManager::GetInstance()->CreateCamera("debugCamera");
+	core_->GetCameraManager()->CreateCamera("debugCamera");
 	//タイトルカメラ
-	CameraManager::GetInstance()->CreateCamera("titleCamera");
+	core_->GetCameraManager()->CreateCamera("titleCamera");
 	//ゲームカメラ
-	CameraManager::GetInstance()->CreateCamera("gameCamera");
+	core_->GetCameraManager()->CreateCamera("gameCamera");
 	//リザルトカメラ
-	CameraManager::GetInstance()->CreateCamera("resultCamera");
+	core_->GetCameraManager()->CreateCamera("resultCamera");
 }

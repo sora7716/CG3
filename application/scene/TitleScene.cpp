@@ -6,10 +6,10 @@
 #include <cstring>
 
 //初期化
-void TitleScene::Initialize(DirectXBase* directXBase) {
+void TitleScene::Initialize(DirectXBase* directXBase,CameraManager*cameraManager) {
 	//シーンのインタフェースの初期化
-	IScene::Initialize(directXBase);
-	camera_ = CameraManager::GetInstance()->FindCamera("titleCamera");
+	IScene::Initialize(directXBase, cameraManager);
+	camera_ = cameraManager_->FindCamera("titleCamera");
 
 	textObj_ = std::make_unique<Text>();
 	textObj_->Initialize("testText");
@@ -75,7 +75,7 @@ void TitleScene::Update() {
 	if (debugCamera_->IsDebug()) {
 		camera_ = debugCamera_->GetCamera();
 	} else {
-		camera_ = CameraManager::GetInstance()->FindCamera("titleCamera");
+		camera_ = cameraManager_->FindCamera("titleCamera");
 	}
 #endif // _DEBUG
 

@@ -3,13 +3,9 @@
 #include "imgui/imgui_impl_win32.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-//インスタンスのゲッター
-WinApi* WinApi::GetInstance(){
-	assert(!isFinalize && "GetInstance() called after Finalize()");
-	if (instance == nullptr) {
-		instance = new WinApi();
-	}
-	return instance;
+//デストラクタ
+WinApi::~WinApi() {
+	Finalize();
 }
 
 // ウィンドウの生成するための初期化
@@ -84,6 +80,10 @@ HWND WinApi::GetHwnd()const{
 //WNDクラスのゲッター
 WNDCLASS WinApi::GetWndClass()const{
 	return wndClass_;
+}
+
+//コンストラクタ
+WinApi::WinApi(ConstructorKey) {
 }
 
 //ウィンドウプロシージャ

@@ -11,7 +11,7 @@
 #include "engine/scene/SceneManager.h"
 #include "engine/scene/AbstractSceneFactory.h"
 #include "engine/2d/TextRasterizer.h"
-
+#include "engine/base/Core.h"
 /// <summary>
 /// ゲーム全体
 /// </summary>
@@ -58,11 +58,9 @@ public://メンバ関数
 	/// <returns>終了したかどうか</returns>
 	virtual bool isEndRequest();
 protected://メンバ変数
-	//DirectXの基盤部分
-	std::unique_ptr<DirectXBase>directXBase_ = nullptr;
 	//シーンファクトリー
 	AbstractSceneFactory*sceneFactory_=nullptr;
-	//文字のラスタライザ
-	std::unique_ptr<TextRasterizer>textRasterizer_ = nullptr;
+	//エンジンの核
+	std::unique_ptr<Core>core_ = nullptr;
 };
 
