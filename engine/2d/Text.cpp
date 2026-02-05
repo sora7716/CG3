@@ -223,7 +223,7 @@ void Text::AcquireTextTexture() {
 	//スケールが1未満にならないようにする
 	transform_.scale.x = std::max(transform_.scale.x, 1.0f);
 	transform_.scale.y = std::max(transform_.scale.y, 1.0f);
-	textStyle_.size = std::max(textStyle_.size, 1.0f);
+	textStyle_.size = std::max(textStyle_.size, 1.0f); 
 
 	//CPUBitmapを作成
 	CpuBitmap cpuBitmap = textRasterizer_->RenderTextToCpuBitmap(StringUtility::ConvertString(textStyle_.text), static_cast<uint32_t>(transform_.scale.x), static_cast<uint32_t>(transform_.scale.y), StringUtility::ConvertString(textStyle_.font), textStyle_.size, textStyle_.color);
