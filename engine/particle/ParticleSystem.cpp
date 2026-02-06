@@ -60,7 +60,7 @@ void ParticleSystem::Draw() {
 	//マテリアルCBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());//material
 	//ワールドトランスフォームの描画
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, SRVManager::GetInstance()->GetGPUDescriptorHandle(srvIndex_));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, ParticleCommon::GetInstance()->GetSRVManager()->GetGPUDescriptorHandle(srvIndex_));
 	//SRVのDescriptorTableの先頭を設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVHandleGPU(modelData_.material.textureFilePath));
 	//描画(DrawCall/ドローコール)
@@ -228,8 +228,8 @@ void ParticleSystem::CreateWorldTransformResource() {
 //ストラクチャバッファの生成
 void ParticleSystem::CreateStructuredBuffer() {
 	//ストラクチャバッファを生成
-	srvIndex_ = SRVManager::GetInstance()->Allocate() + TextureManager::kSRVIndexTop;
-	SRVManager::GetInstance()->CreateSRVForStructuredBuffer(
+	srvIndex_ = ParticleCommon::GetInstance()->GetSRVManager()->Allocate() + TextureManager::kSRVIndexTop;
+	ParticleCommon::GetInstance()->GetSRVManager()->CreateSRVForStructuredBuffer(
 		srvIndex_,
 		instancingResource_.Get(),
 		ParticleEmitter::kNumMaxInstance,

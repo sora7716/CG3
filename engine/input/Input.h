@@ -9,6 +9,7 @@
 #include <cstdint>
 //前方宣言
 class WinApi;
+class Core;
 class Camera;
 
 //マウスのクリック位置
@@ -30,10 +31,10 @@ enum class XboxInput :WORD {
 	kX = XINPUT_GAMEPAD_X,
 	kRB = XINPUT_GAMEPAD_RIGHT_SHOULDER,
 	kLB = XINPUT_GAMEPAD_LEFT_SHOULDER,
-	kRTHUMB= XINPUT_GAMEPAD_RIGHT_THUMB,
-	kLTHUMB= XINPUT_GAMEPAD_LEFT_THUMB,
-	kStart= XINPUT_GAMEPAD_START,
-	kBack= XINPUT_GAMEPAD_BACK,
+	kRTHUMB = XINPUT_GAMEPAD_RIGHT_THUMB,
+	kLTHUMB = XINPUT_GAMEPAD_LEFT_THUMB,
+	kStart = XINPUT_GAMEPAD_START,
+	kBack = XINPUT_GAMEPAD_BACK,
 	kRT,
 	kLT,
 };
@@ -67,26 +68,20 @@ public://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
 	/// <summary>
-	/// インスタンスのゲッター
+	/// デストラクタ
 	/// </summary>
-	/// <returns>インスタンス</returns>
-	static Input* GetInstance();
+	~Input();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="winApp">ウィンドウズアプリケーション</param>
-	void Initialize(WinApi*winApi);
+	void Initialize(WinApi* winApi);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
-
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
 
 	/// <summary>
 	/// キーの押下をチェック
@@ -147,7 +142,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="camera">カメラ</param>
 	/// <returns>ワールド座標系のマウスの位置</returns>
-    Vector3 GetWorldMousePosition(Camera* camera)const;
+	Vector3 GetWorldMousePosition(Camera* camera)const;
 
 	/// <summary>
 	/// スクリーン座標系のマウスの位置のゲッター
@@ -206,12 +201,19 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="xBoxPadNumber">何番目(0~4)</param>
 	/// <param name="deadZone">デッドゾーン</param>
-	void SetDeadZone(DWORD xBoxPadNumber,float deadZone);
+	void SetDeadZone(DWORD xBoxPadNumber, float deadZone);
+public://PressKeyIdiom
+	class ConstructorKey {
+		private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PressKeyを受け取る</param>
+	explicit Input(ConstructorKey);
 private://メンバ関数
-	//コンストラクタの封印
-	Input() = default;
-	//デストラクタの封印
-	~Input() = default;
 	//コピーコンストラクタを禁止
 	Input(const Input&) = delete;
 	//代入演算子を禁止
@@ -241,11 +243,6 @@ private://メンバ関数
 	/// XboxPadの更新
 	/// </summary>
 	void XboxPadUpdate();
-private://静的メンバ変数
-	//インスタンス
-	static inline Input* instance = nullptr;
-	//Finalizeを読んだかどうか
-	static inline bool isFinalize = false;
 private://メンバ変数
 	//ウィンドウズAPI
 	WinApi* winApi_ = nullptr;

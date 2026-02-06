@@ -6,6 +6,7 @@
 #include <array>
 //前方宣言
 class DirectXBase;
+class SRVManager;
 class Camera;
 class GraphicsPipeline;
 class Blend;
@@ -24,11 +25,11 @@ public://メンバ関数
 	static ParticleCommon* GetInstance();
 
 	/// <summary>
-	/// 初期化
-	/// </summary>
-	/// <param name="directXBase">DirectXの基盤</param>
-	/// <param name="directionalLightData">directionalLightのデータ</param>
-	void Initialize(DirectXBase* directXBase);
+    /// 初期化
+    /// </summary>
+    /// <param name="directXBase">DirectXの基盤</param>
+	/// <param name="srvManager">SRVマネージャー</param>
+	void Initialize(DirectXBase* directXBase,SRVManager*srvManager);
 
 	/// <summary>
 	/// 共通描画設定
@@ -44,13 +45,19 @@ public://メンバ関数
 	/// DirectionalLightのリソースのゲッター
 	/// </summary>
 	/// <returns>DirectionalLightのリソース</returns>
-	ID3D12Resource* GetDirectionalLightResource()const;
+	//ID3D12Resource* GetDirectionalLightResource()const;
 
 	/// <summary>
 	/// DirectXの基盤のゲッター
 	/// </summary>
 	/// <returns>DirectXの基盤</returns>
 	DirectXBase* GetDirectXBase()const;
+
+	/// <summary>
+	/// SRVマネージャーのゲッター
+	/// </summary>
+	/// <returns>SRVマネージャー</returns>
+	SRVManager* GetSRVManager()const;
 
 	/// <summary>
 	/// グラフィックパイプラインのゲッター
@@ -86,6 +93,8 @@ private://静的メンバ変数
 private://メンバ変数
 	//DirectXの基盤
 	DirectXBase* directXBase_ = nullptr;
+	//SRVマネージャー
+	SRVManager* srvManager_ = nullptr;
 	//ルートシグネイチャ
 	ComPtr<ID3D12RootSignature>rootSignature_ = nullptr;
 	//グラフィックスパイプライン(PSO)
@@ -97,5 +106,4 @@ private://メンバ変数
 	BlendMode blendMode_ = BlendMode::kNone;
 	//デフォルトカメラ
 	Camera* defaultCamera_ = nullptr;
-
 };

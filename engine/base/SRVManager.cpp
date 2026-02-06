@@ -3,13 +3,9 @@
 #include <cassert>
 using namespace Microsoft::WRL;
 
-//インスタンスのゲッター
-SRVManager* SRVManager::GetInstance(){
-	assert(!isFinalize && "GetInstance() called after Finalize()");
-	if (instance == nullptr) {
-		instance = new SRVManager();
-	}
-	return instance;
+//デストラクタ
+SRVManager::~SRVManager() {
+
 }
 
 //初期化
@@ -77,13 +73,6 @@ void SRVManager::PreDraw() {
 	directXBase_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());
 }
 
-//終了
-void SRVManager::Finalize(){
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
-}
-
 // rootDescriptorTableのセッター
 void SRVManager::SetGraphicsRootDescriptorTable(UINT rootParameterIndex, uint32_t srvIndex) {
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(rootParameterIndex, GetGPUDescriptorHandle(srvIndex));
@@ -107,4 +96,8 @@ D3D12_GPU_DESCRIPTOR_HANDLE SRVManager::GetGPUDescriptorHandle(uint32_t index) {
 // デスクリプタヒープのゲッター
 ID3D12DescriptorHeap* SRVManager::GetDescriptorHeap() const{
 	return descriptorHeap_.Get();
+}
+
+//コンストラクタ
+SRVManager::SRVManager(ConstructorKey) {
 }

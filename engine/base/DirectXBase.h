@@ -103,11 +103,6 @@ public://メンバ関数
 	void PostDraw();
 
 	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
-
-	/// <summary>
 	/// 深度バッファリソースの設定
 	/// </summary>
 	/// <param name="width">横幅</param>

@@ -4,6 +4,7 @@
 
 //前方宣言
 class CameraManager;
+class Input;
 
 /// <summary>
 /// シーン管理
@@ -20,8 +21,9 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="input">入力</param>
 	/// <param name="cameraManager">カメラマネージャー</param>
-	void Initialize(DirectXBase* directXBase, CameraManager* cameraManager);
+	void Initialize(DirectXBase* directXBase, Input* input, CameraManager* cameraManager);
 
 	/// <summary>
 	/// 更新
@@ -42,7 +44,7 @@ public://メンバ関数
 	/// シーンファクトリーのセッター
 	/// </summary>
 	/// <param name="sceneFactory">シーンファクトリー</param>
-	void SetSceneFactory(AbstractSceneFactory*sceneFactory);
+	void SetSceneFactory(AbstractSceneFactory* sceneFactory);
 
 	/// <summary>
 	/// シーン切り替え
@@ -64,6 +66,8 @@ private://静的メンバ変数
 	//Finalizeをしたかどうか
 	static inline bool isFinalize = false;
 private://メンバ変数
+	//入力
+	Input* input_ = nullptr;
 	//シーン
 	IScene* scene_ = nullptr;
 	//次のシーン

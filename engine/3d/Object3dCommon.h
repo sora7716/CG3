@@ -8,6 +8,7 @@
 
 //前方宣言
 class DirectXBase;
+class SRVManager;
 class Camera;
 class GraphicsPipeline;
 class Blend;
@@ -29,7 +30,8 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤</param>
-	void Initialize(DirectXBase* directXBase);
+	/// <param name="srvManager">srvマネージャー</param>
+	void Initialize(DirectXBase* directXBase,SRVManager*srvManager);
 
 	/// <summary>
 	/// 更新
@@ -85,6 +87,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>DirectXの基盤</returns>
 	DirectXBase* GetDirectXBase()const;
+
+	/// <summary>
+	/// SRVマネージャーのゲッター
+	/// </summary>
+	/// <returns>SRVマネージャー</returns>
+	SRVManager* GetSRVManager()const;
 
 	/// <summary>
 	/// グラフィックパイプラインのゲッター
@@ -230,6 +238,9 @@ private://静的メンバ変数
 private://メンバ変数
 	//DirectXの基盤
 	DirectXBase* directXBase_ = nullptr;
+
+	//SRVマネージャー
+	SRVManager* srvManager_ = nullptr;
 
 	//ルートシグネイチャ
 	ComPtr<ID3D12RootSignature>rootSignature_ = nullptr;

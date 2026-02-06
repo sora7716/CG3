@@ -20,9 +20,11 @@ Object3dCommon* Object3dCommon::GetInstance() {
 }
 
 //初期化
-void Object3dCommon::Initialize(DirectXBase* directXBase) {
-	assert(directXBase);//Nullチェック
-	directXBase_ = directXBase;//DirectXの基盤を受け取る
+void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager) {
+	//DirectXの基盤を受け取る
+	directXBase_ = directXBase;
+	//SRVマネージャーを受け取る
+	srvManager_ = srvManager;
 	//ブレンド
 	blend_ = new Blend();
 	//グラフィックスパイプラインの生成と初期化
@@ -194,6 +196,11 @@ DirectXBase* Object3dCommon::GetDirectXBase() const {
 	return directXBase_;
 }
 
+//SRVマネージャーのゲッター
+SRVManager* Object3dCommon::GetSRVManager() const {
+	return srvManager_;
+}
+
 //グラフィックパイプラインのゲッター
 std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> Object3dCommon::GetGraphicsPipelineStates() const {
 	return graphicsPipelineStates_;
@@ -321,8 +328,8 @@ void Object3dCommon::CreatePointLight() {
 //点光源のストラクチャバッファの生成
 void Object3dCommon::CreateStructuredBufferForPoint() {
 	//ストラクチャバッファを生成
-	srvIndexPoint_ = SRVManager::GetInstance()->Allocate() + TextureManager::kSRVIndexTop;
-	SRVManager::GetInstance()->CreateSRVForStructuredBuffer(
+	srvIndexPoint_ = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
+	srvManager_->CreateSRVForStructuredBuffer(
 		srvIndexPoint_,
 		pointLightResource_.Get(),
 		kMaxLightCount,
@@ -356,8 +363,8 @@ void Object3dCommon::CreateSpotLight() {
 //スポットライトのストラクチャバッファの生成
 void Object3dCommon::CreateStructuredBufferForSpot() {
 	//ストラクチャバッファを生成
-	srvIndexSpot_ = SRVManager::GetInstance()->Allocate() + TextureManager::kSRVIndexTop;
-	SRVManager::GetInstance()->CreateSRVForStructuredBuffer(
+	srvIndexSpot_ = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
+	srvManager_->CreateSRVForStructuredBuffer(
 		srvIndexSpot_,
 		spotLightResource_.Get(),
 		kMaxLightCount,

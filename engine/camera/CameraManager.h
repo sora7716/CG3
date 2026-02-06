@@ -31,11 +31,6 @@ public://メンバ関数
 	/// <param name="name">カメラの名前</param>
 	/// <returns>カメラ</returns>
 	Camera* FindCamera(const std::string& name);
-
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
 public://PressKeyIdiom
 	class ConstructorKey {
 	private:

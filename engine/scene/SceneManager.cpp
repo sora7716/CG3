@@ -1,4 +1,5 @@
 #include "SceneManager.h"
+#include "engine/input/Input.h"
 #include "engine/camera/CameraManager.h"
 #include <cassert>
 
@@ -12,9 +13,10 @@ SceneManager* SceneManager::GetInstance() {
 }
 
 //初期化
-void SceneManager::Initialize(DirectXBase* directXBase,CameraManager*cameraManager) {
+void SceneManager::Initialize(DirectXBase* directXBase, Input* input, CameraManager* cameraManager) {
 	directXBase_ = directXBase;
 	cameraManager_ = cameraManager;
+	input_ = input;
 }
 
 //更新
@@ -30,7 +32,7 @@ void SceneManager::Update() {
 		scene_ = nextScene_;
 		nextScene_ = nullptr;
 		//次のシーン
-		scene_->Initialize(directXBase_,cameraManager_);
+		scene_->Initialize(directXBase_, input_, cameraManager_);
 	}
 	//更新
 	scene_->Update();

@@ -1,6 +1,7 @@
 #include "MapChip.h"
 #include "engine/camera/Camera.h"
 #include "engine/base/DirectXBase.h"
+#include "engine/3d/Object3dCommon.h"
 #include "engine/math/func/Math.h"
 #include "engine/3d/ModelManager.h"
 #include "engine/worldTransform/WorldTransform.h"
@@ -16,9 +17,12 @@
 #include "Field.h"
 
 //初期化
-void MapChip::Initialize(DirectXBase* directXBase, Camera* camera, MapChipType mapChipType, const std::string& mapName, const std::string& modelName, float posY, const Vector2Int& mapSize) {
+void MapChip::Initialize(DirectXBase* directXBase,Camera* camera, MapChipType mapChipType, const std::string& mapName, const std::string& modelName, float posY, const Vector2Int& mapSize) {
 	//DirectXの基盤部分の記録
 	directXBase_ = directXBase;
+
+	//SRVマネージャーを記録
+	srvManager_ = Object3dCommon::GetInstance()->GetSRVManager();
 
 	//カメラを記録
 	camera_ = camera;
@@ -239,16 +243,16 @@ void MapChip::Draw() {
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 
 	//座標変換行列SRVの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, SRVManager::GetInstance()->GetGPUDescriptorHandle(srvIndexWvp_));//wvp
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(srvIndexWvp_));//wvp
 
 	//平光源CBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
 
 	//点光源のStructuredBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, SRVManager::GetInstance()->GetGPUDescriptorHandle(srvIndexPoint_));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, srvManager_->GetGPUDescriptorHandle(srvIndexPoint_));
 
 	//スポットライトのStructuredBufferを設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, SRVManager::GetInstance()->GetGPUDescriptorHandle(srvIndexSpot_));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, srvManager_->GetGPUDescriptorHandle(srvIndexSpot_));
 
 	//VertexBufferViewの設定
 	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
@@ -389,8 +393,8 @@ void MapChip::CreateTransformationMatrixResource() {
 //座標変換行列リソースのストラクチャバッファの生成
 void MapChip::CreateStructuredBufferForWvp() {
 	//ストラクチャバッファを生成
-	srvIndexWvp_ = SRVManager::GetInstance()->Allocate() + TextureManager::kSRVIndexTop;
-	SRVManager::GetInstance()->CreateSRVForStructuredBuffer(
+	srvIndexWvp_ = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
+	srvManager_->CreateSRVForStructuredBuffer(
 		srvIndexWvp_,
 		wvpResource_.Get(),
 		kMaxBlockCount,
@@ -514,8 +518,8 @@ void MapChip::CreatePointLight() {
 //点光源のストラクチャバッファの生成
 void MapChip::CreateStructuredBufferForPoint() {
 	//ストラクチャバッファを生成
-	srvIndexPoint_ = SRVManager::GetInstance()->Allocate() + TextureManager::kSRVIndexTop;
-	SRVManager::GetInstance()->CreateSRVForStructuredBuffer(
+	srvIndexPoint_ = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
+	srvManager_->CreateSRVForStructuredBuffer(
 		srvIndexPoint_,
 		pointLightResource_.Get(),
 		kMaxLightCount,
@@ -549,8 +553,8 @@ void MapChip::CreateSpotLight() {
 //スポットライトのストラクチャバッファの生成
 void MapChip::CreateStructuredBufferForSpot() {
 	//ストラクチャバッファを生成
-	srvIndexSpot_ = SRVManager::GetInstance()->Allocate() + TextureManager::kSRVIndexTop;
-	SRVManager::GetInstance()->CreateSRVForStructuredBuffer(
+	srvIndexSpot_ = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
+	srvManager_->CreateSRVForStructuredBuffer(
 		srvIndexSpot_,
 		spotLightResource_.Get(),
 		kMaxLightCount,

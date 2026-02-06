@@ -10,8 +10,9 @@
 #include <array>
 #include <d3d12.h>
 //前方宣言
-class Camera;
 class DirectXBase;
+class SRVManager;
+class Camera;
 class GraphicsPipeline;
 class Blend;
 
@@ -36,6 +37,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="srvManager">SRVマネージャー</param>
 	/// <param name="camera">カメラ</param>
 	/// <param name="mapChipType">マップチップのタイプ</param>
 	/// <param name="mapName">マップ名</param>
@@ -196,6 +198,8 @@ private://定数
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
+	//SRVマネージャー
+	SRVManager* srvManager_ = nullptr;
 
 	//カメラ
 	Camera* camera_ = nullptr;

@@ -13,12 +13,12 @@ ImGuiManager* ImGuiManager::GetInstance() {
 }
 
 //初期化
-void ImGuiManager::Initialize(DirectXBase* directXBase, WinApi* winApi) {
+void ImGuiManager::Initialize(WinApi* winApi, DirectXBase* directXBase, SRVManager* srvManager) {
 #ifdef USE_IMGUI
 	//DirectXの基盤部分を記録する
 	directXBase_ = directXBase;
 	//SRVの管理を記録する
-	srvManager_ = SRVManager::GetInstance();
+	srvManager_ = srvManager;
 	IMGUI_CHECKVERSION();
 	//ImGuiのコンテキストを生成
 	ImGui::CreateContext();

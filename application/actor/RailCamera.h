@@ -6,6 +6,7 @@
 #include <vector>
 
 // 前方宣言
+class Input;
 class Camera;
 class Object3d;
 class WorldTransform;
@@ -28,10 +29,11 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="input">入力</param>
 	/// <param name="camera">カメラ</param>
 	/// <param name="rotate">回転</param>
 	/// <param name="position">位置</param>
-	void Initialize(Camera* camera, const Vector3& rotate, const Vector3& position);
+	void Initialize(Input* input, Camera* camera, const Vector3& rotate, const Vector3& position);
 
 	/// <summary>
 	/// 更新
@@ -77,6 +79,9 @@ public://メンバ関数
 	/// <param name="controlPoints">制御ポイント</param>
 	void SetControlPoints(std::vector<Vector3>controlPoints);
 private://メンバ変数
+	//入力
+	Input* input_ = nullptr;
+
 	//カメラ
 	Camera* camera_ = nullptr;
 

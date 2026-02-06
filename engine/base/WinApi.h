@@ -28,11 +28,6 @@ public://メンバ関数
 	bool ProcesMessage();
 
 	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
-
-	/// <summary>
 	/// HWNDのゲッター
 	/// </summary>
 	/// <returns>HWND</returns>
@@ -76,11 +71,6 @@ public://定数
 	static inline const int32_t kClientHeight = 720;
 	//タイトル名
 	static inline const std::wstring label = L"CG3";
-private://静的メンバ変数
-	//インスタンス
-	static inline WinApi* instance = nullptr;
-	//Finalizeを読んだかどうか
-	static inline bool isFinalize = false;
 private://メンバ変数
 	WNDCLASS wndClass_{};	//ウィンドウクラス
 	HWND hwnd_ = nullptr;	//ウィンドウハンドル

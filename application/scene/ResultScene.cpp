@@ -1,12 +1,13 @@
 #include "ResultScene.h"
 #include "engine/input/Input.h"
+#include "engine/camera/CameraManager.h"
 #include "engine/scene/SceneManager.h"
 
 //初期化
-void ResultScene::Initialize(DirectXBase* directXBase,CameraManager*cameraManager) {
+void ResultScene::Initialize(DirectXBase* directXBase, Input* input, CameraManager* cameraManager) {
 	//シーンのインタフェースの初期化
-	IScene::Initialize(directXBase,cameraManager);
-	camera_ =cameraManager_->FindCamera("ResultCamera");
+	IScene::Initialize(directXBase, input, cameraManager);
+	camera_ = cameraManager_->FindCamera("ResultCamera");
 }
 
 //更新ww
@@ -14,9 +15,9 @@ void ResultScene::Update() {
 	//シーンのインタフェースの初期化
 	IScene::Update();
 
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		SceneManager::GetInstance()->ChangeScene("Title");
-	} else if (Input::GetInstance()->TriggerXboxPad(xBoxPadNumber_, XboxInput::kB)) {
+	} else if (input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kB)) {
 		SceneManager::GetInstance()->ChangeScene("Title");
 	}
 #ifdef USE_IMGUI

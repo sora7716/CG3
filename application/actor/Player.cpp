@@ -16,9 +16,9 @@ Player::~Player() {
 }
 
 //初期化
-void Player::Initialize(Camera* camera, const std::string& modelName) {
+void Player::Initialize(Input* input, Camera* camera, const std::string& modelName) {
 	//入力
-	input_ = Input::GetInstance();
+	input_ = input;
 
 	//カメラ
 	camera_ = camera;

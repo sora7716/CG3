@@ -9,13 +9,8 @@
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"xinput.lib")
 
-//インスタンスのゲッター
-Input* Input::GetInstance() {
-	assert(!isFinalize && "GetInstance() called after Finalize()");
-	if (instance == nullptr) {
-		instance = new Input();
-	}
-	return instance;
+//デストラクタ
+Input::~Input() {
 }
 
 //初期化
@@ -40,13 +35,6 @@ void Input::Update() {
 	MouseUpdate();
 	//XboxPad
 	XboxPadUpdate();
-}
-
-//終了
-void Input::Finalize() {
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
 }
 
 // キーの押下をチェック
@@ -268,6 +256,10 @@ const Vector2 Input::GetXboxPadRighttStick(DWORD xBoxPadNumber) {
 //Xboxのデッドゾーン
 void Input::SetDeadZone(DWORD xBoxPadNumber, float deadZone) {
 	xboxPadDatas_[static_cast<uint32_t>(xBoxPadNumber)].deadZone = deadZone;
+}
+
+//コンストラクタ
+Input::Input(ConstructorKey) {
 }
 
 //キーボード入力の初期化

@@ -23,11 +23,11 @@ TextureManager* TextureManager::GetInstance() {
 }
 
 //初期化
-void TextureManager::Initialize(DirectXBase* directXBase) {
+void TextureManager::Initialize(DirectXBase* directXBase, SRVManager* srvManager) {
 	//DirectXの基盤部分を記録する
 	directXBase_ = directXBase;
 	//SRVの管理を記録する
-	srvManager_ = SRVManager::GetInstance();
+	srvManager_ = srvManager;
 	//SRVの数と同数
 	textureDatas_.reserve(SRVManager::kMaxSRVCount);
 }
@@ -76,7 +76,7 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 void TextureManager::UnloadTexture(const std::string& filePath) {
 	auto it = textureDatas_.find(filePath);
 	if (it != textureDatas_.end()) {
-		SRVManager::GetInstance()->Free(it->second.srvIndex);//srvIndexの解放
+		srvManager_->Free(it->second.srvIndex);//srvIndexの解放
 		textureDatas_.erase(it);//削除
 	} else {
 		return;//存在しない場合何もしない

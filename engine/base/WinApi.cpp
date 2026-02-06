@@ -5,7 +5,8 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg
 
 //デストラクタ
 WinApi::~WinApi() {
-	Finalize();
+	CloseWindow(hwnd_);
+	CoUninitialize();
 }
 
 // ウィンドウの生成するための初期化
@@ -61,15 +62,6 @@ bool WinApi::ProcesMessage(){
 		return false;
 	}
 	return true;
-}
-
-//終了
-void WinApi::Finalize(){
-	CloseWindow(hwnd_);
-	CoUninitialize();
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
 }
 
 //HWNDのゲッター

@@ -3,7 +3,7 @@
 
 //デストラクタ
 CameraManager::~CameraManager() {
-	Finalize();
+
 }
 
 //更新
@@ -36,11 +36,6 @@ Camera* CameraManager::FindCamera(const std::string& name){
 	}
 	//ファイル名一致なし
 	return nullptr;
-}
-
-//終了
-void CameraManager::Finalize(){
-
 }
 
 // PressKeyを受け取るコンストラクタ

@@ -68,9 +68,9 @@ void Object3d::Draw() {
 	//平光源CBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, Object3dCommon::GetInstance()->GetDirectionalLightResource()->GetGPUVirtualAddress());
 	//点光源のStructuredBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, SRVManager::GetInstance()->GetGPUDescriptorHandle(Object3dCommon::GetInstance()->GetSrvIndexPoint()));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5,Object3dCommon::GetInstance()->GetSRVManager()->GetGPUDescriptorHandle(Object3dCommon::GetInstance()->GetSrvIndexPoint()));
 	//スポットライトのStructuredBufferを設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, SRVManager::GetInstance()->GetGPUDescriptorHandle(Object3dCommon::GetInstance()->GetSrvIndexSpot()));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, Object3dCommon::GetInstance()->GetSRVManager()->GetGPUDescriptorHandle(Object3dCommon::GetInstance()->GetSrvIndexSpot()));
 
 	//3Dモデルが割り当てられていれば描画
 	if (model_) {

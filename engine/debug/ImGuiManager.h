@@ -22,13 +22,13 @@ public://メンバ関数
 	/// <returns></returns>
 	static ImGuiManager* GetInstance();
 	
-
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
 	/// <param name="winApi">ウィンドウズアプリケーション</param>
-	void Initialize(DirectXBase* directXBase,WinApi* winApi);
+	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="srvManager">SRVマネージャー</param>
+	void Initialize(WinApi* winApi,DirectXBase* directXBase,SRVManager*srvManager);
 
 	/// <summary>
 	/// ImGuiの受付開始

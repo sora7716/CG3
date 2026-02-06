@@ -3,12 +3,13 @@
 #include "engine/scene/SceneManager.h"
 #include "engine/base/StringUtility.h"
 #include "engine/2d/TextureManager.h"
+#include "engine/camera/CameraManager.h"
 #include <cstring>
 
 //初期化
-void TitleScene::Initialize(DirectXBase* directXBase,CameraManager*cameraManager) {
+void TitleScene::Initialize(DirectXBase* directXBase, Input* input, CameraManager* cameraManager) {
 	//シーンのインタフェースの初期化
-	IScene::Initialize(directXBase, cameraManager);
+	IScene::Initialize(directXBase, input, cameraManager);
 	camera_ = cameraManager_->FindCamera("titleCamera");
 
 	textObj_ = std::make_unique<Text>();

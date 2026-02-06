@@ -12,7 +12,8 @@ using namespace Microsoft::WRL;
 
 //デストラクタ
 DirectXBase::~DirectXBase() {
-	Finalize();
+	//オブジェクトの開放
+	CloseHandle(fenceEvent_);
 }
 
 // DirectX12の初期化
@@ -260,12 +261,6 @@ void DirectXBase::PostDraw() {
 	//コマンドリストのリセット
 	result = commandList_->Reset(commandAllocator_.Get(), nullptr);
 	assert(SUCCEEDED(result));
-}
-
-//終了処理
-void DirectXBase::Finalize() {
-	//オブジェクトの開放
-	CloseHandle(fenceEvent_);
 }
 
 //深度バッファリソースの生成

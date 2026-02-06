@@ -6,9 +6,9 @@
 #include <algorithm>
 
 //初期化
-void DebugCamera::Initialize(CameraManager*cameraManager) {
+void DebugCamera::Initialize(Input* input, CameraManager* cameraManager) {
 	//入力
-	input_ = Input::GetInstance();
+	input_ =input;
 
 	//カメラ
 	camera_ = cameraManager->FindCamera("debugCamera");

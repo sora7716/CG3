@@ -7,7 +7,10 @@
 #include "engine/input/Input.h"
 
 //初期化
-void RailCamera::Initialize(Camera* camera, const Vector3& rotate, const Vector3& position) {
+void RailCamera::Initialize(Input* input, Camera* camera, const Vector3& rotate, const Vector3& position) {
+	//入力を記録
+	input_ = input;
+
 	//カメラを記録
 	camera_ = camera;
 
@@ -31,7 +34,7 @@ void RailCamera::Initialize(Camera* camera, const Vector3& rotate, const Vector3
 //更新
 void RailCamera::Update() {
 	//カメラを動かすフラグのスイッチ
-	if (Input::GetInstance()->TriggerKey(DIK_RETURN)&&Input::GetInstance()->PressKey(DIK_LSHIFT)) {
+	if (input_->TriggerKey(DIK_RETURN) && input_->PressKey(DIK_LSHIFT)) {
 		isMovingCamera_ = !isMovingCamera_;
 	}
 

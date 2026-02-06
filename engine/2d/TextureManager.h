@@ -37,7 +37,8 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤</param>
-	void Initialize(DirectXBase* directXBase);
+	/// <param name="srvManager">SRVマネージャー</param>
+	void Initialize(DirectXBase* directXBase,SRVManager*srvManager);
 
 	/// <summary>
 	/// テクスチャファイルの読み込み

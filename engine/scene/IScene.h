@@ -6,7 +6,6 @@
 #include "engine/debug/ImGuiManager.h"
 #include "engine/debug/DebugCamera.h"
 #include "engine/audio/AudioManager.h"
-#include "engine/camera/CameraManager.h"
 #include "engine/2d/Sprite.h"
 #include "engine/3d/Object3d.h"
 #include "engine/particle/ParticleManager.h"
@@ -14,6 +13,7 @@
 #include <memory>
 
 // 前方宣言
+class Input;
 class SceneManager;
 class AbstractSceneFactory;
 class CameraManager;
@@ -32,13 +32,14 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	virtual ~IScene() = default;
-	
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="input">入力</param>
 	/// <param name="cameraManager">カメラマネージャー</param>
-	virtual void Initialize(DirectXBase* directXBase,CameraManager*cameraManager);
+	virtual void Initialize(DirectXBase* directXBase, Input* input, CameraManager* cameraManager);
 
 	/// <summary>
 	/// 更新
@@ -55,6 +56,8 @@ public://メンバ関数
 protected://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
+	//入力
+	Input* input_ = nullptr;
 	//デバックカメラ
 	std::unique_ptr<DebugCamera>debugCamera_ = nullptr;
 	//シーンファクトリー

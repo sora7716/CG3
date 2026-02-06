@@ -27,8 +27,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="input">入力</param>
 	/// <param name="cameraManager">カメラマネージャー</param>
-	void Initialize(CameraManager* cameraManager);
+	void Initialize(Input*input,CameraManager* cameraManager);
 
 	/// <summary>
 	/// 更新

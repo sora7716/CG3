@@ -20,8 +20,9 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="input">input</param>
 	/// <param name="cameraManager">カメラマネージャー</param>
-	void Initialize(DirectXBase* directXBase, CameraManager* cameraManager)override;
+	void Initialize(DirectXBase* directXBase, Input* input, CameraManager* cameraManager)override;
 
 	/// <summary>
 	/// 更新

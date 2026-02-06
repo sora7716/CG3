@@ -31,9 +31,10 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="input">入力</param>
 	/// <param name="camera">カメラ</param>
 	/// <param name="modelName">モデル名</param>
-	void Initialize(Camera* camera, const std::string& modelName);
+	void Initialize(Input* input, Camera* camera, const std::string& modelName);
 
 	/// <summary>
 	/// 更新

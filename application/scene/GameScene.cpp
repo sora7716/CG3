@@ -9,9 +9,9 @@
 #include "Score.h"
 
 //初期化
-void GameScene::Initialize(DirectXBase* directXBase,CameraManager*cameraManager) {
+void GameScene::Initialize(DirectXBase* directXBase, Input* input, CameraManager* cameraManager) {
 	//シーンのインタフェースの初期化
-	IScene::Initialize(directXBase,cameraManager);
+	IScene::Initialize(directXBase, input, cameraManager);
 	//カメラの設定
 	camera_ = cameraManager_->FindCamera("gameCamera");
 
@@ -21,7 +21,7 @@ void GameScene::Initialize(DirectXBase* directXBase,CameraManager*cameraManager)
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();
-	player_->Initialize(gameCamera_->GetCamera(), "player");
+	player_->Initialize(input_, gameCamera_->GetCamera(), "player");
 	player_->SetPosition({ 25.0f,0.0f,25.0f });
 
 	//フィールド
@@ -51,7 +51,7 @@ void GameScene::Update() {
 	player_->Update();
 	Vector3 playerPos = player_->GetTransformData().translate;
 	Object3dCommon::GetInstance()->SetPointLightPos({ playerPos.x,playerPos.y + 1.3f,playerPos.z });
- 
+
 	//敵
 	enemyManager_->Update(player_->GetWorldPos());
 

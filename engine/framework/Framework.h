@@ -1,16 +1,12 @@
 #pragma once
-#include "WinApi.h"
-#include "engine/base/DirectXBase.h"
 #include "engine/2d/SpriteCommon.h"
 #include "engine/2d/Object2dCommon.h"
 #include "engine/3d/Object3dCommon.h"
 #include "engine/debug/WireframeObject3dCommon.h"
 #include "engine/particle/ParticleCommon.h"
-#include "engine/base/SRVManager.h"
 #include"engine/debug/ImGuiManager.h"
 #include "engine/scene/SceneManager.h"
 #include "engine/scene/AbstractSceneFactory.h"
-#include "engine/2d/TextRasterizer.h"
 #include "engine/base/Core.h"
 /// <summary>
 /// ゲーム全体

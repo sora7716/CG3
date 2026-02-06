@@ -12,26 +12,22 @@ void Framework::Initialize() {
 	//エンジンの核
 	core_ = std::make_unique<Core>();
 	core_->Initialize();
-	//SRVの管理
-	SRVManager::GetInstance()->Initialize(core_->GetDirectXBase());
-	//入力処理
-	Input::GetInstance()->Initialize(core_->GetWinApi());
 	//テクスチャ管理
-	TextureManager::GetInstance()->Initialize(core_->GetDirectXBase());
+	TextureManager::GetInstance()->Initialize(core_->GetDirectXBase(), core_->GetSRVManager());
 	//モデルの管理
 	ModelManager::GetInstance()->Initialize(core_->GetDirectXBase());
 	//ImGuiの管理
-	ImGuiManager::GetInstance()->Initialize(core_->GetDirectXBase(),core_->GetWinApi());
+	ImGuiManager::GetInstance()->Initialize(core_->GetWinApi(), core_->GetDirectXBase(), core_->GetSRVManager());
 	//スプライトの共通部分
 	SpriteCommon::GetInstance()->Initialize(core_->GetDirectXBase());
 	//2Dオブジェクトの共通部分
 	Object2dCommon::GetInstance()->Initialize(core_->GetDirectXBase());
 	//3Dオブジェクトの共通部分
-	Object3dCommon::GetInstance()->Initialize(core_->GetDirectXBase());
+	Object3dCommon::GetInstance()->Initialize(core_->GetDirectXBase(), core_->GetSRVManager());
 	//ワイヤーフレームオブジェクトの共通部分
-	WireframeObject3dCommon::GetInstance()->Initialize(core_->GetDirectXBase());
+	WireframeObject3dCommon::GetInstance()->Initialize(core_->GetDirectXBase(), core_->GetSRVManager());
 	//パーティクルの共通部分の初期化
-	ParticleCommon::GetInstance()->Initialize(core_->GetDirectXBase());
+	ParticleCommon::GetInstance()->Initialize(core_->GetDirectXBase(), core_->GetSRVManager());
 	//ゲームオブジェクトのリスト
 	GameObjectList::GetInstance()->Initialize(core_.get());
 	//カメラの設定
@@ -40,13 +36,13 @@ void Framework::Initialize() {
 	WireframeObject3dCommon::GetInstance()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
 	ParticleCommon::GetInstance()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
 	//シーンの管理
-	SceneManager::GetInstance()->Initialize(core_->GetDirectXBase(),core_->GetCameraManager());
+	SceneManager::GetInstance()->Initialize(core_->GetDirectXBase(), core_->GetInput(), core_->GetCameraManager());
 }
 
 //更新
 void Framework::Update() {
 	//入力処理
-	Input::GetInstance()->Update();
+	core_->GetInput()->Update();
 	//カメラの管理
 	core_->GetCameraManager()->Update();
 	//シーンの管理
@@ -55,10 +51,6 @@ void Framework::Update() {
 
 //終了
 void Framework::Finalize() {
-	//SRVの管理
-	SRVManager::GetInstance()->Finalize();
-	//入力
-	Input::GetInstance()->Finalize();
 	//テクスチャ管理
 	TextureManager::GetInstance()->Finalize();
 	//モデルの管理
@@ -99,7 +91,7 @@ void Framework::Run() {
 		Draw();
 #ifdef _DEBUG
 		//エスケイプを押したらループを抜ける
-		if (Input::GetInstance()->TriggerKey(DIK_ESCAPE) && Input::GetInstance()->PressKey(DIK_LSHIFT)) {
+		if (core_->GetInput()->TriggerKey(DIK_ESCAPE) && core_->GetInput()->PressKey(DIK_LSHIFT)) {
 			break;
 		}
 #endif // _DEBUG

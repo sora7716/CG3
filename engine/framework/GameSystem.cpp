@@ -29,7 +29,7 @@ void GameSystem::Draw() {
 	//描画開始位置
 	core_->GetDirectXBase()->PreDraw();
 	//SRVの管理
-	SRVManager::GetInstance()->PreDraw();
+	core_->GetSRVManager()->PreDraw();
 	//シーン
 	SceneManager::GetInstance()->Draw();
 	//ImGuiの管理
