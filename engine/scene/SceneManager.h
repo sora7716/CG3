@@ -3,8 +3,7 @@
 #include "AbstractSceneFactory.h"
 
 //前方宣言
-class CameraManager;
-class Input;
+class Core;
 
 /// <summary>
 /// シーン管理
@@ -20,10 +19,8 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="input">入力</param>
-	/// <param name="cameraManager">カメラマネージャー</param>
-	void Initialize(DirectXBase* directXBase, Input* input, CameraManager* cameraManager);
+	/// <param name="core">ゲームエンジンの核</param>
+	void Initialize(Core*core);
 
 	/// <summary>
 	/// 更新
@@ -66,17 +63,13 @@ private://静的メンバ変数
 	//Finalizeをしたかどうか
 	static inline bool isFinalize = false;
 private://メンバ変数
-	//入力
-	Input* input_ = nullptr;
+	//ゲームエンジンの核
+	Core* core_ = nullptr;
+	//シーンファクトリー
+	AbstractSceneFactory* sceneFactory_ = nullptr;
 	//シーン
 	IScene* scene_ = nullptr;
 	//次のシーン
 	IScene* nextScene_ = nullptr;
-	//DirectXの基盤部分
-	DirectXBase* directXBase_ = nullptr;
-	//シーンファクトリー
-	AbstractSceneFactory* sceneFactory_ = nullptr;
-	//カメラマネージャー
-	CameraManager* cameraManager_ = nullptr;
 };
 

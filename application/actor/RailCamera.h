@@ -86,7 +86,7 @@ private://メンバ変数
 	Camera* camera_ = nullptr;
 
 	//カメラのオブジェクト
-	Object3d* cameraObject_ = nullptr;
+	//Object3d* cameraObject_ = nullptr;
 
 	//回転
 	Vector3 rotate_ = { 0.0f,0.0f,0.0f };

@@ -8,19 +8,9 @@
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
 using namespace Microsoft::WRL;
-//初期化
-TextureManager* TextureManager::instance = nullptr;
+
 //ImGuiで0番目を使用するため、1番目から使用
 uint32_t TextureManager::kSRVIndexTop = 1;
-
-//インスタンスのゲッター
-TextureManager* TextureManager::GetInstance() {
-	assert(!isFinalize && "GetInstance() called after Finalize()");
-	if (instance == nullptr) {
-		instance = new TextureManager();
-	}
-	return instance;
-}
 
 //初期化
 void TextureManager::Initialize(DirectXBase* directXBase, SRVManager* srvManager) {
@@ -172,9 +162,6 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSRVHandleGPU(const std::string& f
 	return textureDatas_[filePath].srvHandleGPU;
 }
 
-//終了処理
-void TextureManager::Finalize() {
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
+//コンストラクタ
+TextureManager::TextureManager(ConstructorKey) {
 }

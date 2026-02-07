@@ -16,10 +16,10 @@ Enemy::~Enemy() {
 }
 
 //初期化
-void Enemy::Initialize(Camera* camera, const std::string& modelName) {
+void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std::string& modelName) {
 	//3Dモデルの生成と初期化
 	gameObject_.object3d = new Object3d();
-	gameObject_.object3d->Initialize(camera, TransformMode::k3d);
+	gameObject_.object3d->Initialize(object3dCommon, camera, TransformMode::k3d);
 	gameObject_.object3d->SetModel(modelName);
 	gameObject_.transformData.scale = Vector3::MakeAllOne() / 2.0f;
 	gameObject_.isAlive = true;
@@ -28,7 +28,7 @@ void Enemy::Initialize(Camera* camera, const std::string& modelName) {
 	bullet_ = new Bullet();
 	//弾
 	bullet_ = new Bullet();
-	bullet_->Initialize(camera);
+	bullet_->Initialize(object3dCommon,camera);
 	bullet_->SetAliveRange(kAliveAreaSize);
 	bullet_->SetSpeed(bulletShotSpeed_);
 	bullet_->SetSize({ kBulletSize,kBulletSize,kBulletSize });
@@ -55,7 +55,7 @@ void Enemy::Initialize(Camera* camera, const std::string& modelName) {
 
 	//HP
 	hpBar_ = new Object3d();
-	hpBar_->Initialize(camera, TransformMode::kBilboard);
+	hpBar_->Initialize(object3dCommon,camera, TransformMode::kBilboard);
 	hpBar_->SetModel("hpBar");
 	hpBar_->SetTexture("playerHpBar.png");
 	hpBarTransform_.scale = { hpBarWidth_,0.2f,1.0f };
@@ -69,7 +69,7 @@ void Enemy::Initialize(Camera* camera, const std::string& modelName) {
 	hpOutLineMaterial.enableLighting = false;
 
 	hpOutLine_ = new Object3d();
-	hpOutLine_->Initialize(camera, TransformMode::kBilboard);
+	hpOutLine_->Initialize(object3dCommon,camera, TransformMode::kBilboard);
 	hpOutLine_->SetModel("hpOutLine");
 	hpOutLine_->SetTexture("playerHpOutLine.png");
 	hpOutLine_->GetModel()->SetMaterial(hpOutLineMaterial);

@@ -4,16 +4,17 @@
 #include "engine/base/StringUtility.h"
 #include "engine/2d/TextureManager.h"
 #include "engine/camera/CameraManager.h"
+#include "engine/base/Core.h"
 #include <cstring>
 
 //初期化
-void TitleScene::Initialize(DirectXBase* directXBase, Input* input, CameraManager* cameraManager) {
+void TitleScene::Initialize(Core* core) {
 	//シーンのインタフェースの初期化
-	IScene::Initialize(directXBase, input, cameraManager);
-	camera_ = cameraManager_->FindCamera("titleCamera");
+	IScene::Initialize(core);
+	camera_ = core_->GetCameraManager()->FindCamera("titleCamera");
 
 	textObj_ = std::make_unique<Text>();
-	textObj_->Initialize("testText");
+	textObj_->Initialize(core_->GetObject2dCommon(), "testText");
 	textStyele_.text = "飯塚 大空";
 	textStyele_.font = "Impact";
 	textStyele_.size = 128.0f;
@@ -39,7 +40,7 @@ void TitleScene::Update() {
 	//}
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
-	ImGuiManager::GetInstance()->Begin();
+	core_->GetImGuiManager()->Begin();
 	//デバッグカメラ
 	ImGui::Begin("debugCamera");
 	debugCamera_->Debug();
@@ -69,14 +70,14 @@ void TitleScene::Update() {
 	ImGui::End();
 
 	//ImGuiの受付終了
-	ImGuiManager::GetInstance()->End();
+	core_->GetImGuiManager()->End();
 #endif // USE_IMGUI
 
 #ifdef _DEBUG
 	if (debugCamera_->IsDebug()) {
 		camera_ = debugCamera_->GetCamera();
 	} else {
-		camera_ = cameraManager_->FindCamera("titleCamera");
+		camera_ = core_->GetCameraManager()->FindCamera("titleCamera");
 	}
 #endif // _DEBUG
 

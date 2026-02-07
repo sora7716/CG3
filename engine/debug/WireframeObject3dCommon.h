@@ -9,8 +9,9 @@
 //前方宣言
 class DirectXBase;
 class SRVManager;
-class Camera;
 class GraphicsPipeline;
+class ModelManager;
+class Camera;
 class Blend;
 
 /// <summary>
@@ -31,7 +32,8 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤</param>
 	/// <param name="srvManager">SRVマネージャー</param>
-	void Initialize(DirectXBase* directXBase, SRVManager*srvManager);
+	/// <param name="modelManager">モデルマネージャー/param>
+	void Initialize(DirectXBase* directXBase, SRVManager*srvManager,ModelManager*modelManager);
 
 	/// <summary>
 	/// 更新
@@ -93,6 +95,12 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>SRVマネージャー</returns>
 	SRVManager* GetSRVManager()const;
+
+	/// <summary>
+	/// モデルマネージャーのゲッター
+	/// </summary>
+	/// <returns>モデルマネージャー</returns>
+	ModelManager* GetModelManager()const;
 
 	/// <summary>
 	/// グラフィックパイプラインのゲッター
@@ -243,6 +251,9 @@ private://メンバ変数
 	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> graphicsPipelineStates_ = { nullptr };
 	//グラフィックスパイプライン
 	GraphicsPipeline* makeGraphicsPipeline_ = nullptr;
+
+	//モデルマネージャー
+	ModelManager* modelManager_ = nullptr;
 
 	//バッファリソース
 	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//平行光源

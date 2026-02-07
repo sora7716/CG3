@@ -11,7 +11,10 @@ Bullet::~Bullet() {
 }
 
 //初期化
-void Bullet::Initialize(Camera* camera) {
+void Bullet::Initialize(Object3dCommon* object3dCommon, Camera* camera) {
+	//3Dオブジェクトの共通部分を記録
+	object3dCommon_ = object3dCommon;
+
 	//カメラを記録
 	camera_ = camera;
 
@@ -171,7 +174,7 @@ BulletData Bullet::CreateBullet() {
 
 	//3Dモデルの生成
 	bullet.gameObject.object3d = new Object3d();
-	bullet.gameObject.object3d->Initialize(camera_);
+	bullet.gameObject.object3d->Initialize(object3dCommon_, camera_);
 	bullet.aliveRange = aliveRange_;
 	bullet.gameObject.object3d->SetModel(modelName_);
 

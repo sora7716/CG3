@@ -10,21 +10,22 @@
 #include "engine/debug/GlobalVariables.h"
 using namespace Microsoft::WRL;
 
-//インスタンスのゲッター
-Object3dCommon* Object3dCommon::GetInstance() {
-	assert(!isFinalize && "GetInstance() called after Finalize()");
-	if (instance == nullptr) {
-		instance = new Object3dCommon();
-	}
-	return instance;
+//デストラクタ
+Object3dCommon::~Object3dCommon() {
+	delete blend_;
+	delete makeGraphicsPipeline_;
 }
 
 //初期化
-void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager) {
+void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, ModelManager* modelManager) {
 	//DirectXの基盤を受け取る
 	directXBase_ = directXBase;
 	//SRVマネージャーを受け取る
 	srvManager_ = srvManager;
+	//テクスチャマネージャーを受け取る
+	textureManager_ = textureManager;
+	//モデルマネージャー
+	modelManager_ = modelManager;
 	//ブレンド
 	blend_ = new Blend();
 	//グラフィックスパイプラインの生成と初期化
@@ -201,18 +202,19 @@ SRVManager* Object3dCommon::GetSRVManager() const {
 	return srvManager_;
 }
 
+//テクスチャマネージャーのゲッター
+TextureManager* Object3dCommon::GetTextureManager() const {
+	return textureManager_;
+}
+
+//モデルマネージャーのゲッター
+ModelManager* Object3dCommon::GetModelManager() const {
+	return modelManager_;
+}
+
 //グラフィックパイプラインのゲッター
 std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> Object3dCommon::GetGraphicsPipelineStates() const {
 	return graphicsPipelineStates_;
-}
-
-//終了
-void Object3dCommon::Finalize() {
-	delete blend_;
-	delete makeGraphicsPipeline_;
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
 }
 
 // デフォルトカメラのセッター
@@ -289,6 +291,10 @@ SpotLightData& Object3dCommon::GetSpotLight(const std::string& name) {
 //ポイントライトの位置
 void Object3dCommon::SetPointLightPos(const Vector3& pointLightPos) {
 	pointLightPos_ = pointLightPos;
+}
+
+//コンストラクタ
+Object3dCommon::Object3dCommon(ConstructorKey) {
 }
 
 //平行光源の生成

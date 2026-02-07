@@ -12,8 +12,9 @@
 //前方宣言
 class DirectXBase;
 class SRVManager;
-class Camera;
+class Object3dCommon;
 class GraphicsPipeline;
+class Camera;
 class Blend;
 
 /// <summary>
@@ -36,15 +37,14 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="srvManager">SRVマネージャー</param>
+	/// <param name="object3dCommon">3Dオブジェクトの共通部分/param>
 	/// <param name="camera">カメラ</param>
 	/// <param name="mapChipType">マップチップのタイプ</param>
 	/// <param name="mapName">マップ名</param>
 	/// <param name="modelName">使うモデル名</param>
 	/// <param name="posY">描画開始位置のY座標</param>
 	/// <param name="mapSize">マップサイズ</param>
-	void Initialize(DirectXBase* directXBase, Camera* camera, MapChipType mapChipType, const std::string& mapName, const std::string& modelName, float posY, const Vector2Int& mapSize);
+	void Initialize(Object3dCommon* object3dCommon, Camera* camera, MapChipType mapChipType, const std::string& mapName, const std::string& modelName, float posY, const Vector2Int& mapSize);
 
 	/// <summary>
 	/// 更新
@@ -200,6 +200,9 @@ private://メンバ変数
 	DirectXBase* directXBase_ = nullptr;
 	//SRVマネージャー
 	SRVManager* srvManager_ = nullptr;
+
+	//3Dオブジェクトの共通部分
+	Object3dCommon* object3dCommon_ = nullptr;
 
 	//カメラ
 	Camera* camera_ = nullptr;

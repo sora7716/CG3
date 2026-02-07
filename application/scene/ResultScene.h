@@ -19,10 +19,8 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="input">input</param>
-	/// <param name="cameraManager">カメラマネージャー</param>
-	void Initialize(DirectXBase* directXBase, Input* input, CameraManager* cameraManager)override;
+	/// <param name="core">ゲームエンジンの核</param>
+	void Initialize(Core*core)override;
 
 	/// <summary>
 	/// 更新

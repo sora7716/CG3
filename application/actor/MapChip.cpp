@@ -17,12 +17,15 @@
 #include "Field.h"
 
 //初期化
-void MapChip::Initialize(DirectXBase* directXBase,Camera* camera, MapChipType mapChipType, const std::string& mapName, const std::string& modelName, float posY, const Vector2Int& mapSize) {
+void MapChip::Initialize(Object3dCommon* object3dCommon, Camera* camera, MapChipType mapChipType, const std::string& mapName, const std::string& modelName, float posY, const Vector2Int& mapSize) {
+	//3Dオブジェクトの共通部分の記録
+	object3dCommon_ = object3dCommon;
+	
 	//DirectXの基盤部分の記録
-	directXBase_ = directXBase;
+	directXBase_ = object3dCommon_->GetDirectXBase();
 
 	//SRVマネージャーを記録
-	srvManager_ = Object3dCommon::GetInstance()->GetSRVManager();
+	srvManager_ = object3dCommon_->GetSRVManager();
 
 	//カメラを記録
 	camera_ = camera;
@@ -127,10 +130,10 @@ void MapChip::Initialize(DirectXBase* directXBase,Camera* camera, MapChipType ma
 	}
 
 	//モデルデータの読み込み
-	modelData_ = ModelManager::GetInstance()->FindModel(modelName)->GetModelData();
+	modelData_ = object3dCommon_->GetModelManager()->FindModel(modelName)->GetModelData();
 
 	//テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
+	object3dCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
 
 	//wvpリソースの生成
 	CreateTransformationMatrixResource();
@@ -264,7 +267,7 @@ void MapChip::Draw() {
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 
 	//SRVのDescriptorTableの先頭を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVHandleGPU(modelData_.material.textureFilePath));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, object3dCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
 
 	//描画
 	directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.vertices.size()), generatedBlockCount_, 0, 0, 0);
@@ -311,7 +314,7 @@ void MapChip::SetSpotLight(const SpotLightData* spotLight) {
 //テクスチャのセッター
 void MapChip::SetTexture(const std::string& textureName) {
 	modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
-	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
+	object3dCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
 }
 
 //カメラの位置のセッター

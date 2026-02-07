@@ -14,8 +14,9 @@ Sprite::~Sprite() {
 }
 
 //初期化
-void Sprite::Initialize(const std::string& spriteName) {
-	directXBase_ = SpriteCommon::GetInstance()->GetDirectXBase();//DirectXの基盤部分を受け取る
+void Sprite::Initialize(SpriteCommon* spriteCommon, const std::string& spriteName) {
+	spriteCommon_ = spriteCommon;
+	directXBase_ = spriteCommon_->GetDirectXBase();//DirectXの基盤部分を受け取る
 	//頂点データの生成
 	CreateVertexResource();
 	//インデックスデータの生成
@@ -25,9 +26,7 @@ void Sprite::Initialize(const std::string& spriteName) {
 	//スプライトファイルパスを記録
 	spriteName_ = "engine/resources/textures/" + spriteName;
 	//スプライトの共通部分
-	SpriteCommon::GetInstance()->LoadTexture(spriteName_);
-	//DirectXの基盤部分を記録
-	directXBase_ = SpriteCommon::GetInstance()->GetDirectXBase();
+	spriteCommon_->LoadTexture(spriteName_);
 	//スクリーンに表示する範囲を設定
 	WorldTransform::ScreenArea screenArea = {
 		.left = 0,
@@ -51,9 +50,9 @@ void Sprite::Update() {
 //描画処理
 void Sprite::Draw() {
 	//描画準備
-	SpriteCommon::GetInstance()->DrawSetting();
+	spriteCommon_->DrawSetting();
 	//PSOの設定
-	auto pso = SpriteCommon::GetInstance()->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
+	auto pso = spriteCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 	//ワールドトランスフォームの描画
@@ -65,7 +64,7 @@ void Sprite::Draw() {
 	//マテリアルCBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());//material
 	//SRVのDescriptorTableの先頭を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVHandleGPU(spriteName_));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, spriteCommon_->GetTextureManager()->GetSRVHandleGPU(spriteName_));
 	//描画(DrawCall/ドローコール)
 	directXBase_->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
@@ -78,7 +77,7 @@ void Sprite::SetText(const std::string& textName) {
 //テクスチャの変更
 void Sprite::ChangeTexture(const std::string& spriteName) {
 	spriteName_ = "engine/resources/textures/" + spriteName;
-	TextureManager::GetInstance()->LoadTexture(spriteName_);
+	spriteCommon_->LoadTexture(spriteName_);
 }
 
 // UVの座標変換の更新

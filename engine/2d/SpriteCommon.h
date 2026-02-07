@@ -7,6 +7,7 @@
 #include <string>
 //前方宣言
 class DirectXBase;
+class TextureManager;
 class Blend;
 class GraphicsPipeline;
 
@@ -18,16 +19,16 @@ private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
 	/// <summary>
-	/// インスタンスのゲッター
+	/// デストラクタ
 	/// </summary>
-	/// <returns></returns>
-	static SpriteCommon* GetInstance();
+	~SpriteCommon();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	void Initialize(DirectXBase* directXBase);
+	/// <param name="textureManager">テクスチャマネージャー</param>
+	void Initialize(DirectXBase* directXBase,TextureManager*textureManager);
 
 	/// <summary>
 	/// 共通描画設定
@@ -72,7 +73,13 @@ public://メンバ関数
 	/// DirectXの基盤部分のゲッター
 	/// </summary>
 	/// <returns></returns>
-	DirectXBase* GetDirectXBase();
+	DirectXBase* GetDirectXBase()const;
+
+	/// <summary>
+	/// テクスチャマネージャーのゲッター
+	/// </summary>
+	/// <returns>テクスチャマネージャー</returns>
+	TextureManager* GetTextureManager()const;
 
 	/// <summary>
 	/// グラフィックパイプラインのゲッター
@@ -84,20 +91,22 @@ public://メンバ関数
 	/// 終了
 	/// </summary>
 	void Finalize();
+public://PressKeyIdiom
+	class ConstructorKey {
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PressKeyを受け取る</param>
+	explicit SpriteCommon(ConstructorKey);
 private://メンバ関数
-	//コンストラクタを封印
-	SpriteCommon() = default;
-	//デストラクタを封印
-	~SpriteCommon() = default;
 	//コピーコンストラクタ禁止
 	SpriteCommon(const SpriteCommon&) = delete;
 	//代入演算子の禁止
 	SpriteCommon operator=(const SpriteCommon&) = delete;
-private://静的メンバ変数
-	//インスタンス
-	static inline SpriteCommon* instance = nullptr;
-	//Finalizeしたかどうかのフラグ
-	static inline bool isFinalize = false;
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
@@ -114,6 +123,9 @@ private://メンバ変数
 	//バッファリソース内のデータを指すポインタ
 	DirectionalLight* directionalLightPtr_ = nullptr;//平行光源
 	PointLight* pointLightPtr_ = nullptr;//点光源
+
+	//テクスチャマネージャー
+	TextureManager* textureManager_ = nullptr;
 
 	//ブレンド
 	Blend* blend_ = nullptr;

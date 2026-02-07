@@ -20,11 +20,13 @@ WireframeObject3dCommon* WireframeObject3dCommon::GetInstance() {
 }
 
 //初期化
-void WireframeObject3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager) {
+void WireframeObject3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager, ModelManager* modelManager) {
 	//DirectXの基盤を受け取る
 	directXBase_ = directXBase;
 	//SRVマネージャーを受け取る
 	srvManager_ = srvManager;
+	//モデルマネージャーを受け取る
+	modelManager_ = modelManager;
 	//ブレンド
 	blend_ = new Blend();
 	//グラフィックスパイプラインの生成と初期化
@@ -186,6 +188,11 @@ DirectXBase* WireframeObject3dCommon::GetDirectXBase() const {
 //SRVマネージャーのゲッター
 SRVManager* WireframeObject3dCommon::GetSRVManager() const {
 	return srvManager_;
+}
+
+//モデルマネジャーのゲッター
+ModelManager* WireframeObject3dCommon::GetModelManager() const {
+	return modelManager_;
 }
 
 //グラフィックパイプラインのゲッター

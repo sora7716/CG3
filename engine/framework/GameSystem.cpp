@@ -33,7 +33,7 @@ void GameSystem::Draw() {
 	//シーン
 	SceneManager::GetInstance()->Draw();
 	//ImGuiの管理
-	ImGuiManager::GetInstance()->Draw();
+	core_->GetImGuiManager()->Draw();
 	//描画終了位置
 	core_->GetDirectXBase()->PostDraw();
 }

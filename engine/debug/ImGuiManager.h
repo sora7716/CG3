@@ -17,11 +17,10 @@ class WinApi;
 class ImGuiManager {
 public://メンバ関数
 	/// <summary>
-	/// インスタンスのゲッター
+	/// デストラクタ
 	/// </summary>
-	/// <returns></returns>
-	static ImGuiManager* GetInstance();
-	
+	~ImGuiManager();
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -57,25 +56,24 @@ public://メンバ関数
 	/// <param name="label">ラベル</param>
 	/// <param name="frag">フラグ</param>
 	static void CheckBoxToInt(const std::string& label,int32_t& frag);
+public://PressKey
+	class ConstructorKey {
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
 
 	/// <summary>
-	/// 終了
+	/// コンストラクタ
 	/// </summary>
-	void Finalize();
+	/// <param name="">PressKeyを受け取る</param>
+	explicit ImGuiManager(ConstructorKey);
 private://メンバ関数
-	//コンストラクタの封印
-	ImGuiManager() = default;
 	//デストラクタの封印
-	~ImGuiManager() = default;
 	//コピーコンストラクタ禁止
 	ImGuiManager(const ImGuiManager&) = delete;
 	//代入演算子の禁止
 	ImGuiManager operator=(const ImGuiManager&) = delete;
-private://静的メンバ変数
-	//インスタンス
-	static inline ImGuiManager* instance = nullptr;
-	//Finalize呼んだかどうか
-	static inline bool isFinalize = false;
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;

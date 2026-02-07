@@ -17,9 +17,11 @@ Text::~Text() {
 }
 
 //初期化
-void Text::Initialize(const std::string& textKey) {
+void Text::Initialize(Object2dCommon* object2dCommon, const std::string& textKey) {
+	//2dオブジェクトの共通部分
+	object2dCommon_ = object2dCommon;
 	//DirectXの基盤部分を記録する
-	directXBase_ = Object2dCommon::GetInstance()->GetDirectXBase();
+	directXBase_ = object2dCommon_->GetDirectXBase();
 	//頂点データの生成
 	CreateVertexResource();
 	//インデックスリソースの生成
@@ -42,7 +44,7 @@ void Text::Initialize(const std::string& textKey) {
 	worldTransform_ = new WorldTransform();
 	worldTransform_->Initialize(directXBase_, TransformMode::k2d);
 	//カメラにデフォルトカメラを代入
-	worldTransform_->SetCamera(Object2dCommon::GetInstance()->GetDefaultCamera());
+	worldTransform_->SetCamera(object2dCommon_->GetDefaultCamera());
 	//スクリーンに表示する範囲を設定
 	WorldTransform::ScreenArea screenArea = {
 		.left = -static_cast<float>(WinApi::kClientWidth / 2),
@@ -68,9 +70,9 @@ void Text::Update() {
 //描画
 void Text::Draw() {
 	//2Dオブジェクトの共通部分
-	Object2dCommon::GetInstance()->DrawSetting();
+	object2dCommon_->DrawSetting();
 	//PSOの設定
-	auto pso = Object2dCommon::GetInstance()->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
+	auto pso = object2dCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 	//ワールドトランスフォームの描画
@@ -82,7 +84,7 @@ void Text::Draw() {
 	//マテリアルCBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());//material
 	//SRVのDescriptorTableの先頭を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVHandleGPU(textData_.textKey));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, object2dCommon_->GetTextureManager()->GetSRVHandleGPU(textData_.textKey));
 	//描画(DrawCall/ドローコール)
 	directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(textData_.vertices.size()), 1, 0, 0, 0);
 }
@@ -223,11 +225,11 @@ void Text::AcquireTextTexture() {
 	//スケールが1未満にならないようにする
 	transform_.scale.x = std::max(transform_.scale.x, 1.0f);
 	transform_.scale.y = std::max(transform_.scale.y, 1.0f);
-	textStyle_.size = std::max(textStyle_.size, 1.0f); 
+	textStyle_.size = std::max(textStyle_.size, 1.0f);
 
 	//CPUBitmapを作成
 	CpuBitmap cpuBitmap = textRasterizer_->RenderTextToCpuBitmap(StringUtility::ConvertString(textStyle_.text), static_cast<uint32_t>(transform_.scale.x), static_cast<uint32_t>(transform_.scale.y), StringUtility::ConvertString(textStyle_.font), textStyle_.size, textStyle_.color);
 
 	//テクスチャマネージャーに登録
-	TextureManager::GetInstance()->UpdateTextureFromMemotyBGRA(textData_.textKey, cpuBitmap.bgra.data(), cpuBitmap.width, cpuBitmap.height, cpuBitmap.stride);
+	object2dCommon_->GetTextureManager()->UpdateTextureFromMemotyBGRA(textData_.textKey, cpuBitmap.bgra.data(), cpuBitmap.width, cpuBitmap.height, cpuBitmap.stride);
 }

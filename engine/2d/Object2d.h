@@ -7,9 +7,10 @@
 #include <d3d12.h>
 
 //前方宣言
+class DirectXBase;
+class Object2dCommon;
 class WorldTransform;
 class Camera;
-class DirectXBase;
 
 /// <summary>
 /// 2Dオブジェクト
@@ -31,8 +32,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="object2dCommon">2Dオブジェクトの共通部分</param>
 	/// <param name="textureName">テクスチャのファイル名</param>
-	void Initialize(const std::string& textureName);
+	void Initialize(Object2dCommon* object2dCommon, const std::string& textureName);
 
 	/// <summary>
 	/// 更新
@@ -195,6 +197,10 @@ private://メンバ関数
 	/// </summary>
 	void CreateMaterialResource();
 private://メンバ変数
+	//DirectXの基盤部分
+	DirectXBase* directXBase_ = nullptr;
+	//2Dオブジェクトの共通部分
+	Object2dCommon* object2dCommon_ = nullptr;
 	//バッファリソース
 	ComPtr<ID3D12Resource>vertexResource_ = nullptr;//頂点
 	ComPtr<ID3D12Resource>materialResource_ = nullptr;//マテリアル
@@ -220,8 +226,6 @@ private://メンバ変数
 		.rotate = 0.0f,
 		.translate = {0.0f,0.0f}
 	};
-	//DirectXの基盤部分
-	DirectXBase * directXBase_ = nullptr;
 	//ワールドトランスフォーム
 	WorldTransform* worldTransform_ = nullptr;
 	//ブレンドモード

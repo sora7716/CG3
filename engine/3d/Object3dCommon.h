@@ -9,8 +9,10 @@
 //前方宣言
 class DirectXBase;
 class SRVManager;
-class Camera;
 class GraphicsPipeline;
+class TextureManager;
+class ModelManager;
+class Camera;
 class Blend;
 
 /// <summary>
@@ -21,17 +23,18 @@ private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
 	/// <summary>
-	/// インスタンスのゲッター
+	/// デストラクタ
 	/// </summary>
-	/// <returns></returns>
-	static Object3dCommon* GetInstance();
+	~Object3dCommon();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤</param>
 	/// <param name="srvManager">srvマネージャー</param>
-	void Initialize(DirectXBase* directXBase,SRVManager*srvManager);
+	/// <param name="textureManager">テクスチャマネージャー</param>
+	/// <param name="modelManager">モデルマネージャー/param>
+	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, ModelManager* modelManager);
 
 	/// <summary>
 	/// 更新
@@ -58,11 +61,6 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="cameraTranslate"></param>
 	void SetCameraForGPU(const Vector3& cameraTranslate);
-
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
 
 	/// <summary>
 	/// DirectionalLightのリソースのゲッター
@@ -93,6 +91,18 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>SRVマネージャー</returns>
 	SRVManager* GetSRVManager()const;
+
+	/// <summary>
+	/// テクスチャマネージャーのゲッター
+	/// </summary>
+	/// <returns>テクスチャマネージャー</returns>
+	TextureManager* GetTextureManager()const;
+
+	/// <summary>
+	/// モデルマネージャーのゲッター
+	/// </summary>
+	/// <returns>モデルマネージャー</returns>
+	ModelManager* GetModelManager()const;
 
 	/// <summary>
 	/// グラフィックパイプラインのゲッター
@@ -162,15 +172,23 @@ public://メンバ関数
 	SpotLightData& GetSpotLight(const std::string& name);
 
 	/// <summary>
-    /// ポイントライトの位置のセッター
-    /// </summary>
-    /// <param name="pointLightPos">ポイントライトの位置</param>
+	/// ポイントライトの位置のセッター
+	/// </summary>
+	/// <param name="pointLightPos">ポイントライトの位置</param>
 	void SetPointLightPos(const Vector3& pointLightPos);
+public://PressKey
+	class ConstructorKey {
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PressKeyを受け取る</param>
+	explicit Object3dCommon(ConstructorKey);
 private://メンバ関数
-	//コンストラクタの封印
-	Object3dCommon() = default;
-	//デストラクタの封印
-	~Object3dCommon() = default;
 	//コピーコンストラクタ禁止
 	Object3dCommon(const Object3dCommon&) = delete;
 	//代入演算子の禁止
@@ -242,6 +260,9 @@ private://メンバ変数
 	//SRVマネージャー
 	SRVManager* srvManager_ = nullptr;
 
+	//モデルマネージャー
+	ModelManager* modelManager_ = nullptr;
+
 	//ルートシグネイチャ
 	ComPtr<ID3D12RootSignature>rootSignature_ = nullptr;
 
@@ -249,6 +270,9 @@ private://メンバ変数
 	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> graphicsPipelineStates_ = { nullptr };
 	//グラフィックスパイプライン
 	GraphicsPipeline* makeGraphicsPipeline_ = nullptr;
+
+	//テクスチャマネジャー
+	TextureManager* textureManager_ = nullptr;
 
 	//バッファリソース
 	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//平行光源

@@ -15,11 +15,13 @@ ParticleCommon* ParticleCommon::GetInstance() {
 }
 
 //初期化
-void ParticleCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager) {
+void ParticleCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager) {
 	//DirectXの基盤を受け取る
 	directXBase_ = directXBase;
 	//SRVマネージャーを受け取る
 	srvManager_ = srvManager;
+	//テクスチャマネージャーを受け取る
+	textureManager_ = textureManager;
 	//ブレンド
 	blend_ = new Blend();
 	//グラフィックスパイプラインの生成と初期化
@@ -68,6 +70,11 @@ DirectXBase* ParticleCommon::GetDirectXBase() const {
 //SRVマネージャーのゲッター
 SRVManager* ParticleCommon::GetSRVManager() const {
 	return srvManager_;
+}
+
+//テクスチャマネージャーのゲッター
+TextureManager* ParticleCommon::GetTextureManager() const {
+	return textureManager_;
 }
 
 //グラフィックパイプラインのゲッター

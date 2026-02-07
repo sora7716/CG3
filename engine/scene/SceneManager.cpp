@@ -13,10 +13,8 @@ SceneManager* SceneManager::GetInstance() {
 }
 
 //初期化
-void SceneManager::Initialize(DirectXBase* directXBase, Input* input, CameraManager* cameraManager) {
-	directXBase_ = directXBase;
-	cameraManager_ = cameraManager;
-	input_ = input;
+void SceneManager::Initialize(Core* core) {
+	core_ = core;
 }
 
 //更新
@@ -32,7 +30,7 @@ void SceneManager::Update() {
 		scene_ = nextScene_;
 		nextScene_ = nullptr;
 		//次のシーン
-		scene_->Initialize(directXBase_, input_, cameraManager_);
+		scene_->Initialize(core_);
 	}
 	//更新
 	scene_->Update();

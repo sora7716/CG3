@@ -1,8 +1,13 @@
 #pragma once
 #include <map>
+#include <string>
 #include <memory>
-#include "engine/3d/ModelCommon.h"
-#include "engine/3d/Model.h"
+
+//前方宣言
+class DirectXBase;
+class ModelCommon;
+class Model;
+class TextureManager;
 
 /// <summary>
 /// モデルの管理
@@ -10,16 +15,16 @@
 class ModelManager {
 public://メンバ関数
 	/// <summary>
-	/// インスタンスのゲッター
+	/// デストラクタ
 	/// </summary>
-	/// <returns>インスタンス</returns>
-	static ModelManager* GetInstance();
+	~ModelManager();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤部分</param>
-	void Initialize(DirectXBase* directXBase);
+	/// <param name="textureManager">テクスチャマネージャー</param>
+	void Initialize(DirectXBase* directXBase,TextureManager*textureManager);
 
 	/// <summary>
 	/// objモデルの読み込み
@@ -35,27 +40,21 @@ public://メンバ関数
 	/// <param name="name">名前</param>
 	/// <returns>モデル</returns>
 	Model* FindModel(const std::string& name);
-
-	/// <su	mmary>
-	/// 終了
+public://PressKey
+	class ConstructorKey {
+		ConstructorKey() = default;
+		friend class Core;
+	};
+	/// <summary>
+	/// コンストラクタ
 	/// </summary>
-	void Finalize();
+	/// <param name="">PressKeyを受け取る</param>
+	explicit ModelManager(ConstructorKey);
 private://メンバ関数
-	//コンストラクタを封印
-	ModelManager() = default;
-
-	//デストラクタを封印
-	~ModelManager() = default;
-
 	//コピーコンストラクタ禁止
 	ModelManager(const ModelManager&) = delete;
 	//代入演算子禁止
 	ModelManager operator=(const ModelManager&) = delete;
-private://静的メンバ変数
-	//インスタンス
-	static ModelManager* instance;
-	//Finalize()を呼んだかどうかのフラグ
-	static inline bool isFinalize = false;
 private://メンバ変数
 	//モデルデータコンテナ
 	std::map<std::string, std::unique_ptr<Model>>models_;

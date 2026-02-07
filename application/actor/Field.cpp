@@ -12,9 +12,9 @@ Field::~Field() {
 }
 
 //初期化
-void Field::Initialize(Camera* camera) {
+void Field::Initialize(Object3dCommon* object3dCommon, Camera* camera) {
 	mapChip_ = new MapChip();
-	mapChip_->Initialize(Object3dCommon::GetInstance()->GetDirectXBase(), camera, MapChipType::kBlock, "map.csv", "ground", -2.0f, mapSize_);
+	mapChip_->Initialize(object3dCommon, camera, MapChipType::kBlock, "map.csv", "ground", -2.0f, mapSize_);
 
 	//調整項目
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();

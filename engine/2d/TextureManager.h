@@ -7,6 +7,7 @@
 //前方宣言
 class DirectXBase;
 class SRVManager;
+class Core;
 
 /// <summary>
 /// テクスチャを管理する
@@ -28,10 +29,9 @@ private://構造体
 	}TextureData;
 public://メンバ関数
 	/// <summary>
-	/// インスタンスのゲッター
+	/// デストラクタ
 	/// </summary>
-	/// <returns>インスタンス</returns>
-	static TextureManager* GetInstance();
+	~TextureManager() = default;
 
 	/// <summary>
 	/// 初期化
@@ -92,27 +92,24 @@ public://メンバ関数
 	/// <param name="filePath">ファイルパス</param>
 	/// <returns>GPUハンドル</returns>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVHandleGPU(const std::string& filePath);
-
+public://PressKey
+	class ConstructorKey {
+		ConstructorKey() = default;
+		friend class Core;
+	};
 	/// <summary>
-	/// 終了処理
+	/// コンストラクタ
 	/// </summary>
-	void Finalize();
+	/// <param name="">PressKeyを受け取る</param>
+	explicit TextureManager(ConstructorKey);
 private://メンバ関数
-	//コンストラクタの封印
-	TextureManager() = default;
-	//デストラクタの封印
-	~TextureManager() = default;
 	//コピーコンストラクタ禁止
 	TextureManager(TextureManager&) = delete;
 	//代入演算子の禁止
 	TextureManager& operator=(TextureManager&) = delete;
 public://静的メンバ変数
-	//TextureManagerのインスタンス
-	static TextureManager* instance;
 	//SRVインデックスの開始番号
 	static uint32_t kSRVIndexTop;
-	//Finalizeしたかのフラグ
-	static inline bool isFinalize = false;
 private://メンバ変数
 	//テクスチャデータ
 	std::unordered_map<std::string, TextureData>textureDatas_;

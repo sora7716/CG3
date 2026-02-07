@@ -13,9 +13,11 @@ Object2d::~Object2d() {
 	delete worldTransform_;
 }
 //初期化
-void Object2d::Initialize(const std::string& textureName) {
+void Object2d::Initialize(Object2dCommon* object2dCommon, const std::string& textureName) {
+	//2Dオブジェクトの共通部分
+	object2dCommon_ = object2dCommon;
 	//DirectXの基盤部分を記録する
-	directXBase_ = Object2dCommon::GetInstance()->GetDirectXBase();
+	directXBase_ = object2dCommon_->GetDirectXBase();
 	//頂点データの生成
 	CreateVertexResource();
 	//インデックスリソースの生成
@@ -25,14 +27,14 @@ void Object2d::Initialize(const std::string& textureName) {
 	//テクスチャのファイルパスの記録
 	modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
 	//テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
+	object2dCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
 	//uvTransform変数を作る
 	uvTransform_ = { {1.0f,1.0f},Math::kPi,{0.0f,0.0f} };
 	//ワールドトランスフォームの生成と初期化
 	worldTransform_ = new WorldTransform();
 	worldTransform_->Initialize(directXBase_, TransformMode::k2d);
 	//カメラにデフォルトカメラを代入
-	worldTransform_->SetCamera(Object2dCommon::GetInstance()->GetDefaultCamera());
+	worldTransform_->SetCamera(object2dCommon_->GetDefaultCamera());
 	//スクリーンに表示する範囲を設定
 	WorldTransform::ScreenArea screenArea = {
 		.left = -static_cast<float>(WinApi::kClientWidth / 2),
@@ -56,9 +58,9 @@ void Object2d::Update() {
 //描画
 void Object2d::Draw() {
 	//2Dオブジェクトの共通部分
-	Object2dCommon::GetInstance()->DrawSetting();
+	object2dCommon_->DrawSetting();
 	//PSOの設定
-	auto pso = Object2dCommon::GetInstance()->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
+	auto pso = object2dCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 	//ワールドトランスフォームの描画
@@ -70,7 +72,7 @@ void Object2d::Draw() {
 	//マテリアルCBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());//material
 	//SRVのDescriptorTableの先頭を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVHandleGPU(modelData_.material.textureFilePath));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, object2dCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
 	//描画(DrawCall/ドローコール)
 	directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(modelData_.vertices.size()), 1, 0, 0, 0);
 }
@@ -83,7 +85,7 @@ void Object2d::SetText(const std::string& textName) {
 //テクスチャの変更
 void Object2d::ChangeTexture(std::string textureName) {
 	modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
-	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
+	object2dCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
 }
 
 //サイズのゲッター

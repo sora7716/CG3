@@ -2,14 +2,14 @@
 #include "DirectXBase.h"
 #include "SRVManager.h"
 #include "WinApi.h"
-#include<cassert>
-//インスタンスのゲッター
-ImGuiManager* ImGuiManager::GetInstance() {
-	assert(!isFinalize && "GetInstance() called after Finalize()");
-	if (instance == nullptr) {
-		instance = new ImGuiManager();
-	}
-	return instance;
+
+//デストラクタ
+ImGuiManager::~ImGuiManager() {
+#ifdef USE_IMGUI
+	ImGui_ImplDX12_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+#endif // USE_IMGUI
 }
 
 //初期化
@@ -86,14 +86,6 @@ void ImGuiManager::CheckBoxToInt(const std::string& label, int32_t& frag) {
 	frag = static_cast<int32_t>(checkBox);
 }
 
-//終了
-void ImGuiManager::Finalize() {
-#ifdef USE_IMGUI
-	ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
-#endif // USE_IMGUI
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
+//コンストラクタ
+ImGuiManager::ImGuiManager(ConstructorKey) {
 }

@@ -73,8 +73,8 @@ private://定数
 private://メンバ変数
 	//カメラ
 	Camera* camera_ = nullptr;
-	//制御ポイント
-	std::vector<ControlPointData> controlPointDataList_ = {};
+	////制御ポイント
+	//std::vector<ControlPointData> controlPointDataList_ = {};
 	//グループ名
 	const char* groupName_ = "controlPoint";
 };

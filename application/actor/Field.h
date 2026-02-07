@@ -6,8 +6,9 @@
 #include <vector>
 
 //カメラ
-class Camera;
+class Object3dCommon;
 class Object3d;
+class Camera;
 class MapChip;
 
 /// <summary>
@@ -28,9 +29,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="object3dCommon">3Dオブジェクトの共通部分</param>
 	/// <param name="camera">カメラ</param>
-	/// <param name="modelName">モデル名</param>
-	void Initialize(Camera* camera);
+	void Initialize(Object3dCommon*object3dCommon,Camera* camera);
 
 	/// <summary>
 	/// 更新

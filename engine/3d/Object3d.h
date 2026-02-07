@@ -9,8 +9,9 @@
 #include <wrl.h>
 #include <d3d12.h>
 //前方宣言
-class Camera;
 class DirectXBase;
+class Object3dCommon;
+class Camera;
 
 /// <summary>
 /// 3Dオブジェクト
@@ -32,9 +33,10 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="object3dCommon">3dオブジェクトの共通部分</param>
 	/// <param name="camera">カメラ</param>
 	/// <param name="transformMode">トランスフォームモード</param>
-	void Initialize(Camera* camera, TransformMode transformMode = TransformMode::k3d);
+	void Initialize(Object3dCommon*object3dCommon,Camera* camera, TransformMode transformMode = TransformMode::k3d);
 
 	/// <summary>
 	/// 更新
@@ -201,6 +203,9 @@ public://メンバ関数
 	/// <returns>ワールド座標</returns>
 	Vector3 GetWorldPos();
 private://メンバ変数
+	//3Dオブジェクトの共通部分
+	Object3dCommon* object3dCommon_ = nullptr;
+
 	//UV座標
 	Transform2dData uvTransform_ = {
 		.scale = { 1.0f,1.0f },

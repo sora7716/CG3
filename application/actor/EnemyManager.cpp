@@ -14,7 +14,10 @@ EnemyManager* EnemyManager::GetInstance() {
 }
 
 //初期化
-void EnemyManager::Initialize(Camera* camera) {
+void EnemyManager::Initialize(Object3dCommon* object3dCommon, Camera* camera) {
+	//3Dオブジェクトの共通部分を記録
+	object3dCommon_ = object3dCommon;
+	//カメラを記録
 	camera_ = camera;
 	//ランダムエンジンの初期化
 	//乱数エンジンの初期化
@@ -118,7 +121,7 @@ void EnemyManager::Finalize() {
 //敵を生成
 Enemy* EnemyManager::Create() {
 	Enemy* enemy = new Enemy();
-	enemy->Initialize(camera_, "enemy");
+	enemy->Initialize(object3dCommon_,camera_, "enemy");
 	//位置の値をemitRange_の範囲でランダムに設定
 	Vector3 spawnAreaMin = { -(spawnAreaCenter_.x + spawnAreaRadius_),0.0f,-(spawnAreaCenter_.z + spawnAreaRadius_) };
 	Vector3 spawnAreaMax = { spawnAreaCenter_.x + spawnAreaRadius_,0.0f,spawnAreaCenter_.z + spawnAreaRadius_ };

@@ -1,7 +1,7 @@
 #include "Object3d.h"
 #include "Object3dCommon.h"
-#include "engine/camera/Camera.h"
 #include "engine/base/DirectXBase.h"
+#include "engine/camera/Camera.h"
 #include "engine/math/func/Math.h"
 #include "engine/3d/ModelManager.h"
 #include "engine/math/func/Rendering.h"
@@ -15,9 +15,11 @@ Object3d::~Object3d() {
 }
 
 //初期化
-void Object3d::Initialize(Camera* camera, TransformMode transformMode) {
+void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, TransformMode transformMode) {
+	//3Dオブジェクトの共通部分
+	object3dCommon_ = object3dCommon;
 	//DirectXの基盤部分を受け取る
-	directXBase_ = Object3dCommon::GetInstance()->GetDirectXBase();
+	directXBase_ = object3dCommon_->GetDirectXBase();
 
 	//ワールドトランスフォームの生成、初期化
 	worldTransform_ = new WorldTransform();
@@ -29,7 +31,7 @@ void Object3d::Initialize(Camera* camera, TransformMode transformMode) {
 	//カメラにデフォルトカメラを代入
 	worldTransform_->SetCamera(camera);
 	//カメラをセット
-	Object3dCommon::GetInstance()->CreateCameraResource(worldTransform_->GetCamera()->GetTranslate());
+	object3dCommon_->CreateCameraResource(worldTransform_->GetCamera()->GetTranslate());
 
 	//マテリアルの初期化
 	material_.color = { 1.0f,1.0f,1.0f,1.0f };
@@ -42,7 +44,7 @@ void Object3d::Initialize(Camera* camera, TransformMode transformMode) {
 //更新
 void Object3d::Update() {
 	//Object3dの共通部分の更新
-	Object3dCommon::GetInstance()->Update();
+	object3dCommon_->Update();
 
 	if (model_) {
 		worldTransform_->SetNode(model_->GetModelData().rootNode);
@@ -55,10 +57,10 @@ void Object3d::Update() {
 //描画
 void Object3d::Draw() {
 	//3Dオブジェクトの共通部分
-	Object3dCommon::GetInstance()->DrawSetting();
+	object3dCommon_->DrawSetting();
 
 	//PSOの設定
-	auto pso = Object3dCommon::GetInstance()->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
+	auto pso = object3dCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 
@@ -66,11 +68,11 @@ void Object3d::Draw() {
 	worldTransform_->Draw();
 
 	//平光源CBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, Object3dCommon::GetInstance()->GetDirectionalLightResource()->GetGPUVirtualAddress());
+	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, object3dCommon_->GetDirectionalLightResource()->GetGPUVirtualAddress());
 	//点光源のStructuredBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5,Object3dCommon::GetInstance()->GetSRVManager()->GetGPUDescriptorHandle(Object3dCommon::GetInstance()->GetSrvIndexPoint()));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, object3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(object3dCommon_->GetSrvIndexPoint()));
 	//スポットライトのStructuredBufferを設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, Object3dCommon::GetInstance()->GetSRVManager()->GetGPUDescriptorHandle(Object3dCommon::GetInstance()->GetSrvIndexSpot()));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, object3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(object3dCommon_->GetSrvIndexSpot()));
 
 	//3Dモデルが割り当てられていれば描画
 	if (model_) {
@@ -90,13 +92,13 @@ void Object3d::Decompose() {
 
 //モデルのセッター
 void Object3d::SetModel(const std::string& name) {
-	model_ = ModelManager::GetInstance()->FindModel(name);
+	model_ = object3dCommon_->GetModelManager()->FindModel(name);
 }
 
 //カメラのセッター
 void Object3d::SetCamera(Camera* camera) {
 	worldTransform_->SetCamera(camera);
-	Object3dCommon::GetInstance()->SetCameraForGPU(camera->GetTranslate());
+	object3dCommon_->SetCameraForGPU(camera->GetTranslate());
 }
 
 // スケールのセッター
@@ -225,6 +227,6 @@ Model* Object3d::GetModel() {
 }
 
 //ワールド座標のゲッター
-Vector3 Object3d::GetWorldPos(){
+Vector3 Object3d::GetWorldPos() {
 	return worldTransform_->GetWorldPos();
 }

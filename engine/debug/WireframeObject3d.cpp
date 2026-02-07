@@ -25,14 +25,14 @@ void WireframeObject3d::Initialize(Camera* camera, ModelType modelType) {
 
 	//モデルタイプ
 	if (modelType == ModelType::kSphere) {
-		model_ = ModelManager::GetInstance()->FindModel("sphere");
+		model_ = WireframeObject3dCommon::GetInstance()->GetModelManager()->FindModel("sphere");
 	} else if (modelType == ModelType::kCube) {
-		model_ = ModelManager::GetInstance()->FindModel("cube");
+		model_ = WireframeObject3dCommon::GetInstance()->GetModelManager()->FindModel("cube");
 	}
 	//マテリアルの設定
 	model_->SetMaterial(material_);
 #endif // _DEBUG
-	
+
 	//モデルタイプをリリース時でも使っている風にしている
 	(void)modelType;
 
@@ -68,11 +68,11 @@ void WireframeObject3d::Update() {
 	//Sphere
 	sphere_.center = WireframeObject3d::GetWorldPos();
 	sphere_.radius = radius_;
-	
+
 	//AABB
 	aabb_.min = WireframeObject3d::GetWorldPos() * -worldTransform_->GetScale();
 	aabb_.max = WireframeObject3d::GetWorldPos() * worldTransform_->GetScale();
-	
+
 	//OBB
 	obb_.center = WireframeObject3d::GetWorldPos();
 	obb_.rotate = worldTransform_->GetRotate();

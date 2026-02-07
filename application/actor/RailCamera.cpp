@@ -15,9 +15,9 @@ void RailCamera::Initialize(Input* input, Camera* camera, const Vector3& rotate,
 	camera_ = camera;
 
 	//カメラのオブジェクト
-	cameraObject_ = new Object3d();
+	/*cameraObject_ = new Object3d();
 	cameraObject_->Initialize(camera_);
-	cameraObject_->SetModel("camera");
+	cameraObject_->SetModel("camera");*/
 
 	//マテリアル
 	material_.color = { 1.0f,1.0f,1.0f,1.0f };
@@ -54,14 +54,14 @@ void RailCamera::Update() {
 	camera_->SetRotate(rotate_);
 	camera_->SetTranslate(translate_);
 	camera_->SetFovY(fovY_);
-	//カメラのオブジェクト
-	cameraObject_->SetRotate(rotate_);
-	cameraObject_->SetTranslate(translate_);
-	//マテリアルの適応
-	cameraObject_->GetModel()->SetMaterial(material_);
+	////カメラのオブジェクト
+	//cameraObject_->SetRotate(rotate_);
+	//cameraObject_->SetTranslate(translate_);
+	////マテリアルの適応
+	//cameraObject_->GetModel()->SetMaterial(material_);
 
-	//カメラのオブジェクトの更新
-	cameraObject_->Update();
+	////カメラのオブジェクトの更新
+	//cameraObject_->Update();
 }
 
 //デバッグ
@@ -75,18 +75,19 @@ void RailCamera::Debug() {
 
 //描画
 void RailCamera::Draw() {
-	cameraObject_->Draw();
+	//cameraObject_->Draw();
 }
 
 //終了
 void RailCamera::Finalize() {
-	delete cameraObject_;
-	cameraObject_ = nullptr;
+	//delete cameraObject_;
+	//cameraObject_ = nullptr;
 }
 
 //ワールドトランスフォームのゲッター
 const WorldTransform* RailCamera::GetWorldTransform() const {
-	return cameraObject_->GetWorldTransform();
+	//return cameraObject_->GetWorldTransform();
+	return {};
 }
 
 //カメラのゲッター
@@ -96,7 +97,8 @@ Camera* RailCamera::GetCamera() {
 
 //カメラのセッター
 void RailCamera::SetCamera(Camera* camera) {
-	cameraObject_->SetCamera(camera);
+	//cameraObject_->SetCamera(camera);
+	(void)camera;
 }
 
 //制御ポイントのセッター

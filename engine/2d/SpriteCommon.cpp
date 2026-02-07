@@ -6,19 +6,18 @@
 #include <cassert>
 using namespace Microsoft::WRL;
 
-//インスタンスのゲッター
-SpriteCommon* SpriteCommon::GetInstance() {
-	assert(!isFinalize && "GetInstance() called after Finalize()");
-	if (instance == nullptr) {
-		instance = new SpriteCommon();
-	}
-	return instance;
+//デストラクタ
+SpriteCommon::~SpriteCommon() {
+	delete blend_;
+	delete makeGraphicsPipeline_;
 }
 
 //初期化
-void SpriteCommon::Initialize(DirectXBase* directXBase) {
-	assert(directXBase);//Nullチェック
-	directXBase_ = directXBase;//DirectXの基盤を受け取る
+void SpriteCommon::Initialize(DirectXBase* directXBase, TextureManager* textureManager) {
+	//DirectXの基盤を受け取る
+	directXBase_ = directXBase;
+	//テクスチャマネージャー
+	textureManager_ = textureManager;
 	//ブレンド
 	blend_ = new Blend();
 	//グラフィックスパイプラインの生成と初期化
@@ -63,7 +62,7 @@ void SpriteCommon::DrawSetting() {
 
 //テクスチャの読み込み
 void SpriteCommon::LoadTexture(const std::string& filename) {
-	TextureManager::GetInstance()->LoadTexture(filename);
+	textureManager_->LoadTexture(filename);
 }
 
 //平行光源の生成
@@ -106,8 +105,13 @@ ID3D12Resource* SpriteCommon::GetPointLightResource()const {
 }
 
 //DirectXの基盤部分のゲッター
-DirectXBase* SpriteCommon::GetDirectXBase() {
+DirectXBase* SpriteCommon::GetDirectXBase()const {
 	return directXBase_;
+}
+
+//テクスチャマネージャーのゲッター
+TextureManager* SpriteCommon::GetTextureManager() const {
+	return textureManager_;
 }
 
 //グラフィックパイプラインのゲッター
@@ -115,11 +119,6 @@ std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOf
 	return graphicsPipelineStates_;
 }
 
-//終了
-void SpriteCommon::Finalize() {
-	delete blend_;
-	delete makeGraphicsPipeline_;
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
+//コンストラクタ
+SpriteCommon::SpriteCommon(ConstructorKey) {
 }

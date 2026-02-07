@@ -8,9 +8,10 @@
 #include <d3d12.h>
 
 //前方宣言
-class WorldTransform;
-class Camera;
 class DirectXBase;
+class Object2dCommon;
+class Camera;
+class WorldTransform;
 
 //テキストの生成時に必要なもの
 //text:入力する文字
@@ -27,7 +28,7 @@ struct TextStyle {
 /// <summary>
 /// 文字
 /// </summary>
-class Text{
+class Text {
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
@@ -44,8 +45,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="object2dCommon">2Dオブジェクトの共通部分</param>
 	/// <param name="textKey">テキストを検索するとき用のキー</param>
-	void Initialize(const std::string& textKey);
+	void Initialize(Object2dCommon* object2dCommon, const std::string& textKey);
 
 	/// <summary>
 	/// 更新
@@ -153,6 +155,8 @@ private://メンバ関数
 private://メンバ変数
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
+	//2dオブジェクトの共通部分
+	Object2dCommon* object2dCommon_ = nullptr;
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
 	//バッファリソース

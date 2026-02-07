@@ -1,20 +1,16 @@
 #include "IScene.h"
 #include "engine/scene/SceneManager.h"
 #include "engine/scene/SceneFactory.h"
-#include "engine/camera/CameraManager.h"
+#include "engine/base/Core.h"
 #include "engine/debug/GlobalVariables.h"
 
 //初期化
-void IScene::Initialize(DirectXBase* directXBase,Input*input,CameraManager* cameraManager) {
-	//DirectXBaseを受け取る
-	directXBase_ = directXBase;
-	//入力を受け取る
-	input_ = input;
-	//カメラマネージャーを受け取る
-	cameraManager_ = cameraManager;
+void IScene::Initialize(Core* core) {
+	//ゲームエンジンの核
+	core_ = core;
 	//デバックカメラ
 	debugCamera_ = std::make_unique<DebugCamera>();
-	debugCamera_->Initialize(input_, cameraManager_);
+	debugCamera_->Initialize(core_->GetInput(), core_->GetCameraManager());
 	//シーンファクトリーの生成
 	sceneFactory_ = new SceneFactory();
 	//シーンファクトリーのセット

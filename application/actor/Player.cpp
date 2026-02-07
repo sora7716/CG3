@@ -16,9 +16,12 @@ Player::~Player() {
 }
 
 //初期化
-void Player::Initialize(Input* input, Camera* camera, const std::string& modelName) {
+void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon* object3dCommon, Camera* camera, const std::string& modelName) {
 	//入力
 	input_ = input;
+
+	//3dオブジェクトの共通部分
+	object3dCommon_ = object3dCommon;
 
 	//カメラ
 	camera_ = camera;
@@ -33,7 +36,7 @@ void Player::Initialize(Input* input, Camera* camera, const std::string& modelNa
 
 	//3Dオブジェクトの生成と初期化
 	gameObject_.object3d = new Object3d();
-	gameObject_.object3d->Initialize(camera_);
+	gameObject_.object3d->Initialize(object3dCommon,camera_);
 	gameObject_.object3d->SetModel(modelName);
 	gameObject_.isAlive = true;
 
@@ -52,15 +55,15 @@ void Player::Initialize(Input* input, Camera* camera, const std::string& modelNa
 
 	//弾
 	bullet_ = new Bullet();
-	bullet_->Initialize(camera_);
+	bullet_->Initialize(object3dCommon,camera_);
 	bullet_->SetAliveRange(kAliveAreaSize);
 	bullet_->SetSpeed(kBulletSpeed);
 	bullet_->SetSize({ kBulletSize,kBulletSize,kBulletSize });
 	bullet_->SetMaxBulletCount(kBulletCount);
 
 	//スポットライトを設定
-	Object3dCommon::GetInstance()->AddSpotLight("headlight");
-	headlight_ = Object3dCommon::GetInstance()->GetSpotLight("headlight");
+	object3dCommon_->AddSpotLight("headlight");
+	headlight_ = object3dCommon_->GetSpotLight("headlight");
 	headlight_.cosAngle = 0.9f;
 	headlight_.cosFolloffStart = 1.2f;
 
@@ -72,14 +75,14 @@ void Player::Initialize(Input* input, Camera* camera, const std::string& modelNa
 	//HPバー
 	//中身
 	hpBar_ = new Sprite();
-	hpBar_->Initialize("playerHpBar.png");
+	hpBar_->Initialize(spriteCommon, "playerHpBar.png");
 	hpBar_->SetBlendMode(BlendMode::kNormal);
 	hpBarTransform_.scale = { hpBarWidth_,50.0f };
 	hpBarTransform_.translate = { 440.0f,630.0f };
 	hpColor_ = Vector4::ColorCodeTransform("#138A0DFF");
 	//アウトライン
 	hpOutLine_ = new Sprite();
-	hpOutLine_->Initialize("playerHpOutLine.png");
+	hpOutLine_->Initialize(spriteCommon, "playerHpOutLine.png");
 	hpOutLine_->SetBlendMode(BlendMode::kNormal);
 	hpOutLineTransform_.scale = { hpBarWidth_,50.0f };
 	hpOutLineTransform_.translate = { 440.0f,630.0f };
@@ -333,5 +336,5 @@ void Player::HeadlightUpdate() {
 	headlight_.direction = worldForward.Normalize();
 	headlight_.intensity = 30.0f;
 	//ライトのセッター
-	Object3dCommon::GetInstance()->SetSpotLight("headlight", headlight_);
+	object3dCommon_->SetSpotLight("headlight", headlight_);
 }

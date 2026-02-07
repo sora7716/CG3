@@ -6,6 +6,7 @@
 #include <array>
 //前方宣言
 class DirectXBase;
+class TextureManager;
 class Camera;
 class GraphicsPipeline;
 class Blend;
@@ -18,17 +19,16 @@ private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
 	/// <summary>
-	/// インスタンスのゲッター
+	/// デストラクタ
 	/// </summary>
-	/// <returns></returns>
-	static Object2dCommon* GetInstance();
-
+	~Object2dCommon();
+	
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤</param>
-	/// <param name="directionalLightData">directionalLightのデータ</param>
-	void Initialize(DirectXBase* directXBase);
+	/// <param name="textureManager">テクスチャマネージャー</param>
+	void Initialize(DirectXBase* directXBase, TextureManager* textureManager);
 
 	/// <summary>
 	/// 共通描画設定
@@ -41,14 +41,9 @@ public://メンバ関数
 	void CreateDirectionLight();
 
 	/// <summary>
-    /// 点光源
-    /// </summary>
-	void CreatePointLight();
-
-	/// <summary>
-	/// 終了
+	/// 点光源
 	/// </summary>
-	void Finalize();
+	void CreatePointLight();
 
 	/// <summary>
 	/// DirectionalLightのセッター
@@ -75,6 +70,12 @@ public://メンバ関数
 	DirectXBase* GetDirectXBase()const;
 
 	/// <summary>
+	/// テクスチャマネージャーのゲッター
+	/// </summary>
+	/// <returns>テクスチャマネージャー</returns>
+	TextureManager* GetTextureManager()const;
+
+	/// <summary>
 	/// グラフィックパイプラインのゲッター
 	/// </summary>
 	/// <returns>グラフィックパイプライン</returns>
@@ -91,11 +92,18 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>デフォルトカメラ</returns>
 	Camera* GetDefaultCamera()const;
+public://PressKeyIdiom
+	class ConstructorKey {
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PressKeyを受け取る</param>
+	explicit Object2dCommon(ConstructorKey);
 private://メンバ関数
-	//コンストラクタの封印
-	Object2dCommon() = default;
-	//デストラクタの封印
-	~Object2dCommon() = default;
 	//コピーコンストラクタ禁止
 	Object2dCommon(const Object2dCommon&) = delete;
 	//代入演算子の禁止
@@ -114,13 +122,16 @@ private://メンバ変数
 	std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> graphicsPipelineStates_ = { nullptr };
 	//グラフィックスパイプライン
 	GraphicsPipeline* makeGraphicsPipeline_ = nullptr;
-	
+
 	//バッファリソース
 	ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;//平行光源
 	ComPtr<ID3D12Resource> pointLightResource_ = nullptr;//点光源
 	//バッファリソース内のデータを指すポインタ
 	DirectionalLight* directionalLightPtr_ = nullptr;//平行光源
 	PointLight* pointLightPtr_ = nullptr;//点光源
+
+	//テクスチャマネージャー
+	TextureManager* textureManager_ = nullptr;
 
 	//ブレンド
 	Blend* blend_ = nullptr;

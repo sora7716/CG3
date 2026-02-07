@@ -6,12 +6,14 @@
 #include "engine/math/Vector4.h"
 
 // 前方宣言
-class Camera;
 class Input;
+class Camera;
+class SpriteCommon;
+class Object3dCommon;
+class Sprite;
+class WireframeObject3d;
 class WorldTransform;
 class Bullet;
-class WireframeObject3d;
-class Sprite;
 
 /// <summary>
 /// プレイヤー
@@ -32,9 +34,11 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="input">入力</param>
+	/// <param name="spriteCommon">スプライトの共通部分</param>
+	/// <param name="object3dCommon">3Dオブジェクトの共通部分</param>
 	/// <param name="camera">カメラ</param>
 	/// <param name="modelName">モデル名</param>
-	void Initialize(Input* input, Camera* camera, const std::string& modelName);
+	void Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon* object3dCommon, Camera* camera, const std::string& modelName);
 
 	/// <summary>
 	/// 更新
@@ -139,6 +143,9 @@ private://定数
 private://メンバ変数
 	//入力
 	Input* input_ = nullptr;
+
+	//3dオブジェクトの共通部分
+	Object3dCommon* object3dCommon_ = nullptr;
 
 	//カメラ
 	Camera* camera_ = nullptr;

@@ -9,6 +9,7 @@
 #include "engine/math/func/Math.h"
 #include "engine/base/SRVManager.h"
 #include "engine/3d/ModelManager.h"
+#include "engine/3d/Model.h"
 
 //初期化
 void ParticleSystem::Initialize(DirectXBase* directXBase, const std::string& textureName, Model* model) {
@@ -28,7 +29,7 @@ void ParticleSystem::Initialize(DirectXBase* directXBase, const std::string& tex
 	//テクスチャファイルの記録
 	modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
 	//テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
+	ParticleCommon::GetInstance()->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
 
 	//マテリアルリソースの生成
 	CreateMaterialResource();
@@ -62,7 +63,7 @@ void ParticleSystem::Draw() {
 	//ワールドトランスフォームの描画
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, ParticleCommon::GetInstance()->GetSRVManager()->GetGPUDescriptorHandle(srvIndex_));
 	//SRVのDescriptorTableの先頭を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVHandleGPU(modelData_.material.textureFilePath));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, ParticleCommon::GetInstance()->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
 	//描画(DrawCall/ドローコール)
 	directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(modelData_.vertices.size()), emitter_->GetNumInstance(), 0, 0, 0);
 }

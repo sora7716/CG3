@@ -6,6 +6,7 @@
 #include "engine/math/CollisionPrimitives.h"
 
 //前方宣言
+class Object3dCommon;
 class Object3d;
 class Camera;
 class WireframeObject3d;
@@ -29,9 +30,10 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="object3dCommon">3Dオブジェクトの共通部分</param>
 	/// <param name="camera">カメラ</param>
 	/// <param name="modelName">モデル名</param>
-	void Initialize(Camera* camera, const std::string& modelName);
+	void Initialize(Object3dCommon* object3dCommon, Camera* camera, const std::string& modelName);
 
 	/// <summary>
 	/// 更新

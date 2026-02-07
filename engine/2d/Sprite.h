@@ -12,6 +12,7 @@
 //前方宣言
 class DirectXBase;
 class WorldTransform;
+class SpriteCommon;
 
 /// <summary>
 /// スプライト
@@ -33,8 +34,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="spriteCommon">スプライトの共通部分</param>
 	/// <param name="spriteName">スプライト名</param>
-	void Initialize(const std::string& spriteName);
+	void Initialize(SpriteCommon* spriteCommon, const std::string& spriteName);
 
 	/// <summary>
 	/// 更新
@@ -77,8 +79,8 @@ public://メンバ関数
 	void SetColor(const Vector4& color);
 
 	/// <summary>
-    /// トランスフォームのセッター
-    /// </summary>
+	/// トランスフォームのセッター
+	/// </summary>
 	/// <param name="transformData">トランスフォームデータ(scaleは100,100に初期設定してる)</param>
 	void SetTransformData(const Transform2dData& transformData);
 
@@ -120,18 +122,26 @@ private://メンバ変数
 	//テクスチャ番号
 	std::string spriteName_ = {};
 	TransformData transform_ = { {100.0f,100.0f ,1.0f},{},{} };//トランスフォームの情報
-	DirectXBase* directXBase_ = nullptr;//DirectXの基盤
+	//DirectXの基盤
+	DirectXBase* directXBase_ = nullptr;
+	
+	//スプライトの共通部分
+	SpriteCommon* spriteCommon_ = nullptr;
+
 	//バッファリソース
 	ComPtr<ID3D12Resource>vertexResource_ = nullptr;//頂点
 	ComPtr<ID3D12Resource>indexResource_ = nullptr;//インデックス
 	ComPtr<ID3D12Resource>materialResource_ = nullptr;//マテリアル
+	
 	//バッファリソース内のデータを指すポインタ
 	VertexData* vertexData_ = nullptr;//頂点
 	uint32_t* indexData_ = nullptr;//インデックス
 	Material* materialData_ = nullptr;//マテリアル
+	
 	//バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};//頂点
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_ = {};//インデックス
+	
 	//ワールドトランスフォーム
 	WorldTransform* worldTransform_ = nullptr;
 	//ブレンドモード

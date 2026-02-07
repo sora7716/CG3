@@ -201,7 +201,7 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>スワップチェーンのリソース数</returns>
 	size_t GetSwapChainResourceNum()const;
-public://PressKeyIdiom
+public://PressKey
 	class ConstructorKey {
 		ConstructorKey() = default;
 		friend class Core;
@@ -211,7 +211,6 @@ public://PressKeyIdiom
 	/// </summary>
 	/// <param name="">PressKeyを受け取る</param>
 	explicit DirectXBase(ConstructorKey);
-
 public://静的メンバ関数
 	/// <summary>
 	/// デスクリプターCPUハンドルのゲッター

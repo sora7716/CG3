@@ -41,8 +41,6 @@ Node ReadNode(aiNode* node) {
 
 //初期化
 void Model::Initialize(ModelCommon* modelCommon, const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename) {
-	//Nullチェック
-	assert(modelCommon);
 	//ModelCommonのポインタを引数からメンバ変数を記録する
 	modelCommon_ = modelCommon;
 	directXBase_ = modelCommon_->GetDirectXBase();
@@ -57,7 +55,7 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directoryPat
 	//リムライトリソースの生成
 	CreateRimLightResource();
 	//テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
+	modelCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
 }
 
 //描画
@@ -70,7 +68,7 @@ void Model::Draw() {
 	//リムライトのCbufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(7, rimLightResource_->GetGPUVirtualAddress());
 	//SRVのDescriptorTableの先頭を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVHandleGPU(modelData_.material.textureFilePath));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
 	//描画
 	directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.vertices.size()), 1, 0, 0, 0);
 }
@@ -88,7 +86,7 @@ void Model::SetColor(const Vector4& color) {
 //テクスチャの変更
 void Model::SetTexture(const std::string& filePath) {
 	modelData_.material.textureFilePath = "engine/resources/textures/" + filePath;
-	TextureManager::GetInstance()->LoadTexture(modelData_.material.textureFilePath);
+	modelCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
 }
 
 //色を取得

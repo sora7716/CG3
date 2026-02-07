@@ -6,6 +6,7 @@
 #include <string>
 
 //前方宣言
+class Object3dCommon;
 class Camera;
 
 /// <summary>
@@ -26,8 +27,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="object3dCommon">3Dオブジェクトの共通部分</param>
 	/// <param name="camera">カメラ</param>
-	void Initialize(Camera* camera);
+	void Initialize(Object3dCommon*object3dCommon,Camera* camera);
 
 	/// <summary>
 	/// 弾を発射する
@@ -117,6 +119,8 @@ private://メンバ関数
 	/// <returns>弾</returns>
 	BulletData CreateBullet();
 private://メンバ変数
+	//3Dオブジェクトの共通部分
+	Object3dCommon* object3dCommon_ = nullptr;
 	//カメラ
 	Camera* camera_ = nullptr;
 	// 弾のデータのリスト

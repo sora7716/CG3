@@ -43,35 +43,35 @@ void GameObjectList::LoadModel() {
 	
 	//デバッグ用
 	//球
-	ModelManager::GetInstance()->LoadModel("sphere", "sphere", "sphere.gltf");
+	core_->GetModelManager()->LoadModel("sphere", "sphere", "sphere.gltf");
 	//キューブ
-	ModelManager::GetInstance()->LoadModel("cube", "cube", "cube.obj");
+	core_->GetModelManager()->LoadModel("cube", "cube", "cube.obj");
 
 	//ゲームで使用するモデル
 	//プレイヤー
-	ModelManager::GetInstance()->LoadModel("player", "sphere", "sphereFlat.gltf");
+	core_->GetModelManager()->LoadModel("player", "sphere", "sphereFlat.gltf");
 	//敵
-	ModelManager::GetInstance()->LoadModel("enemy", "enemy", "enemy.gltf");
+	core_->GetModelManager()->LoadModel("enemy", "enemy", "enemy.gltf");
 	//球
-	ModelManager::GetInstance()->LoadModel("sphere", "sphere", "sphere.gltf");
+	core_->GetModelManager()->LoadModel("sphere", "sphere", "sphere.gltf");
 	//弾
-	ModelManager::GetInstance()->LoadModel("bullet", "sphere", "sphere.gltf");
+	core_->GetModelManager()->LoadModel("bullet", "sphere", "sphere.gltf");
 	//カメラ
-	ModelManager::GetInstance()->LoadModel("camera", "cube", "cube.obj");
+	core_->GetModelManager()->LoadModel("camera", "cube", "cube.obj");
 	//地面
-	ModelManager::GetInstance()->LoadModel("ground", "cube", "cube.obj");
+	core_->GetModelManager()->LoadModel("ground", "cube", "cube.obj");
 	//フィールド
-	ModelManager::GetInstance()->LoadModel("field", "terrain", "terrain.obj");
+	core_->GetModelManager()->LoadModel("field", "terrain", "terrain.obj");
 	//平面
-	ModelManager::GetInstance()->LoadModel("plane", "base", "plane.gltf");
+	core_->GetModelManager()->LoadModel("plane", "base", "plane.gltf");
 	//HPバー
-	ModelManager::GetInstance()->LoadModel("hpBar", "base", "plane.gltf");
+	core_->GetModelManager()->LoadModel("hpBar", "base", "plane.gltf");
 	//HPアウトライン
-	ModelManager::GetInstance()->LoadModel("hpOutLine", "base", "plane.gltf");
+	core_->GetModelManager()->LoadModel("hpOutLine", "base", "plane.gltf");
 	//スポットライト
-	ModelManager::GetInstance()->LoadModel("spotLight", "plane", "plane.obj");
+	core_->GetModelManager()->LoadModel("spotLight", "plane", "plane.obj");
 	//軸
-	ModelManager::GetInstance()->LoadModel("test", "base", "axis.obj");
+	core_->GetModelManager()->LoadModel("test", "base", "axis.obj");
 }
 
 //カメラの生成

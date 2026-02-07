@@ -12,31 +12,19 @@ void Framework::Initialize() {
 	//エンジンの核
 	core_ = std::make_unique<Core>();
 	core_->Initialize();
-	//テクスチャ管理
-	TextureManager::GetInstance()->Initialize(core_->GetDirectXBase(), core_->GetSRVManager());
-	//モデルの管理
-	ModelManager::GetInstance()->Initialize(core_->GetDirectXBase());
-	//ImGuiの管理
-	ImGuiManager::GetInstance()->Initialize(core_->GetWinApi(), core_->GetDirectXBase(), core_->GetSRVManager());
-	//スプライトの共通部分
-	SpriteCommon::GetInstance()->Initialize(core_->GetDirectXBase());
-	//2Dオブジェクトの共通部分
-	Object2dCommon::GetInstance()->Initialize(core_->GetDirectXBase());
-	//3Dオブジェクトの共通部分
-	Object3dCommon::GetInstance()->Initialize(core_->GetDirectXBase(), core_->GetSRVManager());
 	//ワイヤーフレームオブジェクトの共通部分
-	WireframeObject3dCommon::GetInstance()->Initialize(core_->GetDirectXBase(), core_->GetSRVManager());
+	WireframeObject3dCommon::GetInstance()->Initialize(core_->GetDirectXBase(), core_->GetSRVManager(), core_->GetModelManager());
 	//パーティクルの共通部分の初期化
-	ParticleCommon::GetInstance()->Initialize(core_->GetDirectXBase(), core_->GetSRVManager());
+	ParticleCommon::GetInstance()->Initialize(core_->GetDirectXBase(), core_->GetSRVManager(), core_->GetTextureManager());
 	//ゲームオブジェクトのリスト
 	GameObjectList::GetInstance()->Initialize(core_.get());
 	//カメラの設定
-	Object2dCommon::GetInstance()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
-	Object3dCommon::GetInstance()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
+	core_->GetObject2dCommon()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
+	core_->GetObject3dCommon()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
 	WireframeObject3dCommon::GetInstance()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
 	ParticleCommon::GetInstance()->SetDefaultCamera(core_->GetCameraManager()->FindCamera("defaultCamera"));
 	//シーンの管理
-	SceneManager::GetInstance()->Initialize(core_->GetDirectXBase(), core_->GetInput(), core_->GetCameraManager());
+	SceneManager::GetInstance()->Initialize(core_.get());
 }
 
 //更新
@@ -51,20 +39,8 @@ void Framework::Update() {
 
 //終了
 void Framework::Finalize() {
-	//テクスチャ管理
-	TextureManager::GetInstance()->Finalize();
-	//モデルの管理
-	ModelManager::GetInstance()->Finalize();
-	//ImGuiの管理
-	ImGuiManager::GetInstance()->Finalize();
 	//オーディオの管理
 	AudioManager::GetInstance()->Finalize();
-	//スプライトの共通部分
-	SpriteCommon::GetInstance()->Finalize();
-	//2Dオブジェクトの共通部分
-	Object2dCommon::GetInstance()->Finalize();
-	//3Dオブジェクトの共通部分
-	Object3dCommon::GetInstance()->Finalize();
 	//ワイヤーフレームの共通部分
 	WireframeObject3dCommon::GetInstance()->Finalize();
 	//パーティクルの共通部分

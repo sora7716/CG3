@@ -5,19 +5,20 @@
 #include <cassert>
 using namespace Microsoft::WRL;
 
-//インスタンスのゲッター
-Object2dCommon* Object2dCommon::GetInstance() {
-	assert(!isFinalize && "GetInstance() called after Finalize()");
-	if (instance == nullptr) {
-		instance = new Object2dCommon();
-	}
-	return instance;
+//デストラクタ
+Object2dCommon::~Object2dCommon() {
+	delete blend_;
+	delete makeGraphicsPipeline_;
 }
 
 //初期化
-void Object2dCommon::Initialize(DirectXBase* directXBase) {
-	assert(directXBase);//Nullチェック
-	directXBase_ = directXBase;//DirectXの基盤を受け取る
+void Object2dCommon::Initialize(DirectXBase* directXBase, TextureManager* textureManager) {
+	//DirectXの基盤を受け取る
+	directXBase_ = directXBase;
+
+	//テクスチャマネージャー
+	textureManager_ = textureManager;
+
 	//ブレンド
 	blend_ = new Blend();
 	//グラフィックスパイプラインの生成と初期化
@@ -105,17 +106,14 @@ DirectXBase* Object2dCommon::GetDirectXBase() const {
 	return directXBase_;
 }
 
+//テクスチャマネージャーのゲッター
+TextureManager* Object2dCommon::GetTextureManager() const {
+	return textureManager_;
+}
+
 //グラフィックパイプラインのゲッター
 std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> Object2dCommon::GetGraphicsPipelineStates() const {
 	return graphicsPipelineStates_;
-}
-//終了
-void Object2dCommon::Finalize() {
-	delete blend_;
-	delete makeGraphicsPipeline_;
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
 }
 
 // デフォルトカメラのセッター
@@ -126,4 +124,8 @@ void Object2dCommon::SetDefaultCamera(Camera* camera) {
 // デフォルトカメラのゲッター
 Camera* Object2dCommon::GetDefaultCamera() const {
 	return defaultCamera_;
+}
+
+//コンストラクタ
+Object2dCommon::Object2dCommon(ConstructorKey) {
 }

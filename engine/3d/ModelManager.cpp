@@ -1,21 +1,15 @@
 #include "ModelManager.h"
-#include <cassert>
-//インスタンスの初期化
-ModelManager* ModelManager::instance = nullptr;
+#include "engine/3d/ModelCommon.h"
+#include "engine/3d/Model.h"
 
-// インスタンスのゲッター
-ModelManager* ModelManager::GetInstance() {
-	assert(!isFinalize && "GetInstance() called after Finalize()");
-	if (instance == nullptr) {
-		instance = new ModelManager();
-	}
-	return instance;
+//デストラクタ
+ModelManager::~ModelManager() {
 }
 
 //初期化
-void ModelManager::Initialize(DirectXBase* directXBase) {
+void ModelManager::Initialize(DirectXBase* directXBase, TextureManager* textureManager) {
 	modelCommon_ = new ModelCommon();
-	modelCommon_->Initialize(directXBase);
+	modelCommon_->Initialize(directXBase, textureManager);
 }
 
 // objモデルの読み込み
@@ -44,9 +38,6 @@ Model* ModelManager::FindModel(const std::string& name) {
 	return nullptr;
 }
 
-// 終了
-void ModelManager::Finalize() {
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
+//コンストラクタ
+ModelManager::ModelManager(ConstructorKey) {
 }

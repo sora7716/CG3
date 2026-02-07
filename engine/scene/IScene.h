@@ -13,6 +13,7 @@
 #include <memory>
 
 // 前方宣言
+class Core;
 class Input;
 class SceneManager;
 class AbstractSceneFactory;
@@ -36,10 +37,8 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
-	/// <param name="input">入力</param>
-	/// <param name="cameraManager">カメラマネージャー</param>
-	virtual void Initialize(DirectXBase* directXBase, Input* input, CameraManager* cameraManager);
+	/// <param name="core">ゲームエンジンの核</param>
+	virtual void Initialize(Core*core);
 
 	/// <summary>
 	/// 更新
@@ -54,15 +53,11 @@ public://メンバ関数
 	//純粋仮想関数
 	virtual void Draw() = 0;
 protected://メンバ変数
-	//DirectXの基盤部分
-	DirectXBase* directXBase_ = nullptr;
-	//入力
-	Input* input_ = nullptr;
+	//ゲームエンジンの核
+	Core* core_ = nullptr;
 	//デバックカメラ
 	std::unique_ptr<DebugCamera>debugCamera_ = nullptr;
 	//シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
-	//カメラマネージャー
-	CameraManager* cameraManager_ = nullptr;
 };
 
