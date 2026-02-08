@@ -7,14 +7,9 @@
 class SceneFactory :public AbstractSceneFactory {
 public://メンバ関数
 	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	SceneFactory() = default;
-
-	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~SceneFactory() = default;
+	~SceneFactory()override;
 
 	/// <summary>
 	/// シーンの生成
@@ -22,5 +17,17 @@ public://メンバ関数
 	/// <param name="sceneName">シーン名</param>
 	/// <returns>シーン</returns>
 	IScene* CreateScene(const std::string& sceneName)override;
+public://PrassKey
+	class ConstructorKey {
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PrassKeyを受け取る</param>
+	explicit SceneFactory(AbstractSceneFactory::ConstructorKey);
 };
 

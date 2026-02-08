@@ -8,14 +8,9 @@
 class AbstractSceneFactory{
 public://メンバ関数
 	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	AbstractSceneFactory() = default;
-
-	/// <summary>
 	/// 仮想デストラクタ
 	/// </summary>
-	virtual ~AbstractSceneFactory() = default;
+	virtual ~AbstractSceneFactory();
 
 	/// <summary>
 	/// シーン生成
@@ -23,5 +18,17 @@ public://メンバ関数
 	/// <param name="sceneName">シーン名</param>
 	/// <returns>シーン</returns>
 	virtual IScene* CreateScene(const std::string& sceneName) = 0;
+public://PrassKey
+	class ConstructorKey {
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PrassKeyを受け取る</param>
+	explicit AbstractSceneFactory(ConstructorKey);
 };
 

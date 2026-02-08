@@ -28,7 +28,7 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 	bullet_ = new Bullet();
 	//弾
 	bullet_ = new Bullet();
-	bullet_->Initialize(object3dCommon,camera);
+	bullet_->Initialize(object3dCommon, camera);
 	bullet_->SetAliveRange(kAliveAreaSize);
 	bullet_->SetSpeed(bulletShotSpeed_);
 	bullet_->SetSize({ kBulletSize,kBulletSize,kBulletSize });
@@ -40,22 +40,22 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 
 	//ワイヤーフレームの生成
 	sphere_ = new WireframeObject3d();
-	sphere_->Initialize(camera, ModelType::kSphere);
+	sphere_->Initialize(object3dCommon->GetWireframeObject3dCommon(), camera, ModelType::kSphere);
 	sphereRadius_ = 2.0f;
 
 	attackArea = new WireframeObject3d();
-	attackArea->Initialize(camera, ModelType::kSphere);
+	attackArea->Initialize(object3dCommon->GetWireframeObject3dCommon(), camera, ModelType::kSphere);
 	attackAreaRadius_ = 3.0f;
 	attackArea->SetTranslate(targetPos_);
 	attackArea->Update();
 
 	gameObject_.hitBox = new WireframeObject3d();
-	gameObject_.hitBox->Initialize(camera, ModelType::kCube);
+	gameObject_.hitBox->Initialize(object3dCommon->GetWireframeObject3dCommon(), camera, ModelType::kCube);
 	hitBoxScale_ = { 1.5f,1.5f,1.5f };
 
 	//HP
 	hpBar_ = new Object3d();
-	hpBar_->Initialize(object3dCommon,camera, TransformMode::kBilboard);
+	hpBar_->Initialize(object3dCommon, camera, TransformMode::kBilboard);
 	hpBar_->SetModel("hpBar");
 	hpBar_->SetTexture("playerHpBar.png");
 	hpBarTransform_.scale = { hpBarWidth_,0.2f,1.0f };
@@ -69,7 +69,7 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 	hpOutLineMaterial.enableLighting = false;
 
 	hpOutLine_ = new Object3d();
-	hpOutLine_->Initialize(object3dCommon,camera, TransformMode::kBilboard);
+	hpOutLine_->Initialize(object3dCommon, camera, TransformMode::kBilboard);
 	hpOutLine_->SetModel("hpOutLine");
 	hpOutLine_->SetTexture("playerHpOutLine.png");
 	hpOutLine_->GetModel()->SetMaterial(hpOutLineMaterial);

@@ -11,10 +11,6 @@ void IScene::Initialize(Core* core) {
 	//デバックカメラ
 	debugCamera_ = std::make_unique<DebugCamera>();
 	debugCamera_->Initialize(core_->GetInput(), core_->GetCameraManager());
-	//シーンファクトリーの生成
-	sceneFactory_ = new SceneFactory();
-	//シーンファクトリーのセット
-	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
 	////調整ファイルの読み込み
 	//GlobalVariables::GetInstance()->LoadFiles();
 }

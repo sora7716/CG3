@@ -9,10 +9,9 @@
 class AudioManager{
 public://メンバ関数
 	/// <summary>
-	/// インスタンスのゲッター
+	/// デストラクタ
 	/// </summary>
-	/// <returns>インスタンス</returns>
-	static AudioManager* GetInstance();
+	~AudioManager();
 
 	/// <summary>
 	/// オーディオのロード
@@ -27,16 +26,18 @@ public://メンバ関数
 	/// <param name="name">名前</param>
 	/// <returns>オーディオ</returns>
 	Audio* FindAudio(const std::string& name);
-
+public://PrassKey
+	class ConstructorKey {
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
 	/// <summary>
-	/// 終了
+	/// コンストラクタ
 	/// </summary>
-	void Finalize();
+	/// <param name="">PrassKeyを受け取る</param>
+	explicit 	AudioManager(ConstructorKey);
 private://メンバ関数
-	//コンストラクタの封印
-	AudioManager() = default;
-	//デストラクタの封印
-	~AudioManager() = default;
 	//コピーコンストラクタ禁止
 	AudioManager(const AudioManager&) = delete;
 	//代入演算子の禁止

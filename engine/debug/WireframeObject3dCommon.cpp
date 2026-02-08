@@ -5,18 +5,14 @@
 #include "engine/debug/ImGuiManager.h"
 #include "engine/base/SRVManager.h"
 #include "engine/2d/TextureManager.h"
-#include <cassert>
 #include "engine/math/func/Math.h"
 #include "engine/debug/GlobalVariables.h"
 using namespace Microsoft::WRL;
 
-//インスタンスのゲッター
-WireframeObject3dCommon* WireframeObject3dCommon::GetInstance() {
-	assert(!isFinalize && "GetInstance() called after Finalize()");
-	if (instance == nullptr) {
-		instance = new WireframeObject3dCommon();
-	}
-	return instance;
+//コンストラクタ
+WireframeObject3dCommon::~WireframeObject3dCommon() {
+	delete blend_;
+	delete makeGraphicsPipeline_;
 }
 
 //初期化
@@ -200,15 +196,6 @@ std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOf
 	return graphicsPipelineStates_;
 }
 
-//終了
-void WireframeObject3dCommon::Finalize() {
-	delete blend_;
-	delete makeGraphicsPipeline_;
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
-}
-
 // デフォルトカメラのセッター
 void WireframeObject3dCommon::SetDefaultCamera(Camera* camera) {
 	defaultCamera_ = camera;
@@ -278,6 +265,10 @@ void WireframeObject3dCommon::SetSpotLight(const std::string& name, const SpotLi
 SpotLightData& WireframeObject3dCommon::GetSpotLight(const std::string& name) {
 	// TODO: return ステートメントをここに挿入します
 	return spotLightDataList_.at(name);
+}
+
+//コンストラクタ
+WireframeObject3dCommon::WireframeObject3dCommon(ConstructorKey) {
 }
 
 //平行光源の生成

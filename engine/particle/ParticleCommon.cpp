@@ -5,13 +5,10 @@
 #include <cassert>
 using namespace Microsoft::WRL;
 
-//インスタンスのゲッター
-ParticleCommon* ParticleCommon::GetInstance() {
-	assert(!isFinalize && "GetInstance() called after Finalize()");
-	if (instance == nullptr) {
-		instance = new ParticleCommon();
-	}
-	return instance;
+//デストラクタ
+ParticleCommon::~ParticleCommon() {
+	delete blend_;
+	delete makeGraphicsPipeline_;
 }
 
 //初期化
@@ -81,14 +78,6 @@ TextureManager* ParticleCommon::GetTextureManager() const {
 std::array<ComPtr<ID3D12PipelineState>, static_cast<int32_t>(BlendMode::kCountOfBlendMode)> ParticleCommon::GetGraphicsPipelineStates() const {
 	return graphicsPipelineStates_;
 }
-//終了
-void ParticleCommon::Finalize() {
-	delete blend_;
-	delete makeGraphicsPipeline_;
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
-}
 
 // デフォルトカメラのセッター
 void ParticleCommon::SetDefaultCamera(Camera* camera) {
@@ -98,4 +87,8 @@ void ParticleCommon::SetDefaultCamera(Camera* camera) {
 // デフォルトカメラのゲッター
 Camera* ParticleCommon::GetDefaultCamera() const {
 	return defaultCamera_;
+}
+
+//コンストラクタ
+ParticleCommon::ParticleCommon(ConstructorKey) {
 }

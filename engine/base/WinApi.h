@@ -43,7 +43,7 @@ public://メンバ関数
 	WinApi(const WinApi&) = delete;
 	//代入演算子禁止
 	const WinApi& operator=(const WinApi&) = delete;
-public://PressKeyIdiom
+public://PrassKey
 	class ConstructorKey {
 	private:
 		ConstructorKey() = default;
@@ -52,7 +52,7 @@ public://PressKeyIdiom
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PressKeyを受け取る</param>
+	/// <param name="">PrassKeyを受け取る</param>
 	explicit WinApi(ConstructorKey);
 public://静的メンバ関数
 	/// <summary>

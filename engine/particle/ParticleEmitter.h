@@ -6,6 +6,7 @@
 #include "engine/math/CollisionPrimitives.h"
 
 //前方宣言
+class ParticleCommon;
 class Camera;
 class Model;
 
@@ -58,8 +59,9 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="particleCommon">パーティクルの共通部分</param>
 	/// <param name="model">モデル</param>
-	void Initialize(Model* model);
+	void Initialize(ParticleCommon* particleCommon, Model* model);
 
 	/// <summary>
 	/// 更新
@@ -151,6 +153,8 @@ public://静的メンバ変数
 	//パーティクルの数
 	static const uint32_t kNumMaxInstance = 1024;
 private://メンバ変数
+	//パーティクルの共通部分
+	ParticleCommon* particleCommon_ = nullptr;
 	//カメラ
 	Camera* camera_ = nullptr;
 	//モデル

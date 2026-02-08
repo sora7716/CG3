@@ -1,14 +1,8 @@
 #include "GameObjectList.h"
 #include "engine/base/Core.h"
 #include <cassert>
-
-//インスタンスのゲッター
-GameObjectList* GameObjectList::GetInstance() {
-	assert(!isFinalize && "GetInstance() called after Finalize()");
-	if (instance == nullptr) {
-		instance = new GameObjectList();
-	}
-	return instance;
+//デストラクタ
+GameObjectList::~GameObjectList() {
 }
 
 //初期化
@@ -23,24 +17,20 @@ void GameObjectList::Initialize(Core* core) {
 	CreateCamera();
 }
 
-//終了
-void GameObjectList::Finalize() {
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
+//コンストラクタ
+GameObjectList::GameObjectList(ConstructorKey) {
 }
-
 
 //オーディオの読み込み
 void GameObjectList::LoadAudio() {
-	AudioManager::GetInstance()->LoadAudio("Alarm01", "Alarm01");
-	AudioManager::GetInstance()->LoadAudio("mokugyo", "mokugyo");
+	core_->GetAudioManager()->LoadAudio("Alarm01", "Alarm01");
+	core_->GetAudioManager()->LoadAudio("mokugyo", "mokugyo");
 }
 
 //OBJファイルの読み込み
 void GameObjectList::LoadModel() {
 	//モデルの読み込み
-	
+
 	//デバッグ用
 	//球
 	core_->GetModelManager()->LoadModel("sphere", "sphere", "sphere.gltf");

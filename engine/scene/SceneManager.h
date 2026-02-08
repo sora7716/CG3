@@ -11,11 +11,10 @@ class Core;
 class SceneManager {
 public://メンバ関数
 	/// <summary>
-	/// インスタンスのゲッター
+	/// デストラクタ
 	/// </summary>
-	/// <returns>インスタンス</returns>
-	static SceneManager* GetInstance();
-
+	~SceneManager();
+	
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -33,11 +32,6 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
-
-	/// <summary>
 	/// シーンファクトリーのセッター
 	/// </summary>
 	/// <param name="sceneFactory">シーンファクトリー</param>
@@ -48,11 +42,19 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="sceneName"></param>
 	void ChangeScene(const std::string& sceneName);
+public://PrassKey
+	class ConstructorKey {
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PrassKeyを受け取る</param>
+	explicit SceneManager(ConstructorKey);
 private://メンバ関数
-	//コンストラクタの封印
-	SceneManager() = default;
-	//デストラクタの封印
-	~SceneManager() = default;
 	//コピーコンストラクタを禁止
 	SceneManager(const SceneManager&) = delete;
 	//代入演算子を禁止

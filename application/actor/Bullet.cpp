@@ -4,6 +4,7 @@
 #include "engine/math/func/Math.h"
 #include "engine/debug/ImGuiManager.h"
 #include "engine/debug/WireframeObject3d.h"
+#include "engine/3d/Object3dCommon.h"
 
 //デストラクタ
 Bullet::~Bullet() {
@@ -189,7 +190,7 @@ BulletData Bullet::CreateBullet() {
 
 	//ヒットボックス
 	bullet.gameObject.hitBox = new WireframeObject3d();
-	bullet.gameObject.hitBox->Initialize(camera_, ModelType::kCube);
+	bullet.gameObject.hitBox->Initialize(object3dCommon_->GetWireframeObject3dCommon(), camera_, ModelType::kCube);
 
 	return bullet;
 }

@@ -40,7 +40,7 @@ public://メンバ関数
 	/// <param name="name">名前</param>
 	/// <returns>モデル</returns>
 	Model* FindModel(const std::string& name);
-public://PressKey
+public://PrassKey
 	class ConstructorKey {
 		ConstructorKey() = default;
 		friend class Core;
@@ -48,7 +48,7 @@ public://PressKey
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PressKeyを受け取る</param>
+	/// <param name="">PrassKeyを受け取る</param>
 	explicit ModelManager(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタ禁止

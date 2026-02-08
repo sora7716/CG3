@@ -2,6 +2,10 @@
 #include "application/scene/TitleScene.h"
 #include "application/scene/GameScene.h"
 #include "application/scene/ResultScene.h"
+//デストラクタ
+SceneFactory::~SceneFactory() {
+}
+
 // シーンの生成
 IScene* SceneFactory::CreateScene(const std::string& sceneName) {
 	//次のシーンの生成
@@ -10,9 +14,12 @@ IScene* SceneFactory::CreateScene(const std::string& sceneName) {
 		newScene = new TitleScene();
 	} else if (sceneName == "Game") {
 		newScene = new GameScene();
-	}
-	else if (sceneName == "Result") {
+	} else if (sceneName == "Result") {
 		newScene = new ResultScene();
 	}
 	return newScene;
+}
+
+//コンストラクタ
+SceneFactory::SceneFactory(AbstractSceneFactory::ConstructorKey key) :AbstractSceneFactory(key) {
 }

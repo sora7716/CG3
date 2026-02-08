@@ -202,7 +202,7 @@ public://メンバ関数
 	/// <param name="xBoxPadNumber">何番目(0~4)</param>
 	/// <param name="deadZone">デッドゾーン</param>
 	void SetDeadZone(DWORD xBoxPadNumber, float deadZone);
-public://PressKeyIdiom
+public://PrassKey
 	class ConstructorKey {
 		private:
 		ConstructorKey() = default;
@@ -211,7 +211,7 @@ public://PressKeyIdiom
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PressKeyを受け取る</param>
+	/// <param name="">PrassKeyを受け取る</param>
 	explicit Input(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタを禁止

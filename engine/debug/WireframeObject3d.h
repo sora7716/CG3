@@ -1,18 +1,18 @@
 #pragma once
-#include "engine/3d/Model.h"
 #include "engine/math/CollisionPrimitives.h"
 #include "engine/math/ResourceData.h"
 #include "engine/math/RenderingData.h"
 #include "engine/base/BlendMode.h"
-#include "engine/worldTransform/WorldTransform.h"
 #include <vector>
 #include <string>
 #include <wrl.h>
 #include <d3d12.h>
 //前方宣言
-class Camera;
 class DirectXBase;
+class WireframeObject3dCommon;
 class Model;
+class WorldTransform;
+class Camera;
 
 enum class ModelType {
 	kSphere,
@@ -39,9 +39,10 @@ public://メンバ関数
 	/// <summary>
     /// 初期化
     /// </summary>
+    /// <param name="wireframeObject3dCommon">ワイヤーフレームオブジェクトの共通部分</param>
     /// <param name="camera">カメラ</param>
 	/// <param name="modelType">モデルタイプ</param>
-	void Initialize(Camera* camera,ModelType modelType);
+	void Initialize(WireframeObject3dCommon*wireframeObject3dCommon,Camera* camera,ModelType modelType);
 
 	/// <summary>
 	/// 更新
@@ -172,6 +173,8 @@ public://メンバ関数
 	/// <returns></returns>
 	OBB GetOBB()const;
 private://メンバ変数
+	//ワイヤーフレームオブジェクトの共通部分
+	WireframeObject3dCommon* wireframeObject3dCommon_ = nullptr;
 	//UV座標
 	Transform2dData uvTransform_ = {
 		.scale = { 1.0f,1.0f },

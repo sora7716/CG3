@@ -92,7 +92,7 @@ public://メンバ関数
 	/// <param name="filePath">ファイルパス</param>
 	/// <returns>GPUハンドル</returns>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVHandleGPU(const std::string& filePath);
-public://PressKey
+public://PrassKey
 	class ConstructorKey {
 		ConstructorKey() = default;
 		friend class Core;
@@ -100,7 +100,7 @@ public://PressKey
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PressKeyを受け取る</param>
+	/// <param name="">PrassKeyを受け取る</param>
 	explicit TextureManager(ConstructorKey);
 private://メンバ関数
 	//コピーコンストラクタ禁止

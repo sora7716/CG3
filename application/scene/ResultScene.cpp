@@ -17,9 +17,9 @@ void ResultScene::Update() {
 	IScene::Update();
 
 	if (core_->GetInput()->TriggerKey(DIK_SPACE)) {
-		SceneManager::GetInstance()->ChangeScene("Title");
+		core_->GetSceneManager()->ChangeScene("Title");
 	} else if (core_->GetInput()->TriggerXboxPad(xBoxPadNumber_, XboxInput::kB)) {
-		SceneManager::GetInstance()->ChangeScene("Title");
+		core_->GetSceneManager()->ChangeScene("Title");
 	}
 #ifdef USE_IMGUI
 	//ImGuiの受付開始

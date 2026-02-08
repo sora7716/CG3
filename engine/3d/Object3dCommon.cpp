@@ -17,7 +17,7 @@ Object3dCommon::~Object3dCommon() {
 }
 
 //初期化
-void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, ModelManager* modelManager) {
+void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager, ModelManager* modelManager, WireframeObject3dCommon* wireframeObject3dCommon) {
 	//DirectXの基盤を受け取る
 	directXBase_ = directXBase;
 	//SRVマネージャーを受け取る
@@ -26,6 +26,8 @@ void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 	textureManager_ = textureManager;
 	//モデルマネージャー
 	modelManager_ = modelManager;
+	//ワイヤーフレームオブジェクトの共通部分
+	wireframeObject3dCommon_ = wireframeObject3dCommon;
 	//ブレンド
 	blend_ = new Blend();
 	//グラフィックスパイプラインの生成と初期化
@@ -210,6 +212,11 @@ TextureManager* Object3dCommon::GetTextureManager() const {
 //モデルマネージャーのゲッター
 ModelManager* Object3dCommon::GetModelManager() const {
 	return modelManager_;
+}
+
+//ワイヤーフレームオブジェクトの共通部分のゲッター
+WireframeObject3dCommon* Object3dCommon::GetWireframeObject3dCommon() const {
+	return wireframeObject3dCommon_;
 }
 
 //グラフィックパイプラインのゲッター

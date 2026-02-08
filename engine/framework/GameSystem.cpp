@@ -5,17 +5,13 @@
 //初期化
 void GameSystem::Initialize() {
 	Framework::Initialize();
-	//シーンファクトリーの生成
-	sceneFactory_ = new SceneFactory();
-	//シーンファクトリーのセット
-	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
 	//タイトルシーンを呼び出す
-	SceneManager::GetInstance()->ChangeScene("Title");
+	core_->GetSceneManager()->ChangeScene("Title");
 #ifdef _DEBUG
 	//シーンの管理
-	SceneManager::GetInstance()->Update();
+	core_->GetSceneManager()->Update();
 	//デバッグしたいシーンを呼び出す
-	SceneManager::GetInstance()->ChangeScene("Game");
+	core_->GetSceneManager()->ChangeScene("Game");
 #endif // _DEBUG
 }
 
@@ -31,7 +27,7 @@ void GameSystem::Draw() {
 	//SRVの管理
 	core_->GetSRVManager()->PreDraw();
 	//シーン
-	SceneManager::GetInstance()->Draw();
+	core_->GetSceneManager()->Draw();
 	//ImGuiの管理
 	core_->GetImGuiManager()->Draw();
 	//描画終了位置

@@ -22,18 +22,17 @@ private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
 	/// <summary>
-	/// インスタンスのゲッター
+	/// デストラクタ
 	/// </summary>
-	/// <returns></returns>
-	static WireframeObject3dCommon* GetInstance();
-
+	~WireframeObject3dCommon();
+	
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="directXBase">DirectXの基盤</param>
 	/// <param name="srvManager">SRVマネージャー</param>
 	/// <param name="modelManager">モデルマネージャー/param>
-	void Initialize(DirectXBase* directXBase, SRVManager*srvManager,ModelManager*modelManager);
+	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, ModelManager* modelManager);
 
 	/// <summary>
 	/// 更新
@@ -60,11 +59,6 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="cameraTranslate"></param>
 	void SetCameraForGPU(const Vector3& cameraTranslate);
-
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
 
 	/// <summary>
 	/// DirectionalLightのリソースのゲッター
@@ -168,11 +162,19 @@ public://メンバ関数
 	/// <param name="name">スポットライトの名前</param>
 	/// <returns>スポットライト</returns>
 	SpotLightData& GetSpotLight(const std::string& name);
+public://PrassKey
+	class ConstructorKey {
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PrassKeyを受け取る</param>
+	explicit WireframeObject3dCommon(ConstructorKey);
 private://メンバ関数
-	//コンストラクタの封印
-	WireframeObject3dCommon() = default;
-	//デストラクタの封印
-	~WireframeObject3dCommon() = default;
 	//コピーコンストラクタ禁止
 	WireframeObject3dCommon(const WireframeObject3dCommon&) = delete;
 	//代入演算子の禁止
@@ -231,10 +233,6 @@ private://メンバ関数
 	/// <param name="spotLight">スポットライト</param>
 	void ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLightData& spotLight);
 private://静的メンバ変数
-	//インスタンス
-	static inline WireframeObject3dCommon* instance = nullptr;
-	//Finalizeをしたかどうかのフラグ
-	static inline bool isFinalize = false;
 	//ライトの最大値
 	static inline const int32_t kMaxLightCount = 64;
 private://メンバ変数

@@ -4,21 +4,21 @@
 #include "engine/base/DirectXBase.h"
 #include "engine/particle/ParticleCommon.h"
 #include "engine/camera/Camera.h"
-#include "engine/debug/ImGuiManager.h"
 #include "engine/2d/TextureManager.h"
-#include "engine/math/func/Math.h"
 #include "engine/base/SRVManager.h"
-#include "engine/3d/ModelManager.h"
 #include "engine/3d/Model.h"
 
 //初期化
-void ParticleSystem::Initialize(DirectXBase* directXBase, const std::string& textureName, Model* model) {
+void ParticleSystem::Initialize(ParticleCommon* particleCommon, const std::string& textureName, Model* model) {
+	//パーティクルの共通部分
+	particleCommon_ = particleCommon_;
+
 	//DirectXの基盤部分を記録する
-	directXBase_ = directXBase;
+	directXBase_ = particleCommon_->GetDirectXBase();
 
 	//エミッター
 	emitter_ = std::make_unique<ParticleEmitter>();
-	emitter_->Initialize(model);
+	emitter_->Initialize(particleCommon_, model);
 
 	//ワールドトランスフォームのリソースの生成
 	CreateWorldTransformResource();
@@ -29,7 +29,7 @@ void ParticleSystem::Initialize(DirectXBase* directXBase, const std::string& tex
 	//テクスチャファイルの記録
 	modelData_.material.textureFilePath = "engine/resources/textures/" + textureName;
 	//テクスチャの読み込み
-	ParticleCommon::GetInstance()->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
+	particleCommon_->GetTextureManager()->LoadTexture(modelData_.material.textureFilePath);
 
 	//マテリアルリソースの生成
 	CreateMaterialResource();
@@ -49,9 +49,9 @@ void ParticleSystem::Update() {
 //描画
 void ParticleSystem::Draw() {
 	//描画準備
-	ParticleCommon::GetInstance()->DrawSetting();
+	particleCommon_->DrawSetting();
 	//PSOの設定
-	auto pso = ParticleCommon::GetInstance()->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
+	auto pso = particleCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 	//VertexBufferViewの設定
@@ -61,9 +61,9 @@ void ParticleSystem::Draw() {
 	//マテリアルCBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());//material
 	//ワールドトランスフォームの描画
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, ParticleCommon::GetInstance()->GetSRVManager()->GetGPUDescriptorHandle(srvIndex_));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, particleCommon_->GetSRVManager()->GetGPUDescriptorHandle(srvIndex_));
 	//SRVのDescriptorTableの先頭を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, ParticleCommon::GetInstance()->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, particleCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
 	//描画(DrawCall/ドローコール)
 	directXBase_->GetCommandList()->DrawIndexedInstanced(static_cast<UINT>(modelData_.vertices.size()), emitter_->GetNumInstance(), 0, 0, 0);
 }
@@ -229,8 +229,8 @@ void ParticleSystem::CreateWorldTransformResource() {
 //ストラクチャバッファの生成
 void ParticleSystem::CreateStructuredBuffer() {
 	//ストラクチャバッファを生成
-	srvIndex_ = ParticleCommon::GetInstance()->GetSRVManager()->Allocate() + TextureManager::kSRVIndexTop;
-	ParticleCommon::GetInstance()->GetSRVManager()->CreateSRVForStructuredBuffer(
+	srvIndex_ = particleCommon_->GetSRVManager()->Allocate() + TextureManager::kSRVIndexTop;
+	particleCommon_->GetSRVManager()->CreateSRVForStructuredBuffer(
 		srvIndex_,
 		instancingResource_.Get(),
 		ParticleEmitter::kNumMaxInstance,

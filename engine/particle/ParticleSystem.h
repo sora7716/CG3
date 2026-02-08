@@ -8,6 +8,7 @@
 
 //前方宣言
 class DirectXBase;
+class ParticleCommon;
 
 /// <summary>
 /// パーティクルシステム
@@ -29,10 +30,10 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="directXBase">DirectXの基盤部分</param>
+	/// <param name="particleCommon">パーティクルの共通部分</param>
 	/// <param name="textureName">テクスチャ名</param>
 	/// <param name="model">モデル</param>
-	void Initialize(DirectXBase* directXBase, const std::string& textureName, Model* model = nullptr);
+	void Initialize(ParticleCommon* particleCommon, const std::string& textureName, Model* model = nullptr);
 
 	/// <summary>
 	/// 更新
@@ -133,6 +134,8 @@ private://メンバ関数
 private://メンバ変数
 	//DirectXの基盤部分	
 	DirectXBase* directXBase_ = nullptr;
+	//パーティクルの共通部分
+	ParticleCommon* particleCommon_ = nullptr;
 	//ワールドビュープロジェクションのリソース
 	ComPtr<ID3D12Resource>instancingResource_ = nullptr;
 	//ワールドビュープロジェクションのデータ

@@ -10,10 +10,9 @@
 class ParticleManager {
 public://メンバ関数
 	/// <summary>
-	/// インスタンスのゲッター
+	/// デストラクタ
 	/// </summary>
-	/// <returns></returns>
-	static ParticleManager* GetInstance();
+	~ParticleManager();
 
 	/// <summary>
 	/// パーティクルシステムの追加
@@ -26,21 +25,21 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="name">名前</param>
 	ParticleSystem* FindParticleSystem(const std::string& name);
-
+public://PrassKey
+	class ConstructorKey {
+		ConstructorKey() = default;
+		friend class Core;
+	};
 	/// <summary>
-	/// 終了
+	/// コンストラクタ
 	/// </summary>
-	void Finalize();
-
+	/// <param name="">PrassKeyを受け取る</param>
+	explicit ParticleManager(ConstructorKey);
+private://メンバ関数
 	//コピーコンストラクタ禁止
 	ParticleManager(const ParticleManager&) = delete;
 	//代入演算子を禁止
 	ParticleManager operator=(const ParticleManager&) = delete;
-private://メンバ関数
-	//コンストラクタの封印
-	ParticleManager() = default;
-	//デストラクタの封印
-	~ParticleManager() = default;
 public://静的メンバ変数
 	//インスタンス
 	static inline ParticleManager* instance = nullptr;

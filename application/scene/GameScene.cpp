@@ -86,7 +86,7 @@ void GameScene::Update() {
 	//プレイヤーが死んだら
 	if (!player_->IsAlive()) {
 		enemyManager_->Reset();
-		SceneManager::GetInstance()->ChangeScene("Result");
+		core_->GetSceneManager()->ChangeScene("Result");
 	}
 
 #ifdef USE_IMGUI

@@ -56,7 +56,7 @@ public://メンバ関数
 	/// <param name="label">ラベル</param>
 	/// <param name="frag">フラグ</param>
 	static void CheckBoxToInt(const std::string& label,int32_t& frag);
-public://PressKey
+public://PrassKey
 	class ConstructorKey {
 	private:
 		ConstructorKey() = default;
@@ -66,7 +66,7 @@ public://PressKey
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PressKeyを受け取る</param>
+	/// <param name="">PrassKeyを受け取る</param>
 	explicit ImGuiManager(ConstructorKey);
 private://メンバ関数
 	//デストラクタの封印

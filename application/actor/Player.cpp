@@ -36,7 +36,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 
 	//3Dオブジェクトの生成と初期化
 	gameObject_.object3d = new Object3d();
-	gameObject_.object3d->Initialize(object3dCommon,camera_);
+	gameObject_.object3d->Initialize(object3dCommon, camera_);
 	gameObject_.object3d->SetModel(modelName);
 	gameObject_.isAlive = true;
 
@@ -55,7 +55,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 
 	//弾
 	bullet_ = new Bullet();
-	bullet_->Initialize(object3dCommon,camera_);
+	bullet_->Initialize(object3dCommon, camera_);
 	bullet_->SetAliveRange(kAliveAreaSize);
 	bullet_->SetSpeed(kBulletSpeed);
 	bullet_->SetSize({ kBulletSize,kBulletSize,kBulletSize });
@@ -69,7 +69,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 
 	//ヒットボックス
 	gameObject_.hitBox = new WireframeObject3d();
-	gameObject_.hitBox->Initialize(camera_, ModelType::kCube);
+	gameObject_.hitBox->Initialize(object3dCommon_->GetWireframeObject3dCommon(), camera_, ModelType::kCube);
 	hitBoxScale_ = Vector3::MakeAllOne() - 0.2f;
 
 	//HPバー

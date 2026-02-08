@@ -1,15 +1,11 @@
 #include "SceneManager.h"
-#include "engine/input/Input.h"
-#include "engine/camera/CameraManager.h"
 #include <cassert>
 
-//インストールしてものゲッター
-SceneManager* SceneManager::GetInstance() {
-	assert(!isFinalize && "GetInstance() called after Finalize()");
-	if (instance == nullptr) {
-		instance = new SceneManager();
-	}
-	return instance;
+//デストラクタ
+SceneManager::~SceneManager() {
+	scene_->Finalize();
+	delete scene_;
+	delete instance;
 }
 
 //初期化
@@ -42,15 +38,6 @@ void SceneManager::Draw() {
 	scene_->Draw();
 }
 
-//終了
-void SceneManager::Finalize() {
-	scene_->Finalize();
-	delete scene_;
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
-}
-
 //シーンファクトリーのセッター
 void SceneManager::SetSceneFactory(AbstractSceneFactory* sceneFactory) {
 	sceneFactory_ = sceneFactory;
@@ -61,4 +48,8 @@ void SceneManager::ChangeScene(const std::string& sceneName) {
 	assert(sceneFactory_);
 	assert(nextScene_ == nullptr);
 	nextScene_ = sceneFactory_->CreateScene(sceneName);
+}
+
+//コンストラクタ
+SceneManager::SceneManager(ConstructorKey) {
 }

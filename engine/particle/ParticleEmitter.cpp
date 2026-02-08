@@ -7,9 +7,11 @@
 #include "engine/debug/ImGuiManager.h"
 
 //初期化
-void ParticleEmitter::Initialize(Model* model) {
+void ParticleEmitter::Initialize(ParticleCommon* particleCommon, Model* model) {
+	//パーティクルの共通部分
+	particleCommon_ = particleCommon;
 	//カメラを設定
-	camera_ = ParticleCommon::GetInstance()->GetDefaultCamera();
+	camera_ = particleCommon_->GetDefaultCamera();
 	//モデルを設定
 	model_ = model;
 	//乱数エンジンの初期化
@@ -86,22 +88,22 @@ void ParticleEmitter::SetCamera(Camera* camera) {
 }
 
 //トランスフォームデータのセッター
-void ParticleEmitter::SetTransformData(const TransformData& transfrom){
+void ParticleEmitter::SetTransformData(const TransformData& transfrom) {
 	emitter_.transform = transfrom;
 }
 
 //パーティクルの数のセッター
-void ParticleEmitter::SetParticleCount(uint32_t cont){
+void ParticleEmitter::SetParticleCount(uint32_t cont) {
 	emitter_.count = cont;
 }
 
 //発生範囲のセッター
-void ParticleEmitter::SetEmitRange(float range){
+void ParticleEmitter::SetEmitRange(float range) {
 	emitter_.range = range;
 }
 
 //加速度が起こるフィールドのセッター
-void ParticleEmitter::SetAccelerationField(const AccelerationField& field){
+void ParticleEmitter::SetAccelerationField(const AccelerationField& field) {
 	accelerationField_ = field;
 }
 
@@ -111,7 +113,7 @@ Particle ParticleEmitter::MakeNewParticle() {
 }
 
 //通常のパーティクルを生成
-Particle ParticleEmitter::MakeNormalParticle(){
+Particle ParticleEmitter::MakeNormalParticle() {
 	//パーティクルの初期化
 	Particle particle;
 

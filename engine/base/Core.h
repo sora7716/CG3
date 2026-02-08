@@ -10,12 +10,19 @@
 #include "engine/2d/SpriteCommon.h"
 #include "engine/2d/Object2dCommon.h"
 #include "engine/3d/Object3dCommon.h"
+#include "engine/debug/WireframeObject3dCommon.h"
+#include "engine/particle/ParticleCommon.h"
+#include "engine/scene/SceneManager.h"
+#include "engine/audio/AudioManager.h"
+#include "engine/particle/ParticleManager.h"
+#include "application/actor/GameObjectList.h"
+#include "engine/scene/AbstractSceneFactory.h"
 #include <memory>
 
 /// <summary>
 /// エンジンの核
 /// </summary>
-class Core{
+class Core {
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
@@ -97,6 +104,48 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>3Dオブジェクトの共通部分</returns>
 	Object3dCommon* GetObject3dCommon()const;
+
+	/// <summary>
+	/// ワイヤーフレームオブジェクトの共通部分のゲッター
+	/// </summary>
+	/// <returns>ワイヤーフレームオブジェクト</returns>
+	WireframeObject3dCommon* GetWireframeObject3dCommon()const;
+
+	/// <summary>
+	/// パーティクルの共通部分のゲッター
+	/// </summary>
+	/// <returns>パーティクルの共通部分</returns>
+	ParticleCommon* GetParticleCommon()const;
+
+	/// <summary>
+	/// シーンマネージャーのゲッター
+	/// </summary>
+	/// <returns>シーンマネージャー</returns>
+	SceneManager* GetSceneManager()const;
+
+	/// <summary>
+	/// オーディオマネージャーのゲッター
+	/// </summary>
+	/// <returns>オーディオマネージャー</returns>
+	AudioManager* GetAudioManager()const;
+
+	/// <summary>
+	/// パーティクルのマネージャーのゲッター
+	/// </summary>
+	/// <returns>パーティクルマネージャー</returns>
+	ParticleManager* GetParticleManager()const;
+
+	/// <summary>
+	/// ゲームオブジェクトのリストのゲッター
+	/// </summary>
+	/// <returns>ゲームオブジェクトのリストのゲッター</returns>
+	GameObjectList* GetGameObjectList()const;
+
+	/// <summary>
+	/// シーンファクトリのゲッター
+	/// </summary>
+	/// <returns>シーンファクトリ</returns>
+	AbstractSceneFactory* GetSceneFactory()const;
 private://メンバ変数
 	//WinApi
 	std::unique_ptr<WinApi>winApi_ = nullptr;
@@ -120,5 +169,19 @@ private://メンバ変数
 	std::unique_ptr<Object2dCommon>object2dCommon_ = nullptr;
 	//3Dオブジェクトの共通部分
 	std::unique_ptr<Object3dCommon>object3dCommon_ = nullptr;
+	//ワイヤーフレームオブジェクトの共通部分
+	std::unique_ptr<WireframeObject3dCommon>wireframeObject3dCommon_ = nullptr;
+	//パーティクルの共通部分
+	std::unique_ptr<ParticleCommon>particleCommon_ = nullptr;
+	//シーンマネージャー
+	std::unique_ptr<SceneManager>sceneManager_ = nullptr;
+	//オーディオマネージャー
+	std::unique_ptr<AudioManager>audioManager_ = nullptr;
+	//パーティクルマネージャー
+	std::unique_ptr<ParticleManager>particleManager_ = nullptr;
+	//ゲームオブジェクトのリスト
+	std::unique_ptr<GameObjectList>gameObjectList_ = nullptr;
+	//シーンファクトリ
+	std::unique_ptr< AbstractSceneFactory> sceneFactory_ = nullptr;
 };
 

@@ -21,28 +21,22 @@ private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
 	/// <summary>
-	/// インスタンスのゲッター
+	/// デストラクタ
 	/// </summary>
-	/// <returns></returns>
-	static ParticleCommon* GetInstance();
+	~ParticleCommon();
 
 	/// <summary>
-    /// 初期化
-    /// </summary>
-    /// <param name="directXBase">DirectXの基盤</param>
+	/// 初期化
+	/// </summary>
+	/// <param name="directXBase">DirectXの基盤</param>
 	/// <param name="srvManager">SRVマネージャー</param>
 	/// <param name="textureManager">テクスチャマネージャー</param>
-	void Initialize(DirectXBase* directXBase,SRVManager*srvManager,TextureManager*textureManager);
+	void Initialize(DirectXBase* directXBase, SRVManager* srvManager, TextureManager* textureManager);
 
 	/// <summary>
 	/// 共通描画設定
 	/// </summary>
 	void DrawSetting();
-
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
 
 	/// <summary>
 	/// DirectionalLightのリソースのゲッター
@@ -85,11 +79,18 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>デフォルトカメラ</returns>
 	Camera* GetDefaultCamera()const;
+public://PrassKey
+	class ConstructorKey {
+	private:
+		ConstructorKey() = default;
+		friend class Core;
+	};
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="">PrassKeyを受け取る</param>
+	explicit ParticleCommon(ConstructorKey);
 private://メンバ関数
-	//コンストラクタの封印
-	ParticleCommon() = default;
-	//デストラクタの封印
-	~ParticleCommon() = default;
 	//コピーコンストラクタ禁止
 	ParticleCommon(const ParticleCommon&) = delete;
 	//代入演算子の禁止

@@ -1,4 +1,5 @@
 #include "Core.h"
+#include "engine/scene/SceneFactory.h"
 //初期化
 void Core::Initialize() {
 	//WinApi
@@ -30,9 +31,28 @@ void Core::Initialize() {
 	//2Dオブジェクトの共通部分
 	object2dCommon_ = std::make_unique<Object2dCommon>(Object2dCommon::ConstructorKey{});
 	object2dCommon_->Initialize(directXBase_.get(), textureManager_.get());
+	//ワイヤーフレームオブジェクトのきょつう部分
+	wireframeObject3dCommon_ = std::make_unique<WireframeObject3dCommon>(WireframeObject3dCommon::ConstructorKey{});
+	wireframeObject3dCommon_->Initialize(directXBase_.get(), srvManager_.get(), modelManager_.get());
 	//3Dオブジェクトの共通部分
 	object3dCommon_ = std::make_unique<Object3dCommon>(Object3dCommon::ConstructorKey{});
-	object3dCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get(), modelManager_.get());
+	object3dCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get(), modelManager_.get(), wireframeObject3dCommon_.get());
+	//パーティクルの共通部分
+	particleCommon_ = std::make_unique<ParticleCommon>(ParticleCommon::ConstructorKey{});
+	particleCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get());
+	//シーンファクトリ
+	sceneFactory_ = std::make_unique<SceneFactory>(AbstractSceneFactory::ConstructorKey{});
+	//シーンマネージャー
+	sceneManager_ = std::make_unique<SceneManager>(SceneManager::ConstructorKey{});
+	sceneManager_->Initialize(this);
+	sceneManager_->SetSceneFactory(sceneFactory_.get());
+	//オーディオマネージャー
+	audioManager_ = std::make_unique<AudioManager>(AudioManager::ConstructorKey{});
+	//パーティクルマネージャー
+	particleManager_ = std::make_unique<ParticleManager>(ParticleManager::ConstructorKey{});
+	//ゲームオブジェクトのリスト
+	gameObjectList_ = std::make_unique<GameObjectList>(GameObjectList::ConstructorKey{});
+	gameObjectList_->Initialize(this);
 }
 
 //WinApiのゲッター
@@ -88,4 +108,39 @@ Object2dCommon* Core::GetObject2dCommon() const {
 //3Dオブジェクトの共通部分のゲッター
 Object3dCommon* Core::GetObject3dCommon() const {
 	return object3dCommon_.get();
+}
+
+//ワイヤーフレームオブジェクトの共通部分のゲッター
+WireframeObject3dCommon* Core::GetWireframeObject3dCommon() const {
+	return wireframeObject3dCommon_.get();
+}
+
+//パーティクルの共通部分のゲッター
+ParticleCommon* Core::GetParticleCommon() const {
+	return particleCommon_.get();
+}
+
+//シーンマネージャーのゲッター
+SceneManager* Core::GetSceneManager() const {
+	return sceneManager_.get();
+}
+
+//オーディオマネージャー
+AudioManager* Core::GetAudioManager() const {
+	return audioManager_.get();
+}
+
+//パーティクルマネージャーのゲッター
+ParticleManager* Core::GetParticleManager() const {
+	return particleManager_.get();
+}
+
+//ゲームオブジェクトのリストのゲッター
+GameObjectList* Core::GetGameObjectList() const {
+	return gameObjectList_.get();
+}
+
+//シーンファクトリのゲッター
+AbstractSceneFactory* Core::GetSceneFactory() const {
+	return sceneFactory_.get();
 }

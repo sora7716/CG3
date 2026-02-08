@@ -11,28 +11,26 @@ class Core;
 class GameObjectList{
 public://メンバ関数
 	/// <summary>
-	/// インスタンスのゲッター
+	/// デストラクタ
 	/// </summary>
-	/// <returns>インスタンス</returns>
-	static GameObjectList* GetInstance();
-	
+	~GameObjectList();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="core">エンジンの核</param>
 	void Initialize(Core*core);
-
+public://PrassKey
+	class ConstructorKey {
+		ConstructorKey() = default;
+		friend class Core;
+	};
 	/// <summary>
-	/// 終了
+	/// コンストラクタ
 	/// </summary>
-	void Finalize();
+	/// <param name="">PrassKeyを受け取る</param>
+	explicit GameObjectList(ConstructorKey);
 private://メンバ関数
-
-	//コンストラクタの封印
-	GameObjectList() = default;
-	//デストラクタの封印
-	~GameObjectList() = default;
 	//コピーコンストラクタ禁止
 	GameObjectList(const GameObjectList&) = delete;
 	//代入演算子の禁止

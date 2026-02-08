@@ -99,7 +99,7 @@ private://メンバ関数
 	SRVManager(const SRVManager&) = delete;
 	//代入演算子の禁止
 	SRVManager operator=(const SRVManager&) = delete;
-public://PressKeyIdiom
+public://PrassKey
 	class ConstructorKey {
 	private:
 		ConstructorKey() = default;
@@ -109,7 +109,7 @@ public://PressKeyIdiom
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	/// <param name="">PressKeyを受け取る</param>
+	/// <param name="">PrassKeyを受け取る</param>
 	explicit SRVManager(ConstructorKey);
 public://定数
 	static inline const uint32_t kMaxSRVCount = 65536;

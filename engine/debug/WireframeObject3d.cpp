@@ -2,11 +2,14 @@
 #include "WireframeObject3dCommon.h"
 #include "engine/camera/Camera.h"
 #include "engine/base/DirectXBase.h"
-#include "engine/math/func/Math.h"
-#include "engine/3d/ModelManager.h"
 #include "engine/math/func/Rendering.h"
-#include "engine/debug/ImGuiManager.h"
 #include "engine/base/SRVManager.h"
+#include "engine/3d/ModelManager.h"
+#include "engine/debug/ImGuiManager.h"
+#include "engine/worldTransform/WorldTransform.h"
+#include "engine/3d/Model.h"
+#include "engine/math/func/Math.h"
+#include "engine/debug/WireframeObject3dCommon.h"
 #include <cassert>
 
 //デストラクタ
@@ -15,7 +18,9 @@ WireframeObject3d::~WireframeObject3d() {
 }
 
 //初期化
-void WireframeObject3d::Initialize(Camera* camera, ModelType modelType) {
+void WireframeObject3d::Initialize(WireframeObject3dCommon* wireframeObject3dCommon, Camera* camera, ModelType modelType) {
+	//ワイヤーフレームオブジェクトの共通部分を記録
+	wireframeObject3dCommon_ = wireframeObject3dCommon;
 #ifdef _DEBUG
 	//マテリアルの初期化
 	material_.color = { 0.0f,0.0f,0.0f,1.0f };
@@ -25,9 +30,9 @@ void WireframeObject3d::Initialize(Camera* camera, ModelType modelType) {
 
 	//モデルタイプ
 	if (modelType == ModelType::kSphere) {
-		model_ = WireframeObject3dCommon::GetInstance()->GetModelManager()->FindModel("sphere");
+		model_ = wireframeObject3dCommon_->GetModelManager()->FindModel("sphere");
 	} else if (modelType == ModelType::kCube) {
-		model_ = WireframeObject3dCommon::GetInstance()->GetModelManager()->FindModel("cube");
+		model_ = wireframeObject3dCommon_->GetModelManager()->FindModel("cube");
 	}
 	//マテリアルの設定
 	model_->SetMaterial(material_);
@@ -37,7 +42,7 @@ void WireframeObject3d::Initialize(Camera* camera, ModelType modelType) {
 	(void)modelType;
 
 	//DirectXの基盤部分を受け取る
-	directXBase_ = WireframeObject3dCommon::GetInstance()->GetDirectXBase();
+	directXBase_ = wireframeObject3dCommon_->GetDirectXBase();
 	//ワールドトランスフォームの生成、初期化
 	worldTransform_ = new WorldTransform();
 	worldTransform_->Initialize(directXBase_, TransformMode::k3d);
@@ -48,14 +53,14 @@ void WireframeObject3d::Initialize(Camera* camera, ModelType modelType) {
 	//カメラにデフォルトカメラを代入
 	worldTransform_->SetCamera(camera);
 	//カメラをセット
-	WireframeObject3dCommon::GetInstance()->CreateCameraResource(worldTransform_->GetCamera()->GetTranslate());
+	wireframeObject3dCommon_->CreateCameraResource(worldTransform_->GetCamera()->GetTranslate());
 }
 
 //更新
 void WireframeObject3d::Update() {
 #ifdef _DEBUG
 	//Object3dの共通部分の更新
-	WireframeObject3dCommon::GetInstance()->Update();
+	wireframeObject3dCommon_->Update();
 	//UVトランスフォーム更新
 	model_->UVTransform(uvTransform_);
 	//ノードの設定
@@ -84,10 +89,10 @@ void WireframeObject3d::Update() {
 void WireframeObject3d::Draw() {
 #ifdef _DEBUG
 	//3Dオブジェクトの共通部分
-	WireframeObject3dCommon::GetInstance()->DrawSetting();
+	wireframeObject3dCommon_->DrawSetting();
 
 	//PSOの設定
-	auto pso = WireframeObject3dCommon::GetInstance()->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
+	auto pso = wireframeObject3dCommon_->GetGraphicsPipelineStates()[static_cast<int32_t>(blendMode_)].Get();
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 
@@ -95,11 +100,11 @@ void WireframeObject3d::Draw() {
 	worldTransform_->Draw();
 
 	//平光源CBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, WireframeObject3dCommon::GetInstance()->GetDirectionalLightResource()->GetGPUVirtualAddress());
+	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, wireframeObject3dCommon_->GetDirectionalLightResource()->GetGPUVirtualAddress());
 	//点光源のStructuredBufferの場所を設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, WireframeObject3dCommon::GetInstance()->GetSRVManager()->GetGPUDescriptorHandle(WireframeObject3dCommon::GetInstance()->GetSrvIndexPoint()));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, wireframeObject3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(wireframeObject3dCommon_->GetSrvIndexPoint()));
 	//スポットライトのStructuredBufferを設定
-	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, WireframeObject3dCommon::GetInstance()->GetSRVManager()->GetGPUDescriptorHandle(WireframeObject3dCommon::GetInstance()->GetSrvIndexSpot()));
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, wireframeObject3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(wireframeObject3dCommon_->GetSrvIndexSpot()));
 	//モデルの描画	
 	model_->Draw();
 #endif // _DEBUG
@@ -118,7 +123,7 @@ void WireframeObject3d::Decompose() {
 //カメラのセッター
 void WireframeObject3d::SetCamera(Camera* camera) {
 	worldTransform_->SetCamera(camera);
-	WireframeObject3dCommon::GetInstance()->SetCameraForGPU(camera->GetTranslate());
+	wireframeObject3dCommon_->SetCameraForGPU(camera->GetTranslate());
 }
 
 //半径のセッター

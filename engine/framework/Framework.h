@@ -1,13 +1,6 @@
 #pragma once
-#include "engine/2d/SpriteCommon.h"
-#include "engine/2d/Object2dCommon.h"
-#include "engine/3d/Object3dCommon.h"
-#include "engine/debug/WireframeObject3dCommon.h"
-#include "engine/particle/ParticleCommon.h"
-#include"engine/debug/ImGuiManager.h"
-#include "engine/scene/SceneManager.h"
-#include "engine/scene/AbstractSceneFactory.h"
 #include "engine/base/Core.h"
+
 /// <summary>
 /// ゲーム全体
 /// </summary>
@@ -54,8 +47,6 @@ public://メンバ関数
 	/// <returns>終了したかどうか</returns>
 	virtual bool isEndRequest();
 protected://メンバ変数
-	//シーンファクトリー
-	AbstractSceneFactory*sceneFactory_=nullptr;
 	//エンジンの核
 	std::unique_ptr<Core>core_ = nullptr;
 };

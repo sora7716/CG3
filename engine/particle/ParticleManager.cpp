@@ -1,13 +1,6 @@
 #include "ParticleManager.h"
-#include <cassert>
-
-//インスタンスのゲッター
-ParticleManager* ParticleManager::GetInstance() {
-	assert(!isFinalize && "GetInstance() called after Finalize()");
-	if (instance == nullptr) {
-		instance = new ParticleManager();
-	}
-	return instance;
+//デストラクタ
+ParticleManager::~ParticleManager() {
 }
 
 //パーティクルシステムの追加
@@ -35,9 +28,6 @@ ParticleSystem* ParticleManager::FindParticleSystem(const std::string& name) {
 	return nullptr;
 }
 
-//終了
-void ParticleManager::Finalize() {
-	delete instance;
-	instance = nullptr;
-	isFinalize = true;
+//コンストラクタ
+ParticleManager::ParticleManager(ConstructorKey) {
 }
