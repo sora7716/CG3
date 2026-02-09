@@ -2,6 +2,7 @@
 #include "engine/math/ResourceData.h"
 #include "engine/math/RenderingData.h"
 #include "engine/base/BlendMode.h"
+#include "TextData.h"
 #include "TextRasterizer.h"
 #include <string>
 #include <wrl.h>
@@ -12,18 +13,6 @@ class DirectXBase;
 class Object2dCommon;
 class Camera;
 class WorldTransform;
-
-//テキストの生成時に必要なもの
-//text:入力する文字
-//font:使用するフォント
-//size:テキストのサイズ
-//color:テキストの色
-struct TextStyle {
-	std::string text;
-	std::string font;
-	float size;
-	Vector4 color;
-};
 
 /// <summary>
 /// 文字
@@ -187,7 +176,7 @@ private://メンバ変数
 	};
 
 	//テキストデータ
-	TextData textData_ = {};
+	TextObjectData textData_ = {};
 	//テキストスタイル
 	TextStyle textStyle_ = {};
 	//テキストラスタライザー

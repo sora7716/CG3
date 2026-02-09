@@ -1,6 +1,12 @@
 #pragma once
+#include "engine/2d/TextData.h"
+#include "engine/math/RenderingData.h"
 #include <cstdint>
 #include <array>
+
+//前方宣言
+class Object2dCommon;
+class Text;
 
 /// <summary>
 /// スコア
@@ -15,7 +21,7 @@ public://メンバ関数
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Score() = default;
+	~Score();
 
 	/// <summary>
 	/// スコアの加算
@@ -26,7 +32,8 @@ public://メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	/// <param name="object2dCommon">2Dオブジェクトの共通部分</param>
+	void Initialize(Object2dCommon* object2dCommon);
 
 	/// <summary>
 	/// 更新
@@ -37,13 +44,17 @@ public://メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
-public://静的メンバ変数
-	static inline int32_t score = 0;
 private://定数
 	//桁数
 	static inline const int32_t kDigitCount = 6;
+private://静的メンバ変数
+	static inline int32_t score = 0;
 private://メンバ変数
-	//各桁の情報を保持する
-	std::array<int32_t, kDigitCount> numbers_ = {};
+	//テキスト
+	Text* text_ = nullptr;
+	//テキストスタイル
+	TextStyle textStyle_ = {};
+	//トランスフォームデータ
+	Transform2dData transformData_ = { {100.0f,100.0f},{},{} };
 };
 

@@ -506,6 +506,9 @@
     <ClInclude Include="engine\base\Core.h">
       <Filter>engine\base</Filter>
     </ClInclude>
+    <ClInclude Include="engine\2d\TextData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="engine\resources\shaders\Object3d.PS.hlsl">

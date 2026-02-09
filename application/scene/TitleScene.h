@@ -1,7 +1,6 @@
 #pragma once
 #include "engine/scene/IScene.h"
-#include "engine/2d/TextRasterizer.h"
-#include "engine/2d/Text.h"
+#include "application/actor/Score.h"
 
 /// <summary>
 /// タイトルシーン
@@ -24,7 +23,6 @@ public://メンバ関数
 	/// <param name="core">ゲームエンジンの核</param>
 	void Initialize(Core*core)override;
 
-
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -43,8 +41,6 @@ private://メンバ変数
 	Camera* camera_ = nullptr;
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
-
-	std::unique_ptr<Text>textObj_ = nullptr;
-	TextStyle textStyele_ = {};
-	Transform2dData textTransformData_ = {};
+	//スコアの表示
+	std::unique_ptr<Score>score_ = nullptr;
 };

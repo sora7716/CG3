@@ -104,6 +104,7 @@
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\2d\SpriteCommon.h" />
     <ClInclude Include="engine\2d\Text.h" />
+    <ClInclude Include="engine\2d\TextData.h" />
     <ClInclude Include="engine\2d\TextRasterizer.h" />
     <ClInclude Include="engine\2d\TextureManager.h" />
     <ClInclude Include="engine\3d\Model.h" />

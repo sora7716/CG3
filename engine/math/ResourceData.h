@@ -70,8 +70,8 @@ struct ModelData {
 	Node rootNode;
 };
 
-//テキストデータ
-struct TextData {
+//テキストのオブジェクトデータ
+struct TextObjectData {
 	std::vector<VertexData>vertices;
 	std::string textKey;
 };

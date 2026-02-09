@@ -116,7 +116,7 @@ void GameScene::Update() {
 	ImGui::End();
 
 	//スコア
-	ImGui::Text("score:%d", Score::score);
+	//ImGui::Text("score:%d", Score::score);
 
 	//Object3dCommon
 	core_->GetObject3dCommon()->Debug();
