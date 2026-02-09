@@ -41,6 +41,10 @@ void TitleScene::Update() {
 
 	ImGui::Text("Title");
 
+	ImGui::Begin("Text");
+	score_->Debug();
+	ImGui::End();
+
 	//ImGuiの受付終了
 	core_->GetImGuiManager()->End();
 #endif // USE_IMGUI

@@ -3,6 +3,8 @@
 #include "engine/math/RenderingData.h"
 #include <cstdint>
 #include <array>
+#include <Vector2.h>
+#include <Vector2.h>
 
 //前方宣言
 class Object2dCommon;
@@ -41,9 +43,38 @@ public://メンバ関数
 	void Update();
 
 	/// <summary>
+	/// デバッグ
+	/// </summary>
+	void Debug();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	/// <summary>
+	/// 位置のセッター
+	/// </summary>
+	/// <param name="position">位置</param>
+	void SetPosition(const Vector2& position);
+
+	/// <summary>
+	/// スケールのセッター
+	/// </summary>
+	/// <param name="scale">スケール</param>
+	void SetScale(const Vector2& scale);
+
+	/// <summary>
+	/// 色のセッター
+	/// </summary>
+	/// <param name="color">色</param>
+	void SetColor(const Vector4& color);
+
+	/// <summary>
+	/// テキストのサイズのセッター
+	/// </summary>
+	/// <param name="size">テキストサイズ</param>
+	void SetTextSize(float size);
 private://定数
 	//桁数
 	static inline const int32_t kDigitCount = 6;
