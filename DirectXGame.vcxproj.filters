@@ -264,9 +264,6 @@
     <ClCompile Include="application\actor\EnemyManager.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
-    <ClCompile Include="application\actor\Score.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="engine\2d\TextRasterizer.cpp">
       <Filter>engine\2d</Filter>
     </ClCompile>
@@ -275,6 +272,9 @@
     </ClCompile>
     <ClCompile Include="engine\base\Core.cpp">
       <Filter>engine\base</Filter>
+    </ClCompile>
+    <ClCompile Include="application\actor\Score.cpp">
+      <Filter>application\actor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -494,9 +494,6 @@
     <ClInclude Include="application\actor\EnemyManager.h">
       <Filter>application\actor</Filter>
     </ClInclude>
-    <ClInclude Include="application\actor\Score.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="engine\2d\TextRasterizer.h">
       <Filter>engine\2d</Filter>
     </ClInclude>
@@ -506,8 +503,11 @@
     <ClInclude Include="engine\base\Core.h">
       <Filter>engine\base</Filter>
     </ClInclude>
+    <ClInclude Include="application\actor\Score.h">
+      <Filter>application\actor</Filter>
+    </ClInclude>
     <ClInclude Include="engine\2d\TextData.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>engine\2d</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

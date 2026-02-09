@@ -12,9 +12,6 @@ void TitleScene::Initialize(Core* core) {
 	//シーンのインタフェースの初期化
 	IScene::Initialize(core);
 	camera_ = core_->GetCameraManager()->FindCamera("titleCamera");
-
-	score_ = std::make_unique<Score>();
-	score_->Initialize(core_->GetObject2dCommon());
 }
 
 //更新ww
@@ -22,15 +19,11 @@ void TitleScene::Update() {
 	//シーンのインタフェースの初期化
 	IScene::Update();
 
-	if (core_->GetInput()->PressKey(DIK_SPACE)) {
-		score_->AddScore(1);
-	}
 	//if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 	//	SceneManager::GetInstance()->ChangeScene("Game");
 	//} else if (Input::GetInstance()->TriggerXboxPad(xBoxPadNumber_, XboxInput::kB)) {
 	//	SceneManager::GetInstance()->ChangeScene("Game");
 	//}
-	score_->Update();
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
 	core_->GetImGuiManager()->Begin();
@@ -40,10 +33,6 @@ void TitleScene::Update() {
 	ImGui::End();
 
 	ImGui::Text("Title");
-
-	ImGui::Begin("Text");
-	score_->Debug();
-	ImGui::End();
 
 	//ImGuiの受付終了
 	core_->GetImGuiManager()->End();
@@ -62,7 +51,7 @@ void TitleScene::Update() {
 
 //描画
 void TitleScene::Draw() {
-	score_->Draw();
+	
 }
 
 //終了

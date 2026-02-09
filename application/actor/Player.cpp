@@ -193,18 +193,13 @@ void Player::Debug() {
 void Player::Finalize() {
 	//3Dオブジェクトの解放
 	delete gameObject_.object3d;
-	gameObject_.object3d = nullptr;
 	//弾の解放
 	delete bullet_;
-	bullet_ = nullptr;
 	//ヒットボックスの解放
 	delete gameObject_.hitBox;
-	gameObject_.hitBox = nullptr;
 	//スプライトの開放
 	delete hpBar_;
-	hpBar_ = nullptr;
 	delete hpOutLine_;
-	hpOutLine_ = nullptr;
 }
 
 //衝突したら

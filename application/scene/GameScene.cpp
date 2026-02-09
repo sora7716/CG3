@@ -7,7 +7,6 @@
 #include "engine/camera/CameraManager.h"
 #include "engine/base/Core.h"
 #include "actor/Bullet.h"
-#include "Score.h"
 
 //初期化
 void GameScene::Initialize(Core* core) {
@@ -32,6 +31,10 @@ void GameScene::Initialize(Core* core) {
 	//敵の実装
 	enemyManager_ = EnemyManager::GetInstance();
 	enemyManager_->Initialize(core_->GetObject3dCommon(), camera_);
+
+	//スコア
+	score_ = std::make_unique<Score>();
+	score_->Initialize(core_->GetObject2dCommon());
 }
 
 //更新
@@ -61,6 +64,9 @@ void GameScene::Update() {
 	field_->SetPointLight(core_->GetObject3dCommon()->GetPointLight());
 	field_->SetSpotLight(core_->GetObject3dCommon()->GetSpotLightPtr());
 	field_->Update();
+
+	//スコア
+	score_->Update();
 
 	//衝突判定
 	//敵とプレイヤーの弾
@@ -146,6 +152,9 @@ void GameScene::Draw() {
 
 	//敵
 	enemyManager_->Draw();
+
+	//スコア
+	score_->Draw();
 }
 
 //終了

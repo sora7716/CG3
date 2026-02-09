@@ -1,6 +1,5 @@
 #pragma once
 #include "engine/scene/IScene.h"
-#include "application/actor/Score.h"
 
 /// <summary>
 /// タイトルシーン
@@ -41,6 +40,4 @@ private://メンバ変数
 	Camera* camera_ = nullptr;
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
-	//スコアの表示
-	std::unique_ptr<Score>score_ = nullptr;
 };

@@ -4,6 +4,7 @@
 #include "actor/GameCamera.h"
 #include "actor/Field.h"
 #include "actor/EnemyManager.h"
+#include "actor/Score.h"
 
 /// <summary>
 /// ゲームシーン
@@ -55,5 +56,8 @@ private://メンバ変数
 
 	//敵の管理
 	EnemyManager* enemyManager_ = nullptr;
+	
+	//スコアの表示
+	std::unique_ptr<Score>score_ = nullptr;
 };
 
