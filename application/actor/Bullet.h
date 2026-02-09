@@ -2,7 +2,7 @@
 #include "ActorData.h"
 #include "engine/math/Matrix4x4.h"
 #include "engine/math/CollisionPrimitives.h"
-#include <list>
+#include <vector>
 #include <string>
 
 //前方宣言
@@ -29,7 +29,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="object3dCommon">3Dオブジェクトの共通部分</param>
 	/// <param name="camera">カメラ</param>
-	void Initialize(Object3dCommon*object3dCommon,Camera* camera);
+	void Initialize(Object3dCommon* object3dCommon, Camera* camera);
 
 	/// <summary>
 	/// 弾を発射する
@@ -45,8 +45,8 @@ public://メンバ関数
 	/// <summary>
 	/// 衝突したとき
 	/// </summary>
-	/// <param name="it">弾のデータリストのイテレータ</param>
-	void OnCollision(std::list<BulletData>::iterator it);
+	/// <param name="index">弾のデータインデックス</param>
+	void OnCollision(uint32_t index);
 
 	/// <summary>
 	/// 描画
@@ -106,25 +106,27 @@ public://メンバ関数
 	/// <param name="modelName">モデル名</param>
 	void SetModel(const std::string& modelName);
 
-
 	/// <summary>
 	/// 弾のデータリストのゲッター
 	/// </summary>
-	/// <returns>弾のデータリスト</returns>
-	std::list<BulletData>& GetBulletData();
+	/// <returns>弾のデータ</returns>
+	std::vector<BulletData>& GetBulletData();
 private://メンバ関数
 	/// <summary>
 	/// 弾の生成
 	/// </summary>
-	/// <returns>弾</returns>
-	BulletData CreateBullet();
+	/// <param name="bulletData">弾のデータ</param>
+	void CreateBullet(BulletData& bulletData);
+private://定数
+	//弾の数
+	static inline const int32_t kMaxBulletCount = 20;
 private://メンバ変数
 	//3Dオブジェクトの共通部分
 	Object3dCommon* object3dCommon_ = nullptr;
 	//カメラ
 	Camera* camera_ = nullptr;
-	// 弾のデータのリスト
-	std::list<BulletData>bulletDataList_;
+	// 弾のデータ
+	std::vector<BulletData>bulletDatas_;
 	//弾の発射地点
 	Vector3 shootingPosition_ = {};
 	//マテリアル

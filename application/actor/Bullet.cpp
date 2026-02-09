@@ -21,6 +21,16 @@ void Bullet::Initialize(Object3dCommon* object3dCommon, Camera* camera) {
 
 	//ヒットボックスのサイズを設定
 	hitBoxScale_ = { 0.25f,0.25f,0.25f };
+
+	//弾の最大数を設定
+	bulletDatas_.resize(kMaxBulletCount);
+
+	for (BulletData& bullet : bulletDatas_) {
+		bullet.gameObject.object3d = new Object3d();
+		bullet.gameObject.object3d->Initialize(object3dCommon_, camera);
+		bullet.gameObject.hitBox = new WireframeObject3d();
+		bullet.gameObject.hitBox->Initialize(object3dCommon_->GetWireframeObject3dCommon(), camera_, ModelType::kCube);
+	}
 }
 
 //弾を発射する
@@ -30,18 +40,18 @@ void Bullet::Fire(bool isShooting) {
 		return;
 	}
 
-	//弾の最大値を超えた場合早期リターン
-	if (bulletDataList_.size() > maxBulletCount_) {
-		return;
-	}
-
 	//弾を生成
-	bulletDataList_.push_back(CreateBullet());
+	for (BulletData& bullet : bulletDatas_) {
+		if (!bullet.gameObject.isAlive) {
+			CreateBullet(bullet);
+			break;
+		}
+	}
 }
 
 //更新
 void Bullet::Update() {
-	for (BulletData& bulletData : bulletDataList_) {
+	for (BulletData& bulletData : bulletDatas_) {
 		if (bulletData.gameObject.isAlive) {
 			//飛ばす
 			bulletData.gameObject.transformData.translate += bulletData.gameObject.velocity;
@@ -68,32 +78,17 @@ void Bullet::Update() {
 			bulletData.gameObject.hitBox->Update();
 		}
 	}
-
-	//弾の削除
-	for (BulletData& bulletData : bulletDataList_) {
-		if (!bulletData.gameObject.isAlive) {
-			delete bulletData.gameObject.object3d;
-			bulletData.gameObject.object3d = nullptr;
-			delete bulletData.gameObject.hitBox;
-			bulletData.gameObject.hitBox = nullptr;
-		}
-	}
-
-	//リストから削除
-	bulletDataList_.remove_if([](const BulletData& b) {
-		return !b.gameObject.isAlive;
-	});
 }
 
 //衝突したときの
-void Bullet::OnCollision(std::list<BulletData>::iterator it) {
-	it->gameObject.isAlive = false;
+void Bullet::OnCollision(uint32_t index) {
+	bulletDatas_[index].gameObject.isAlive = false;
 }
 
 //描画
 void Bullet::Draw() {
 	//弾の描画
-	for (const BulletData& bulletData : bulletDataList_) {
+	for (const BulletData& bulletData : bulletDatas_) {
 		if (bulletData.gameObject.isAlive) {
 			bulletData.gameObject.object3d->Draw();
 			bulletData.gameObject.hitBox->Draw();
@@ -103,13 +98,14 @@ void Bullet::Draw() {
 
 //終了
 void Bullet::Finalize() {
-	for (BulletData& bulletData : bulletDataList_) {
+	//弾のデータ
+	for (BulletData& bulletData : bulletDatas_) {
 		delete bulletData.gameObject.object3d;
 		bulletData.gameObject.object3d = nullptr;
 		delete bulletData.gameObject.hitBox;
 		bulletData.gameObject.hitBox = nullptr;
 	}
-	bulletDataList_.clear();
+	bulletDatas_.clear();
 }
 
 //発射地点のセッター
@@ -153,44 +149,35 @@ void Bullet::SetModel(const std::string& modelName) {
 }
 
 //弾のデータリストのゲッター
-std::list<BulletData>& Bullet::GetBulletData() {
-	return bulletDataList_;
+std::vector<BulletData>& Bullet::GetBulletData() {
+	return bulletDatas_;
 }
 
 //弾の生成
-BulletData Bullet::CreateBullet() {
-	BulletData bullet = {};
-	bullet.gameObject.transformData.scale = Vector3::MakeAllOne();
-	bullet.gameObject.isAlive = true;
+void Bullet::CreateBullet(BulletData&bulletData) {
+	bulletData.gameObject.transformData.scale = Vector3::MakeAllOne();
+	bulletData.gameObject.isAlive = true;
 	//弾の位置を設定
-	bullet.gameObject.transformData.translate = shootingPosition_;
+	bulletData.gameObject.transformData.translate = shootingPosition_;
 	//射撃地点を取得
-	bullet.shootingPoint = bullet.gameObject.transformData.translate;
+	bulletData.shootingPoint = bulletData.gameObject.transformData.translate;
 
 	//マテリアルの初期化
-	bullet.gameObject.material.color = { 1.0f,1.0f,1.0f,1.0f };
-	bullet.gameObject.material.enableLighting = true;
-	bullet.gameObject.material.shininess = 10.0f;
-	bullet.gameObject.material.uvMatrix = Matrix4x4::Identity4x4();
+	bulletData.gameObject.material.color = { 1.0f,1.0f,1.0f,1.0f };
+	bulletData.gameObject.material.enableLighting = true;
+	bulletData.gameObject.material.shininess = 10.0f;
+	bulletData.gameObject.material.uvMatrix = Matrix4x4::Identity4x4();
 
 	//3Dモデルの生成
-	bullet.gameObject.object3d = new Object3d();
-	bullet.gameObject.object3d->Initialize(object3dCommon_, camera_);
-	bullet.aliveRange = aliveRange_;
-	bullet.gameObject.object3d->SetModel(modelName_);
+	bulletData.aliveRange = aliveRange_;
+	bulletData.gameObject.object3d->SetModel(modelName_);
 
 	//サイズと角度の設定
-	bullet.gameObject.transformData.scale = size_;
-	bullet.gameObject.transformData.rotate = angle_;
+	bulletData.gameObject.transformData.scale = size_;
+	bulletData.gameObject.transformData.rotate = angle_;
 
 	//弾の速度を設定
-	bullet.gameObject.velocity = { 0.0f,0.0f,speed_ };
-	bullet.direction = Math::TransformNormal(bullet.gameObject.velocity, sourceWorldMatrix_);
-	bullet.gameObject.velocity = bullet.direction * Math::kDeltaTime;
-
-	//ヒットボックス
-	bullet.gameObject.hitBox = new WireframeObject3d();
-	bullet.gameObject.hitBox->Initialize(object3dCommon_->GetWireframeObject3dCommon(), camera_, ModelType::kCube);
-
-	return bullet;
+	bulletData.gameObject.velocity = { 0.0f,0.0f,speed_ };
+	bulletData.direction = Math::TransformNormal(bulletData.gameObject.velocity, sourceWorldMatrix_);
+	bulletData.gameObject.velocity = bulletData.direction * Math::kDeltaTime;
 }

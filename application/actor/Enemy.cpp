@@ -24,9 +24,7 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 	gameObject_.transformData.scale = Vector3::MakeAllOne() / 2.0f;
 	gameObject_.isAlive = true;
 
-	//弾の生成
-	bullet_ = new Bullet();
-	//弾
+	//弾の生成と初期化
 	bullet_ = new Bullet();
 	bullet_->Initialize(object3dCommon, camera);
 	bullet_->SetAliveRange(kAliveAreaSize);
@@ -167,6 +165,22 @@ void Enemy::Finalize() {
 	hpBar_ = nullptr;
 	delete hpOutLine_;
 	hpOutLine_ = nullptr;
+	delete enemyState_;
+	enemyState_ = nullptr;
+}
+
+//リセット
+void Enemy::Reset() {
+	gameObject_.transformData.scale = Vector3::MakeAllOne() / 2.0f;
+	gameObject_.isAlive = true;
+
+	//HP
+	hp_ = kMaxHpCout;
+	hpBarTransform_.scale = { hpBarWidth_,0.2f,1.0f };
+	hpBarTransform_.translate = {};
+	hpOutLineTransform_.scale = { hpBarWidth_,0.2f,1.0f };
+	hpOutLineTransform_.translate = {};
+	hpBarPosX_ = 0.0f;
 }
 
 //衝突したら
@@ -252,6 +266,11 @@ void Enemy::SetMoveSpeed(float moveSpeed) {
 //弾の発射速度のセッター
 void Enemy::SetBulletShotSpeed(float bulletShotSpeed) {
 	bulletShotSpeed_ = bulletShotSpeed;
+}
+
+//生存フラグのセッター
+void Enemy::SetIsAlive(bool isAlive) {
+	gameObject_.isAlive = isAlive;
 }
 
 //弾のゲッター

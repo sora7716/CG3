@@ -54,7 +54,7 @@ void GameScene::Update() {
 	//プレイヤー
 	player_->Update();
 	Vector3 playerPos = player_->GetTransformData().translate;
-	core_->GetObject3dCommon()->SetPointLightPos({playerPos.x,playerPos.y + 1.3f,playerPos.z});
+	core_->GetObject3dCommon()->SetPointLightPos({ playerPos.x,playerPos.y + 1.3f,playerPos.z });
 
 	//敵
 	enemyManager_->Update(player_->GetWorldPos());
@@ -70,28 +70,36 @@ void GameScene::Update() {
 
 	//衝突判定
 	//敵とプレイヤーの弾
-	for (Enemy* enemy : enemyManager_->GetEnemyList()) {
-		for (std::list<BulletData>::iterator itPlayerBullet = player_->GetBullet()->GetBulletData().begin(); itPlayerBullet != player_->GetBullet()->GetBulletData().end(); itPlayerBullet++) {
-			if (Collision::IsCollision(enemy->GetOBB(), itPlayerBullet->gameObject.hitBox->GetOBB())) {
-				player_->GetBullet()->OnCollision(itPlayerBullet);
-				enemy->OnCollision();
+	for (Enemy* enemy : enemyManager_->GetEnemies()) {
+		if (!enemy->IsAlive()) {
+			continue;//敵が生存していなかったら
+		}
+		for (uint32_t i = 0; i < player_->GetBullet()->GetBulletData().size(); i++) {
+			if (player_->GetBullet()->GetBulletData()[i].gameObject.isAlive) {
+				if (Collision::IsCollision(enemy->GetOBB(), player_->GetBullet()->GetBulletData()[i].gameObject.hitBox->GetOBB())) {
+					player_->GetBullet()->OnCollision(i);
+					enemy->OnCollision();
+					break;
+				}
 			}
 		}
 	}
 
 	//プレイヤーと敵の弾
-	for (Enemy* enemy : enemyManager_->GetEnemyList()) {
-		for (std::list<BulletData>::iterator itEnemyBullet = enemy->GetBullet()->GetBulletData().begin(); itEnemyBullet != enemy->GetBullet()->GetBulletData().end(); itEnemyBullet++) {
-			if (Collision::IsCollision(player_->GetOBB(), itEnemyBullet->gameObject.hitBox->GetOBB())) {
-				enemy->GetBullet()->OnCollision(itEnemyBullet);
-				player_->OnCollision();
+	for (Enemy* enemy : enemyManager_->GetEnemies()) {
+		for (uint32_t i = 0; i < enemy->GetBullet()->GetBulletData().size(); i++) {
+			if (enemy->GetBullet()->GetBulletData()[i].gameObject.isAlive) {
+				if (Collision::IsCollision(player_->GetOBB(), enemy->GetBullet()->GetBulletData()[i].gameObject.hitBox->GetOBB())) {
+					enemy->GetBullet()->OnCollision(i);
+					player_->OnCollision();
+					break;
+				}
 			}
 		}
 	}
 
 	//プレイヤーが死んだら
 	if (!player_->IsAlive()) {
-		enemyManager_->Reset();
 		core_->GetSceneManager()->ChangeScene("Result");
 	}
 
@@ -159,6 +167,8 @@ void GameScene::Draw() {
 
 //終了
 void GameScene::Finalize() {
+	//敵の解放
+	EnemyManager::GetInstance()->Finalize();
 	//シーンのインターフェース
 	IScene::Finalize();
 }

@@ -1,6 +1,6 @@
 #pragma once
 #include "Enemy.h"
-#include <list>
+#include <vector>
 #include <random>
 
 //前方宣言
@@ -42,11 +42,6 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// リセット
-	/// </summary>
-	void Reset();
-
-	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera">カメラ</param>
@@ -61,8 +56,8 @@ public://メンバ関数
 	/// <summary>
 	/// 敵のリストを取得
 	/// </summary>
-	/// <returns>敵のリスト</returns>
-	std::list<Enemy*>GetEnemyList();
+	/// <returns>敵(複数形)</returns>
+	const std::vector<Enemy*>& GetEnemies()const;
 
 	/// <summary>
 	/// 終了
@@ -79,10 +74,10 @@ private://メンバ関数
 	EnemyManager operator=(const EnemyManager&) = delete;
 
 	/// <summary>
-	/// 敵を生成
+	/// 敵をスポーンのパラメータを設定
 	/// </summary>
-	/// <returns></returns>
-	Enemy* Create();
+	/// <param name="enemy">敵</param>
+	void SetSpawnParams(Enemy* enemy);
 
 	/// <summary>
 	/// 敵のスポーン
@@ -91,8 +86,6 @@ private://メンバ関数
 private://静的メンバ変数
 	//インスタンス
 	static inline EnemyManager* instance = nullptr;
-	//終了を呼んだかどうか
-	static inline bool isFinalize = false;
 private://定数
 	//敵の数
 	static inline const int32_t kMaxEnemy = 10;
@@ -103,7 +96,7 @@ private://メンバ変数
 	//3Dオブジェクトの共通部分
 	Object3dCommon* object3dCommon_ = nullptr;
 	//敵
-	std::list<Enemy*>enemyList_;
+	std::vector<Enemy*>enemies_;
 	//カメラ
 	Camera* camera_ = nullptr;
 	//スポーンできるエリアの中心

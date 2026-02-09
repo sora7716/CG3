@@ -1,7 +1,6 @@
 #include "GameSystem.h"
 #include "engine/scene/SceneManager.h"
 #include "engine/scene/SceneFactory.h"
-#include "application/actor/EnemyManager.h"
 //初期化
 void GameSystem::Initialize() {
 	Framework::Initialize();
@@ -36,8 +35,5 @@ void GameSystem::Draw() {
 
 //終了
 void GameSystem::Finalize() {
-	//敵の解放
-	EnemyManager::GetInstance()->Finalize();
-
 	Framework::Finalize();
 }

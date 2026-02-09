@@ -56,6 +56,11 @@ public://メンバ関数
 	void Finalize();
 
 	/// <summary>
+	/// リセット
+	/// </summary>
+	void Reset();
+
+	/// <summary>
 	/// 衝突したら
 	/// </summary>
 	void OnCollision();
@@ -104,6 +109,12 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="bulletShotSpeed">弾の発射速度</param>
 	void SetBulletShotSpeed(float bulletShotSpeed);
+
+	/// <summary>
+	/// 生存フラグのセッター
+	/// </summary>
+	/// <param name="isAlive">生存フラグ</param>
+	void SetIsAlive(bool isAlive);
 
 	/// <summary>
 	/// 弾のゲッター

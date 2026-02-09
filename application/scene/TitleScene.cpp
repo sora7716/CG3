@@ -19,11 +19,11 @@ void TitleScene::Update() {
 	//シーンのインタフェースの初期化
 	IScene::Update();
 
-	//if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-	//	SceneManager::GetInstance()->ChangeScene("Game");
-	//} else if (Input::GetInstance()->TriggerXboxPad(xBoxPadNumber_, XboxInput::kB)) {
-	//	SceneManager::GetInstance()->ChangeScene("Game");
-	//}
+	if (core_->GetInput()->TriggerKey(DIK_SPACE)) {
+		core_->GetSceneManager()->ChangeScene("Game");
+	} else if (core_->GetInput()->TriggerXboxPad(xBoxPadNumber_, XboxInput::kB)) {
+		core_->GetSceneManager()->ChangeScene("Game");
+	}
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
 	core_->GetImGuiManager()->Begin();
@@ -51,7 +51,7 @@ void TitleScene::Update() {
 
 //描画
 void TitleScene::Draw() {
-	
+
 }
 
 //終了
