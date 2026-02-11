@@ -14,18 +14,18 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	GameScene() = default;
+	GameScene();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~GameScene()override = default;
+	~GameScene()override;
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="core">ゲームエンジンの核</param>
-	void Initialize(Core*core)override;
+	/// <param name="sceneContext">シーンで必要なもの</param>
+	void Initialize(const SceneContext& sceneContext)override;
 
 	/// <summary>
 	/// 更新

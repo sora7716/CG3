@@ -31,7 +31,7 @@ void EnemyManager::Initialize(Object3dCommon* object3dCommon, Camera* camera) {
 	}
 
 	//最初のスポーンする敵を設定
-	for (int32_t i = 0; i < kFirstSpawnEnemyCount; i++) {
+	for (int32_t i = 0; i < (kFirstSpawnEnemyCount > kMaxEnemy ? kMaxEnemy : kFirstSpawnEnemyCount); i++) {
 		SetSpawnParams(enemies_[i]);
 	}
 }

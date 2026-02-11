@@ -1,0 +1,17 @@
+#include "Context.h"
+#include "engine/base/Core.h"
+
+//ゲームエンジンの核から必要な物を抽出する
+void SceneContext::operator=(Core* core) {
+	input = core->GetInput();
+	object3dCommon = core->GetObject3dCommon();
+	object2dCommon = core->GetObject2dCommon();
+	spriteCommon = core->GetSpriteCommon();
+	wireframeObject3dCommon = core->GetWireframeObject3dCommon();
+	particleCommon = core->GetParticleCommon();
+	sceneManager = core->GetSceneManager();
+	cameraManager = core->GetCameraManager();
+	particleManager = core->GetParticleManager();
+	audioManager = core->GetAudioManager();
+	imguiManager = core->GetImGuiManager();
+}

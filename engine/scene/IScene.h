@@ -1,23 +1,12 @@
 #pragma once
-#include "engine/base/DirectXBase.h"
-#include "engine/base/SRVManager.h"
-#include "engine/base/BlendMode.h"
-#include "engine/2d/Object2d.h"
-#include "engine/debug/ImGuiManager.h"
+#include "engine/base/Context.h"
+#include "engine/input/Input.h"
 #include "engine/debug/DebugCamera.h"
-#include "engine/audio/AudioManager.h"
-#include "engine/2d/Sprite.h"
-#include "engine/3d/Object3d.h"
-#include "engine/particle/ParticleManager.h"
-#include "engine/debug/WireframeObject3d.h"
 #include <memory>
 
 // 前方宣言
-class Core;
-class Input;
-class SceneManager;
 class AbstractSceneFactory;
-class CameraManager;
+class DebugCamera;
 
 /// <summary>
 /// シーンのインターフェース
@@ -27,18 +16,18 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	IScene() = default;
+	IScene();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	virtual ~IScene() = default;
+	virtual ~IScene();
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="core">ゲームエンジンの核</param>
-	virtual void Initialize(Core*core);
+	/// <param name="sceneContext">シーンで必要なもの</param>
+	virtual void Initialize(const SceneContext& sceneContext);
 
 	/// <summary>
 	/// 更新
@@ -53,8 +42,8 @@ public://メンバ関数
 	//純粋仮想関数
 	virtual void Draw() = 0;
 protected://メンバ変数
-	//ゲームエンジンの核
-	Core* core_ = nullptr;
+	//シーンで必要なもの
+	SceneContext sceneContext_ = {};
 	//デバックカメラ
 	std::unique_ptr<DebugCamera>debugCamera_ = nullptr;
 	//シーンファクトリー

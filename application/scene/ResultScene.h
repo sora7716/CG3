@@ -1,5 +1,10 @@
 #pragma once
 #include "engine/scene/IScene.h"
+#include "engine/math/Vector2.h"
+
+//前方宣言
+class Text;
+class Score;
 
 /// <summary>
 /// タイトルシーン
@@ -9,18 +14,18 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	ResultScene() = default;
+	ResultScene();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~ResultScene()override = default;
+	~ResultScene()override;
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="core">ゲームエンジンの核</param>
-	void Initialize(Core*core)override;
+	/// <param name="sceneContext">シーンで必要なもの</param>
+	void Initialize(const SceneContext& sceneContext)override;
 
 	/// <summary>
 	/// 更新
@@ -40,4 +45,14 @@ private://メンバ変数
 	Camera* camera_ = nullptr;
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
+	//スコア
+	std::unique_ptr<Score>score_ = nullptr;
+	Vector2 scorePos_ = { 60.0f,300.0f };
+	Vector2 scoreScele_ = { 500.0f,500.0f };
+	float scoreTextSize_ = 64.0f;
+
+	//リターン
+	std::unique_ptr<Text>pressReturn_ = nullptr;
+	Vector2 pressReturnPos_ = {250.0f,600.0f};
+	float pressReturnSize_ = 64.0f;
 };

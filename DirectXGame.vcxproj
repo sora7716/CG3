@@ -42,6 +42,7 @@
     <ClCompile Include="engine\audio\Audio.cpp" />
     <ClCompile Include="engine\audio\AudioManager.cpp" />
     <ClCompile Include="engine\base\Blend.cpp" />
+    <ClCompile Include="engine\base\Context.cpp" />
     <ClCompile Include="engine\base\Core.cpp" />
     <ClCompile Include="engine\base\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\base\DirectXBase.cpp" />
@@ -116,6 +117,7 @@
     <ClInclude Include="engine\audio\AudioManager.h" />
     <ClInclude Include="engine\base\Blend.h" />
     <ClInclude Include="engine\base\BlendMode.h" />
+    <ClInclude Include="engine\base\Context.h" />
     <ClInclude Include="engine\base\Core.h" />
     <ClInclude Include="engine\base\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\base\DirectXBase.h" />
