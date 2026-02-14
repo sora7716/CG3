@@ -47,6 +47,8 @@ private://メンバ変数
 	DWORD xBoxPadNumber_ = 0;
 	//スコア
 	std::unique_ptr<Score>score_ = nullptr;
+	//スコアの表示
+	std::unique_ptr<Text>drawScore_ = nullptr;
 	Vector2 scorePos_ = { 60.0f,300.0f };
 	Vector2 scoreScele_ = { 500.0f,500.0f };
 	float scoreTextSize_ = 64.0f;

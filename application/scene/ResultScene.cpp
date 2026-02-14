@@ -4,6 +4,8 @@
 #include "engine/scene/SceneManager.h"
 #include "engine/debug/ImGuiManager.h"
 #include "application/actor/Score.h"
+#include <sstream>
+#include <iomanip>
 #include "engine/2d/Text.h"
 
 //コンストラクタ
@@ -21,12 +23,18 @@ void ResultScene::Initialize(const SceneContext& sceneContext) {
 	camera_ = sceneContext_.cameraManager->FindCamera("ResultCamera");
 
 	//スコア
-	score_ = std::make_unique<Score>();
-	score_->Initialize(sceneContext_.object2dCommon);
+	drawScore_ = std::make_unique<Text>();
+	drawScore_->Initialize(sceneContext_.object2dCommon, "drawScore");
+	//スコアの文字列を作成
+	std::ostringstream scoreText;
+	scoreText << "SCORE : " << std::setw(Score::kDigitCount) << std::setfill('0') << score_->GetScore();
+	//スコアをリセット
+	score_->SetScore(0);
+	drawScore_->SetText(scoreText.str());
 
 	//PressReturn
 	pressReturn_ = std::make_unique<Text>();
-	pressReturn_->Initialize(sceneContext_.object2dCommon,"pressReturn");
+	pressReturn_->Initialize(sceneContext_.object2dCommon, "pressReturn");
 	pressReturn_->SetText("Press : B");
 }
 
@@ -41,10 +49,10 @@ void ResultScene::Update() {
 		sceneContext_.sceneManager->ChangeScene("Title");
 	}
 
-	score_->SetPosition(scorePos_);
-	score_->SetScale(scoreScele_);
-	score_->SetTextSize(scoreTextSize_);
-	score_->Update();
+	drawScore_->SetTranslate(scorePos_);
+	drawScore_->SetScale(scoreScele_);
+	drawScore_->SetTextSize(scoreTextSize_);
+	drawScore_->Update();
 
 	pressReturn_->SetTranslate(pressReturnPos_);
 	pressReturn_->SetScale(scoreScele_);
@@ -86,7 +94,7 @@ void ResultScene::Update() {
 
 //描画
 void ResultScene::Draw() {
-	score_->Draw();
+	drawScore_->Draw();
 	pressReturn_->Draw();
 }
 
