@@ -121,28 +121,23 @@ void GameScene::Update() {
 	ImGui::End();
 
 	//グローバル変数の更新
-	GlobalVariables::GetInstance()->Update();
+	//GlobalVariables::GetInstance()->Update();
 
 	//プレイヤー
 	ImGui::Begin("player");
 	player_->Debug();
 	ImGui::End();
 
-	//レイルカメラ
-	ImGui::Begin("gameCamera");
-	gameCamera_->Debug();
-	ImGui::End();
-
 	//敵
-	ImGui::Begin("enemy");
-	enemyManager_->Debug();
-	ImGui::End();
+	//ImGui::Begin("enemy");
+	//enemyManager_->Debug();
+	//ImGui::End();
 
 	//スコア
 	//ImGui::Text("score:%d", Score::score);
 
 	//Object3dCommon
-	sceneContext_.object3dCommon->Debug();
+	//sceneContext_.object3dCommon->Debug();
 
 	//ImGuiの受付終了
 	sceneContext_.imguiManager->End();
