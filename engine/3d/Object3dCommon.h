@@ -4,7 +4,7 @@
 #include <wrl.h>
 #include <d3d12.h>
 #include <array>
-#include <map>
+#include <vector>
 
 //前方宣言
 class DirectXBase;
@@ -160,23 +160,11 @@ public://メンバ関数
 	SpotLight* GetSpotLightPtr();
 
 	/// <summary>
-	/// スポットライトを追加
-	/// </summary>
-	/// <param name="name">スポットライトの名前</param>
-	void AddSpotLight(const std::string& name);
-
-	/// <summary>
 	/// スポットライトのセッター
 	/// </summary>
-	/// <param name="name">スポットライトの名前</param>
-	void SetSpotLight(const std::string& name, const SpotLight& spotLight);
-
-	/// <summary>
-	/// スポットライトのゲッター
-	/// </summary>
-	/// <param name="name">スポットライトの名前</param>
-	/// <returns>スポットライト</returns>
-	SpotLight& GetSpotLight(const std::string& name);
+	/// <param name="index">インデックス</param>
+	/// <param name="spotLight">スポットライト</param>
+	void SetSpotLightList(uint32_t index, const SpotLight& spotLight);
 
 	/// <summary>
 	/// ポイントライトの位置のセッター
@@ -300,7 +288,7 @@ private://メンバ変数
 	//点光源
 	PointLight pointLightDataList_[kMaxLightCount] = {};
 	//スポットライト
-	std::map<std::string, SpotLight>spotLightDataList_ = {};
+	std::vector<SpotLight>spotLightList_ = {};
 
 	//ブレンド
 	Blend* blend_ = nullptr;

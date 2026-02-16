@@ -108,6 +108,7 @@ void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 	CreateStructuredBufferForPoint();
 	//スポットライトの生成
 	CreateSpotLight();
+	spotLightList_.resize(kMaxLightCount);
 	CreateStructuredBufferForSpot();
 
 	//調整項目に設定
@@ -130,10 +131,8 @@ void Object3dCommon::Update() {
 	}
 
 	//スポットライトのポインタにデータを転送
-	int32_t index = 0;
-	for (auto& [key, value] : spotLightDataList_) {
-		spotLightPtr_[index] = value;
-		index++;
+	for (int32_t i=0;i<spotLightList_.size();i++){
+		spotLightPtr_[i] = spotLightList_[i];
 	}
 }
 
@@ -260,39 +259,9 @@ SpotLight* Object3dCommon::GetSpotLightPtr() {
 	return spotLightPtr_;
 }
 
-//スポットライトを追加
-void Object3dCommon::AddSpotLight(const std::string& name) {
-	//読み込み済みならカメラを検索
-	if (spotLightDataList_.contains(name)) {
-		//読み込み済みなら早期return
-		return;
-	}
-	//スポットライトを生成
-	SpotLight spotLight = {};
-	spotLight.color = { 1.0f,1.0f,1.0f,1.0f };
-	spotLight.position = { 2.0f,1.25f,0.0f };
-	spotLight.distance = 7.0f;
-	spotLight.direction = Vector3({ -1.0f,-1.0f,0.0f }).Normalize();
-	spotLight.intensity = 4.0f;
-	spotLight.decay = 2.0f;
-	spotLight.cosAngle = std::cos(Math::kPi / 3.0f);
-	spotLight.cosFolloffStart = 1.0f;
-	spotLight.isBlinnPhong = true;
-	spotLight.enableSpotLighting = true;
-
-	//スポットライトをmapコンテナに格納する
-	spotLightDataList_.insert(std::make_pair(name, spotLight));
-}
-
 //スポットライトのセッター
-void Object3dCommon::SetSpotLight(const std::string& name, const SpotLight& spotLight) {
-	spotLightDataList_.at(name) = spotLight;
-}
-
-//スポットライトのゲッター
-SpotLight& Object3dCommon::GetSpotLight(const std::string& name) {
-	// TODO: return ステートメントをここに挿入します
-	return spotLightDataList_.at(name);
+void Object3dCommon::SetSpotLightList(uint32_t index, const SpotLight& spotLight) {
+	spotLightList_[index] = spotLight;
 }
 
 //ポイントライトの位置

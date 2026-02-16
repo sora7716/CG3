@@ -62,10 +62,10 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 	bullet_->SetMaxBulletCount(kBulletCount);
 
 	//スポットライトを設定
-	object3dCommon_->AddSpotLight("headlight");
-	headlight_ = object3dCommon_->GetSpotLight("headlight");
+	headlight_ = object3dCommon_->GetSpotLightPtr()[0];
 	headlight_.cosAngle = 0.9f;
 	headlight_.cosFolloffStart = 1.2f;
+	headlight_.enableSpotLighting = true;
 
 	//ヒットボックス
 	gameObject_.hitBox = new WireframeObject3d();
@@ -316,7 +316,7 @@ void Player::HeadlightUpdate() {
 	headlight_.direction = worldForward.Normalize();
 	//headlight_.intensity = 30.0f;
 	//ライトのセッター
-	object3dCommon_->SetSpotLight("headlight", headlight_);
+	object3dCommon_->SetSpotLightList(0, headlight_);
 }
 
 //視点
