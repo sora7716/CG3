@@ -135,11 +135,23 @@ private://メンバ関数
 	void Attack();
 
 	/// <summary>
+	/// ダメージを受ける
+	/// </summary>
+	void Damage();
+
+	/// <summary>
+	/// 死亡
+	/// </summary>
+	void Dead();
+
+	/// <summary>
 	/// ヘッドライトの更新
 	/// </summary>
 	void HeadlightUpdate();
 private://定数
 	static inline const int32_t kMaxHpCount = 10;
+	//ダメージのクールタイムの最大値
+	static inline const float kMaxDamageCoolTime = 0.5f;
 private://メンバ変数
 	//入力
 	Input* input_ = nullptr;
@@ -176,5 +188,8 @@ private://メンバ変数
 	Transform2dData hpBarTransform_ = {};
 	Sprite* hpOutLine_ = nullptr;
 	Transform2dData hpOutLineTransform_ = {};
+
+	//ダメージのクールタイム
+	float damageCoolTime_ = 0.0f;
 };
 

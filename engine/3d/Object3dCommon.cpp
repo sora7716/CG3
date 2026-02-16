@@ -80,7 +80,7 @@ void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 	}
 
 	pointLightDataList_[0].position = {};
-	pointLightDataList_[0].intensity = 10.0f;
+	pointLightDataList_[0].intensity = 0.2f;
 	pointLightDataList_[0].distance = 9.5f;
 	pointLightDataList_[0].decay = 15.0f;
 	pointLightDataList_[0].isBlinnPhong = true;

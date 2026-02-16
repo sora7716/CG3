@@ -9,8 +9,10 @@ SceneManager::~SceneManager() {
 }
 
 //初期化
-void SceneManager::Initialize(Core* core) {
-	core_ = core;
+void SceneManager::Initialize(const SceneContext& sceneContext) {
+	sceneContext_ = sceneContext;
+	//シーンマネージャだけ自分から渡す
+	sceneContext_.sceneManager = this;
 }
 
 //更新
@@ -26,7 +28,7 @@ void SceneManager::Update() {
 		scene_ = nextScene_;
 		nextScene_ = nullptr;
 		//次のシーン
-		scene_->Initialize(core_);
+		scene_->Initialize(sceneContext_);
 	}
 	//更新
 	scene_->Update();

@@ -91,6 +91,14 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 
 //更新
 void Player::Update() {
+	//死亡判定
+	Dead();
+
+	//ダメージクールタイムを減らす
+	if (damageCoolTime_ > 0.0f) {
+		damageCoolTime_ -= Math::kDeltaTime;
+	}
+
 	//移動
 	Move();
 
@@ -171,21 +179,6 @@ void Player::Draw() {
 void Player::Debug() {
 #ifdef USE_IMGUI
 	ImGui::Text("hp:%d", hp_);
-	/*ImGui::DragFloat3("rotate", &gameObject_.transformData.rotate.x, 0.1f);
-	ImGui::ColorEdit4("rimColor", &rimLight_.color.x);
-	ImGui::DragFloat("rimPower", &rimLight_.power, 0.1f, 0.0f, 100.0f);
-	ImGui::DragFloat("rimSoftness", &rimLight_.softness, 0.1f, 0.0f, 100.0f);
-	ImGui::DragFloat("rimOutLinePower", &rimLight_.outLinePower, 0.1f, 0.0f, 100.0f);
-	ImGuiManager::GetInstance()->CheckBoxToInt("enableRimLighting", rimLight_.enableRimLighting);
-	ImGui::DragFloat("cosAngle", &headlight_.cosAngle, 0.1f);
-	ImGui::DragFloat("cosFolloffStart", &headlight_.cosFolloffStart, 0.1f*/
-	ImGui::DragFloat3("translate", &gameObject_.transformData.translate.x, 0.1f);
-	ImGui::DragFloat3("hitBox.scale", &hitBoxScale_.x, 0.1f);
-	ImGui::DragFloat2("hp.scale", &hpBarTransform_.scale.x, 0.1f);
-	ImGui::DragFloat2("hp.translate", &hpBarTransform_.translate.x, 0.1f);
-	ImGui::ColorEdit4("hp.color", &hpColor_.x);
-	ImGui::DragFloat2("hpOutLine.scale", &hpOutLineTransform_.scale.x, 0.1f);
-	ImGui::DragFloat2("hpOutLine.translate", &hpOutLineTransform_.translate.x, 0.1f);
 #endif // USE_IMGUI
 }
 
@@ -204,13 +197,8 @@ void Player::Finalize() {
 
 //衝突したら
 void Player::OnCollision() {
-	if (hp_ <= 0) {
-		gameObject_.isAlive = false;
-	} else {
-		hp_--;
-		//Hpバーに適応
-		hpBarTransform_.scale.x -= hpBarWidth_ / static_cast<float>(kMaxHpCount);
-	}
+	//攻撃を受ける
+	Damage();
 }
 
 //カメラのセッター
@@ -311,6 +299,24 @@ void Player::Attack() {
 	bullet_->SetSourceWorldMatrix(gameObject_.object3d->GetWorldTransform()->GetWorldMatrix());
 	bullet_->Fire(input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kRT));
 	bullet_->Update();
+}
+
+//ダメージを受ける
+void Player::Damage() {
+	//ダメージクールタイムが0だったら
+	if (damageCoolTime_ <= 0.0f) {
+		//Hpバーに適応
+		hpBarTransform_.scale.x -= hpBarWidth_ / static_cast<float>(kMaxHpCount);
+		//ダメージクールタイムを設定
+		damageCoolTime_ = kMaxDamageCoolTime;
+	}
+}
+
+//死亡
+void Player::Dead() {
+	if (hpBarTransform_.scale.x <= 0) {
+		gameObject_.isAlive = false;
+	}
 }
 
 //ヘッドライトの更新

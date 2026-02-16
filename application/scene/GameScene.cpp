@@ -5,15 +5,24 @@
 #include "engine/math/func/Collision.h"
 #include "engine/scene/SceneManager.h"
 #include "engine/camera/CameraManager.h"
+#include "engine/debug/WireframeObject3d.h"
 #include "engine/base/Core.h"
 #include "actor/Bullet.h"
 
+//コンストラクタ
+GameScene::GameScene() {
+}
+
+//デストラクタ
+GameScene::~GameScene() {
+}
+
 //初期化
-void GameScene::Initialize(Core* core) {
+void GameScene::Initialize(const SceneContext& sceneContext) {
 	//シーンのインタフェースの初期化
-	IScene::Initialize(core);
+	IScene::Initialize(sceneContext);
 	//カメラの設定
-	camera_ = core_->GetCameraManager()->FindCamera("gameCamera");
+	camera_ = sceneContext_.cameraManager->FindCamera("gameCamera");
 
 	//追従カメラ
 	gameCamera_ = std::make_unique<GameCamera>();
@@ -21,20 +30,20 @@ void GameScene::Initialize(Core* core) {
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();
-	player_->Initialize(core_->GetInput(), core_->GetSpriteCommon(), core_->GetObject3dCommon(), gameCamera_->GetCamera(), "player");
+	player_->Initialize(sceneContext_.input, sceneContext_.spriteCommon, sceneContext_.object3dCommon, gameCamera_->GetCamera(), "player");
 	player_->SetPosition({ 25.0f,0.0f,25.0f });
 
 	//フィールド
 	field_ = std::make_unique<Field>();
-	field_->Initialize(core_->GetObject3dCommon(), gameCamera_->GetCamera());
+	field_->Initialize(sceneContext_.object3dCommon, gameCamera_->GetCamera());
 
 	//敵の実装
 	enemyManager_ = EnemyManager::GetInstance();
-	enemyManager_->Initialize(core_->GetObject3dCommon(), camera_);
+	enemyManager_->Initialize(sceneContext_.object3dCommon, camera_);
 
 	//スコア
 	score_ = std::make_unique<Score>();
-	score_->Initialize(core_->GetObject2dCommon());
+	score_->Initialize(sceneContext_.object2dCommon);
 }
 
 //更新
@@ -54,15 +63,15 @@ void GameScene::Update() {
 	//プレイヤー
 	player_->Update();
 	Vector3 playerPos = player_->GetTransformData().translate;
-	core_->GetObject3dCommon()->SetPointLightPos({ playerPos.x,playerPos.y + 1.3f,playerPos.z });
+	sceneContext_.object3dCommon->SetPointLightPos({ playerPos.x,playerPos.y + 1.3f,playerPos.z });
 
 	//敵
 	enemyManager_->Update(player_->GetWorldPos());
 
 	//フィールド
-	field_->SetDirectionalLight(core_->GetObject3dCommon()->GetDirectionalLight());
-	field_->SetPointLight(core_->GetObject3dCommon()->GetPointLight());
-	field_->SetSpotLight(core_->GetObject3dCommon()->GetSpotLightPtr());
+	field_->SetDirectionalLight(sceneContext_.object3dCommon->GetDirectionalLight());
+	field_->SetPointLight(sceneContext_.object3dCommon->GetPointLight());
+	field_->SetSpotLight(sceneContext_.object3dCommon->GetSpotLightPtr());
 	field_->Update();
 
 	//スコア
@@ -100,43 +109,38 @@ void GameScene::Update() {
 
 	//プレイヤーが死んだら
 	if (!player_->IsAlive()) {
-		core_->GetSceneManager()->ChangeScene("Result");
+		sceneContext_.sceneManager->ChangeScene("Result");
 	}
 
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
-	core_->GetImGuiManager()->Begin();
+	sceneContext_.imguiManager->Begin();
 	//デバッグカメラ
 	ImGui::Begin("debugCamera");
 	debugCamera_->Debug();
 	ImGui::End();
 
 	//グローバル変数の更新
-	GlobalVariables::GetInstance()->Update();
+	//GlobalVariables::GetInstance()->Update();
 
 	//プレイヤー
 	ImGui::Begin("player");
 	player_->Debug();
 	ImGui::End();
 
-	//レイルカメラ
-	ImGui::Begin("gameCamera");
-	gameCamera_->Debug();
-	ImGui::End();
-
 	//敵
-	ImGui::Begin("enemy");
-	enemyManager_->Debug();
-	ImGui::End();
+	//ImGui::Begin("enemy");
+	//enemyManager_->Debug();
+	//ImGui::End();
 
 	//スコア
 	//ImGui::Text("score:%d", Score::score);
 
 	//Object3dCommon
-	core_->GetObject3dCommon()->Debug();
+	//sceneContext_.object3dCommon->Debug();
 
 	//ImGuiの受付終了
-	core_->GetImGuiManager()->End();
+	sceneContext_.imguiManager->End();
 #endif // USE_IMGUI
 
 #ifdef _DEBUG

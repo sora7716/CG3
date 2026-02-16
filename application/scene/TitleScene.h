@@ -1,5 +1,7 @@
 #pragma once
 #include "engine/scene/IScene.h"
+#include "engine/math/Vector2.h"
+class Text;
 
 /// <summary>
 /// タイトルシーン
@@ -9,18 +11,18 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	TitleScene() = default;
+	TitleScene();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~TitleScene()override = default;
+	~TitleScene()override;
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="core">ゲームエンジンの核</param>
-	void Initialize(Core*core)override;
+	/// <param name="sceneContext">シーンで必要なもの</param>
+	void Initialize(const SceneContext& sceneContext)override;
 
 	/// <summary>
 	/// 更新
@@ -40,4 +42,13 @@ private://メンバ変数
 	Camera* camera_ = nullptr;
 	//Xboxの番号
 	DWORD xBoxPadNumber_ = 0;
+	//ゲームタイトル
+	std::unique_ptr<Text>titleName_ = nullptr;
+	Vector2 titleNamePos_ = {};
+	float titleNameSize_ = 128.0f;
+
+	//スタートの開始ボタン
+	std::unique_ptr<Text>pressStart_=nullptr;
+	Vector2 pressStartPos_ = {};
+	float pressStartSize_ = 64.0f;
 };

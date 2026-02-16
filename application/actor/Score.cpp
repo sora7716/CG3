@@ -77,4 +77,14 @@ void Score::SetTextSize(float size) {
 	textStyle_.size = size;
 }
 
+//スコアのセッター
+void Score::SetScore(int32_t score) {
+	this->score = score;
+}
+
+//スコアのゲッター
+int32_t Score::GetScore() const {
+	return score;
+}
+
 

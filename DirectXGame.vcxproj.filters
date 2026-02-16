@@ -276,6 +276,9 @@
     <ClCompile Include="application\actor\Score.cpp">
       <Filter>application\actor</Filter>
     </ClCompile>
+    <ClCompile Include="engine\base\Context.cpp">
+      <Filter>engine\base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\math\Matrix4x4.h">
@@ -508,6 +511,9 @@
     </ClInclude>
     <ClInclude Include="engine\2d\TextData.h">
       <Filter>engine\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\base\Context.h">
+      <Filter>engine\base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

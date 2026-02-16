@@ -2,13 +2,40 @@
 #include "engine/input/Input.h"
 #include "engine/camera/CameraManager.h"
 #include "engine/scene/SceneManager.h"
-#include "engine/base/Core.h"
+#include "engine/debug/ImGuiManager.h"
+#include "application/actor/Score.h"
+#include <sstream>
+#include <iomanip>
+#include "engine/2d/Text.h"
+
+//コンストラクタ
+ResultScene::ResultScene() {
+}
+
+//デストラクタ
+ResultScene::~ResultScene() {
+}
 
 //初期化
-void ResultScene::Initialize(Core* core) {
+void ResultScene::Initialize(const SceneContext& sceneContext) {
 	//シーンのインタフェースの初期化
-	IScene::Initialize(core);
-	camera_ = core_->GetCameraManager()->FindCamera("ResultCamera");
+	IScene::Initialize(sceneContext);
+	camera_ = sceneContext_.cameraManager->FindCamera("ResultCamera");
+
+	//スコア
+	drawScore_ = std::make_unique<Text>();
+	drawScore_->Initialize(sceneContext_.object2dCommon, "drawScore");
+	//スコアの文字列を作成
+	std::ostringstream scoreText;
+	scoreText << "SCORE : " << std::setw(Score::kDigitCount) << std::setfill('0') << score_->GetScore();
+	//スコアをリセット
+	score_->SetScore(0);
+	drawScore_->SetText(scoreText.str());
+
+	//PressReturn
+	pressReturn_ = std::make_unique<Text>();
+	pressReturn_->Initialize(sceneContext_.object2dCommon, "pressReturn");
+	pressReturn_->SetText("Press : B");
 }
 
 //更新ww
@@ -16,28 +43,49 @@ void ResultScene::Update() {
 	//シーンのインタフェースの初期化
 	IScene::Update();
 
-	if (core_->GetInput()->TriggerKey(DIK_SPACE)) {
-		core_->GetSceneManager()->ChangeScene("Title");
-	} else if (core_->GetInput()->TriggerXboxPad(xBoxPadNumber_, XboxInput::kB)) {
-		core_->GetSceneManager()->ChangeScene("Title");
+	if (sceneContext_.input->TriggerKey(DIK_SPACE)) {
+		sceneContext_.sceneManager->ChangeScene("Title");
+	} else if (sceneContext_.input->TriggerXboxPad(xBoxPadNumber_, XboxInput::kB)) {
+		sceneContext_.sceneManager->ChangeScene("Title");
 	}
+
+	drawScore_->SetTranslate(scorePos_);
+	drawScore_->SetScale(scoreScele_);
+	drawScore_->SetTextSize(scoreTextSize_);
+	drawScore_->Update();
+
+	pressReturn_->SetTranslate(pressReturnPos_);
+	pressReturn_->SetScale(scoreScele_);
+	pressReturn_->SetTextSize(pressReturnSize_);
+	pressReturn_->Update();
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
-	core_->GetImGuiManager()->Begin();
+	sceneContext_.imguiManager->Begin();
 	//デバッグカメラ
 	ImGui::Begin("debugCamera");
 	debugCamera_->Debug();
+	ImGui::SeparatorText("socre");
+	ImGui::PushID(0);
+	ImGui::DragFloat2("scale", &scoreScele_.x, 0.1f);
+	ImGui::DragFloat2("position", &scorePos_.x, 0.1f);
+	ImGui::DragFloat("textSize", &scoreTextSize_, 0.1f);
+	ImGui::PopID();
+	ImGui::SeparatorText("pressReturn");
+	ImGui::PushID(1);
+	ImGui::DragFloat2("position", &pressReturnPos_.x, 0.1f);
+	ImGui::DragFloat("textSize", &pressReturnSize_, 0.1f);
+	ImGui::PopID();
 	ImGui::End();
 	ImGui::Text("Result");
 	//ImGuiの受付終了
-	core_->GetImGuiManager()->End();
+	sceneContext_.imguiManager->End();
 #endif // USE_IMGUI
 
 #ifdef _DEBUG
 	if (debugCamera_->IsDebug()) {
 		camera_ = debugCamera_->GetCamera();
 	} else {
-		camera_ = core_->GetCameraManager()->FindCamera("ResultCamera");
+		camera_ = sceneContext_.cameraManager->FindCamera("ResultCamera");
 	}
 #endif // _DEBUG
 
@@ -46,7 +94,8 @@ void ResultScene::Update() {
 
 //描画
 void ResultScene::Draw() {
-
+	drawScore_->Draw();
+	pressReturn_->Draw();
 }
 
 //終了

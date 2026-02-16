@@ -42,10 +42,6 @@ void Core::Initialize() {
 	particleCommon_->Initialize(directXBase_.get(), srvManager_.get(), textureManager_.get());
 	//シーンファクトリ
 	sceneFactory_ = std::make_unique<SceneFactory>(AbstractSceneFactory::ConstructorKey{});
-	//シーンマネージャー
-	sceneManager_ = std::make_unique<SceneManager>(SceneManager::ConstructorKey{});
-	sceneManager_->Initialize(this);
-	sceneManager_->SetSceneFactory(sceneFactory_.get());
 	//オーディオマネージャー
 	audioManager_ = std::make_unique<AudioManager>(AudioManager::ConstructorKey{});
 	//パーティクルマネージャー
@@ -53,6 +49,18 @@ void Core::Initialize() {
 	//ゲームオブジェクトのリスト
 	gameObjectList_ = std::make_unique<GameObjectList>(GameObjectList::ConstructorKey{});
 	gameObjectList_->Initialize(this);
+	//シーンで必要なものをまとめる
+	sceneContex_.input = input_.get();
+	sceneContex_.cameraManager = cameraManager_.get();
+	sceneContex_.audioManager = audioManager_.get();
+	sceneContex_.imguiManager = imguiManager_.get();
+	sceneContex_.object2dCommon = object2dCommon_.get();
+	//シーンでの必要なものを取得
+	sceneContex_ = this;
+	//シーンマネージャー
+	sceneManager_ = std::make_unique<SceneManager>(SceneManager::ConstructorKey{});
+	sceneManager_->Initialize(sceneContex_);
+	sceneManager_->SetSceneFactory(sceneFactory_.get());
 }
 
 //WinApiのゲッター

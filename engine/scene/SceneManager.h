@@ -2,9 +2,6 @@
 #include "IScene.h"
 #include "AbstractSceneFactory.h"
 
-//前方宣言
-class Core;
-
 /// <summary>
 /// シーン管理
 /// </summary>
@@ -14,12 +11,12 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~SceneManager();
-	
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="core">ゲームエンジンの核</param>
-	void Initialize(Core*core);
+	/// <param name="sceneContext">シーンで必要なもの</param>
+	void Initialize(const SceneContext& sceneContext);
 
 	/// <summary>
 	/// 更新
@@ -65,8 +62,8 @@ private://静的メンバ変数
 	//Finalizeをしたかどうか
 	static inline bool isFinalize = false;
 private://メンバ変数
-	//ゲームエンジンの核
-	Core* core_ = nullptr;
+	//シーンで必要なもの
+	SceneContext sceneContext_ = {};
 	//シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
 	//シーン

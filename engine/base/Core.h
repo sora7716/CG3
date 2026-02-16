@@ -17,6 +17,7 @@
 #include "engine/particle/ParticleManager.h"
 #include "application/actor/GameObjectList.h"
 #include "engine/scene/AbstractSceneFactory.h"
+#include "engine/base/Context.h"
 #include <memory>
 
 /// <summary>
@@ -183,5 +184,7 @@ private://メンバ変数
 	std::unique_ptr<GameObjectList>gameObjectList_ = nullptr;
 	//シーンファクトリ
 	std::unique_ptr< AbstractSceneFactory> sceneFactory_ = nullptr;
+	//シーンで必要なもの
+	SceneContext sceneContex_ = {};
 };
 
