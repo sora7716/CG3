@@ -75,7 +75,19 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="size">テキストサイズ</param>
 	void SetTextSize(float size);
-private://定数
+
+	/// <summary>
+	/// スコアのセッター
+	/// </summary>
+	/// <param name="score">スコア</param>
+	void SetScore(int32_t score);
+
+	/// <summary>
+	/// スコアのゲッター
+	/// </summary>
+	/// <returns>スコア</returns>
+	int32_t GetScore()const;
+public://定数
 	//桁数
 	static inline const int32_t kDigitCount = 6;
 private://静的メンバ変数
