@@ -81,7 +81,7 @@ public://メンバ関数
 	/// スポットライトのセッター
 	/// </summary>
 	/// <param name="spot">スポットライト</param>
-	void SetSpotLight(const SpotLightData* spot);
+	void SetSpotLight(const SpotLight* spot);
 private://メンバ変数
 	//マップチップ
 	MapChip* mapChip_ = nullptr;

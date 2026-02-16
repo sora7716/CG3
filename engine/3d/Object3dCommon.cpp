@@ -80,7 +80,7 @@ void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 	}
 
 	pointLightDataList_[0].position = {};
-	pointLightDataList_[0].intensity = 0.2f;
+	pointLightDataList_[0].intensity = 1.5f;
 	pointLightDataList_[0].distance = 9.5f;
 	pointLightDataList_[0].decay = 15.0f;
 	pointLightDataList_[0].isBlinnPhong = true;
@@ -256,7 +256,7 @@ PointLight* Object3dCommon::GetPointLight() {
 }
 
 //スポットライトのゲッター
-SpotLightData* Object3dCommon::GetSpotLightPtr() {
+SpotLight* Object3dCommon::GetSpotLightPtr() {
 	return spotLightPtr_;
 }
 
@@ -268,7 +268,7 @@ void Object3dCommon::AddSpotLight(const std::string& name) {
 		return;
 	}
 	//スポットライトを生成
-	SpotLightData spotLight = {};
+	SpotLight spotLight = {};
 	spotLight.color = { 1.0f,1.0f,1.0f,1.0f };
 	spotLight.position = { 2.0f,1.25f,0.0f };
 	spotLight.distance = 7.0f;
@@ -285,12 +285,12 @@ void Object3dCommon::AddSpotLight(const std::string& name) {
 }
 
 //スポットライトのセッター
-void Object3dCommon::SetSpotLight(const std::string& name, const SpotLightData& spotLight) {
+void Object3dCommon::SetSpotLight(const std::string& name, const SpotLight& spotLight) {
 	spotLightDataList_.at(name) = spotLight;
 }
 
 //スポットライトのゲッター
-SpotLightData& Object3dCommon::GetSpotLight(const std::string& name) {
+SpotLight& Object3dCommon::GetSpotLight(const std::string& name) {
 	// TODO: return ステートメントをここに挿入します
 	return spotLightDataList_.at(name);
 }
@@ -353,7 +353,7 @@ void Object3dCommon::CreateStructuredBufferForPoint() {
 //スポットライトの生成
 void Object3dCommon::CreateSpotLight() {
 	// 配列サイズで確保
-	spotLightResource_ = directXBase_->CreateBufferResource(sizeof(SpotLightData) * kMaxLightCount);
+	spotLightResource_ = directXBase_->CreateBufferResource(sizeof(SpotLight) * kMaxLightCount);
 
 	//光源データの書きこみ
 	spotLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&spotLightPtr_));
@@ -381,7 +381,7 @@ void Object3dCommon::CreateStructuredBufferForSpot() {
 		srvIndexSpot_,
 		spotLightResource_.Get(),
 		kMaxLightCount,
-		sizeof(SpotLightData)
+		sizeof(SpotLight)
 	);
 }
 
@@ -399,7 +399,7 @@ void Object3dCommon::AddItemForPointLight(const char* groupName, const PointLigh
 }
 
 //グローバル変数に追加(SpotLight)
-void Object3dCommon::AddItemForSpotLight(const char* groupName, const SpotLightData& spotLight) {
+void Object3dCommon::AddItemForSpotLight(const char* groupName, const SpotLight& spotLight) {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	globalVariables->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "color", spotLight.color);
@@ -427,7 +427,7 @@ void Object3dCommon::ApplyGlobalVariablesForPointLight(const char* groupName, Po
 }
 
 //グローバル変数を適用(SpotLight)
-void Object3dCommon::ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLightData& spotLight) {
+void Object3dCommon::ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLight& spotLight) {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	spotLight.color = globalVariables->GetValue<Vector4>(groupName, "color");
 	spotLight.cosAngle = globalVariables->GetValue<float>(groupName, "cosAngle");

@@ -228,7 +228,7 @@ PointLight* WireframeObject3dCommon::GetPointLight() {
 }
 
 //スポットライトのゲッター
-SpotLightData* WireframeObject3dCommon::GetSpotLightPtr() {
+SpotLight* WireframeObject3dCommon::GetSpotLightPtr() {
 	return spotLightPtr_;
 }
 
@@ -240,7 +240,7 @@ void WireframeObject3dCommon::AddSpotLight(const std::string& name) {
 		return;
 	}
 	//スポットライトを生成
-	SpotLightData spotLight = {};
+	SpotLight spotLight = {};
 	spotLight.color = { 1.0f,1.0f,1.0f,1.0f };
 	spotLight.position = { 2.0f,1.25f,0.0f };
 	spotLight.distance = 7.0f;
@@ -257,12 +257,12 @@ void WireframeObject3dCommon::AddSpotLight(const std::string& name) {
 }
 
 //スポットライトのセッター
-void WireframeObject3dCommon::SetSpotLight(const std::string& name, const SpotLightData& spotLight) {
+void WireframeObject3dCommon::SetSpotLight(const std::string& name, const SpotLight& spotLight) {
 	spotLightDataList_.at(name) = spotLight;
 }
 
 //スポットライトのゲッター
-SpotLightData& WireframeObject3dCommon::GetSpotLight(const std::string& name) {
+SpotLight& WireframeObject3dCommon::GetSpotLight(const std::string& name) {
 	// TODO: return ステートメントをここに挿入します
 	return spotLightDataList_.at(name);
 }
@@ -320,7 +320,7 @@ void WireframeObject3dCommon::CreateStructuredBufferForPoint() {
 //スポットライトの生成
 void WireframeObject3dCommon::CreateSpotLight() {
 	// 配列サイズで確保
-	spotLightResource_ = directXBase_->CreateBufferResource(sizeof(SpotLightData) * kMaxLightCount);
+	spotLightResource_ = directXBase_->CreateBufferResource(sizeof(SpotLight) * kMaxLightCount);
 
 	//光源データの書きこみ
 	spotLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&spotLightPtr_));
@@ -348,7 +348,7 @@ void WireframeObject3dCommon::CreateStructuredBufferForSpot() {
 		srvIndexSpot_,
 		spotLightResource_.Get(),
 		kMaxLightCount,
-		sizeof(SpotLightData)
+		sizeof(SpotLight)
 	);
 }
 
@@ -366,7 +366,7 @@ void WireframeObject3dCommon::AddItemForPointLight(const char* groupName, const 
 }
 
 //グローバル変数に追加(SpotLight)
-void WireframeObject3dCommon::AddItemForSpotLight(const char* groupName, const SpotLightData& spotLight) {
+void WireframeObject3dCommon::AddItemForSpotLight(const char* groupName, const SpotLight& spotLight) {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	globalVariables->CreateGroup(groupName);
 	globalVariables->AddItem(groupName, "color", spotLight.color);
@@ -394,7 +394,7 @@ void WireframeObject3dCommon::ApplyGlobalVariablesForPointLight(const char* grou
 }
 
 //グローバル変数を適用(SpotLight)
-void WireframeObject3dCommon::ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLightData& spotLight) {
+void WireframeObject3dCommon::ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLight& spotLight) {
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	spotLight.color = globalVariables->GetValue<Vector4>(groupName, "color");
 	spotLight.cosAngle = globalVariables->GetValue<float>(groupName, "cosAngle");

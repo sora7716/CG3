@@ -43,7 +43,7 @@ struct PointLight {
 };
 
 //スポットライト
-struct SpotLightData {
+struct SpotLight {
 	Vector4 color;//ライト色
 	Vector3 position;//ライトの位置
 	float intensity;//輝度
@@ -51,9 +51,10 @@ struct SpotLightData {
 	float distance;//ライトの届く最大距離
 	float decay;//減衰率
 	float cosAngle;//スポットライトの余弦
-	float cosFolloffStart;
+	float cosFolloffStart;//
 	int32_t isBlinnPhong;//BlinnPhongReflectionを行うかどうか
 	int32_t enableSpotLighting;//点光源を有効にするか
+	float padding[2];
 };
 
 //マテリアルデータ

@@ -148,6 +148,11 @@ private://メンバ関数
 	/// ヘッドライトの更新
 	/// </summary>
 	void HeadlightUpdate();
+
+	/// <summary>
+	/// 視点移動
+	/// </summary>
+	void LookDirection();
 private://定数
 	static inline const int32_t kMaxHpCount = 10;
 	//ダメージのクールタイムの最大値
@@ -169,7 +174,7 @@ private://メンバ変数
 	Bullet* bullet_ = nullptr;
 
 	//ヘッドライト
-	SpotLightData headlight_ = {};
+	SpotLight headlight_ = {};
 
 	//リムライト
 	RimLight rimLight_ = {};

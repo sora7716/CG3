@@ -63,7 +63,7 @@ void GameScene::Update() {
 	//プレイヤー
 	player_->Update();
 	Vector3 playerPos = player_->GetTransformData().translate;
-	sceneContext_.object3dCommon->SetPointLightPos({ playerPos.x,playerPos.y + 1.3f,playerPos.z });
+	sceneContext_.object3dCommon->SetPointLightPos({ playerPos.x,playerPos.y + 2.0f,playerPos.z });
 
 	//敵
 	enemyManager_->Update(player_->GetWorldPos());
@@ -109,7 +109,7 @@ void GameScene::Update() {
 
 	//プレイヤーが死んだら
 	if (!player_->IsAlive()) {
-		sceneContext_.sceneManager->ChangeScene("Result");
+		//sceneContext_.sceneManager->ChangeScene("Result");
 	}
 
 #ifdef USE_IMGUI

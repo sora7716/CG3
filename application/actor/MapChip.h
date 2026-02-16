@@ -106,7 +106,7 @@ public://メンバ関数
 	/// スポットライトのセッター
 	/// </summary>
 	/// <param name="spotLight">スポットライト</param>
-	void SetSpotLight(const SpotLightData* spotLight);
+	void SetSpotLight(const SpotLight* spotLight);
 
 	/// <summary>
 	/// テクスチャのセッター
@@ -227,7 +227,7 @@ private://メンバ変数
 	TransformationMatrix* wvpPtr_ = nullptr;//TransformationMatrix
 	DirectionalLight* directionalLightPtr_ = nullptr;//平行光源
 	PointLight* pointLightPtr_ = nullptr;//点光源
-	SpotLightData* spotLightPtr_ = nullptr;//スポットライト
+	SpotLight* spotLightPtr_ = nullptr;//スポットライト
 	CameraForGPU* cameraForGPU_ = nullptr;//カメラ
 
 	//SRVインデックス
@@ -253,7 +253,7 @@ private://メンバ変数
 	//点光源
 	PointLight pointLightDataList_[kMaxLightCount] = {};
 	//スポットライト
-	SpotLightData spotLightDataList_[kMaxLightCount] = {};
+	SpotLight spotLightDataList_[kMaxLightCount] = {};
 
 	//ワールド座標
 	TransformData transforms_[kMaxBlockCount] = {};

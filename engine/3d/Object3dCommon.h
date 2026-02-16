@@ -157,7 +157,7 @@ public://メンバ関数
 	/// スポットライトのゲッター
 	/// </summary>
 	/// <returns>スポットライト</returns>
-	SpotLightData* GetSpotLightPtr();
+	SpotLight* GetSpotLightPtr();
 
 	/// <summary>
 	/// スポットライトを追加
@@ -169,14 +169,14 @@ public://メンバ関数
 	/// スポットライトのセッター
 	/// </summary>
 	/// <param name="name">スポットライトの名前</param>
-	void SetSpotLight(const std::string& name, const SpotLightData& spotLight);
+	void SetSpotLight(const std::string& name, const SpotLight& spotLight);
 
 	/// <summary>
 	/// スポットライトのゲッター
 	/// </summary>
 	/// <param name="name">スポットライトの名前</param>
 	/// <returns>スポットライト</returns>
-	SpotLightData& GetSpotLight(const std::string& name);
+	SpotLight& GetSpotLight(const std::string& name);
 
 	/// <summary>
 	/// ポイントライトの位置のセッター
@@ -238,7 +238,7 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="groupName">グループ名</param>
 	/// <param name="spotLight">スポットライト</param>
-	void AddItemForSpotLight(const char* groupName, const SpotLightData& spotLight);
+	void AddItemForSpotLight(const char* groupName, const SpotLight& spotLight);
 
 	/// <summary>
 	/// グローバル変数を適用(PointLight)
@@ -252,7 +252,7 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="groupName">グループ名</param>
 	/// <param name="spotLight">スポットライト</param>
-	void ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLightData& spotLight);
+	void ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLight& spotLight);
 private://静的メンバ変数
 	//インスタンス
 	static inline Object3dCommon* instance = nullptr;
@@ -292,7 +292,7 @@ private://メンバ変数
 	//バッファリソース内のデータを指すポインタ
 	DirectionalLight* directionalLightPtr_ = nullptr;//平行光源
 	PointLight* pointLightPtr_ = nullptr;//点光源
-	SpotLightData* spotLightPtr_ = nullptr;//スポットライト
+	SpotLight* spotLightPtr_ = nullptr;//スポットライト
 	CameraForGPU* cameraForGPU_ = nullptr;//カメラ
 
 	//平行光源
@@ -300,7 +300,7 @@ private://メンバ変数
 	//点光源
 	PointLight pointLightDataList_[kMaxLightCount] = {};
 	//スポットライト
-	std::map<std::string, SpotLightData>spotLightDataList_ = {};
+	std::map<std::string, SpotLight>spotLightDataList_ = {};
 
 	//ブレンド
 	Blend* blend_ = nullptr;

@@ -118,32 +118,8 @@ void Player::Update() {
 	//ヘッドライトの更新
 	HeadlightUpdate();
 
-	// XboxPad
-	if (input_->IsXboxPadConnected(xBoxPadNumber_)) {
-
-		float stickX = input_->GetXboxPadRighttStick(xBoxPadNumber_).x; // -1..1
-
-		// デッドゾーン（スティックの微妙なブレ対策）
-		const float deadZone = 0.15f;
-		if (std::fabs(stickX) < deadZone) {
-			stickX = 0.0f;
-		} else {
-			// デッドゾーン分を詰めて 0..1 に戻す（好み）
-			stickX = (stickX - copysignf(deadZone, stickX)) / (1.0f - deadZone);
-		}
-
-		// 回転速度（ラジアン/秒） 例：180度/秒
-		const float yawSpeed = Math::kPi; // PI rad/s = 180deg/s
-
-		gameObject_.transformData.rotate.y += stickX * yawSpeed * Math::kDeltaTime;
-	}
-
-	// 必要なら 0..2PI に丸める（巨大化防止）
-	const float twoPi = Math::kPi * 2.0f;
-	if (gameObject_.transformData.rotate.y > twoPi) gameObject_.transformData.rotate.y -= twoPi;
-	if (gameObject_.transformData.rotate.y < 0.0f)  gameObject_.transformData.rotate.y += twoPi;
-
-	gameObject_.object3d->SetRotate(gameObject_.transformData.rotate);
+	//視点
+	LookDirection();
 
 	//3Dオブジェクトの更新
 	gameObject_.object3d->Update();
@@ -178,7 +154,10 @@ void Player::Draw() {
 //デバッグ用
 void Player::Debug() {
 #ifdef USE_IMGUI
-	ImGui::Text("hp:%d", hp_);
+	ImGui::DragFloat("intensity", &headlight_.intensity, 0.1f);
+	ImGui::DragFloat("cosFolloffStart", &headlight_.cosFolloffStart, 0.1f);
+	ImGui::DragFloat("cosAngle", &headlight_.cosAngle, 0.1f);
+	ImGui::DragFloat("decay", &headlight_.decay, 0.1f);
 #endif // USE_IMGUI
 }
 
@@ -335,7 +314,37 @@ void Player::HeadlightUpdate() {
 
 	//正規化してライトの方向に設定
 	headlight_.direction = worldForward.Normalize();
-	headlight_.intensity = 30.0f;
+	//headlight_.intensity = 30.0f;
 	//ライトのセッター
 	object3dCommon_->SetSpotLight("headlight", headlight_);
+}
+
+//視点
+void Player::LookDirection() {
+	// XboxPad
+	if (input_->IsXboxPadConnected(xBoxPadNumber_)) {
+
+		float stickX = input_->GetXboxPadRighttStick(xBoxPadNumber_).x; // -1..1
+
+		// デッドゾーン（スティックの微妙なブレ対策）
+		const float deadZone = 0.15f;
+		if (std::fabs(stickX) < deadZone) {
+			stickX = 0.0f;
+		} else {
+			// デッドゾーン分を詰めて 0..1 に戻す（好み）
+			stickX = (stickX - copysignf(deadZone, stickX)) / (1.0f - deadZone);
+		}
+
+		// 回転速度（ラジアン/秒） 例：180度/秒
+		const float yawSpeed = Math::kPi; // PI rad/s = 180deg/s
+
+		gameObject_.transformData.rotate.y += stickX * yawSpeed * Math::kDeltaTime;
+	}
+
+	// 必要なら 0..2PI に丸める（巨大化防止）
+	const float twoPi = Math::kPi * 2.0f;
+	if (gameObject_.transformData.rotate.y > twoPi) gameObject_.transformData.rotate.y -= twoPi;
+	if (gameObject_.transformData.rotate.y < 0.0f)  gameObject_.transformData.rotate.y += twoPi;
+
+	gameObject_.object3d->SetRotate(gameObject_.transformData.rotate);
 }

@@ -41,6 +41,7 @@ struct SpotLight {
     float32_t cosFalloffStart;
     int32_t isBlinnPhong; //BlinnPhongReflectionを行うかどうか
     int32_t enablSpotLighting; //点光源を有効にするか
+    float32_t2 padding;
 };
 
 //カメラ
