@@ -27,7 +27,7 @@ Matrix4x4 Matrix4x4::operator*(const Matrix4x4& mat) const {
 	Matrix4x4 result;
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			result.m[i][j] = 0;
+			result.m[i][j] = 0.0f;
 			for (int k = 0; k < 4; k++) {
 				result.m[i][j] += m[i][k] * mat.m[k][j];
 			}
@@ -59,7 +59,7 @@ Matrix4x4& Matrix4x4::operator-=(const Matrix4x4& mat) {
 }
 
 //逆行列
-Matrix4x4 Matrix4x4::Inverse() const{
+Matrix4x4 Matrix4x4::Inverse() const {
 	Matrix4x4 result{};
 	float determinant = m[0][0] * (m[1][1] * m[2][2] * m[3][3] +
 		m[2][1] * m[3][2] * m[1][3] +
@@ -224,7 +224,7 @@ Matrix4x4 Matrix4x4::Inverse() const{
 }
 
 //転置行列
-Matrix4x4 Matrix4x4::Transpose(){
+Matrix4x4 Matrix4x4::Transpose() {
 	Matrix4x4 result = {};
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
@@ -241,7 +241,7 @@ Matrix4x4 Matrix4x4::InverseTranspose() {
 }
 
 //単位行列
-Matrix4x4 Matrix4x4::Identity4x4(){
+Matrix4x4 Matrix4x4::Identity4x4() {
 	Matrix4x4 result = {};
 	for (int i = 0; i < 4; i++) {
 		result.m[i][i] = 1;

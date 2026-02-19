@@ -66,7 +66,7 @@ void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 	directionalLightData_.intensity = 1.0f;
 	directionalLightData_.isLambert = false;
 	directionalLightData_.isBlinnPhong = true;
-	directionalLightData_.enableDirectionalLighting = false;
+	directionalLightData_.enableDirectionalLighting = true;
 
 	//PointLightの初期化
 	for (int i = 0; i < kMaxLightCount; i++) {

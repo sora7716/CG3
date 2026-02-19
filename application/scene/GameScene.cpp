@@ -66,7 +66,7 @@ void GameScene::Update() {
 	sceneContext_.object3dCommon->SetPointLightPos({ playerPos.x,playerPos.y + 2.0f,playerPos.z });
 
 	//敵
-	enemyManager_->Update(player_->GetWorldPos());
+	//enemyManager_->Update(player_->GetWorldPos());
 
 	//フィールド
 	field_->SetDirectionalLight(sceneContext_.object3dCommon->GetDirectionalLight());
@@ -163,7 +163,7 @@ void GameScene::Draw() {
 	field_->Draw();
 
 	//敵
-	enemyManager_->Draw();
+	//enemyManager_->Draw();
 
 	//スコア
 	score_->Draw();
