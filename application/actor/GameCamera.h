@@ -23,8 +23,7 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	/// <param name="offset">オフセット</param>
-	void Initialize(Camera* camera, const Vector3& offset);
+	void Initialize(Camera* camera);
 
 	/// <summary>
 	/// 更新

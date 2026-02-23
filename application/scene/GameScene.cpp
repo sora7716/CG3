@@ -26,7 +26,7 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 
 	//追従カメラ
 	gameCamera_ = std::make_unique<GameCamera>();
-	gameCamera_->Initialize(camera_, { 0.0f,20.0f,-12.0f });
+	gameCamera_->Initialize(camera_);
 
 	//プレイヤー
 	player_ = std::make_unique<Player>();
@@ -126,6 +126,11 @@ void GameScene::Update() {
 	//プレイヤー
 	ImGui::Begin("player");
 	player_->Debug();
+	ImGui::End();
+
+	//ゲームカメラ
+	ImGui::Begin("gameCamera");
+	gameCamera_->Debug();
 	ImGui::End();
 
 	//敵
