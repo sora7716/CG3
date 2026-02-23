@@ -9,6 +9,7 @@ class WireframeObject3d;
 struct GameObject {
 	TransformData transformData;
 	Vector3 velocity;
+	Vector3 acceleration;
 	Vector3 moveDirection;
 	Material material;
 	Object3d* object3d;

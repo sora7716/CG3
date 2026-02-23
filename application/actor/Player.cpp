@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "Player.h"
 #include "engine/3d/Object3d.h"
 #include "engine/3d/Object3dCommon.h"
@@ -33,6 +34,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 		.translate = {}
 	};
 	gameObject_.velocity = { 5.0f,0.0f,5.0f };
+	gameObject_.acceleration = { 0.0f,-Math::kGravity,0.0f };
 
 	//3Dオブジェクトの生成と初期化
 	gameObject_.object3d = new Object3d();
@@ -154,10 +156,7 @@ void Player::Draw() {
 //デバッグ用
 void Player::Debug() {
 #ifdef USE_IMGUI
-	ImGui::DragFloat("intensity", &headlight_.intensity, 0.1f);
-	ImGui::DragFloat("cosFolloffStart", &headlight_.cosFolloffStart, 0.1f);
-	ImGui::DragFloat("cosAngle", &headlight_.cosAngle, 0.1f);
-	ImGui::DragFloat("decay", &headlight_.decay, 0.1f);
+	ImGui::DragFloat3("trasnalate", &gameObject_.transformData.translate.x, 0.1f);
 #endif // USE_IMGUI
 }
 
@@ -241,11 +240,10 @@ void Player::Move() {
 		gameObject_.moveDirection.x = 0.0f;
 	}
 
-	//移動
-	//gameObject_.transformData.translate += (gameObject_.velocity * gameObject_.moveDirection.Normalize()) * Math::kDeltaTime;
-
-	////トランスフォームのセット
-	//gameObject_.object3d->SetTransform(gameObject_.transformData);
+	//ジャンプ
+	gameObject_.velocity.y += gameObject_.acceleration.y * Math::kDeltaTime;
+	gameObject_.transformData.translate.y += gameObject_.velocity.y * Math::kGravity;
+	gameObject_.transformData.translate.y = std::max(gameObject_.transformData.translate.y, 0.0f);
 
 	//XboxPadの平行移動
 	if (input_->IsXboxPadConnected(xBoxPadNumber_)) {
@@ -255,15 +253,6 @@ void Player::Move() {
 			gameObject_.moveDirection.z = input_->GetXboxPadLeftStick(xBoxPadNumber_).y;
 		}
 	}
-
-	////プレイヤーの角度をもとに回転行列を求める
-	//Matrix4x4 rotMat = Rendering::MakeRotateXYZMatrix(gameObject_.transformData.rotate);
-
-	////カメラの向いてる方向を正にする(XとZ軸限定)
-	//Vector3 moveDirXZ = Math::TransformNormal(Vector3(gameObject_.moveDirection.x, 0.0f, gameObject_.moveDirection.z), rotMat);
-
-	////Y軸のそのまま
-	//gameObject_.moveDirection = { moveDirXZ.x,gameObject_.moveDirection.y,moveDirXZ.z };
 
 	//カメラを移動させる
 	gameObject_.transformData.translate += gameObject_.moveDirection.Normalize() * kMoveSpeed * Math::kDeltaTime;
