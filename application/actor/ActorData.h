@@ -10,7 +10,7 @@ struct GameObject {
 	TransformData transformData;
 	Vector3 velocity;
 	Vector3 acceleration;
-	Vector3 moveDirection;
+	Vector3 direction;
 	Material material;
 	Object3d* object3d;
 	WireframeObject3d* hitBox;

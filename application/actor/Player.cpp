@@ -34,7 +34,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 		.translate = {}
 	};
 	gameObject_.velocity = { 5.0f,0.0f,5.0f };
-	gameObject_.acceleration = { 0.0f,-Math::kGravity,0.0f };
+	gameObject_.acceleration = { 0.0f,Math::kGravity,0.0f };
 
 	//3Dオブジェクトの生成と初期化
 	gameObject_.object3d = new Object3d();
@@ -58,7 +58,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 	//弾
 	bullet_ = new Bullet();
 	bullet_->Initialize(object3dCommon, camera_);
-	bullet_->SetAliveRange(kAliveAreaSize);
+	bullet_->SetAliveRange(kBulletAliveAreaSize);
 	bullet_->SetSpeed(kBulletSpeed);
 	bullet_->SetSize({ kBulletSize,kBulletSize,kBulletSize });
 	bullet_->SetMaxBulletCount(kBulletCount);
@@ -104,9 +104,21 @@ void Player::Update() {
 	//移動
 	Move();
 
+	//ジャンプ
+	Jump();
+
+	//速度と加速度を位置に適応
+	IntegrateMotion();
+
 	//移動の制限
 	gameObject_.transformData.translate.x = std::clamp(gameObject_.transformData.translate.x, 11.0f, 26.0f);
 	gameObject_.transformData.translate.z = std::clamp(gameObject_.transformData.translate.z, 3.0f, 29.0f);
+	//下に行き過ぎないように制限
+	gameObject_.transformData.translate.y = std::max(gameObject_.transformData.translate.y, 0.0f);
+	//地面にいるかどうか
+	if (gameObject_.transformData.translate.y <= 0.0f) {
+		isOnGround_ = true;
+	}
 
 	//攻撃
 	Attack();
@@ -122,6 +134,9 @@ void Player::Update() {
 
 	//視点
 	LookDirection();
+
+	//トランスフォームを設定
+	gameObject_.object3d->SetTransformData(gameObject_.transformData);
 
 	//3Dオブジェクトの更新
 	gameObject_.object3d->Update();
@@ -156,6 +171,9 @@ void Player::Draw() {
 //デバッグ用
 void Player::Debug() {
 #ifdef USE_IMGUI
+	ImGui::DragFloat3("direction", &gameObject_.direction.x, 0.1f);
+	ImGui::DragFloat3("acceleration", &gameObject_.acceleration.x, 0.1f);
+	ImGui::DragFloat3("velocity", &gameObject_.velocity.x, 0.1f);
 	ImGui::DragFloat3("trasnalate", &gameObject_.transformData.translate.x, 0.1f);
 #endif // USE_IMGUI
 }
@@ -222,42 +240,21 @@ bool Player::IsAlive() {
 
 //移動
 void Player::Move() {
-	//前後
-	if (input_->PressKey(DIK_UP)) {
-		gameObject_.moveDirection.z = 1.0f;
-	} else if (input_->PressKey(DIK_DOWN)) {
-		gameObject_.moveDirection.z = -1.0f;
-	} else {
-		gameObject_.moveDirection.z = 0.0f;
-	}
-
-	//左右
-	if (input_->PressKey(DIK_RIGHT)) {
-		gameObject_.moveDirection.x = 1.0f;
-	} else if (input_->PressKey(DIK_LEFT)) {
-		gameObject_.moveDirection.x = -1.0f;
-	} else {
-		gameObject_.moveDirection.x = 0.0f;
-	}
-
-	//ジャンプ
-	gameObject_.velocity.y += gameObject_.acceleration.y * Math::kDeltaTime;
-	gameObject_.transformData.translate.y += gameObject_.velocity.y * Math::kGravity;
-	gameObject_.transformData.translate.y = std::max(gameObject_.transformData.translate.y, 0.0f);
-
 	//XboxPadの平行移動
 	if (input_->IsXboxPadConnected(xBoxPadNumber_)) {
 		if (std::fabs(input_->GetXboxPadLeftStick(xBoxPadNumber_).x) > 0.0f
 			|| std::fabs(input_->GetXboxPadLeftStick(xBoxPadNumber_).y) > 0.0f) {
-			gameObject_.moveDirection.x = input_->GetXboxPadLeftStick(xBoxPadNumber_).x;
-			gameObject_.moveDirection.z = input_->GetXboxPadLeftStick(xBoxPadNumber_).y;
+			gameObject_.direction.x = input_->GetXboxPadLeftStick(xBoxPadNumber_).x;
+			gameObject_.direction.z = input_->GetXboxPadLeftStick(xBoxPadNumber_).y;
+		} else {
+			gameObject_.direction.x = 0.0f;
+			gameObject_.direction.z = 0.0f;
 		}
 	}
 
 	//カメラを移動させる
-	gameObject_.transformData.translate += gameObject_.moveDirection.Normalize() * kMoveSpeed * Math::kDeltaTime;
-	//トランスフォームのセット
-	gameObject_.object3d->SetTransformData(gameObject_.transformData);
+	gameObject_.velocity.x = gameObject_.direction.Normalize().x * kMoveSpeed;
+	gameObject_.velocity.z = gameObject_.direction.Normalize().z * kMoveSpeed;
 }
 
 //攻撃
@@ -267,6 +264,27 @@ void Player::Attack() {
 	bullet_->SetSourceWorldMatrix(gameObject_.object3d->GetWorldTransform()->GetWorldMatrix());
 	bullet_->Fire(input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kRT));
 	bullet_->Update();
+}
+
+//ジャンプ
+void Player::Jump() {
+	if (isOnGround_) {
+		//地面にいたらジャンプできるようにする
+		if (input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kB)) {
+			//Y軸に初速を代入
+			gameObject_.velocity.y = kJumpSpeed;
+			//地面にいるかどうかのフラグをfalse
+			isOnGround_ = false;
+		}
+	}
+}
+
+//速度と加速度を位置に適応
+void Player::IntegrateMotion() {
+	//加速度を適応
+	gameObject_.velocity += gameObject_.acceleration * Math::kDeltaTime;
+	//速度を適応
+	gameObject_.transformData.translate += gameObject_.velocity * Math::kDeltaTime;
 }
 
 //ダメージを受ける

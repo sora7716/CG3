@@ -115,14 +115,20 @@ public://メンバ関数
 private://定数
 	//カメラの移動速度
 	static inline const float kMoveSpeed = 4.0f;
+	//ジャンプするときの初速
+	static inline const float kJumpSpeed = 4.0f;
+	//HPの最大値
+	static inline const int32_t kMaxHpCount = 10;
+	//ダメージのクールタイムの最大値
+	static inline const float kMaxDamageCoolTime = 0.5f;
 	//弾の数
 	static inline const uint32_t kBulletCount = 30;
 	//弾の速度
 	static inline const float kBulletSpeed = 30.0f;
 	//弾の大きさ
 	static inline const float kBulletSize = 0.25f;
-	//生存エリアのサイズ
-	static inline const float kAliveAreaSize = 100.0f;
+	//弾の生存エリア
+	static inline const float kBulletAliveAreaSize = 100.0f;
 private://メンバ関数
 	/// <summary>
 	/// 移動
@@ -133,6 +139,16 @@ private://メンバ関数
 	/// 攻撃
 	/// </summary>
 	void Attack();
+
+	/// <summary>
+	/// ジャンプ
+	/// </summary>
+	void Jump();
+
+	/// <summary>
+	/// 速度と加速度を位置に適応
+	/// </summary>
+	void IntegrateMotion();
 
 	/// <summary>
 	/// ダメージを受ける
@@ -153,10 +169,6 @@ private://メンバ関数
 	/// 視点移動
 	/// </summary>
 	void LookDirection();
-private://定数
-	static inline const int32_t kMaxHpCount = 10;
-	//ダメージのクールタイムの最大値
-	static inline const float kMaxDamageCoolTime = 0.5f;
 private://メンバ変数
 	//入力
 	Input* input_ = nullptr;
@@ -169,6 +181,8 @@ private://メンバ変数
 
 	//プレイヤーデータ
 	GameObject gameObject_ = {};
+	//地面にいるかどうかのフラグ
+	bool isOnGround_ = false;
 
 	//弾
 	Bullet* bullet_ = nullptr;
