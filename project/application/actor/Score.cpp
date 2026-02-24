@@ -46,12 +46,12 @@ void Score::Update() {
 
 //デバッグ
 void Score::Debug() {
-//#ifdef USE_IMGUI
+#ifdef USE_IMGUI
 	ImGui::DragFloat2("scale", &transformData_.scale.x, 0.1f);
 	ImGui::DragFloat2("translate", &transformData_.translate.x, 0.1f);
 	ImGui::DragFloat("textSize", &textStyle_.size, 0.1f);
 	ImGui::ColorEdit4("color", &textStyle_.color.x);
-//#endif // USE_IMGUI
+#endif // USE_IMGUI
 }
 
 //描画
