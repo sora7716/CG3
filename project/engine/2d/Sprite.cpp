@@ -113,7 +113,7 @@ void Sprite::SetBlendMode(BlendMode blendMode) {
 
 //頂点データの初期化
 void Sprite::InitializeVertexData() {
-	//1枚目の三角形
+	//矩形
 	vertexData_[0].position = { 0.0f,1.0f,0.0f,1.0f };//左下
 	vertexData_[0].texcoord = { 0.0f,1.0f };
 	vertexData_[0].normal = { 0.0f,0.0f,-1.0f };
@@ -126,18 +126,9 @@ void Sprite::InitializeVertexData() {
 	vertexData_[2].texcoord = { 1.0f,1.0f };
 	vertexData_[2].normal = { 0.0f,0.0f,-1.0f };
 
-	//2枚目の三角形
-	vertexData_[3].position = { 0.0f,0.0f,0.0f,1.0f };//左上
-	vertexData_[3].texcoord = { 0.0f,0.0f };
+	vertexData_[3].position = { 1.0f,0.0f,0.0f,1.0f };//右上
+	vertexData_[3].texcoord = { 1.0f,0.0f };
 	vertexData_[3].normal = { 0.0f,0.0f,-1.0f };
-
-	vertexData_[4].position = { 1.0f,0.0f,0.0f,1.0f };//右上
-	vertexData_[4].texcoord = { 1.0f,0.0f };
-	vertexData_[4].normal = { 0.0f,0.0f,-1.0f };
-
-	vertexData_[5].position = { 1.0f,1.0f,0.0f,1.0f };//右下
-	vertexData_[5].texcoord = { 1.0f,1.0f };
-	vertexData_[5].normal = { 0.0f,0.0f,-1.0f };
 }
 
 //頂点データの生成
@@ -160,7 +151,7 @@ void Sprite::CreateVertexResource() {
 //インデックスデータの初期化
 void Sprite::InitializeIndexData() {
 	indexData_[0] = 0; indexData_[1] = 1; indexData_[2] = 2;
-	indexData_[3] = 1; indexData_[4] = 4; indexData_[5] = 2;
+	indexData_[3] = 1; indexData_[4] = 3; indexData_[5] = 2;
 }
 
 //インデックスリソースの生成
