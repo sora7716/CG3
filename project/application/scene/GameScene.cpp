@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "GameScene.h"
 #include "engine/input/Input.h"
 #include "engine/3d/Object3dCommon.h"
@@ -50,6 +51,12 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	//スコア
 	score_ = std::make_unique<Score>();
 	score_->Initialize(sceneContext_.object2dCommon);
+
+	//ワイヤーモデル
+	wireframeObject3d_ = std::make_unique<WireframeObject3d>();
+	wireframeObject3d_->Initialize(sceneContext_.wireframeObject3dCommon, camera_, ModelType::kCube);
+	wireframeTransformDate_.scale = Vector3::MakeAllOne();
+	wireframeTransformDate_.translate = { 20.0f,0.0f,25.0f };
 }
 
 //更新
@@ -65,6 +72,9 @@ void GameScene::Update() {
 	player_->SetCamera(camera_);
 	field_->SetCamera(camera_);
 	enemyManager_->SetCamera(camera_);
+	wireframeObject3d_->SetCamera(camera_);
+
+	Vector3 prePlayerPos = player_->GetTransformData().translate;
 
 	//プレイヤー
 	player_->Update();
@@ -83,35 +93,82 @@ void GameScene::Update() {
 	//スコア
 	score_->Update();
 
-	//衝突判定
-	//敵とプレイヤーの弾
-	for (Enemy* enemy : enemyManager_->GetEnemies()) {
-		if (!enemy->IsAlive()) {
-			continue;//敵が生存していなかったら
-		}
-		for (uint32_t i = 0; i < player_->GetBullet()->GetBulletData().size(); i++) {
-			if (player_->GetBullet()->GetBulletData()[i].gameObject.isAlive) {
-				if (Collision::IsCollision(enemy->GetOBB(), player_->GetBullet()->GetBulletData()[i].gameObject.hitBox->GetOBB())) {
-					player_->GetBullet()->OnCollision(i);
-					enemy->OnCollision();
-					break;
-				}
-			}
-		}
-	}
+	//ワイヤーフレームモデル
+	wireframeObject3d_->SetScale(wireframeTransformDate_.scale);
+	wireframeObject3d_->SetRotate(wireframeTransformDate_.rotate);
+	wireframeObject3d_->SetTranslate(wireframeTransformDate_.translate);
+	wireframeObject3d_->Update();
 
-	//プレイヤーと敵の弾
-	for (Enemy* enemy : enemyManager_->GetEnemies()) {
-		for (uint32_t i = 0; i < enemy->GetBullet()->GetBulletData().size(); i++) {
-			if (enemy->GetBullet()->GetBulletData()[i].gameObject.isAlive) {
-				if (Collision::IsCollision(player_->GetOBB(), enemy->GetBullet()->GetBulletData()[i].gameObject.hitBox->GetOBB())) {
-					enemy->GetBullet()->OnCollision(i);
-					player_->OnCollision();
-					break;
-				}
+	//ワイヤーフレームモデルとプレイヤーの当たり判定
+	if (Collision::IsCollision(player_->GetOBB(), wireframeObject3d_->GetOBB())) {
+		wireframeObject3d_->SetColor(Vector4::MakeRedColor());
+
+		Vector3 pos = player_->GetWorldPos();
+		Vector3 vel = player_->GetVelocity();
+
+		//// 「落下中に当たった」＝上に乗った（床）
+		//if (vel.y <= 0.0f) {
+		//	pos.y = prePlayerPos.y;     // Yだけ戻す（床にめり込まない）
+		//	vel.y = 0.0f;               // 落下だけ止める
+		//	
+		//} else {
+		//	// 上昇中に当たった（天井）なら上昇だけ止める
+		//	pos.y = prePlayerPos.y;
+		//	vel.y = 0.0f;
+		//}
+
+		float blockRight = wireframeObject3d_->GetOBB().center.x + wireframeObject3d_->GetOBB().size.x;
+		float blockTop = wireframeObject3d_->GetOBB().center.y + wireframeObject3d_->GetOBB().size.y;
+		float playerLeft = pos.x - player_->GetOBB().size.x;
+		float playerBottom = pos.y - player_->GetOBB().size.y;
+		if (playerBottom < blockTop) {
+			player_->SetIsOnGround(true);
+			pos.y = std::max(pos.y, prePlayerPos.y);
+			vel.y = 0.0f;
+		} else {
+			player_->SetIsOnGround(false);
+		}
+
+		if (playerLeft < blockRight) {
+			if (playerBottom + 0.05f < blockTop) {
+				pos.x = prePlayerPos.x;
 			}
 		}
+
+		player_->SetPosition(pos);
+		player_->SetVelocity(vel);
+	} else {
+		wireframeObject3d_->SetColor(Vector4::MakeBlackColor());
 	}
+	////衝突判定
+	////敵とプレイヤーの弾
+	//for (Enemy* enemy : enemyManager_->GetEnemies()) {
+	//	if (!enemy->IsAlive()) {
+	//		continue;//敵が生存していなかったら
+	//	}
+	//	for (uint32_t i = 0; i < player_->GetBullet()->GetBulletData().size(); i++) {
+	//		if (player_->GetBullet()->GetBulletData()[i].gameObject.isAlive) {
+	//			if (Collision::IsCollision(enemy->GetOBB(), player_->GetBullet()->GetBulletData()[i].gameObject.hitBox->GetOBB())) {
+	//				player_->GetBullet()->OnCollision(i);
+	//				enemy->OnCollision();
+	//				break;
+	//			}
+	//		}
+	//	}
+	//}
+
+	////プレイヤーと敵の弾
+	//for (Enemy* enemy : enemyManager_->GetEnemies()) {
+	//	for (uint32_t i = 0; i < enemy->GetBullet()->GetBulletData().size(); i++) {
+	//		if (enemy->GetBullet()->GetBulletData()[i].gameObject.isAlive) {
+	//			if (Collision::IsCollision(player_->GetOBB(), enemy->GetBullet()->GetBulletData()[i].gameObject.hitBox->GetOBB())) {
+	//				enemy->GetBullet()->OnCollision(i);
+	//				player_->OnCollision();
+	//				break;
+	//			}
+	//		}
+	//	}
+	//}
 
 	//プレイヤーが死んだら
 	if (!player_->IsAlive()) {
@@ -137,6 +194,11 @@ void GameScene::Update() {
 	//ゲームカメラ
 	ImGui::Begin("gameCamera");
 	gameCamera_->Debug();
+	ImGui::End();
+
+	//ワイヤーモデル
+	ImGui::Begin("wireframe");
+	sceneContext_.imguiManager->DragTransform(wireframeTransformDate_);
 	ImGui::End();
 
 	//敵
@@ -178,6 +240,9 @@ void GameScene::Draw() {
 
 	//スコア
 	score_->Draw();
+
+	//ワイヤフレームモデル
+	wireframeObject3d_->Draw();
 }
 
 //終了

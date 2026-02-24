@@ -175,6 +175,7 @@ void Player::Debug() {
 	ImGui::DragFloat3("acceleration", &gameObject_.acceleration.x, 0.1f);
 	ImGui::DragFloat3("velocity", &gameObject_.velocity.x, 0.1f);
 	ImGui::DragFloat3("trasnalate", &gameObject_.transformData.translate.x, 0.1f);
+	ImGui::Checkbox("isOnGround", &isOnGround_);
 #endif // USE_IMGUI
 }
 
@@ -206,6 +207,21 @@ void Player::SetCamera(Camera* camera) {
 //位置のセッター
 void Player::SetPosition(const Vector3& positBulletion) {
 	gameObject_.transformData.translate = positBulletion;
+}
+
+//速度のセッター
+void Player::SetVelocity(const Vector3& velocity) {
+	gameObject_.velocity = velocity;
+}
+
+//地面の上にいるかのフラグのセッター
+void Player::SetIsOnGround(bool isOnGround) {
+	isOnGround_ = isOnGround;
+}
+
+//地面の上にいるかのフラグのゲッター
+bool Player::IsOnGround() {
+	return isOnGround_;
 }
 
 //オブジェクト3dのゲッター

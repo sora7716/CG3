@@ -78,6 +78,24 @@ public://メンバ関数
 	void SetPosition(const Vector3& position);
 
 	/// <summary>
+	/// 速度のセッター
+	/// </summary>
+	/// <param name="velocity">速度</param>
+	void SetVelocity(const Vector3& velocity);
+
+	/// <summary>
+	/// 地面の上にいるかのフラグのセッター
+	/// </summary>
+	/// <param name="isOnGround">地面の上にいるか</param>
+	void SetIsOnGround(bool isOnGround);
+
+	/// <summary>
+	/// 地面の上にいるかのフラグのゲッター
+	/// </summary>
+	/// <returns>地面の上にいるか</returns>
+	bool IsOnGround();
+
+	/// <summary>
 	/// ワールド座標系での位置のゲッター
 	/// </summary>
 	/// <returns>ワールド座標系での位置</returns>
@@ -116,7 +134,7 @@ private://定数
 	//カメラの移動速度
 	static inline const float kMoveSpeed = 4.0f;
 	//ジャンプするときの初速
-	static inline const float kJumpSpeed = 4.0f;
+	static inline const float kJumpSpeed = 10.0f;
 	//HPの最大値
 	static inline const int32_t kMaxHpCount = 10;
 	//ダメージのクールタイムの最大値

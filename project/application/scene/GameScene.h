@@ -1,5 +1,6 @@
 #pragma once
 #include "engine/scene/IScene.h"
+#include "engine/math/RenderingData.h"
 
 //前方宣言
 class Player;
@@ -62,5 +63,9 @@ private://メンバ変数
 	
 	//スコアの表示
 	std::unique_ptr<Score>score_ = nullptr;
+
+	//ワイヤーモデル
+	std::unique_ptr<WireframeObject3d>wireframeObject3d_ = nullptr;
+	TransformData wireframeTransformDate_ = {};
 };
 
