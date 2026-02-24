@@ -1,10 +1,13 @@
 #pragma once
 #include "engine/scene/IScene.h"
-#include "actor/Player.h"
-#include "actor/GameCamera.h"
-#include "actor/Field.h"
-#include "actor/EnemyManager.h"
-#include "actor/Score.h"
+
+//前方宣言
+class Player;
+class GameCamera;
+class Field;
+class EnemyManager;
+class Score;
+class WireframeObject3d;
 
 /// <summary>
 /// ゲームシーン

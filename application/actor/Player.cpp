@@ -240,6 +240,26 @@ bool Player::IsAlive() {
 
 //移動
 void Player::Move() {
+#ifdef _DEBUG
+	//前後
+	if (input_->PressKey(DIK_UP)) {
+		gameObject_.direction.z = 1.0f;
+	} else if (input_->PressKey(DIK_DOWN)) {
+		gameObject_.direction.z = -1.0f;
+	} else {
+		gameObject_.direction.z = 0.0f;
+	}
+
+	//左右
+	if (input_->PressKey(DIK_RIGHT)) {
+		gameObject_.direction.x = 1.0f;
+	} else if (input_->PressKey(DIK_LEFT)) {
+		gameObject_.direction.x = -1.0f;
+	} else {
+		gameObject_.direction.x = 0.0f;
+	}
+#endif // _DEBUG
+
 	//XboxPadの平行移動
 	if (input_->IsXboxPadConnected(xBoxPadNumber_)) {
 		if (std::fabs(input_->GetXboxPadLeftStick(xBoxPadNumber_).x) > 0.0f
@@ -276,6 +296,16 @@ void Player::Jump() {
 			//地面にいるかどうかのフラグをfalse
 			isOnGround_ = false;
 		}
+
+#ifdef _DEBUG
+		if (input_->TriggerKey(DIK_SPACE)) {
+			//Y軸に初速を代入
+			gameObject_.velocity.y = kJumpSpeed;
+			//地面にいるかどうかのフラグをfalse
+			isOnGround_ = false;
+		}
+#endif // _DEBUG
+
 	}
 }
 

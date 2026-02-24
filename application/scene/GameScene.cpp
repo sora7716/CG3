@@ -8,6 +8,12 @@
 #include "engine/debug/WireframeObject3d.h"
 #include "engine/base/Core.h"
 #include "actor/Bullet.h"
+#include "actor/Player.h"
+#include "actor/GameCamera.h"
+#include "actor/Field.h"
+#include "actor/EnemyManager.h"
+#include "actor/Score.h"
+#include "engine/debug/WireframeObject3d.h"
 
 //コンストラクタ
 GameScene::GameScene() {
@@ -109,7 +115,7 @@ void GameScene::Update() {
 
 	//プレイヤーが死んだら
 	if (!player_->IsAlive()) {
-		//sceneContext_.sceneManager->ChangeScene("Result");
+		sceneContext_.sceneManager->ChangeScene("Result");
 	}
 
 #ifdef USE_IMGUI
