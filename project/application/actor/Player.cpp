@@ -111,9 +111,9 @@ void Player::Update() {
 	//速度と加速度を位置に適応
 	IntegrateMotion();
 
-	//移動の制限
-	gameObject_.transformData.translate.x = std::clamp(gameObject_.transformData.translate.x, 11.0f, 26.0f);
-	gameObject_.transformData.translate.z = std::clamp(gameObject_.transformData.translate.z, 3.0f, 29.0f);
+	////移動の制限
+	//gameObject_.transformData.translate.x = std::clamp(gameObject_.transformData.translate.x, 11.0f, 26.0f);
+	//gameObject_.transformData.translate.z = std::clamp(gameObject_.transformData.translate.z, 3.0f, 29.0f);
 	//下に行き過ぎないように制限
 	gameObject_.transformData.translate.y = std::max(gameObject_.transformData.translate.y, 0.0f);
 	//地面にいるかどうか
