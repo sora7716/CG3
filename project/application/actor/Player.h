@@ -2,7 +2,9 @@
 #include "ActorData.h"
 #include <Windows.h>
 #include <string>
+#include <memory>
 #include "engine/math/CollisionPrimitives.h"
+#include "engine/math/PhysicsData.h"
 #include "engine/math/Vector4.h"
 
 // 前方宣言
@@ -23,7 +25,7 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Player() = default;
+	Player();
 
 	/// <summary>
 	/// デストラクタ
@@ -201,6 +203,12 @@ private://メンバ変数
 	GameObject gameObject_ = {};
 	//地面にいるかどうかのフラグ
 	bool isOnGround_ = false;
+
+	//アンカーポイント
+	std::unique_ptr<WireframeObject3d>anchorPoint_ = nullptr;
+	bool isAnchorSet_ = false;
+	bool isMovingToAnchor_ = false;
+	Spring spring_ = {};
 
 	//弾
 	Bullet* bullet_ = nullptr;

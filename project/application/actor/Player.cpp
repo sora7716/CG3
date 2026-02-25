@@ -12,6 +12,10 @@
 #include "engine/debug/WireframeObject3d.h"
 #include "engine/2d/Sprite.h"
 
+//コンストラクタ
+Player::Player() {
+}
+
 //デストラクタ
 Player::~Player() {
 	Finalize();
@@ -90,12 +94,63 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 	hpOutLineTransform_.scale = { hpBarWidth_,50.0f };
 	hpOutLineTransform_.translate = { 440.0f,630.0f };
 
+	//アンカーポイント
+	anchorPoint_ = std::make_unique<WireframeObject3d>();
+	anchorPoint_->Initialize(object3dCommon_->GetWireframeObject3dCommon(), camera_, ModelType::kSphere);
+	anchorPoint_->SetRadius(0.05f);
+	spring_.naturalLength = 2.0f;
+	spring_.stiffness = 40.0f;
+	spring_.dampingCoefficient = 2.0f;
 }
 
 //更新
 void Player::Update() {
 	//死亡判定
 	Dead();
+
+	if (input_->TriggerKey(DIK_B)) {
+		isAnchorSet_ = true;
+	} else {
+		isAnchorSet_ = false;
+	}
+
+	if (isAnchorSet_) {
+		// ローカル前方向
+		Vector3 localForward = { 0.0f, 0.0f, 10.0f };
+
+		// プレイヤーのワールド行列
+		Matrix4x4 world = gameObject_.object3d->GetWorldTransform()->GetWorldMatrix();
+
+		// 前方向をワールド空間へ
+		Vector3 worldForward = Math::TransformNormal(localForward, world);
+
+		// プレイヤーの現在位置
+		Vector3 playerPos = gameObject_.object3d->GetWorldPos();
+
+		// 最終位置
+		spring_.anchor = playerPos + worldForward;
+
+		// ここが正解
+		anchorPoint_->SetTranslate(spring_.anchor);
+	}
+
+	if (input_->TriggerKey(DIK_C)) {
+		isMovingToAnchor_ = true;
+	}
+
+	gameObject_.acceleration.y = Physics::kGravity;
+	if (isMovingToAnchor_) {
+		Ball ball = { .position = gameObject_.object3d->GetWorldPos(),.velocity = gameObject_.velocity,.acceleration = gameObject_.acceleration,.mass = 1.0f,.radius = 0.1f };
+		float diff = (spring_.anchor - ball.position).Length();
+		gameObject_.acceleration = Physics::ApplySpringForce(spring_, ball);
+		gameObject_.acceleration.y += Physics::kGravity;
+		if (diff <= spring_.naturalLength) {
+			isMovingToAnchor_ = false;
+		}
+	}
+
+	//アンカーポイント
+	anchorPoint_->Update();
 
 	//ダメージクールタイムを減らす
 	if (damageCoolTime_ > 0.0f) {
@@ -167,6 +222,8 @@ void Player::Draw() {
 	//HP
 	hpBar_->Draw();
 	hpOutLine_->Draw();
+	//アンカーポイント
+	anchorPoint_->Draw();
 }
 
 //デバッグ用
@@ -175,8 +232,10 @@ void Player::Debug() {
 	ImGui::DragFloat3("direction", &gameObject_.direction.x, 0.1f);
 	ImGui::DragFloat3("acceleration", &gameObject_.acceleration.x, 0.1f);
 	ImGui::DragFloat3("velocity", &gameObject_.velocity.x, 0.1f);
+	ImGui::DragFloat3("rotate", &gameObject_.transformData.rotate.x, 0.1f);
 	ImGui::DragFloat3("trasnalate", &gameObject_.transformData.translate.x, 0.1f);
 	ImGui::Checkbox("isOnGround", &isOnGround_);
+	ImGui::Checkbox("isMovingToAnchor", &isMovingToAnchor_);
 #endif // USE_IMGUI
 }
 
@@ -203,6 +262,7 @@ void Player::OnCollision() {
 void Player::SetCamera(Camera* camera) {
 	gameObject_.object3d->SetCamera(camera);
 	gameObject_.hitBox->SetCamera(camera);
+	anchorPoint_->SetCamera(camera);
 }
 
 //位置のセッター

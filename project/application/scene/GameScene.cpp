@@ -128,15 +128,20 @@ void GameScene::Update() {
 	sphere_->SetRadius(ball_.radius);
 	//下に行き過ぎないように制限
 	//ball_.position.y = std::max(ball_.position.y, 0.0f);	
-	//ball_.acceleration = Physics::ApplySpringForce(spring_, ball_);
-	//ball_.acceleration.y += Physics::kGravity;
-	//ball_.velocity += ball_.acceleration * Math::kDeltaTime;
-	//ball_.position += ball_.velocity * Math::kDeltaTime;
-	ball_.position = Physics::ApplyPendulumForce(pendulum_, ball_.position);
+	ball_.velocity += ball_.acceleration * Math::kDeltaTime;
+	ball_.position += ball_.velocity * Math::kDeltaTime;
+	float diff = (spring_.anchor - ball_.position).Length();
+	if (diff > spring_.naturalLength) {
+		ball_.acceleration = Physics::ApplySpringForce(spring_, ball_);
+		ball_.acceleration.y += Physics::kGravity;
+	} else {
+		ball_.velocity = {};
+	}
+	//ball_.position = Physics::ApplyPendulumForce(pendulum_, ball_.position);
 	sphere_->Update();
 
-	anchorPoint_->SetTranslate(pendulum_.anchor);
-	//anchorPoint_->SetTranslate(spring_.anchor);
+	//anchorPoint_->SetTranslate(pendulum_.anchor);
+	anchorPoint_->SetTranslate(spring_.anchor);
 	anchorPoint_->SetRadius(0.05f);
 	anchorPoint_->Update();
 
@@ -296,8 +301,8 @@ void GameScene::Draw() {
 
 	//ワイヤフレームモデル
 	wireframeObject3d_->Draw();
-	sphere_->Draw();
-	anchorPoint_->Draw();
+	//sphere_->Draw();
+	//anchorPoint_->Draw();
 }
 
 //終了
