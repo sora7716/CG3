@@ -25,7 +25,7 @@ public://メンバ関数
 	/// デストラクタ
 	/// </summary>
 	~DirectXBase();
-
+	
 	/// <summary>
 	/// DirectX12の初期化
 	/// </summary>

@@ -106,17 +106,6 @@ void GameScene::Update() {
 		Vector3 pos = player_->GetWorldPos();
 		Vector3 vel = player_->GetVelocity();
 
-		//// 「落下中に当たった」＝上に乗った（床）
-		//if (vel.y <= 0.0f) {
-		//	pos.y = prePlayerPos.y;     // Yだけ戻す（床にめり込まない）
-		//	vel.y = 0.0f;               // 落下だけ止める
-		//	
-		//} else {
-		//	// 上昇中に当たった（天井）なら上昇だけ止める
-		//	pos.y = prePlayerPos.y;
-		//	vel.y = 0.0f;
-		//}
-
 		float blockRight = wireframeObject3d_->GetOBB().center.x + wireframeObject3d_->GetOBB().size.x;
 		float blockTop = wireframeObject3d_->GetOBB().center.y + wireframeObject3d_->GetOBB().size.y;
 		float playerLeft = pos.x - player_->GetOBB().size.x;
@@ -132,6 +121,17 @@ void GameScene::Update() {
 		if (playerLeft < blockRight) {
 			if (playerBottom + 0.05f < blockTop) {
 				pos.x = prePlayerPos.x;
+			}
+		}
+
+		float blockFront = wireframeObject3d_->GetOBB().center.z + wireframeObject3d_->GetOBB().size.z;
+		float blockBehind = wireframeObject3d_->GetOBB().center.z - wireframeObject3d_->GetOBB().size.z;
+		float playerFront = player_->GetOBB().center.z + player_->GetOBB().size.z;
+		float playerBehind = player_->GetOBB().center.z - player_->GetOBB().size.z;
+
+		if (playerBehind < blockFront) {
+			if (playerBottom + 0.05f < blockTop) {
+				pos.z = prePlayerPos.z;
 			}
 		}
 
