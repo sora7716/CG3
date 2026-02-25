@@ -279,6 +279,9 @@
     <ClCompile Include="engine\base\Context.cpp">
       <Filter>engine\base</Filter>
     </ClCompile>
+    <ClCompile Include="engine\math\func\Physics.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\math\Matrix4x4.h">
@@ -514,6 +517,12 @@
     </ClInclude>
     <ClInclude Include="engine\base\Context.h">
       <Filter>engine\base</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\func\Physics.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\PhysicsData.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

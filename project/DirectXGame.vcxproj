@@ -66,6 +66,7 @@
     <ClCompile Include="engine\math\func\Aithmetic.cpp" />
     <ClCompile Include="engine\math\func\Collision.cpp" />
     <ClCompile Include="engine\math\func\Math.cpp" />
+    <ClCompile Include="engine\math\func\Physics.cpp" />
     <ClCompile Include="engine\math\func\Rendering.cpp" />
     <ClCompile Include="engine\math\Matrix4x4.cpp" />
     <ClCompile Include="engine\math\Vector2.cpp" />
@@ -142,9 +143,11 @@
     <ClInclude Include="engine\math\func\Aithmetic.h" />
     <ClInclude Include="engine\math\func\Collision.h" />
     <ClInclude Include="engine\math\func\Math.h" />
+    <ClInclude Include="engine\math\func\Physics.h" />
     <ClInclude Include="engine\math\func\Rendering.h" />
     <ClInclude Include="engine\math\Matrix3x3.h" />
     <ClInclude Include="engine\math\Matrix4x4.h" />
+    <ClInclude Include="engine\math\PhysicsData.h" />
     <ClInclude Include="engine\math\RenderingData.h" />
     <ClInclude Include="engine\math\Vector2.h" />
     <ClInclude Include="engine\math\Vector3.h" />

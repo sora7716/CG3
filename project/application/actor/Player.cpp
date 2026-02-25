@@ -6,6 +6,7 @@
 #include "engine/debug/ImGuiManager.h"
 #include "engine/input/Input.h"
 #include "engine/math/func/Math.h"
+#include "engine/math/func/Physics.h"
 #include "engine/worldTransform/WorldTransform.h"
 #include "Bullet.h"
 #include "engine/debug/WireframeObject3d.h"
@@ -34,7 +35,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 		.translate = {}
 	};
 	gameObject_.velocity = { 5.0f,0.0f,5.0f };
-	gameObject_.acceleration = { 0.0f,Math::kGravity,0.0f };
+	gameObject_.acceleration = { 0.0f,Physics::kGravity,0.0f };
 
 	//3Dオブジェクトの生成と初期化
 	gameObject_.object3d = new Object3d();

@@ -104,8 +104,6 @@ public:
 public://定数
 	//デルタタイム
 	static inline const float kDeltaTime = 1.0f / 60.0f;
-	//重力加速度
-	static inline const float kGravity = -9.8f;
 	//円周率
 	static inline const float kPi = std::numbers::pi_v<float>;
 	//ラジアン変換用定数

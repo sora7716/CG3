@@ -1,6 +1,8 @@
 #pragma once
 #include "engine/scene/IScene.h"
 #include "engine/math/RenderingData.h"
+#include "engine/math/CollisionPrimitives.h"
+#include "engine/math/PhysicsData.h"
 
 //前方宣言
 class Player;
@@ -60,12 +62,19 @@ private://メンバ変数
 
 	//敵の管理
 	EnemyManager* enemyManager_ = nullptr;
-	
+
 	//スコアの表示
 	std::unique_ptr<Score>score_ = nullptr;
 
 	//ワイヤーモデル
 	std::unique_ptr<WireframeObject3d>wireframeObject3d_ = nullptr;
 	TransformData wireframeTransformDate_ = {};
+
+	std::unique_ptr<WireframeObject3d>sphere_ = nullptr;
+	std::unique_ptr<WireframeObject3d>anchorPoint_ = nullptr;
+	Ball ball_ = {};
+	Spring spring_ = {};
+	Pendulum pendulum_ = {};
+
 };
 
