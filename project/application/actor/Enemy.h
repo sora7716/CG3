@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 #include "ActorData.h"
-#include "engine/math/RenderingData.h"
+#include "RenderingData.h"
 #include "EnemyState.h"
-#include "engine/math/CollisionPrimitives.h"
+#include "PrimitiveData.h"
 
 //前方宣言
 class Object3dCommon;
@@ -63,7 +63,7 @@ public://メンバ関数
 	/// <summary>
 	/// 衝突したら
 	/// </summary>
-	void OnCollision();
+	void OnCollision(GameObject* other);
 
 	/// <summary>
 	/// 待機
@@ -133,6 +133,8 @@ public://メンバ関数
 	/// </summary>
 	/// <returns></returns>
 	bool IsAlive();
+
+	Collider& GetCollider();
 private://メンバ関数
 	/// <summary>
 	/// ターゲットの方向を向く
@@ -165,6 +167,7 @@ private://メンバ変数
 	float bulletShotSpeed_ = -8.0f;
 	//ゲームオブジェクト
 	GameObject gameObject_ = {};
+	Collider collider_ = {};
 
 	//ターゲットの位置
 	Vector3 targetPos_ = {};

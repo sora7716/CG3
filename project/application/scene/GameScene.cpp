@@ -13,7 +13,9 @@
 #include "GameCamera.h"
 #include "Field.h"
 #include "EnemyManager.h"
+#include "Enemy.h"
 #include "Score.h"
+#include "ColliderManager.h"
 #include "WireframeObject3d.h"
 #include "func/Math.h"
 #include "func/Physics.h"
@@ -42,6 +44,9 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	player_->Initialize(sceneContext_.input, sceneContext_.spriteCommon, sceneContext_.object3dCommon, gameCamera_->GetCamera(), "player");
 	player_->SetPosition({ 25.0f,0.0f,25.0f });
 
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize(sceneContext_.object3dCommon,camera_,"enemy");
+
 	//フィールド
 	field_ = std::make_unique<Field>();
 	field_->Initialize(sceneContext_.object3dCommon, gameCamera_->GetCamera());
@@ -59,12 +64,18 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	wireframeObject3d_->Initialize(sceneContext_.wireframeObject3dCommon, camera_, ModelType::kCube);
 	wireframeTransformDate_.scale = Vector3::MakeAllOne();
 	wireframeTransformDate_.translate = { 20.0f,0.0f,25.0f };
+
+	//衝突判定
+	colliderManager_ = std::make_unique<ColliderManager>();
+	colliderManager_->Register(&player_->GetCollider());
+	colliderManager_->Register(&enemy_->GetCollider());
 }
 
 //更新
 void GameScene::Update() {
 	//シーンのインタフェースの初期化
 	IScene::Update();
+	colliderManager_->Step();
 
 	//追従カメラ
 	gameCamera_->Update();
@@ -75,6 +86,7 @@ void GameScene::Update() {
 	field_->SetCamera(camera_);
 	enemyManager_->SetCamera(camera_);
 	wireframeObject3d_->SetCamera(camera_);
+	enemy_->SetCamera(camera_);
 
 	Vector3 prePlayerPos = player_->GetTransformData().translate;
 
@@ -85,6 +97,8 @@ void GameScene::Update() {
 
 	//敵
 	//enemyManager_->Update(player_->GetWorldPos());
+
+	enemy_->Update();
 
 	//フィールド
 	field_->SetDirectionalLight(sceneContext_.object3dCommon->GetDirectionalLight());
@@ -143,35 +157,35 @@ void GameScene::Update() {
 		wireframeObject3d_->SetColor(Vector4::MakeBlackColor());
 	}
 
-	//衝突判定
-	//敵とプレイヤーの弾
-	for (Enemy* enemy : enemyManager_->GetEnemies()) {
-		if (!enemy->IsAlive()) {
-			continue;//敵が生存していなかったら
-		}
-		for (uint32_t i = 0; i < player_->GetBullet()->GetBulletData().size(); i++) {
-			if (player_->GetBullet()->GetBulletData()[i].gameObject.isAlive) {
-				if (Collision::IsCollision(enemy->GetOBB(), player_->GetBullet()->GetBulletData()[i].gameObject.hitBox->GetOBB())) {
-					player_->GetBullet()->OnCollision(i);
-					enemy->OnCollision();
-					break;
-				}
-			}
-		}
-	}
+	////衝突判定
+	////敵とプレイヤーの弾
+	//for (Enemy* enemy : enemyManager_->GetEnemies()) {
+	//	if (!enemy->IsAlive()) {
+	//		continue;//敵が生存していなかったら
+	//	}
+	//	for (uint32_t i = 0; i < player_->GetBullet()->GetBulletData().size(); i++) {
+	//		if (player_->GetBullet()->GetBulletData()[i].gameObject.isAlive) {
+	//			if (Collision::IsCollision(enemy->GetOBB(), player_->GetBullet()->GetBulletData()[i].gameObject.hitBox->GetOBB())) {
+	//				player_->GetBullet()->OnCollision(i);
+	//				enemy->OnCollision();
+	//				break;
+	//			}
+	//		}
+	//	}
+	//}
 
-	//プレイヤーと敵の弾
-	for (Enemy* enemy : enemyManager_->GetEnemies()) {
-		for (uint32_t i = 0; i < enemy->GetBullet()->GetBulletData().size(); i++) {
-			if (enemy->GetBullet()->GetBulletData()[i].gameObject.isAlive) {
-				if (Collision::IsCollision(player_->GetOBB(), enemy->GetBullet()->GetBulletData()[i].gameObject.hitBox->GetOBB())) {
-					enemy->GetBullet()->OnCollision(i);
-					player_->OnCollision();
-					break;
-				}
-			}
-		}
-	}
+	////プレイヤーと敵の弾
+	//for (Enemy* enemy : enemyManager_->GetEnemies()) {
+	//	for (uint32_t i = 0; i < enemy->GetBullet()->GetBulletData().size(); i++) {
+	//		if (enemy->GetBullet()->GetBulletData()[i].gameObject.isAlive) {
+	//			if (Collision::IsCollision(player_->GetOBB(), enemy->GetBullet()->GetBulletData()[i].gameObject.hitBox->GetOBB())) {
+	//				enemy->GetBullet()->OnCollision(i);
+	//				player_->OnCollision();
+	//				break;
+	//			}
+	//		}
+	//	}
+	//}
 
 	//プレイヤーが死んだら
 	if (!player_->IsAlive()) {
@@ -234,6 +248,8 @@ void GameScene::Update() {
 void GameScene::Draw() {
 	//プレイヤー
 	player_->Draw();
+
+	enemy_->Draw();
 
 	//マップチップ
 	field_->Draw();

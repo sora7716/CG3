@@ -3,7 +3,7 @@
 #include <random>
 #include "engine/math/RenderingData.h"
 #include "engine/math/Vector4.h"
-#include "engine/math/CollisionPrimitives.h"
+#include "PrimitiveData.h"
 
 //前方宣言
 class ParticleCommon;

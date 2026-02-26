@@ -1,16 +1,18 @@
 #pragma once
 #include "engine/scene/IScene.h"
 #include "engine/math/RenderingData.h"
-#include "engine/math/CollisionPrimitives.h"
+#include "PrimitiveData.h"
 #include "engine/math/PhysicsData.h"
 
 //前方宣言
 class Player;
 class GameCamera;
 class Field;
+class Enemy;
 class EnemyManager;
 class Score;
 class WireframeObject3d;
+class ColliderManager;
 
 /// <summary>
 /// ゲームシーン
@@ -69,5 +71,9 @@ private://メンバ変数
 	//ワイヤーモデル
 	std::unique_ptr<WireframeObject3d>wireframeObject3d_ = nullptr;
 	TransformData wireframeTransformDate_ = {};
+
+	std::unique_ptr<Enemy>enemy_ = nullptr;
+
+	std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
 };
 

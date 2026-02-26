@@ -1,16 +1,16 @@
 #define NOMINMAX
 #include "Player.h"
-#include "engine/3d/Object3d.h"
-#include "engine/3d/Object3dCommon.h"
-#include "engine/camera/Camera.h"
-#include "engine/debug/ImGuiManager.h"
-#include "engine/input/Input.h"
-#include "engine/math/func/Math.h"
-#include "engine/math/func/Physics.h"
-#include "engine/worldTransform/WorldTransform.h"
+#include "Object3d.h"
+#include "Object3dCommon.h"
+#include "Camera.h"
+#include "ImGuiManager.h"
+#include "Input.h"
+#include "func/Math.h"
+#include "func/Physics.h"
+#include "WorldTransform.h"
 #include "Bullet.h"
-#include "engine/debug/WireframeObject3d.h"
-#include "engine/2d/Sprite.h"
+#include "WireframeObject3d.h"
+#include "Sprite.h"
 
 //コンストラクタ
 Player::Player() {
@@ -46,6 +46,20 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 	gameObject_.object3d->Initialize(object3dCommon, camera_);
 	gameObject_.object3d->SetModel(modelName);
 	gameObject_.isAlive = true;
+	gameObject_.tag = Tag::kPlayer;
+
+	//衝突
+	collider_.owner = &gameObject_;
+	collider_.obb.orientations[0] = { 1,0,0 };
+	collider_.obb.orientations[1] = { 0,1,0 };
+	collider_.obb.orientations[2] = { 0,0,1 };
+
+	collider_.isTrigger = true;
+	collider_.enabled = true;
+
+	collider_.onCollision = [this](GameObject* other) {
+		this->OnCollision(other);
+	};
 
 	//マテリアルの初期化
 	gameObject_.material.color = { 1.0f,1.0f,1.0f,1.0f };
@@ -257,9 +271,11 @@ void Player::Finalize() {
 }
 
 //衝突したら
-void Player::OnCollision() {
-	//攻撃を受ける
-	Damage();
+void Player::OnCollision(GameObject* other) {
+	if (other->tag == Tag::kEnemy) {
+		//攻撃を受ける
+		Damage();
+	}
 }
 
 //カメラのセッター
@@ -317,6 +333,10 @@ Bullet* Player::GetBullet()const {
 //生存フラグのゲッター
 bool Player::IsAlive() {
 	return gameObject_.isAlive;
+}
+
+Collider& Player::GetCollider() {
+	return collider_;
 }
 
 //移動

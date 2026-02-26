@@ -3,9 +3,9 @@
 #include <Windows.h>
 #include <string>
 #include <memory>
-#include "engine/math/CollisionPrimitives.h"
-#include "engine/math/PhysicsData.h"
-#include "engine/math/Vector4.h"
+#include "PrimitiveData.h"
+#include "PhysicsData.h"
+#include "Vector4.h"
 
 // 前方宣言
 class Input;
@@ -65,7 +65,7 @@ public://メンバ関数
 	/// <summary>
 	/// 衝突したら
 	/// </summary>
-	void OnCollision();
+	void OnCollision(GameObject*other);
 
 	/// <summary>
 	/// カメラのセッター
@@ -132,6 +132,8 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>生存フラグ</returns>
 	bool IsAlive();
+
+	Collider& GetCollider();
 private://定数
 	//カメラの移動速度
 	static inline const float kMoveSpeed = 4.0f;
@@ -236,5 +238,8 @@ private://メンバ変数
 
 	//ダメージのクールタイム
 	float damageCoolTime_ = 0.0f;
+
+	//衝突
+	Collider collider_ = {};
 };
 

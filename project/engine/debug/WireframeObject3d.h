@@ -1,5 +1,5 @@
 #pragma once
-#include "engine/math/CollisionPrimitives.h"
+#include "PrimitiveData.h"
 #include "engine/math/ResourceData.h"
 #include "engine/math/RenderingData.h"
 #include "engine/base/BlendMode.h"

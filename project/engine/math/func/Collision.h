@@ -1,5 +1,5 @@
 #pragma once
-#include "engine/math/CollisionPrimitives.h"
+#include "PrimitiveData.h"
 
 /// <summary>
 /// 衝突判定

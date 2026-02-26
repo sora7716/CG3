@@ -23,6 +23,15 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 	gameObject_.object3d->SetModel(modelName);
 	gameObject_.transformData.scale = Vector3::MakeAllOne() / 2.0f;
 	gameObject_.isAlive = true;
+	gameObject_.tag = Tag::kEnemy;
+
+	collider_.owner = &gameObject_;
+	collider_.obb.orientations[0] = { 1,0,0 };
+	collider_.obb.orientations[1] = { 0,1,0 };
+	collider_.obb.orientations[2] = { 0,0,1 };
+	collider_.isTrigger = true;
+	collider_.enabled = true;
+	collider_.onCollision = [this](GameObject* other) {this->OnCollision(other); };
 
 	//弾の生成と初期化
 	bullet_ = new Bullet();
@@ -184,15 +193,17 @@ void Enemy::Reset() {
 }
 
 //衝突したら
-void Enemy::OnCollision() {
-	hp_--;
-	//描画のHPにも適応
-	hpBarTransform_.scale.x -= hpBarWidth_ / kMaxHpCout;
-	hpBarPosX_ -= hpBarWidth_ / kMaxHpCout;
-	if (hp_ <= 0) {
-		gameObject_.isAlive = false;
-		//スコアを加算
-		Score::AddScore(30);
+void Enemy::OnCollision(GameObject* other) {
+	if (other->tag == Tag::kPlayer) {
+		hp_--;
+		//描画のHPにも適応
+		hpBarTransform_.scale.x -= hpBarWidth_ / kMaxHpCout;
+		hpBarPosX_ -= hpBarWidth_ / kMaxHpCout;
+		if (hp_ <= 0) {
+			gameObject_.isAlive = false;
+			//スコアを加算
+			Score::AddScore(30);
+		}
 	}
 }
 
@@ -286,6 +297,10 @@ OBB Enemy::GetOBB()const {
 //生存フラグのゲッター
 bool Enemy::IsAlive() {
 	return gameObject_.isAlive;
+}
+
+Collider& Enemy::GetCollider() {
+	return collider_;
 }
 
 //ターゲットの方向を向く

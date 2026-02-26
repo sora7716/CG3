@@ -1,7 +1,7 @@
 #pragma once
 #include "ActorData.h"
 #include "engine/math/Matrix4x4.h"
-#include "engine/math/CollisionPrimitives.h"
+#include "PrimitiveData.h"
 #include <vector>
 #include <string>
 
