@@ -107,7 +107,7 @@ void GameScene::Update() {
 	sceneContext_.object3dCommon->SetPointLightPos({ playerPos.x,playerPos.y + 2.0f,playerPos.z });
 
 	//敵
-	//enemyManager_->Update(player_->GetWorldPos());
+	enemyManager_->Update(player_->GetWorldPos());
 
 	//フィールド
 	field_->SetDirectionalLight(sceneContext_.object3dCommon->GetDirectionalLight());
@@ -186,35 +186,35 @@ void GameScene::Update() {
 	} else {
 		wireframeObject3d_->SetColor(Vector4::MakeBlackColor());
 	}
-	////衝突判定
-	////敵とプレイヤーの弾
-	//for (Enemy* enemy : enemyManager_->GetEnemies()) {
-	//	if (!enemy->IsAlive()) {
-	//		continue;//敵が生存していなかったら
-	//	}
-	//	for (uint32_t i = 0; i < player_->GetBullet()->GetBulletData().size(); i++) {
-	//		if (player_->GetBullet()->GetBulletData()[i].gameObject.isAlive) {
-	//			if (Collision::IsCollision(enemy->GetOBB(), player_->GetBullet()->GetBulletData()[i].gameObject.hitBox->GetOBB())) {
-	//				player_->GetBullet()->OnCollision(i);
-	//				enemy->OnCollision();
-	//				break;
-	//			}
-	//		}
-	//	}
-	//}
+	//衝突判定
+	//敵とプレイヤーの弾
+	for (Enemy* enemy : enemyManager_->GetEnemies()) {
+		if (!enemy->IsAlive()) {
+			continue;//敵が生存していなかったら
+		}
+		for (uint32_t i = 0; i < player_->GetBullet()->GetBulletData().size(); i++) {
+			if (player_->GetBullet()->GetBulletData()[i].gameObject.isAlive) {
+				if (Collision::IsCollision(enemy->GetOBB(), player_->GetBullet()->GetBulletData()[i].gameObject.hitBox->GetOBB())) {
+					player_->GetBullet()->OnCollision(i);
+					enemy->OnCollision();
+					break;
+				}
+			}
+		}
+	}
 
-	////プレイヤーと敵の弾
-	//for (Enemy* enemy : enemyManager_->GetEnemies()) {
-	//	for (uint32_t i = 0; i < enemy->GetBullet()->GetBulletData().size(); i++) {
-	//		if (enemy->GetBullet()->GetBulletData()[i].gameObject.isAlive) {
-	//			if (Collision::IsCollision(player_->GetOBB(), enemy->GetBullet()->GetBulletData()[i].gameObject.hitBox->GetOBB())) {
-	//				enemy->GetBullet()->OnCollision(i);
-	//				player_->OnCollision();
-	//				break;
-	//			}
-	//		}
-	//	}
-	//}
+	//プレイヤーと敵の弾
+	for (Enemy* enemy : enemyManager_->GetEnemies()) {
+		for (uint32_t i = 0; i < enemy->GetBullet()->GetBulletData().size(); i++) {
+			if (enemy->GetBullet()->GetBulletData()[i].gameObject.isAlive) {
+				if (Collision::IsCollision(player_->GetOBB(), enemy->GetBullet()->GetBulletData()[i].gameObject.hitBox->GetOBB())) {
+					enemy->GetBullet()->OnCollision(i);
+					player_->OnCollision();
+					break;
+				}
+			}
+		}
+	}
 
 	//プレイヤーが死んだら
 	if (!player_->IsAlive()) {
@@ -294,7 +294,7 @@ void GameScene::Draw() {
 	field_->Draw();
 
 	//敵
-	//enemyManager_->Draw();
+	enemyManager_->Draw();
 
 	//スコア
 	score_->Draw();

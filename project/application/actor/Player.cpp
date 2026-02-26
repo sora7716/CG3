@@ -54,11 +54,11 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 	gameObject_.material.uvMatrix = Matrix4x4::Identity4x4();
 
 	//リムライトの初期化
-	rimLight_.color = { 1.0f,1.0f,1.0f,1.0f };
+	rimLight_.color = Vector4::MakeWhiteColor();
 	rimLight_.power = 3.4f;
 	rimLight_.outLinePower = 0.3f;
 	rimLight_.softness = 0.2f;
-	rimLight_.enableRimLighting = true;
+	rimLight_.enableRimLighting = false;
 
 	//弾
 	bullet_ = new Bullet();
@@ -108,7 +108,7 @@ void Player::Update() {
 	//死亡判定
 	Dead();
 
-	if (input_->TriggerKey(DIK_B)) {
+	if (input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kLB)) {
 		isAnchorSet_ = true;
 	} else {
 		isAnchorSet_ = false;
@@ -134,7 +134,7 @@ void Player::Update() {
 		anchorPoint_->SetTranslate(spring_.anchor);
 	}
 
-	if (input_->TriggerKey(DIK_C)) {
+	if (input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kLT)) {
 		isMovingToAnchor_ = true;
 	}
 
@@ -229,13 +229,17 @@ void Player::Draw() {
 //デバッグ用
 void Player::Debug() {
 #ifdef USE_IMGUI
-	ImGui::DragFloat3("direction", &gameObject_.direction.x, 0.1f);
-	ImGui::DragFloat3("acceleration", &gameObject_.acceleration.x, 0.1f);
-	ImGui::DragFloat3("velocity", &gameObject_.velocity.x, 0.1f);
-	ImGui::DragFloat3("rotate", &gameObject_.transformData.rotate.x, 0.1f);
-	ImGui::DragFloat3("trasnalate", &gameObject_.transformData.translate.x, 0.1f);
-	ImGui::Checkbox("isOnGround", &isOnGround_);
-	ImGui::Checkbox("isMovingToAnchor", &isMovingToAnchor_);
+	//ImGui::DragFloat3("direction", &gameObject_.direction.x, 0.1f);
+	//ImGui::DragFloat3("acceleration", &gameObject_.acceleration.x, 0.1f);
+	//ImGui::DragFloat3("velocity", &gameObject_.velocity.x, 0.1f);
+	//ImGui::DragFloat3("rotate", &gameObject_.transformData.rotate.x, 0.1f);
+	//ImGui::DragFloat3("trasnalate", &gameObject_.transformData.translate.x, 0.1f);
+	//ImGui::Checkbox("isOnGround", &isOnGround_);
+	//ImGui::Checkbox("isMovingToAnchor", &isMovingToAnchor_);
+	ImGui::ColorEdit4("color", &rimLight_.color.x);
+	ImGui::DragFloat("power", &rimLight_.power, 0.1f);
+	ImGui::DragFloat("outLinePower", &rimLight_.outLinePower, 0.1f);
+	ImGui::DragFloat("softness", &rimLight_.softness, 0.1f);
 #endif // USE_IMGUI
 }
 
@@ -367,7 +371,7 @@ void Player::Attack() {
 void Player::Jump() {
 	if (isOnGround_) {
 		//地面にいたらジャンプできるようにする
-		if (input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kB)) {
+		if (input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kA)) {
 			//Y軸に初速を代入
 			gameObject_.velocity.y = kJumpSpeed;
 			//地面にいるかどうかのフラグをfalse
