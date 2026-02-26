@@ -1,22 +1,22 @@
 #define NOMINMAX
 #include "GameScene.h"
-#include "engine/input/Input.h"
-#include "engine/3d/Object3dCommon.h"
-#include "engine/debug/GlobalVariables.h"
-#include "engine/math/func/Collision.h"
-#include "engine/scene/SceneManager.h"
-#include "engine/camera/CameraManager.h"
-#include "engine/debug/WireframeObject3d.h"
-#include "engine/base/Core.h"
-#include "actor/Bullet.h"
-#include "actor/Player.h"
-#include "actor/GameCamera.h"
-#include "actor/Field.h"
-#include "actor/EnemyManager.h"
-#include "actor/Score.h"
-#include "engine/debug/WireframeObject3d.h"
-#include "engine/math/func/Math.h"
-#include "engine/math/func/Physics.h"
+#include "Input.h"
+#include "Object3dCommon.h"
+#include "GlobalVariables.h"
+#include "func/Collision.h"
+#include "SceneManager.h"
+#include "CameraManager.h"
+#include "WireframeObject3d.h"
+#include "Core.h"
+#include "Bullet.h"
+#include "Player.h"
+#include "GameCamera.h"
+#include "Field.h"
+#include "EnemyManager.h"
+#include "Score.h"
+#include "WireframeObject3d.h"
+#include "func/Math.h"
+#include "func/Physics.h"
 
 //コンストラクタ
 GameScene::GameScene() {
@@ -59,27 +59,6 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	wireframeObject3d_->Initialize(sceneContext_.wireframeObject3dCommon, camera_, ModelType::kCube);
 	wireframeTransformDate_.scale = Vector3::MakeAllOne();
 	wireframeTransformDate_.translate = { 20.0f,0.0f,25.0f };
-
-	sphere_ = std::make_unique<WireframeObject3d>();
-	sphere_->Initialize(sceneContext_.wireframeObject3dCommon, camera_, ModelType::kSphere);
-	ball_.position = { 0.8f,0.2f,0.0f };
-	ball_.acceleration = { 0.0f,Physics::kGravity,0.0f };
-	ball_.mass = 2.0f;
-	ball_.radius = 0.05f;
-
-	spring_.anchor = { 0.0f,1.0f,0.0f };
-	spring_.naturalLength = 0.7f;
-	spring_.stiffness = 100.0f;
-	spring_.dampingCoefficient = 2.0f;
-
-	pendulum_.anchor = { 0.0f,1.0f,0.0f };
-	pendulum_.length = 0.8f;
-	pendulum_.angle = 0.7f;
-	pendulum_.angularAcceleration = 0.0f;
-	pendulum_.angularVelocity = 0.0f;
-
-	anchorPoint_ = std::make_unique<WireframeObject3d>();
-	anchorPoint_->Initialize(sceneContext_.wireframeObject3dCommon, camera_, ModelType::kSphere);
 }
 
 //更新
@@ -96,8 +75,6 @@ void GameScene::Update() {
 	field_->SetCamera(camera_);
 	enemyManager_->SetCamera(camera_);
 	wireframeObject3d_->SetCamera(camera_);
-	sphere_->SetCamera(camera_);
-	anchorPoint_->SetCamera(camera_);
 
 	Vector3 prePlayerPos = player_->GetTransformData().translate;
 
@@ -107,7 +84,7 @@ void GameScene::Update() {
 	sceneContext_.object3dCommon->SetPointLightPos({ playerPos.x,playerPos.y + 2.0f,playerPos.z });
 
 	//敵
-	enemyManager_->Update(player_->GetWorldPos());
+	//enemyManager_->Update(player_->GetWorldPos());
 
 	//フィールド
 	field_->SetDirectionalLight(sceneContext_.object3dCommon->GetDirectionalLight());
@@ -123,27 +100,6 @@ void GameScene::Update() {
 	wireframeObject3d_->SetRotate(wireframeTransformDate_.rotate);
 	wireframeObject3d_->SetTranslate(wireframeTransformDate_.translate);
 	wireframeObject3d_->Update();
-
-	sphere_->SetTranslate(ball_.position);
-	sphere_->SetRadius(ball_.radius);
-	//下に行き過ぎないように制限
-	//ball_.position.y = std::max(ball_.position.y, 0.0f);	
-	ball_.velocity += ball_.acceleration * Math::kDeltaTime;
-	ball_.position += ball_.velocity * Math::kDeltaTime;
-	float diff = (spring_.anchor - ball_.position).Length();
-	if (diff > spring_.naturalLength) {
-		ball_.acceleration = Physics::ApplySpringForce(spring_, ball_);
-		ball_.acceleration.y += Physics::kGravity;
-	} else {
-		ball_.velocity = {};
-	}
-	//ball_.position = Physics::ApplyPendulumForce(pendulum_, ball_.position);
-	sphere_->Update();
-
-	//anchorPoint_->SetTranslate(pendulum_.anchor);
-	anchorPoint_->SetTranslate(spring_.anchor);
-	anchorPoint_->SetRadius(0.05f);
-	anchorPoint_->Update();
 
 	//ワイヤーフレームモデルとプレイヤーの当たり判定
 	if (Collision::IsCollision(player_->GetOBB(), wireframeObject3d_->GetOBB())) {
@@ -186,6 +142,7 @@ void GameScene::Update() {
 	} else {
 		wireframeObject3d_->SetColor(Vector4::MakeBlackColor());
 	}
+
 	//衝突判定
 	//敵とプレイヤーの弾
 	for (Enemy* enemy : enemyManager_->GetEnemies()) {
@@ -247,18 +204,6 @@ void GameScene::Update() {
 	sceneContext_.imguiManager->DragTransform(wireframeTransformDate_);
 	ImGui::End();
 
-	ImGui::Begin("physics");
-	ImGui::DragFloat3("spring.anchor", &spring_.anchor.x, 0.1f);
-	ImGui::DragFloat("spring.naturalLength", &spring_.naturalLength, 0.1f);
-	ImGui::DragFloat("spring.stiffness", &spring_.stiffness, 0.1f);
-	ImGui::DragFloat("dampingCoefficient", &spring_.dampingCoefficient, 0.1f);
-	ImGui::DragFloat3("pendulum.anchor", &pendulum_.anchor.x, 0.1f);
-	ImGui::DragFloat("pendulum.length", &pendulum_.length, 0.1f);
-	ImGui::DragFloat3("ball.acceleration", &ball_.acceleration.x, 0.1f);
-	ImGui::DragFloat3("ball.velocity", &ball_.velocity.x, 0.1f);
-	ImGui::DragFloat3("ball.position", &ball_.position.x, 0.1f);
-	ImGui::End();
-
 	//敵
 	//ImGui::Begin("enemy");
 	//enemyManager_->Debug();
@@ -294,15 +239,13 @@ void GameScene::Draw() {
 	field_->Draw();
 
 	//敵
-	enemyManager_->Draw();
+	//enemyManager_->Draw();
 
 	//スコア
 	score_->Draw();
 
 	//ワイヤフレームモデル
 	wireframeObject3d_->Draw();
-	//sphere_->Draw();
-	//anchorPoint_->Draw();
 }
 
 //終了

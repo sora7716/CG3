@@ -69,12 +69,5 @@ private://メンバ変数
 	//ワイヤーモデル
 	std::unique_ptr<WireframeObject3d>wireframeObject3d_ = nullptr;
 	TransformData wireframeTransformDate_ = {};
-
-	std::unique_ptr<WireframeObject3d>sphere_ = nullptr;
-	std::unique_ptr<WireframeObject3d>anchorPoint_ = nullptr;
-	Ball ball_ = {};
-	Spring spring_ = {};
-	Pendulum pendulum_ = {};
-
 };
 
