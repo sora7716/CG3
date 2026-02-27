@@ -25,7 +25,8 @@ struct GameObject {
 	Material material;
 	Object3d* object3d;
 	WireframeObject3d* hitBox;
-	uint32_t isAlive;
+	bool isAlive;
+	bool isOnGround;
 	Tag tag;
 };
 

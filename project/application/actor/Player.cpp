@@ -50,7 +50,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 
 	//衝突
 	collider_.owner = &gameObject_;
-	collider_.isTrigger = true;
+	collider_.isTrigger = false;
 	collider_.isEnabled = true;
 
 	collider_.onCollision = [this](GameObject* other) {
@@ -183,7 +183,7 @@ void Player::Update() {
 	gameObject_.transformData.translate.y = std::max(gameObject_.transformData.translate.y, 0.0f);
 	//地面にいるかどうか
 	if (gameObject_.transformData.translate.y <= 0.0f) {
-		isOnGround_ = true;
+		gameObject_.isOnGround = true;
 	}
 
 	//攻撃
@@ -244,12 +244,13 @@ void Player::Debug() {
 	//ImGui::DragFloat3("velocity", &gameObject_.velocity.x, 0.1f);
 	//ImGui::DragFloat3("rotate", &gameObject_.transformData.rotate.x, 0.1f);
 	//ImGui::DragFloat3("trasnalate", &gameObject_.transformData.translate.x, 0.1f);
-	//ImGui::Checkbox("isOnGround", &isOnGround_);
 	//ImGui::Checkbox("isMovingToAnchor", &isMovingToAnchor_);
 	ImGui::ColorEdit4("color", &rimLight_.color.x);
 	ImGui::DragFloat("power", &rimLight_.power, 0.1f);
 	ImGui::DragFloat("outLinePower", &rimLight_.outLinePower, 0.1f);
 	ImGui::DragFloat("softness", &rimLight_.softness, 0.1f);
+	ImGui::Checkbox("collider.isTrigger", &collider_.isTrigger);
+	ImGui::Checkbox("isOnGround", &gameObject_.isOnGround);
 #endif // USE_IMGUI
 }
 
@@ -293,12 +294,12 @@ void Player::SetVelocity(const Vector3& velocity) {
 
 //地面の上にいるかのフラグのセッター
 void Player::SetIsOnGround(bool isOnGround) {
-	isOnGround_ = isOnGround;
+	gameObject_.isOnGround = isOnGround;
 }
 
 //地面の上にいるかのフラグのゲッター
 bool Player::IsOnGround() {
-	return isOnGround_;
+	return gameObject_.isOnGround;
 }
 
 //オブジェクト3dのゲッター
@@ -385,13 +386,13 @@ void Player::Attack() {
 
 //ジャンプ
 void Player::Jump() {
-	if (isOnGround_) {
+	if (gameObject_.isOnGround) {
 		//地面にいたらジャンプできるようにする
 		if (input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kA)) {
 			//Y軸に初速を代入
 			gameObject_.velocity.y = kJumpSpeed;
 			//地面にいるかどうかのフラグをfalse
-			isOnGround_ = false;
+			gameObject_.isOnGround = false;
 		}
 
 #ifdef _DEBUG
@@ -399,7 +400,7 @@ void Player::Jump() {
 			//Y軸に初速を代入
 			gameObject_.velocity.y = kJumpSpeed;
 			//地面にいるかどうかのフラグをfalse
-			isOnGround_ = false;
+			gameObject_.isOnGround = false;
 		}
 #endif // _DEBUG
 

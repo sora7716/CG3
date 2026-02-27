@@ -130,6 +130,8 @@ void Enemy::Debug() {
 	ImGui::DragFloat("hp.posX", &hpBarPosX_, 0.1f);
 	ImGui::DragFloat3("hpOutLine.translate", &hpOutLineTransform_.translate.x, 0.1f);
 	ImGui::DragFloat3("hpOutLine.scale", &hpOutLineTransform_.scale.x, 0.1f);
+	ImGui::DragFloat3("hitBox.scale", &hitBoxScale_.x, 0.1f);
+	ImGui::Checkbox("collider.isTrigger", &collider_.isTrigger);
 #endif // _DEBUG
 }
 

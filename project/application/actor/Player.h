@@ -203,8 +203,6 @@ private://メンバ変数
 
 	//プレイヤーデータ
 	GameObject gameObject_ = {};
-	//地面にいるかどうかのフラグ
-	bool isOnGround_ = false;
 
 	//アンカーポイント
 	std::unique_ptr<WireframeObject3d>anchorPoint_ = nullptr;

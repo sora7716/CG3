@@ -172,6 +172,10 @@ void GameScene::Update() {
 	player_->Debug();
 	ImGui::End();
 
+	ImGui::Begin("enemy");
+	enemy_->Debug();
+	ImGui::End();
+
 	//ゲームカメラ
 	ImGui::Begin("gameCamera");
 	gameCamera_->Debug();

@@ -345,7 +345,6 @@ HitInfo Collision::GetHitInfo(const OBB& obb1, const OBB& obb2) {
 		if (overlap < hitInfo.depth) {
 			hitInfo.depth = overlap;
 			hitInfo.normal = axis;
-			Log::ConsolePrintf(std::format("x:{},y:{},z:{}", hitInfo.normal.x, hitInfo.normal.y, hitInfo.normal.z));
 		}
 	}
 

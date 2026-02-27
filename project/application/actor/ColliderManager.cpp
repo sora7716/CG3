@@ -89,7 +89,15 @@ void ColliderManager::CheckCollision() {
 				pairB->onCollision(pairA->owner);
 			}
 
-			Resolve(*pairA->owner, *pairB->owner, hitInfo);
+			if (!pairA->isTrigger) {
+				//pairAを貫通しないようにする
+				Resolve(*pairA->owner, *pairB->owner, hitInfo);
+			}
+
+			if (!pairB->isTrigger) {
+				//pairBを貫通しないようにする
+				Resolve(*pairB->owner, *pairA->owner, hitInfo);
+			}
 		}
 	}
 }
@@ -114,12 +122,13 @@ void ColliderManager::Resolve(GameObject& self, const GameObject& other, HitInfo
 	Vector3 pos = self.transformData.translate;
 	Vector3 vel = self.velocity;
 
-	// normalを「other→self」方向に揃える（これが超重要）
+	// normalを「other→self」方向に揃える
 	Vector3 delta = pos - other.transformData.translate;
 	if (delta.Dot(hit.normal) < 0.0f) {
 		hit.normal = -hit.normal;
 	}
 
+	//押し戻し
 	const float slop = 0.001f;
 	pos += hit.normal * (hit.depth + slop);
 
@@ -128,6 +137,13 @@ void ColliderManager::Resolve(GameObject& self, const GameObject& other, HitInfo
 		vel -= hit.normal * vn;
 	}
 
+	//下に地面があるかどうか
+	if (hit.normal.y > 0.5f) {
+		self.isOnGround = true;
+		self.velocity.y = 0.0f;
+	}
+
+	//位置と速度をを設定
 	self.transformData.translate = pos;
 	self.velocity = vel;
 }
