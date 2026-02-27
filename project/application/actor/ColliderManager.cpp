@@ -89,14 +89,20 @@ void ColliderManager::CheckCollision() {
 				pairB->onCollision(pairA->owner);
 			}
 
-			if (!pairA->isTrigger) {
+			if (!pairA->isTrigger && pairB->isTrigger) {
 				//pairAを貫通しないようにする
 				Resolve(*pairA->owner, *pairB->owner, hitInfo);
 			}
 
-			if (!pairB->isTrigger) {
+			if (!pairB->isTrigger&&pairA->isTrigger) {
 				//pairBを貫通しないようにする
 				Resolve(*pairB->owner, *pairA->owner, hitInfo);
+			}
+
+			//両方isTriggerがfalseだった場合
+			if (!pairA->isTrigger && !pairB->isTrigger) {
+				//pairAを貫通しないようにする
+				Resolve(*pairA->owner, *pairB->owner, hitInfo);
 			}
 		}
 	}
