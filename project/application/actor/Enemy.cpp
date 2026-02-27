@@ -30,7 +30,7 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 	collider_.obb.orientations[1] = { 0,1,0 };
 	collider_.obb.orientations[2] = { 0,0,1 };
 	collider_.isTrigger = true;
-	collider_.enabled = true;
+	collider_.isEnabled = true;
 	collider_.onCollision = [this](GameObject* other) {this->OnCollision(other); };
 
 	//弾の生成と初期化

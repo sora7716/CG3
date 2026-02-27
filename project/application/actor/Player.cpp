@@ -55,7 +55,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 	collider_.obb.orientations[2] = { 0,0,1 };
 
 	collider_.isTrigger = true;
-	collider_.enabled = true;
+	collider_.isEnabled = true;
 
 	collider_.onCollision = [this](GameObject* other) {
 		this->OnCollision(other);

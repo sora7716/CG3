@@ -1,57 +1,106 @@
 #include "ColliderManager.h"
 #include "func/Collision.h"
+#include "WireframeObject3d.h"
 #include "Object3d.h"
 
-void ColliderManager::Register(Collider* collider) {
+//コライダーの追加
+void ColliderManager::AddCollider(Collider* collider) {
+	//追加されているか確認
+	if (!IsRegistered(collider)) {
+		return;
+	}
+
+	//追加されていなかったら追加
 	colliders_.push_back(collider);
 }
 
-void ColliderManager::Step() {
+//コライダーの削除
+void ColliderManager::RemoveCollider(Collider* collider) {
+	std::vector<Collider*>::iterator itCollider = std::remove(colliders_.begin(), colliders_.end(), collider);
+	colliders_.erase(itCollider, colliders_.end());
+}
+
+//衝突判定を行う
+void ColliderManager::ProcessCollision() {
+	//コライダーをOBBに同期
+	SyncCollider();
+	//衝突判定をチェック
+	CheckCollision();
+}
+
+//追加していいか
+bool ColliderManager::IsRegistered(Collider* collider) {
+	//colliderがnullだったら追加しない
+	if (!collider) {
+		return false;
+	}
+	//すでに登録されているかを確認
+	std::vector<Collider*>::iterator itCollider = std::find(colliders_.begin(), colliders_.end(), collider);
+	if (itCollider != colliders_.end()) {
+		return false;
+	}
+
+	return true;
+}
+
+//コライダーをOBBに同期
+void ColliderManager::SyncCollider() {
 	for (Collider* collider : colliders_) {
 		if (!collider) {
 			continue;
-		} else if (!collider->enabled) {
+		} else if (!collider->isEnabled) {
 			continue;
 		} else if (!collider->owner) {
 			continue;
 		}
 
 		//OBBの値の更新
-		collider->obb.size = collider->owner->transformData.scale;
-		collider->obb.rotate = collider->owner->transformData.rotate;
-		collider->obb.center = collider->owner->object3d->GetWorldPos();
+		collider->obb.size = collider->owner->hitBox->GetScale();
+		collider->obb.rotate = collider->owner->hitBox->GetRotate();
+		collider->obb.center = collider->owner->hitBox->GetWorldPos();
+		collider->obb.center = collider->owner->hitBox->GetWorldPos();
 	}
+}
 
+//衝突判定をチェック
+void ColliderManager::CheckCollision() {
 	for (uint32_t i = 0; i < colliders_.size(); i++) {
-		Collider* a = colliders_[i];
-		if (!a) {
-			continue;
-		} else if (!a->enabled) {
-			continue;
-		} else if (!a->owner) {
+		Collider* pairA = colliders_[i];
+		if (!IsActive(pairA)) {
 			continue;
 		}
 
 		for (uint32_t j = i + 1; j < colliders_.size(); j++) {
-			Collider* b = colliders_[j];
-			if (!b) {
-				continue;
-			} else if (!b->enabled) {
-				continue;
-			} else if (!b->owner) {
+			Collider* pairB = colliders_[j];
+			if (!IsActive(pairB)) {
 				continue;
 			}
 
-			if (!Collision::IsCollision(a->obb, b->obb)) {
+			if (!Collision::IsCollision(pairA->obb, pairB->obb)) {
 				continue;
 			}
 
-			if (a->onCollision) {
-				a->onCollision(b->owner);
+			if (pairA->onCollision) {
+				pairA->onCollision(pairB->owner);
 			}
-			if (b->onCollision) {
-				b->onCollision(a->owner);
+			if (pairB->onCollision) {
+				pairB->onCollision(pairA->owner);
 			}
 		}
 	}
+}
+
+//衝突判定を行えるか
+bool ColliderManager::IsActive(Collider* collider) {
+	if (!collider) {
+		//colliderがnullだったら衝突判定を行えない
+		return false;
+	} else if (!collider->isEnabled) {
+		//colliderが無効化されていたら衝突判定を行えない
+		return false;
+	} else if (!collider->owner) {
+		//colliderのownerがnullだったら衝突判定を行えない
+		return false;
+	}
+	return true;
 }

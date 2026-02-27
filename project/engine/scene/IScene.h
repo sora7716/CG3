@@ -7,6 +7,7 @@
 // 前方宣言
 class AbstractSceneFactory;
 class DebugCamera;
+class ColliderManager;
 
 /// <summary>
 /// シーンのインターフェース
@@ -48,5 +49,7 @@ protected://メンバ変数
 	std::unique_ptr<DebugCamera>debugCamera_ = nullptr;
 	//シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
+	//コライダーマネージャー
+	std::unique_ptr<ColliderManager>colliderManager_ = nullptr;
 };
 

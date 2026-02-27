@@ -67,16 +67,12 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 
 	//衝突判定
 	colliderManager_ = std::make_unique<ColliderManager>();
-	colliderManager_->Register(&player_->GetCollider());
-	colliderManager_->Register(&enemy_->GetCollider());
+	colliderManager_->AddCollider(&player_->GetCollider());
+	colliderManager_->AddCollider(&enemy_->GetCollider());
 }
 
 //更新
 void GameScene::Update() {
-	//シーンのインタフェースの初期化
-	IScene::Update();
-	colliderManager_->Step();
-
 	//追従カメラ
 	gameCamera_->Update();
 	gameCamera_->SetTragetPos(player_->GetTransformData().translate);
@@ -192,6 +188,8 @@ void GameScene::Update() {
 		sceneContext_.sceneManager->ChangeScene("Result");
 	}
 
+	//シーンのインタフェースの初期化
+	IScene::Update();
 #ifdef USE_IMGUI
 	//ImGuiの受付開始
 	sceneContext_.imguiManager->Begin();

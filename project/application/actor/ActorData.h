@@ -41,12 +41,12 @@ struct BulletData {
 //owner: どの物体の当たり判定
 //obb: 当たり判定の形
 //isTrigger: 押し戻ししない
-//enabled: 無効化用
+//isEnabled: 無効化用
 //onCollision: 衝突したときに呼ばれる
 struct Collider {
 	GameObject* owner;
 	OBB obb;
 	bool isTrigger;
-	bool enabled;
+	bool isEnabled;
 	std::function<void(GameObject* other)>onCollision;
 };
