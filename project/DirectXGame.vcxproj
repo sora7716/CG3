@@ -82,6 +82,7 @@
     <ClCompile Include="engine\scene\SceneFactory.cpp" />
     <ClCompile Include="engine\scene\SceneManager.cpp" />
     <ClCompile Include="engine\worldTransform\WorldTransform.cpp" />
+    <ClCompile Include="Object3dVer2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\actor\ActorData.h" />
@@ -164,6 +165,7 @@
     <ClInclude Include="engine\scene\SceneFactory.h" />
     <ClInclude Include="engine\scene\SceneManager.h" />
     <ClInclude Include="engine\worldTransform\WorldTransform.h" />
+    <ClInclude Include="Object3dVer2.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\resources\shaders\MapChip.hlsli">

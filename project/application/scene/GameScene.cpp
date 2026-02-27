@@ -70,6 +70,9 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	colliderManager_ = std::make_unique<ColliderManager>();
 	colliderManager_->AddCollider(&player_->GetCollider());
 	colliderManager_->AddCollider(&enemy_->GetCollider());
+
+	object3dVer2_ = std::make_unique<Object3dVer2>();
+	object3dVer2_->Initialize(sceneContext_.object3dCommon,camera_,"player");
 }
 
 //更新
@@ -84,6 +87,7 @@ void GameScene::Update() {
 	enemyManager_->SetCamera(camera_);
 	wireframeObject3d_->SetCamera(camera_);
 	enemy_->SetCamera(camera_);
+	object3dVer2_->SetCamera(camera_);
 
 	Vector3 prePlayerPos = player_->GetTransformData().translate;
 
@@ -111,6 +115,8 @@ void GameScene::Update() {
 	wireframeObject3d_->SetRotate(wireframeTransformDate_.rotate);
 	wireframeObject3d_->SetTranslate(wireframeTransformDate_.translate);
 	wireframeObject3d_->Update();
+
+	object3dVer2_->Update();
 
 	//ワイヤーフレームモデルとプレイヤーの当たり判定
 	if (Collision::IsCollision(player_->GetOBB(), wireframeObject3d_->GetOBB())) {
@@ -224,6 +230,8 @@ void GameScene::Draw() {
 
 	//敵
 	//enemyManager_->Draw();
+
+	object3dVer2_->Draw();
 
 	//スコア
 	score_->Draw();
