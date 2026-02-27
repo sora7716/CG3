@@ -13,6 +13,12 @@ class DirectXBase;
 class Object3dCommon;
 class Camera;
 
+//列挙型
+enum class Transform3dMode :uint32_t {
+	kNormal,
+	kBilboard,
+};
+
 /// <summary>
 /// 3Dオブジェクト
 /// </summary>
@@ -36,7 +42,7 @@ public://メンバ関数
 	/// <param name="object3dCommon">3dオブジェクトの共通部分</param>
 	/// <param name="camera">カメラ</param>
 	/// <param name="transformMode">トランスフォームモード</param>
-	void Initialize(Object3dCommon*object3dCommon,Camera* camera, TransformMode transformMode = TransformMode::k3d);
+	void Initialize(Object3dCommon* object3dCommon, Camera* camera, Transform3dMode transform3dMode = Transform3dMode::kNormal);
 
 	/// <summary>
 	/// 更新
@@ -202,6 +208,24 @@ public://メンバ関数
 	/// </summary>
 	/// <returns>ワールド座標</returns>
 	Vector3 GetWorldPos();
+private://メンバ関数
+	/// <summary>
+    /// 座標変換行列リソースの生成
+    /// </summary>
+	void CreateTransformationMatrixResource();
+
+	/// <summary>
+    /// 座標の更新
+    /// </summary>
+	void UpdateTransform();
+
+	/// <summary>
+	/// ビルボード行列での更新
+	/// </summary>
+	void UpdateTransformBillboard();
+private://メンバ関数テーブル
+	//座標の更新をまとめた
+	static void (Object3d::* UpdateTransformTable[])();
 private://メンバ変数
 	//3Dオブジェクトの共通部分
 	Object3dCommon* object3dCommon_ = nullptr;
@@ -218,6 +242,21 @@ private://メンバ変数
 	Model* model_ = nullptr;
 	//ワールドトランスフォーム
 	WorldTransform* worldTransform_ = nullptr;
+	//ワールドビュープロジェクションのリソース
+	ComPtr<ID3D12Resource>wvpResource_ = nullptr;
+	//ワールドビュープロジェクションのデータ
+	TransformationMatrix* wvpData_ = nullptr;
+	//カメラ
+	Camera* camera_ = nullptr;
+	//ワールド座標
+	TransformData transform_ = {};
+	//ワールド行列
+	Matrix4x4 worldMatrix_ = {};
+	Transform3dMode transform3dMode_ = Transform3dMode::kNormal;
+	//親
+	const WorldTransform* parent_ = nullptr;
+	//ノード
+	Node node_ = {};
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
 

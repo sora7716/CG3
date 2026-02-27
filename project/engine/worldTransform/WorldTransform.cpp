@@ -4,7 +4,7 @@
 #include "engine/math/func/Math.h"
 #include "engine/camera/Camera.h"
 #include <cmath>
-////メンバ関数テーブルの初期化
+//メンバ関数テーブルの初期化
 void(WorldTransform::* WorldTransform::UpdateTransformTable[])() = {
 	&UpdateTransform,
 	&UpdateTransform2d,

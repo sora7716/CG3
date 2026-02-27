@@ -74,5 +74,7 @@ private://メンバ変数
 
 	std::unique_ptr<Object3d>object3d_ = nullptr;
 	TransformData transform_ = {};
+
+	TransformData cameraTransform_ = {};
 };
 

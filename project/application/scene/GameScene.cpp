@@ -72,12 +72,14 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	//colliderManager_->AddCollider(&enemy_->GetCollider());
 
 	object3dVer2_ = std::make_unique<Object3dVer2>();
-	object3dVer2_->Initialize(sceneContext_.object3dCommon,camera_,"player");
+	object3dVer2_->Initialize(sceneContext_.object3dCommon, camera_, "player");
 
 	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(sceneContext_.object3dCommon,camera_,TransformMode::k3d);
-	object3d_->SetModel("enemy");
+	object3d_->Initialize(sceneContext_.object3dCommon, camera_, TransformMode::k3d);
+	object3d_->SetModel("plane");
 	transform_.scale = Vector3::MakeAllOne();
+
+	cameraTransform_.scale = Vector3::MakeAllOne();
 }
 
 //更新
@@ -94,6 +96,9 @@ void GameScene::Update() {
 	//enemy_->SetCamera(camera_);
 	object3dVer2_->SetCamera(camera_);
 	object3d_->SetCamera(camera_);
+
+	camera_->SetRotate(cameraTransform_.rotate);
+	camera_->SetTranslate(cameraTransform_.translate);
 
 	//Vector3 prePlayerPos = player_->GetTransformData().translate;
 
@@ -173,6 +178,11 @@ void GameScene::Update() {
 
 	ImGui::Begin("object3d");
 	ImGuiManager::DragTransform(transform_);
+	ImGui::End();
+
+	ImGui::Begin("camera");
+	ImGui::DragFloat3("rotate", &cameraTransform_.rotate.x, 0.1f);
+	ImGui::DragFloat3("translate", &cameraTransform_.translate.x, 0.1f);
 	ImGui::End();
 
 	//グローバル変数の更新

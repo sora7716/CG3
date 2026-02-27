@@ -8,6 +8,11 @@
 #include "engine/debug/ImGuiManager.h"
 #include "engine/base/SRVManager.h"
 #include <cassert>
+//メンバ関数テーブルの初期化
+void(Object3d::* Object3d::UpdateTransformTable[])() = {
+	&UpdateTransform,
+	&UpdateTransformBillboard,
+};
 
 //デストラクタ
 Object3d::~Object3d() {
@@ -15,23 +20,25 @@ Object3d::~Object3d() {
 }
 
 //初期化
-void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, TransformMode transformMode) {
+void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, Transform3dMode transform3dMode) {
 	//3Dオブジェクトの共通部分
 	object3dCommon_ = object3dCommon;
 	//DirectXの基盤部分を受け取る
 	directXBase_ = object3dCommon_->GetDirectXBase();
 
-	//ワールドトランスフォームの生成、初期化
-	worldTransform_ = new WorldTransform();
-	worldTransform_->Initialize(directXBase_, transformMode);
+	transform3dMode_ = transform3dMode;
+	//ワールド座標
+	transform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+	//wvpリソースの初期化
+	CreateTransformationMatrixResource();
 
 	//uv座標
 	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
 
 	//カメラにデフォルトカメラを代入
-	worldTransform_->SetCamera(camera);
+	camera_ = camera;
 	//カメラをセット
-	object3dCommon_->CreateCameraResource(worldTransform_->GetCamera()->GetTranslate());
+	object3dCommon_->CreateCameraResource(camera_->GetTranslate());
 
 	//マテリアルの初期化
 	material_.color = { 1.0f,1.0f,1.0f,1.0f };
@@ -47,11 +54,11 @@ void Object3d::Update() {
 	object3dCommon_->Update();
 
 	if (model_) {
-		worldTransform_->SetNode(model_->GetModelData().rootNode);
+		node_ = model_->GetModelData().rootNode;
 		model_->UVTransform(uvTransform_);
 	}
-	//ワールドトランスフォーム
-	worldTransform_->Update();
+	//トランスフォームの更新
+	(this->*UpdateTransformTable[static_cast<uint32_t>(transform3dMode_)])();
 }
 
 //描画
@@ -64,8 +71,8 @@ void Object3d::Draw() {
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 
-	//ワールドトランスフォーム
-	worldTransform_->Draw();
+	//座標変換行列CBufferの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());//wvp
 
 	//平光源CBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, object3dCommon_->GetDirectionalLightResource()->GetGPUVirtualAddress());
@@ -97,28 +104,28 @@ void Object3d::SetModel(const std::string& name) {
 
 //カメラのセッター
 void Object3d::SetCamera(Camera* camera) {
-	worldTransform_->SetCamera(camera);
+	camera_ = camera;
 	object3dCommon_->SetCameraForGPU(camera->GetTranslate());
 }
 
 // スケールのセッター
 void Object3d::SetScale(const Vector3& scale) {
-	worldTransform_->SetScale(scale);
+	transform_.scale = scale;
 }
 
 // 回転のセッター
 void Object3d::SetRotate(const Vector3& rotate) {
-	worldTransform_->SetRotate(rotate);
+	transform_.rotate = rotate;
 }
 
 // 平行移動のセッター
 void Object3d::SetTranslate(const Vector3& translate) {
-	worldTransform_->SetTranslate(translate);
+	transform_.translate = translate;
 }
 
 //トランスフォームのセッター
 void Object3d::SetTransformData(const TransformData& transform) {
-	worldTransform_->SetTransformData(transform);
+	transform_ = transform;
 }
 
 // uvスケールのセッター
@@ -163,19 +170,19 @@ void Object3d::SetBlendMode(const BlendMode& blendMode) {
 // スケールのゲッター
 const Vector3& Object3d::GetScale() const {
 	// TODO: return ステートメントをここに挿入します
-	return worldTransform_->GetScale();
+	return transform_.scale;
 }
 
 // 回転のゲッター
 const Vector3& Object3d::GetRotate() const {
 	// TODO: return ステートメントをここに挿入します
-	return worldTransform_->GetRotate();
+	return transform_.rotate;
 }
 
 // 平行移動のゲッター
 const Vector3& Object3d::GetTranslate() const {
 	// TODO: return ステートメントをここに挿入します
-	return worldTransform_->GetTranslate();
+	return transform_.translate;
 }
 
 // uvスケールのゲッター
@@ -215,7 +222,7 @@ WorldTransform* Object3d::GetWorldTransform() const {
 //トランスフォームデータのゲッター
 const TransformData& Object3d::GetTransformData() const {
 	// TODO: return ステートメントをここに挿入します
-	return worldTransform_->GetTransform();
+	return transform_;
 }
 
 //モデルのゲッター
@@ -229,4 +236,58 @@ Model* Object3d::GetModel() {
 //ワールド座標のゲッター
 Vector3 Object3d::GetWorldPos() {
 	return worldTransform_->GetWorldPos();
+}
+
+//座標変換行列リソースの生成
+void Object3d::CreateTransformationMatrixResource() {
+	//座標変換行列リソースを作成する
+	wvpResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix));
+	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
+	//書き込むためのアドレス
+	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
+	//単位行列を書き込んでおく
+	wvpData_->wvp = Matrix4x4::Identity4x4();
+	wvpData_->world = Matrix4x4::Identity4x4();
+	wvpData_->worldInverseTranspose = Matrix4x4::Identity4x4();
+}
+
+//座標の更新
+void Object3d::UpdateTransform() {
+	worldMatrix_ = Rendering::MakeAffineMatrix(transform_);
+	//TransformからWorldMatrixを作る
+	if (parent_) {
+		worldMatrix_ = worldMatrix_ * parent_->GetWorldMatrix();
+	}
+	//wvpの書き込み
+	if (camera_) {
+		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+		wvpData_->wvp = node_.localMatrix * worldMatrix_ * viewProjectionMatrix;
+	} else {
+		wvpData_->wvp = worldMatrix_;
+	}
+	//ワールド行列を送信
+	wvpData_->world = node_.localMatrix * worldMatrix_;
+	//逆行列の転置行列を送信
+	wvpData_->worldInverseTranspose = worldMatrix_.InverseTranspose();
+}
+
+//ビルボード行列での更新
+void Object3d::UpdateTransformBillboard() {
+	//カメラがなかったら
+	if (!camera_) {
+		wvpData_->wvp = worldMatrix_;
+		return;
+	}
+	worldMatrix_ = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), transform_);
+	//TransformからWorldMatrixを作る
+	if (parent_) {
+		worldMatrix_ = worldMatrix_ * parent_->GetWorldMatrix();
+	}
+	//wvpの書き込み
+	const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+	wvpData_->wvp = worldMatrix_ * viewProjectionMatrix;
+	//ワールド行列を送信
+	wvpData_->world = worldMatrix_;
+	//逆行列の転置行列を送信
+	wvpData_->worldInverseTranspose = wvpData_->world.InverseTranspose();
 }
