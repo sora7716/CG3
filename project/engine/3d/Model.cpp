@@ -59,7 +59,7 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directoryPat
 }
 
 //描画
-void Model::Draw() {
+void Model::Draw(uint32_t objectCount) {
 	//VertexBufferViewの設定
 	directXBase_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);//VBVを設定
 	directXBase_->GetCommandList()->IASetIndexBuffer(&indexBufferView_);//IBVを設定
@@ -70,7 +70,7 @@ void Model::Draw() {
 	//SRVのDescriptorTableの先頭を設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(2, modelCommon_->GetTextureManager()->GetSRVHandleGPU(modelData_.material.textureFilePath));
 	//描画
-	directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.vertices.size()), 1, 0, 0, 0);
+	directXBase_->GetCommandList()->DrawIndexedInstanced(UINT(modelData_.vertices.size()), objectCount, 0, 0, 0);
 }
 
 //uv変換

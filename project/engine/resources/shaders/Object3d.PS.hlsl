@@ -59,12 +59,12 @@ struct Camera {
     float32_t padding;
 };
 
-ConstantBuffer<Material> gMaterial : register(b1);
+ConstantBuffer<Material> gMaterial : register(b0);
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
-ConstantBuffer<DirectionalLight> gDirectionalLight : register(b2);
-ConstantBuffer<Camera> gCamera : register(b3);
-ConstantBuffer<RimLight> gRimLight : register(b4);
+ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
+ConstantBuffer<Camera> gCamera : register(b2);
+ConstantBuffer<RimLight> gRimLight : register(b3);
 StructuredBuffer<PointLight> gPointLight : register(t1);
 StructuredBuffer<SpotLight> gSpotLight : register(t2);
 

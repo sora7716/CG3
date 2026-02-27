@@ -19,7 +19,7 @@ Enemy::~Enemy() {
 void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std::string& modelName) {
 	//3Dモデルの生成と初期化
 	gameObject_.object3d = new Object3d();
-	gameObject_.object3d->Initialize(object3dCommon, camera, TransformMode::k3d);
+	gameObject_.object3d->Initialize(object3dCommon, camera, Transform3dMode::kNormal);
 	gameObject_.object3d->SetModel(modelName);
 	gameObject_.transformData.scale = Vector3::MakeAllOne() / 2.0f;
 	gameObject_.isAlive = true;
@@ -59,7 +59,7 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 
 	//HP
 	hpBar_ = new Object3d();
-	hpBar_->Initialize(object3dCommon, camera, TransformMode::kBilboard);
+	hpBar_->Initialize(object3dCommon, camera, Transform3dMode::kBilboard);
 	hpBar_->SetModel("hpBar");
 	hpBar_->SetTexture("playerHpBar.png");
 	hpBarTransform_.scale = { hpBarWidth_,0.2f,1.0f };
@@ -73,7 +73,7 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 	hpOutLineMaterial.enableLighting = false;
 
 	hpOutLine_ = new Object3d();
-	hpOutLine_->Initialize(object3dCommon, camera, TransformMode::kBilboard);
+	hpOutLine_->Initialize(object3dCommon, camera, Transform3dMode::kBilboard);
 	hpOutLine_->SetModel("hpOutLine");
 	hpOutLine_->SetTexture("playerHpOutLine.png");
 	hpOutLine_->GetModel()->SetMaterial(hpOutLineMaterial);
@@ -83,7 +83,7 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 //更新
 void Enemy::Update() {
 	//オブジェクト3Dの更新
-	gameObject_.object3d->SetTransformData(gameObject_.transformData);
+	gameObject_.object3d->SetTransformData(0,gameObject_.transformData);
 	gameObject_.object3d->Update();
 
 	//ワイヤーフレームの更新
@@ -112,10 +112,10 @@ void Enemy::Update() {
 	//HP
 	Vector3 worldPos = gameObject_.object3d->GetWorldPos();
 	hpOutLineTransform_.translate = { worldPos.x,worldPos.y + 2.0f,worldPos.z };
-	hpOutLine_->SetTransformData(hpOutLineTransform_);
+	hpOutLine_->SetTransformData(0,hpOutLineTransform_);
 	hpOutLine_->Update();
 	hpBarTransform_.translate = { worldPos.x + hpBarPosX_,worldPos.y + 2.0f,worldPos.z };
-	hpBar_->SetTransformData(hpBarTransform_);
+	hpBar_->SetTransformData(0,hpBarTransform_);
 	hpBar_->Update();
 }
 

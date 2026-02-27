@@ -57,7 +57,7 @@ void Bullet::Update() {
 			bulletData.gameObject.transformData.translate += bulletData.gameObject.velocity;
 
 			//弾の情報を設定
-			bulletData.gameObject.object3d->SetTransformData(bulletData.gameObject.transformData);
+			bulletData.gameObject.object3d->SetTransformData(0,bulletData.gameObject.transformData);
 			bulletData.gameObject.object3d->GetModel()->SetMaterial(bulletData.gameObject.material);
 
 			//弾の生存させるか

@@ -29,15 +29,17 @@ public://メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="modelCommon">モデルの共通部分</param>
-    /// <param name="directoryPath">ディレクトリファイルパス(最後に"/"はいらない)</param>
+	/// <param name="directoryPath">ディレクトリファイルパス(最後に"/"はいらない)</param>
 	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
 	/// <param name="filename">ファイル名(最初に"/"入らない</param>
 	void Initialize(ModelCommon* modelCommon, const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename);
 
+
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	/// <param name="objectCount">表示したいオブジェクト数</param>
+	void Draw(uint32_t objectCount = 1);
 
 	/// <summary>
 	/// uv変換
@@ -49,7 +51,7 @@ public://メンバ関数
 	/// 色を変更
 	/// </summary>
 	/// <param name="color">色</param>
-	void SetColor(const Vector4&color);
+	void SetColor(const Vector4& color);
 
 	/// <summary>
 	/// テクスチャの変更
@@ -78,12 +80,12 @@ public://メンバ関数
 	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
-    /// モデルファイルの読み込み
-    /// </summary>
+	/// モデルファイルの読み込み
+	/// </summary>
 	/// <param name="directoryPath">ディレクトリファイルパス(最後に"/"はいらない)</param>
 	/// <param name="storedFilePath">モデルを保管しているファイル名(最初と最後に"/"入らない)</param>
 	/// <param name="filename">ファイル名(最初に"/"入らない</param>
-    /// <returns>モデルデータ</returns>
+	/// <returns>モデルデータ</returns>
 	static ModelData LoadModelFile(const std::string& directoryPath, const std::string& storedFilePath, const std::string& filename);
 
 	/// <summary>

@@ -10,6 +10,7 @@
 #include <d3d12.h>
 //前方宣言
 class DirectXBase;
+class SRVManager;
 class Object3dCommon;
 class Camera;
 
@@ -80,26 +81,30 @@ public://メンバ関数
 	/// <summary>
 	/// スケールのセッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="scale">スケール</param>
-	void SetScale(const Vector3& scale);
+	void SetScale(uint32_t index, const Vector3& scale);
 
 	/// <summary>
 	/// 回転のセッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="rotate">回転</param>
-	void SetRotate(const Vector3& rotate);
+	void SetRotate(uint32_t index, const Vector3& rotate);
 
 	/// <summary>
 	/// 平行移動のセッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="translate">平行移動</param>
-	void SetTranslate(const Vector3& translate);
+	void SetTranslate(uint32_t index, const Vector3& translate);
 
 	/// <summary>
 	/// トランスフォームのセッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="transform">トランスフォーム</param>
-	void SetTransformData(const TransformData& transform);
+	void SetTransformData(uint32_t index, const TransformData& transform);
 
 	/// <summary>
 	/// uvスケールのセッター
@@ -146,20 +151,23 @@ public://メンバ関数
 	/// <summary>
 	/// スケールのゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>スケール</returns>
-	const Vector3& GetScale()const;
+	const Vector3& GetScale(uint32_t index)const;
 
 	/// <summary>
 	/// 回転のゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>回転</returns>
-	const Vector3& GetRotate()const;
+	const Vector3& GetRotate(uint32_t index)const;
 
 	/// <summary>
 	/// 平行移動のゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>平行移動</returns>
-	const Vector3& GetTranslate()const;
+	const Vector3& GetTranslate(uint32_t index)const;
 
 	/// <summary>
 	/// uvスケールのゲッター
@@ -194,8 +202,9 @@ public://メンバ関数
 	/// <summary>
 	/// トランスフォームデータのゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>トランスフォームデータ</returns>
-	const TransformData& GetTransformData()const;
+	const TransformData& GetTransformData(uint32_t index)const;
 
 	/// <summary>
 	/// モデルのゲッター
@@ -210,13 +219,18 @@ public://メンバ関数
 	Vector3 GetWorldPos();
 private://メンバ関数
 	/// <summary>
-    /// 座標変換行列リソースの生成
-    /// </summary>
+	/// 座標変換行列リソースの生成
+	/// </summary>
 	void CreateTransformationMatrixResource();
 
 	/// <summary>
-    /// 座標の更新
+    /// 座標変換行列リソースのストラクチャバッファの生成
     /// </summary>
+	void CreateStructuredBufferForWvp();
+
+	/// <summary>
+	/// 座標の更新
+	/// </summary>
 	void UpdateTransform();
 
 	/// <summary>
@@ -226,6 +240,9 @@ private://メンバ関数
 private://メンバ関数テーブル
 	//座標の更新をまとめた
 	static void (Object3d::* UpdateTransformTable[])();
+private://定数
+	//オブジェクトの表示できる最大数
+	static inline const uint32_t kMaxObjectCount = 2;
 private://メンバ変数
 	//3Dオブジェクトの共通部分
 	Object3dCommon* object3dCommon_ = nullptr;
@@ -238,21 +255,22 @@ private://メンバ変数
 	};
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
+	//SRVマネージャー
+	SRVManager* srvManager_ = nullptr;
 	//3Dモデル
 	Model* model_ = nullptr;
 	//ワールドトランスフォーム
 	WorldTransform* worldTransform_ = nullptr;
 	//ワールドビュープロジェクションのリソース
 	ComPtr<ID3D12Resource>wvpResource_ = nullptr;
-	//ワールドビュープロジェクションのデータ
-	TransformationMatrix* wvpData_ = nullptr;
+	//ワールドビュープロジェクションのポインタ
+	TransformationMatrix* wvpPtr_ = nullptr;
 	//カメラ
 	Camera* camera_ = nullptr;
 	//ワールド座標
-	TransformData transform_ = {};
-	//ワールド行列
-	Matrix4x4 worldMatrix_ = {};
+	TransformData transforms_[kMaxObjectCount] = {};
 	Transform3dMode transform3dMode_ = Transform3dMode::kNormal;
+	uint32_t srvIndex_ = 0;
 	//親
 	const WorldTransform* parent_ = nullptr;
 	//ノード

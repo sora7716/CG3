@@ -75,9 +75,10 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	object3dVer2_->Initialize(sceneContext_.object3dCommon, camera_, "player");
 
 	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(sceneContext_.object3dCommon, camera_, TransformMode::k3d);
-	object3d_->SetModel("plane");
-	transform_.scale = Vector3::MakeAllOne();
+	object3d_->Initialize(sceneContext_.object3dCommon, camera_, Transform3dMode::kNormal);
+	object3d_->SetModel("enemy");
+	transform_0.scale = Vector3::MakeAllOne();
+	transform_1.scale = Vector3::MakeAllOne();
 
 	cameraTransform_.scale = Vector3::MakeAllOne();
 }
@@ -128,7 +129,8 @@ void GameScene::Update() {
 	//wireframeObject3d_->Update();
 
 	object3dVer2_->Update();
-	object3d_->SetTransformData(transform_);
+	object3d_->SetTransformData(0,transform_0);
+	object3d_->SetTransformData(1,transform_1);
 	object3d_->Update();
 
 	////衝突判定
@@ -177,7 +179,12 @@ void GameScene::Update() {
 	ImGui::End();
 
 	ImGui::Begin("object3d");
-	ImGuiManager::DragTransform(transform_);
+	ImGui::PushID(0);
+	ImGuiManager::DragTransform(transform_0);
+	ImGui::PopID();
+	ImGui::PushID(1);
+	ImGuiManager::DragTransform(transform_1);
+	ImGui::PopID();
 	ImGui::End();
 
 	ImGui::Begin("camera");

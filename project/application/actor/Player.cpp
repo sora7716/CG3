@@ -202,7 +202,7 @@ void Player::Update() {
 	LookDirection();
 
 	//トランスフォームを設定
-	gameObject_.object3d->SetTransformData(gameObject_.transformData);
+	gameObject_.object3d->SetTransformData(0,gameObject_.transformData);
 
 	//3Dオブジェクトの更新
 	gameObject_.object3d->Update();
@@ -481,5 +481,5 @@ void Player::LookDirection() {
 	if (gameObject_.transformData.rotate.y > twoPi) gameObject_.transformData.rotate.y -= twoPi;
 	if (gameObject_.transformData.rotate.y < 0.0f)  gameObject_.transformData.rotate.y += twoPi;
 
-	gameObject_.object3d->SetRotate(gameObject_.transformData.rotate);
+	gameObject_.object3d->SetRotate(0,gameObject_.transformData.rotate);
 }
