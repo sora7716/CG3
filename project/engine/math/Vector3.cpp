@@ -15,7 +15,7 @@ float Vector3::Length() {
 //正規化
 Vector3 Vector3::Normalize()const {
 	Vector3 result = {};
-	float len = Vector3(x,y,z).Length();
+	float len = Vector3(x, y, z).Length();
 	if (len != 0.0f) {
 		result.x = x / len;
 		result.y = y / len;
@@ -161,9 +161,9 @@ Vector3& Vector3::operator+=(float n) {
 //マイナスにする
 Vector3 Vector3::operator-()const {
 	Vector3 result{
-	1.0f - x,
-	1.0f - y,
-	1.0f - z,
+	-x,
+	-y,
+	-z,
 	};
 	return result;
 }

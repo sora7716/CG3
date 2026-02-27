@@ -50,10 +50,6 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 
 	//衝突
 	collider_.owner = &gameObject_;
-	collider_.obb.orientations[0] = { 1,0,0 };
-	collider_.obb.orientations[1] = { 0,1,0 };
-	collider_.obb.orientations[2] = { 0,0,1 };
-
 	collider_.isTrigger = true;
 	collider_.isEnabled = true;
 

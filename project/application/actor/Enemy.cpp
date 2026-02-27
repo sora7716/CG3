@@ -26,9 +26,6 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 	gameObject_.tag = Tag::kEnemy;
 
 	collider_.owner = &gameObject_;
-	collider_.obb.orientations[0] = { 1,0,0 };
-	collider_.obb.orientations[1] = { 0,1,0 };
-	collider_.obb.orientations[2] = { 0,0,1 };
 	collider_.isTrigger = true;
 	collider_.isEnabled = true;
 	collider_.onCollision = [this](GameObject* other) {this->OnCollision(other); };
@@ -101,7 +98,7 @@ void Enemy::Update() {
 	attackArea->Update();
 
 	//振る舞い
-	Behavior();
+	//Behavior();
 
 	//弾の更新
 	bullet_->Update();

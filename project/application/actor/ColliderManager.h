@@ -1,6 +1,7 @@
 #pragma once
 #include "ActorData.h"
 #include <vector>
+#include <func/Collision.h>
 
 /// <summary>
 /// 衝突の管理
@@ -47,6 +48,13 @@ private://メンバ関数
 	/// <param name="collider">コライダー</param>
     /// <returns>衝突判定を行えるか</returns>
 	bool IsActive(Collider* collider);
+
+	/// <summary>
+	/// 押し出し
+	/// </summary>
+	/// <param name="gameObject">ゲームオブジェクト</param>
+	/// <param name="hitInfo">衝突情報</param>
+	void Resolve(GameObject& self, const GameObject& other, HitInfo hit);
 private://メンバ変数
 	std::vector<Collider*>colliders_;
 };

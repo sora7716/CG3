@@ -46,6 +46,7 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize(sceneContext_.object3dCommon,camera_,"enemy");
+	enemy_->SetTranslate({ 22.0f,0.0f,25.0f });
 
 	//フィールド
 	field_ = std::make_unique<Field>();
@@ -114,41 +115,6 @@ void GameScene::Update() {
 	//ワイヤーフレームモデルとプレイヤーの当たり判定
 	if (Collision::IsCollision(player_->GetOBB(), wireframeObject3d_->GetOBB())) {
 		wireframeObject3d_->SetColor(Vector4::MakeRedColor());
-
-		Vector3 pos = player_->GetWorldPos();
-		Vector3 vel = player_->GetVelocity();
-
-		float blockRight = wireframeObject3d_->GetOBB().center.x + wireframeObject3d_->GetOBB().size.x;
-		float blockTop = wireframeObject3d_->GetOBB().center.y + wireframeObject3d_->GetOBB().size.y;
-		float playerLeft = pos.x - player_->GetOBB().size.x;
-		float playerBottom = pos.y - player_->GetOBB().size.y;
-		if (playerBottom < blockTop) {
-			player_->SetIsOnGround(true);
-			pos.y = std::max(pos.y, prePlayerPos.y);
-			vel.y = 0.0f;
-		} else {
-			player_->SetIsOnGround(false);
-		}
-
-		if (playerLeft < blockRight) {
-			if (playerBottom + 0.05f < blockTop) {
-				pos.x = prePlayerPos.x;
-			}
-		}
-
-		float blockFront = wireframeObject3d_->GetOBB().center.z + wireframeObject3d_->GetOBB().size.z;
-		float blockBehind = wireframeObject3d_->GetOBB().center.z - wireframeObject3d_->GetOBB().size.z;
-		float playerFront = player_->GetOBB().center.z + player_->GetOBB().size.z;
-		float playerBehind = player_->GetOBB().center.z - player_->GetOBB().size.z;
-
-		if (playerBehind < blockFront) {
-			if (playerBottom + 0.05f < blockTop) {
-				pos.z = prePlayerPos.z;
-			}
-		}
-
-		player_->SetPosition(pos);
-		player_->SetVelocity(vel);
 	} else {
 		wireframeObject3d_->SetColor(Vector4::MakeBlackColor());
 	}
@@ -185,7 +151,7 @@ void GameScene::Update() {
 
 	//プレイヤーが死んだら
 	if (!player_->IsAlive()) {
-		sceneContext_.sceneManager->ChangeScene("Result");
+		//sceneContext_.sceneManager->ChangeScene("Result");
 	}
 
 	//シーンのインタフェースの初期化

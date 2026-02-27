@@ -1,6 +1,16 @@
 #pragma once
 #include "PrimitiveData.h"
 
+//衝突情報
+//isHit: 当たったか
+//normal: 押し出す方向
+//depth: めり込み量
+struct HitInfo {
+	bool isCollision;
+	Vector3 normal;
+	float depth;
+};
+
 /// <summary>
 /// 衝突判定
 /// </summary>
@@ -45,4 +55,7 @@ public://静的メンバ関数
 	/// <param name="obb2">obb2</param>
 	/// <returns>衝突したかのフラグ</returns>
 	static bool IsCollision(const OBB& obb1, const OBB& obb2);
+
+
+	static HitInfo GetHitInfo(const OBB& obb1, const OBB& obb2);
 };

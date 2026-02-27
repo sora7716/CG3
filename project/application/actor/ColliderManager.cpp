@@ -57,6 +57,7 @@ void ColliderManager::SyncCollider() {
 		//OBBの値の更新
 		collider->obb.size = collider->owner->hitBox->GetScale();
 		collider->obb.rotate = collider->owner->hitBox->GetRotate();
+		Rendering::MakeOBBRotateMatrix(collider->obb.orientations, collider->obb.rotate);
 		collider->obb.center = collider->owner->hitBox->GetWorldPos();
 		collider->obb.center = collider->owner->hitBox->GetWorldPos();
 	}
@@ -75,8 +76,9 @@ void ColliderManager::CheckCollision() {
 			if (!IsActive(pairB)) {
 				continue;
 			}
-
-			if (!Collision::IsCollision(pairA->obb, pairB->obb)) {
+			//衝突情報
+			HitInfo hitInfo = Collision::GetHitInfo(pairA->obb, pairB->obb);
+			if (!hitInfo.isCollision) {
 				continue;
 			}
 
@@ -86,6 +88,8 @@ void ColliderManager::CheckCollision() {
 			if (pairB->onCollision) {
 				pairB->onCollision(pairA->owner);
 			}
+
+			Resolve(*pairA->owner, *pairB->owner, hitInfo);
 		}
 	}
 }
@@ -103,4 +107,27 @@ bool ColliderManager::IsActive(Collider* collider) {
 		return false;
 	}
 	return true;
+}
+
+//押し出し
+void ColliderManager::Resolve(GameObject& self, const GameObject& other, HitInfo hit) {
+	Vector3 pos = self.transformData.translate;
+	Vector3 vel = self.velocity;
+
+	// normalを「other→self」方向に揃える（これが超重要）
+	Vector3 delta = pos - other.transformData.translate;
+	if (delta.Dot(hit.normal) < 0.0f) {
+		hit.normal = -hit.normal;
+	}
+
+	const float slop = 0.001f;
+	pos += hit.normal * (hit.depth + slop);
+
+	float vn = vel.Dot(hit.normal);
+	if (vn < 0.0f) {
+		vel -= hit.normal * vn;
+	}
+
+	self.transformData.translate = pos;
+	self.velocity = vel;
 }
