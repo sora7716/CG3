@@ -55,7 +55,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 
 	collider_.onCollision = [this](GameObject* other) {
 		this->OnCollision(other);
-	};
+		};
 
 	//マテリアルの初期化
 	gameObject_.material.color = { 1.0f,1.0f,1.0f,1.0f };
@@ -107,7 +107,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 	//アンカーポイント
 	anchorPoint_ = std::make_unique<WireframeObject3d>();
 	anchorPoint_->Initialize(object3dCommon_->GetWireframeObject3dCommon(), camera_, ModelType::kSphere);
-	anchorPoint_->SetRadius(0,0.05f);
+	anchorPoint_->SetRadius(0, 0.05f);
 	spring_.naturalLength = 2.0f;
 	spring_.stiffness = 40.0f;
 	spring_.dampingCoefficient = 2.0f;
@@ -129,19 +129,19 @@ void Player::Update() {
 		Vector3 localForward = { 0.0f, 0.0f, 10.0f };
 
 		// プレイヤーのワールド行列
-		Matrix4x4 world = gameObject_.object3d->GetWorldTransform()->GetWorldMatrix();
+		Matrix4x4 world = gameObject_.object3d->GetWorldMatrix(0);
 
 		// 前方向をワールド空間へ
 		Vector3 worldForward = Math::TransformNormal(localForward, world);
 
 		// プレイヤーの現在位置
-		Vector3 playerPos = gameObject_.object3d->GetWorldPos();
+		Vector3 playerPos = gameObject_.object3d->GetWorldPos(0);
 
 		// 最終位置
 		spring_.anchor = playerPos + worldForward;
 
 		// ここが正解
-		anchorPoint_->SetTranslate(0,spring_.anchor);
+		anchorPoint_->SetTranslate(0, spring_.anchor);
 	}
 
 	if (input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kLT)) {
@@ -150,7 +150,7 @@ void Player::Update() {
 
 	gameObject_.acceleration.y = Physics::kGravity;
 	if (isMovingToAnchor_) {
-		Ball ball = { .position = gameObject_.object3d->GetWorldPos(),.velocity = gameObject_.velocity,.acceleration = gameObject_.acceleration,.mass = 1.0f,.radius = 0.1f };
+		Ball ball = { .position = gameObject_.object3d->GetWorldPos(0),.velocity = gameObject_.velocity,.acceleration = gameObject_.acceleration,.mass = 1.0f,.radius = 0.1f };
 		float diff = (spring_.anchor - ball.position).Length();
 		gameObject_.acceleration = Physics::ApplySpringForce(spring_, ball);
 		gameObject_.acceleration.y += Physics::kGravity;
@@ -202,15 +202,15 @@ void Player::Update() {
 	LookDirection();
 
 	//トランスフォームを設定
-	gameObject_.object3d->SetTransformData(0,gameObject_.transformData);
+	gameObject_.object3d->SetTransformData(0, gameObject_.transformData);
 
 	//3Dオブジェクトの更新
 	gameObject_.object3d->Update();
 
 	//ヒットボックスの更新
-	gameObject_.hitBox->SetTranslate(0,gameObject_.object3d->GetWorldPos());
-	gameObject_.hitBox->SetRotate(0,gameObject_.transformData.rotate);
-	gameObject_.hitBox->SetScale(0,hitBoxScale_);
+	gameObject_.hitBox->SetTranslate(0, gameObject_.object3d->GetWorldPos(0));
+	gameObject_.hitBox->SetRotate(0, gameObject_.transformData.rotate);
+	gameObject_.hitBox->SetScale(0, hitBoxScale_);
 	gameObject_.hitBox->Update();
 
 	//HP
@@ -304,7 +304,7 @@ bool Player::IsOnGround() {
 
 //オブジェクト3dのゲッター
 Vector3 Player::GetWorldPos() const {
-	return gameObject_.object3d->GetWorldPos();
+	return gameObject_.object3d->GetWorldPos(0);
 }
 
 //トランスフォームデータのゲッター
@@ -378,8 +378,8 @@ void Player::Move() {
 //攻撃
 void Player::Attack() {
 	//弾の発射
-	bullet_->SetShootingPosition(gameObject_.object3d->GetWorldPos());
-	bullet_->SetSourceWorldMatrix(gameObject_.object3d->GetWorldTransform()->GetWorldMatrix());
+	bullet_->SetShootingPosition(gameObject_.object3d->GetWorldPos(0));
+	bullet_->SetSourceWorldMatrix(gameObject_.object3d->GetWorldMatrix(0));
 	bullet_->Fire(input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kRT));
 	bullet_->Update();
 }
@@ -437,12 +437,12 @@ void Player::Dead() {
 void Player::HeadlightUpdate() {
 	//ライトの位置をプレイヤーの前に設定
 	Vector3 headlightOffset = { 0.0f, 0.0f, 0.5f };
-	headlight_.position = gameObject_.object3d->GetWorldPos() + headlightOffset;
+	headlight_.position = gameObject_.object3d->GetWorldPos(0) + headlightOffset;
 	// ローカル空間での“前”の向き
 	Vector3 localForward = { 0.0f, 0.0f, 1.0f };
 
 	//プレイヤーのワールド行列を取得
-	Matrix4x4 world = gameObject_.object3d->GetWorldTransform()->GetWorldMatrix();
+	Matrix4x4 world = gameObject_.object3d->GetWorldMatrix(0);
 
 	//前方向ベクトルだけをワールド空間に変換
 	Vector3 worldForward = Math::TransformNormal(localForward, world);
@@ -481,5 +481,5 @@ void Player::LookDirection() {
 	if (gameObject_.transformData.rotate.y > twoPi) gameObject_.transformData.rotate.y -= twoPi;
 	if (gameObject_.transformData.rotate.y < 0.0f)  gameObject_.transformData.rotate.y += twoPi;
 
-	gameObject_.object3d->SetRotate(0,gameObject_.transformData.rotate);
+	gameObject_.object3d->SetRotate(0, gameObject_.transformData.rotate);
 }

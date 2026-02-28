@@ -16,10 +16,8 @@
 #include "Enemy.h"
 #include "Score.h"
 #include "ColliderManager.h"
-#include "WireframeObject3d.h"
 #include "func/Math.h"
 #include "func/Physics.h"
-#include "Object3d.h"
 
 //コンストラクタ
 GameScene::GameScene() {
@@ -37,83 +35,56 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	camera_ = sceneContext_.cameraManager->FindCamera("gameCamera");
 
 	//追従カメラ
-	//gameCamera_ = std::make_unique<GameCamera>();
-	//gameCamera_->Initialize(camera_);
+	gameCamera_ = std::make_unique<GameCamera>();
+	gameCamera_->Initialize(camera_);
 
 	//プレイヤー
-	//player_ = std::make_unique<Player>();
-	//player_->Initialize(sceneContext_.input, sceneContext_.spriteCommon, sceneContext_.object3dCommon, gameCamera_->GetCamera(), "player");
-	//player_->SetPosition({ 25.0f,0.0f,25.0f });
+	player_ = std::make_unique<Player>();
+	player_->Initialize(sceneContext_.input, sceneContext_.spriteCommon, sceneContext_.object3dCommon, gameCamera_->GetCamera(), "player");
+	player_->SetPosition({ 25.0f,0.0f,25.0f });
 
-	//enemy_ = std::make_unique<Enemy>();
-	//enemy_->Initialize(sceneContext_.object3dCommon,camera_,"enemy");
-	//enemy_->SetTranslate({ 22.0f,0.0f,25.0f });
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize(sceneContext_.object3dCommon,camera_,"enemy");
+	enemy_->SetTranslate({ 22.0f,0.0f,25.0f });
 
 	//フィールド
-	//field_ = std::make_unique<Field>();
-	//field_->Initialize(sceneContext_.object3dCommon, gameCamera_->GetCamera());
+	field_ = std::make_unique<Field>();
 
 	//敵の実装
 	//enemyManager_ = EnemyManager::GetInstance();
 	//enemyManager_->Initialize(sceneContext_.object3dCommon, camera_);
 
 	//スコア
-	//score_ = std::make_unique<Score>();
-	//score_->Initialize(sceneContext_.object2dCommon);
-
-	//ワイヤーモデル
-	//wireframeObject3d_ = std::make_unique<WireframeObject3d>();
-	//wireframeObject3d_->Initialize(sceneContext_.wireframeObject3dCommon, camera_, ModelType::kCube);
-	//wireframeTransformDate_.scale = Vector3::MakeAllOne();
-	//wireframeTransformDate_.translate = { 20.0f,0.0f,25.0f };
+	score_ = std::make_unique<Score>();
+	score_->Initialize(sceneContext_.object2dCommon);
 
 	//衝突判定
-	//colliderManager_->AddCollider(&player_->GetCollider());
-	//colliderManager_->AddCollider(&enemy_->GetCollider());
-
-	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(sceneContext_.object3dCommon, camera_, 2, Transform3dMode::kNormal);
-	object3d_->SetModel("enemy");
-	transform_0.scale = Vector3::MakeAllOne();
-	transform_1.scale = Vector3::MakeAllOne();
-
-	cameraTransform_.scale = Vector3::MakeAllOne();
-	cameraTransform_.translate = { 0.0f,0.0f,-25.0f };
-
-	wireframeObject3d_ = std::make_unique<WireframeObject3d>();
-	wireframeObject3d_->Initialize(sceneContext_.wireframeObject3dCommon, camera_, ModelType::kCube, 3);
+	colliderManager_->AddCollider(&player_->GetCollider());
+	colliderManager_->AddCollider(&enemy_->GetCollider());
 }
 
 //更新
 void GameScene::Update() {
 	//追従カメラ
-	//gameCamera_->Update();
-	//gameCamera_->SetTragetPos(player_->GetTransformData().translate);
+	gameCamera_->Update();
+	gameCamera_->SetTragetPos(player_->GetTransformData().translate);
 
 	//カメラの設定
-	//player_->SetCamera(camera_);
-	//field_->SetCamera(camera_);
+	player_->SetCamera(camera_);
 	//enemyManager_->SetCamera(camera_);
-	//wireframeObject3d_->SetCamera(camera_);
-	//enemy_->SetCamera(camera_);
-	object3d_->SetCamera(camera_);
+	enemy_->SetCamera(camera_);
 
-	camera_->SetRotate(cameraTransform_.rotate);
-	camera_->SetTranslate(cameraTransform_.translate);
-
-	wireframeObject3d_->Update();
-
-	//Vector3 prePlayerPos = player_->GetTransformData().translate;
+	Vector3 prePlayerPos = player_->GetTransformData().translate;
 
 	//プレイヤー
-	//player_->Update();
-	//Vector3 playerPos = player_->GetTransformData().translate;
-	//sceneContext_.object3dCommon->SetPointLightPos({ playerPos.x,playerPos.y + 2.0f,playerPos.z });
+	player_->Update();
+	Vector3 playerPos = player_->GetTransformData().translate;
+	sceneContext_.object3dCommon->SetPointLightPos({ playerPos.x,playerPos.y + 2.0f,playerPos.z });
 
 	//敵
 	//enemyManager_->Update(player_->GetWorldPos());
 
-	//enemy_->Update();
+	enemy_->Update();
 
 	//フィールド
 	//field_->SetDirectionalLight(sceneContext_.object3dCommon->GetDirectionalLight());
@@ -122,17 +93,7 @@ void GameScene::Update() {
 	//field_->Update();
 
 	//スコア
-	//score_->Update();
-
-	//ワイヤーフレームモデル
-	//wireframeObject3d_->SetScale(wireframeTransformDate_.scale);
-	//wireframeObject3d_->SetRotate(wireframeTransformDate_.rotate);
-	//wireframeObject3d_->SetTranslate(wireframeTransformDate_.translate);
-	//wireframeObject3d_->Update();
-
-	object3d_->SetTransformData(0, transform_0);
-	object3d_->SetTransformData(1, transform_1);
-	object3d_->Update();
+	score_->Update();
 
 	////衝突判定
 	////敵とプレイヤーの弾
@@ -179,20 +140,6 @@ void GameScene::Update() {
 	debugCamera_->Debug();
 	ImGui::End();
 
-	ImGui::Begin("object3d");
-	ImGui::PushID(0);
-	ImGuiManager::DragTransform(transform_0);
-	ImGui::PopID();
-	ImGui::PushID(1);
-	ImGuiManager::DragTransform(transform_1);
-	ImGui::PopID();
-	ImGui::End();
-
-	ImGui::Begin("camera");
-	ImGui::DragFloat3("rotate", &cameraTransform_.rotate.x, 0.1f);
-	ImGui::DragFloat3("translate", &cameraTransform_.translate.x, 0.1f);
-	ImGui::End();
-
 	//グローバル変数の更新
 	//GlobalVariables::GetInstance()->Update();
 
@@ -231,7 +178,6 @@ void GameScene::Update() {
 		camera_ = debugCamera_->GetCamera();
 	} else {
 		//camera_ = gameCamera_->GetCamera();
-		camera_ = sceneContext_.cameraManager->FindCamera("gameCamera");
 	}
 #endif // _DEBUG
 
@@ -239,10 +185,10 @@ void GameScene::Update() {
 
 //描画
 void GameScene::Draw() {
-	////プレイヤー
-	//player_->Draw();
+	//プレイヤー
+	player_->Draw();
 
-	//enemy_->Draw();
+	enemy_->Draw();
 
 	////マップチップ
 	//field_->Draw();
@@ -250,12 +196,8 @@ void GameScene::Draw() {
 	//敵
 	//enemyManager_->Draw();
 
-	//object3d_->Draw();
-
-	wireframeObject3d_->Draw();
-
 	//スコア
-	//score_->Draw();
+	score_->Draw();
 }
 
 //終了

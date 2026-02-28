@@ -10,8 +10,6 @@ class Field;
 class Enemy;
 class EnemyManager;
 class Score;
-class WireframeObject3d;
-class Object3d;
 
 /// <summary>
 /// ゲームシーン
@@ -53,28 +51,20 @@ private://メンバ変数
 	Camera* camera_ = nullptr;
 
 	//プレイヤー
-	//std::unique_ptr<Player>player_ = nullptr;
+	std::unique_ptr<Player>player_ = nullptr;
 
 	//ゲームカメラ
-	//std::unique_ptr<GameCamera>gameCamera_ = nullptr;
+	std::unique_ptr<GameCamera>gameCamera_ = nullptr;
 
 	//フィールド
-	//std::unique_ptr<Field>field_ = nullptr;
+	std::unique_ptr<Field>field_ = nullptr;
 
 	//敵の管理
 	//EnemyManager* enemyManager_ = nullptr;
 
 	//スコアの表示
-	//std::unique_ptr<Score>score_ = nullptr;
+	std::unique_ptr<Score>score_ = nullptr;
 
-	//std::unique_ptr<Enemy>enemy_ = nullptr;
-
-	std::unique_ptr<Object3d>object3d_ = nullptr;
-	TransformData transform_0 = {};
-	TransformData transform_1 = {};
-
-	TransformData cameraTransform_ = {};
-
-	std::unique_ptr<WireframeObject3d>wireframeObject3d_ = {};
+	std::unique_ptr<Enemy>enemy_ = nullptr;
 };
 

@@ -66,9 +66,6 @@ void WireframeObject3d::Initialize(WireframeObject3dCommon* wireframeObject3dCom
 		transform.rotate = {};
 		transform.translate = { 0.0f,0.0f,0.0f };
 	}
-	transforms_[0].translate = {};
-	transforms_[1].translate = { 2.0f,0.0f,0.0f };
-	transforms_[2].translate = { 4.0f,0.0f,0.0f };
 	//wvpデータも初期化
 	wvpData_.resize(instanceCount);
 	for (TransformationMatrix& wvp : wvpData_) {

@@ -37,6 +37,13 @@ void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, uint32
 		transform.rotate = {};
 		transform.translate = {};
 	}
+	//wvpのデータ数を決定
+	wvpData_.resize(instanceCount);
+	for (TransformationMatrix& wvp : wvpData_) {
+		wvp.world = Matrix4x4::Identity4x4();
+		wvp.wvp = Matrix4x4::Identity4x4();
+		wvp.worldInverseTranspose = Matrix4x4::Identity4x4();
+	}
 	//wvpリソースの初期化
 	CreateTransformationMatrixResource();
 	//座標変換行列リソースのストラクチャバッファの生成
@@ -223,12 +230,6 @@ const Vector4& Object3d::GetColor() const {
 	return defaultColor;
 }
 
-//ワールド行列のゲッター
-WorldTransform* Object3d::GetWorldTransform() const {
-	// TODO: return ステートメントをここに挿入します
-	return worldTransform_;
-}
-
 //トランスフォームデータのゲッター
 const TransformData& Object3d::GetTransformData(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
@@ -243,9 +244,14 @@ Model* Object3d::GetModel() {
 	return nullptr;
 }
 
+//ワールドマトリックスのゲッター
+Matrix4x4 Object3d::GetWorldMatrix(uint32_t index) {
+	return wvpData_[index].world;
+}
+
 //ワールド座標のゲッター
-Vector3 Object3d::GetWorldPos() {
-	return worldTransform_->GetWorldPos();
+Vector3 Object3d::GetWorldPos(uint32_t index) {
+	return { wvpData_[index].world.m[3][0],wvpData_[index].world.m[3][1],wvpData_[index].world.m[3][2] };
 }
 
 //座標変換行列リソースの生成
@@ -278,22 +284,25 @@ void Object3d::CreateStructuredBufferForWvp() {
 //座標の更新
 void Object3d::UpdateTransform() {
 	for (uint32_t i = 0; i < static_cast<uint32_t>(transforms_.size()); i++) {
-		wvpPtr_[i].world = Rendering::MakeAffineMatrix(transforms_[i]);
+		wvpData_[i].world = Rendering::MakeAffineMatrix(transforms_[i]);
 		//TransformからWorldMatrixを作る
 		if (parent_) {
-			wvpPtr_[i].world = wvpPtr_[i].world * parent_->GetWorldMatrix();
+			wvpData_[i].world = wvpData_[i].world * parent_->GetWorldMatrix();
 		}
 		//wvpの書き込み
 		if (camera_) {
 			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
-			wvpPtr_[i].wvp = node_.localMatrix * wvpPtr_[i].world * viewProjectionMatrix;
+			wvpData_[i].wvp = node_.localMatrix * wvpData_[i].world * viewProjectionMatrix;
 		} else {
-			wvpPtr_[i].wvp = wvpPtr_[i].world;
+			wvpData_[i].wvp = wvpData_[i].world;
 		}
 		//ワールド行列を送信
-		wvpPtr_[i].world = node_.localMatrix * wvpPtr_[i].world;
+		wvpData_[i].world = node_.localMatrix * wvpData_[i].world;
 		//逆行列の転置行列を送信
-		wvpPtr_[i].worldInverseTranspose = wvpPtr_[i].world.InverseTranspose();
+		wvpData_[i].worldInverseTranspose = wvpData_[i].world.InverseTranspose();
+
+		//ポインタに送信
+		wvpPtr_[i] = wvpData_[i];
 	}
 }
 
@@ -302,20 +311,23 @@ void Object3d::UpdateTransformBillboard() {
 	for (uint32_t i = 0; i < static_cast<uint32_t>(transforms_.size()); i++) {
 		//カメラがなかったら
 		if (!camera_) {
-			wvpPtr_[i].wvp = wvpPtr_[i].world;
+			wvpData_[i].wvp = wvpData_[i].world;
 			return;
 		}
-		wvpPtr_[i].world = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), transforms_[i]);
+		wvpData_[i].world = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), transforms_[i]);
 		//TransformからWorldMatrixを作る
 		if (parent_) {
-			wvpPtr_[i].world = wvpPtr_[i].world * parent_->GetWorldMatrix();
+			wvpData_[i].world = wvpData_[i].world * parent_->GetWorldMatrix();
 		}
 		//wvpの書き込み
 		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
-		wvpPtr_[i].wvp = wvpPtr_[i].world * viewProjectionMatrix;
+		wvpData_[i].wvp = wvpData_[i].world * viewProjectionMatrix;
 		//ワールド行列を送信
-		wvpPtr_[i].world = wvpPtr_[i].world;
+		wvpData_[i].world = wvpData_[i].world;
 		//逆行列の転置行列を送信
-		wvpPtr_[i].worldInverseTranspose = wvpPtr_[i].world.InverseTranspose();
+		wvpData_[i].worldInverseTranspose = wvpData_[i].world.InverseTranspose();
+
+		//ポインタに送信
+		wvpPtr_[i] = wvpData_[i];
 	}
 }

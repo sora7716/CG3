@@ -104,13 +104,13 @@ void Enemy::Update() {
 	bullet_->Update();
 
 	//ヒットボックス
-	gameObject_.hitBox->SetTranslate(0, gameObject_.object3d->GetWorldPos());
+	gameObject_.hitBox->SetTranslate(0, gameObject_.object3d->GetWorldPos(0));
 	gameObject_.hitBox->SetRotate(0, gameObject_.transformData.rotate);
 	gameObject_.hitBox->SetScale(0, hitBoxScale_);
 	gameObject_.hitBox->Update();
 
 	//HP
-	Vector3 worldPos = gameObject_.object3d->GetWorldPos();
+	Vector3 worldPos = gameObject_.object3d->GetWorldPos(0);
 	hpOutLineTransform_.translate = { worldPos.x,worldPos.y + 2.0f,worldPos.z };
 	hpOutLine_->SetTransformData(0, hpOutLineTransform_);
 	hpOutLine_->Update();
@@ -240,8 +240,8 @@ void Enemy::Attack() {
 	}
 
 	//弾の発射
-	bullet_->SetShootingPosition(gameObject_.object3d->GetWorldPos());
-	bullet_->SetSourceWorldMatrix(gameObject_.object3d->GetWorldTransform()->GetWorldMatrix());
+	bullet_->SetShootingPosition(gameObject_.object3d->GetWorldPos(0));
+	bullet_->SetSourceWorldMatrix(gameObject_.object3d->GetWorldMatrix(0));
 	bullet_->Fire(isAttacking_);
 
 	//攻撃フラグを折る
@@ -305,7 +305,7 @@ Collider& Enemy::GetCollider() {
 //ターゲットの方向を向く
 void Enemy::EnemyToTarget() {
 	//プレイヤーの向きに合わせる
-	Vector3 dir = (gameObject_.object3d->GetWorldPos() - targetPos_).Normalize();
+	Vector3 dir = (gameObject_.object3d->GetWorldPos(0) - targetPos_).Normalize();
 	float yaw = std::atan2(dir.x, dir.z);
 	gameObject_.transformData.rotate.y = yaw;
 }

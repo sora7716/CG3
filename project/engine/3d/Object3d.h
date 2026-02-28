@@ -189,12 +189,6 @@ public://メンバ関数
 	const Vector4& GetColor()const;
 
 	/// <summary>
-	/// ワールドトランスフォームのゲッター
-	/// </summary>
-	/// <returns>ワールドトランスフォーム</returns>
-	WorldTransform* GetWorldTransform()const;
-
-	/// <summary>
 	/// トランスフォームデータのゲッター
 	/// </summary>
 	/// <param name="index">インデックス</param>
@@ -208,10 +202,18 @@ public://メンバ関数
 	Model* GetModel();
 
 	/// <summary>
-	/// ワールド座標のゲッター
+	/// ワールドマトリックスのゲッター
 	/// </summary>
-	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos();
+	/// <param name="index">インデックス</param>
+	/// <returns>ワールドマトリックス</returns>
+	Matrix4x4 GetWorldMatrix(uint32_t index);
+
+	/// <summary>
+    /// ワールド座標のゲッター
+    /// </summary>
+	/// <param name="index">インデックス</param>
+    /// <returns>ワールド座標</returns>
+	Vector3 GetWorldPos(uint32_t index);
 private://メンバ関数
 	/// <summary>
 	/// 座標変換行列リソースの生成
@@ -257,6 +259,7 @@ private://メンバ変数
 	ComPtr<ID3D12Resource>wvpResource_ = nullptr;
 	//ワールドビュープロジェクションのポインタ
 	TransformationMatrix* wvpPtr_ = nullptr;
+	std::vector<TransformationMatrix> wvpData_ = {};
 	//カメラ
 	Camera* camera_ = nullptr;
 	//ワールド座標
