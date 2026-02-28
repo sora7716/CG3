@@ -18,7 +18,6 @@ Player::Player() {
 
 //デストラクタ
 Player::~Player() {
-	Finalize();
 }
 
 //初期化
@@ -42,26 +41,31 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 	gameObject_.acceleration = { 0.0f,Physics::kGravity,0.0f };
 
 	//3Dオブジェクトの生成と初期化
-	gameObject_.object3d = new Object3d();
-	gameObject_.object3d->Initialize(object3dCommon, camera_);
-	gameObject_.object3d->SetModel(modelName);
+	renderObject_.object3d = std::make_unique<Object3d>();
+	renderObject_.object3d->Initialize(object3dCommon, camera_);
+	renderObject_.object3d->SetModel(modelName);
 	gameObject_.isAlive = true;
-	gameObject_.tag = Tag::kPlayer;
+
+	//Colliderの状態
+	colliderState_.scalePtr = &gameObject_.transformData.scale;
+	colliderState_.rotatePtr = &gameObject_.transformData.rotate;
+	colliderState_.translatePtr = &gameObject_.transformData.translate;
+	colliderState_.velocityPtr = &gameObject_.velocity;
+	colliderState_.worldMatrixPtr = &renderObject_.object3d->GetWorldMatrix(0);
+	colliderState_.isOnGroundPtr = &gameObject_.isOnGround;
 
 	//衝突
-	collider_.owner = &gameObject_;
+	collider_.owner = &colliderState_;
 	collider_.isTrigger = false;
 	collider_.isEnabled = true;
 
-	collider_.onCollision = [this](GameObject* other) {
-		this->OnCollision(other);
-		};
+	collider_.onCollision = [this](ColliderState* other) {this->OnCollision(other); };
 
 	//マテリアルの初期化
-	gameObject_.material.color = { 1.0f,1.0f,1.0f,1.0f };
-	gameObject_.material.enableLighting = true;
-	gameObject_.material.shininess = 10.0f;
-	gameObject_.material.uvMatrix = Matrix4x4::Identity4x4();
+	renderObject_.material.color = { 1.0f,1.0f,1.0f,1.0f };
+	renderObject_.material.enableLighting = true;
+	renderObject_.material.shininess = 10.0f;
+	renderObject_.material.uvMatrix = Matrix4x4::Identity4x4();
 
 	//リムライトの初期化
 	rimLight_.color = Vector4::MakeWhiteColor();
@@ -71,7 +75,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 	rimLight_.enableRimLighting = false;
 
 	//弾
-	bullet_ = new Bullet();
+	bullet_ = std::make_unique<Bullet>();
 	bullet_->Initialize(object3dCommon, camera_);
 	bullet_->SetAliveRange(kBulletAliveAreaSize);
 	bullet_->SetSpeed(kBulletSpeed);
@@ -85,82 +89,30 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 	headlight_.enableSpotLighting = true;
 
 	//ヒットボックス
-	gameObject_.hitBox = new WireframeObject3d();
-	gameObject_.hitBox->Initialize(object3dCommon_->GetWireframeObject3dCommon(), camera_, ModelType::kCube);
+	renderObject_.hitBox = std::make_unique<WireframeObject3d>();
+	renderObject_.hitBox->Initialize(object3dCommon_->GetWireframeObject3dCommon(), camera_, ModelType::kCube);
 	hitBoxScale_ = Vector3::MakeAllOne() - 0.2f;
 
 	//HPバー
 	//中身
-	hpBar_ = new Sprite();
+	hpBar_ = std::make_unique<Sprite>();
 	hpBar_->Initialize(spriteCommon, "playerHpBar.png");
 	hpBar_->SetBlendMode(BlendMode::kNormal);
 	hpBarTransform_.scale = { hpBarWidth_,50.0f };
 	hpBarTransform_.translate = { 440.0f,630.0f };
 	hpColor_ = Vector4::ColorCodeTransform("#138A0DFF");
 	//アウトライン
-	hpOutLine_ = new Sprite();
+	hpOutLine_ = std::make_unique<Sprite>();
 	hpOutLine_->Initialize(spriteCommon, "playerHpOutLine.png");
 	hpOutLine_->SetBlendMode(BlendMode::kNormal);
 	hpOutLineTransform_.scale = { hpBarWidth_,50.0f };
 	hpOutLineTransform_.translate = { 440.0f,630.0f };
-
-	//アンカーポイント
-	anchorPoint_ = std::make_unique<WireframeObject3d>();
-	anchorPoint_->Initialize(object3dCommon_->GetWireframeObject3dCommon(), camera_, ModelType::kSphere);
-	anchorPoint_->SetRadius(0, 0.05f);
-	spring_.naturalLength = 2.0f;
-	spring_.stiffness = 40.0f;
-	spring_.dampingCoefficient = 2.0f;
 }
 
 //更新
 void Player::Update() {
 	//死亡判定
 	Dead();
-
-	if (input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kLB)) {
-		isAnchorSet_ = true;
-	} else {
-		isAnchorSet_ = false;
-	}
-
-	if (isAnchorSet_) {
-		// ローカル前方向
-		Vector3 localForward = { 0.0f, 0.0f, 10.0f };
-
-		// プレイヤーのワールド行列
-		Matrix4x4 world = gameObject_.object3d->GetWorldMatrix(0);
-
-		// 前方向をワールド空間へ
-		Vector3 worldForward = Math::TransformNormal(localForward, world);
-
-		// プレイヤーの現在位置
-		Vector3 playerPos = gameObject_.object3d->GetWorldPos(0);
-
-		// 最終位置
-		spring_.anchor = playerPos + worldForward;
-
-		// ここが正解
-		anchorPoint_->SetTranslate(0, spring_.anchor);
-	}
-
-	if (input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kLT)) {
-		isMovingToAnchor_ = true;
-	}
-
-	gameObject_.acceleration.y = Physics::kGravity;
-	if (isMovingToAnchor_) {
-		Ball ball = { .position = gameObject_.object3d->GetWorldPos(0),.velocity = gameObject_.velocity,.acceleration = gameObject_.acceleration,.mass = 1.0f,.radius = 0.1f };
-		float diff = (spring_.anchor - ball.position).Length();
-		gameObject_.acceleration = Physics::ApplySpringForce(spring_, ball);
-		gameObject_.acceleration.y += Physics::kGravity;
-		if (diff <= spring_.naturalLength) {
-			isMovingToAnchor_ = false;
-		}
-	}
-
-	//アンカーポイント
-	anchorPoint_->Update();
 
 	//ダメージクールタイムを減らす
 	if (damageCoolTime_ > 0.0f) {
@@ -190,10 +142,10 @@ void Player::Update() {
 	Attack();
 
 	//マテリアルのセット
-	gameObject_.object3d->GetModel()->SetMaterial(gameObject_.material);
+	renderObject_.object3d->GetModel()->SetMaterial(renderObject_.material);
 
 	//リムライトのセット
-	gameObject_.object3d->GetModel()->SetRimLight(rimLight_);
+	renderObject_.object3d->GetModel()->SetRimLight(rimLight_);
 
 	//ヘッドライトの更新
 	HeadlightUpdate();
@@ -202,16 +154,16 @@ void Player::Update() {
 	LookDirection();
 
 	//トランスフォームを設定
-	gameObject_.object3d->SetTransformData(0, gameObject_.transformData);
+	renderObject_.object3d->SetTransformData(0, gameObject_.transformData);
 
 	//3Dオブジェクトの更新
-	gameObject_.object3d->Update();
+	renderObject_.object3d->Update();
 
 	//ヒットボックスの更新
-	gameObject_.hitBox->SetTranslate(0, gameObject_.object3d->GetWorldPos(0));
-	gameObject_.hitBox->SetRotate(0, gameObject_.transformData.rotate);
-	gameObject_.hitBox->SetScale(0, hitBoxScale_);
-	gameObject_.hitBox->Update();
+	renderObject_.hitBox->SetTranslate(0, renderObject_.object3d->GetWorldPos(0));
+	renderObject_.hitBox->SetRotate(0, gameObject_.transformData.rotate);
+	renderObject_.hitBox->SetScale(0, hitBoxScale_);
+	renderObject_.hitBox->Update();
 
 	//HP
 	hpBar_->SetTransformData(hpBarTransform_);
@@ -224,16 +176,14 @@ void Player::Update() {
 //描画
 void Player::Draw() {
 	//3Dオブジェクトの描画
-	gameObject_.object3d->Draw();
+	renderObject_.object3d->Draw();
 	//弾の描画
 	bullet_->Draw();
 	//ヒットボックスの描画
-	gameObject_.hitBox->Draw();
+	renderObject_.hitBox->Draw();
 	//HP
 	hpBar_->Draw();
 	hpOutLine_->Draw();
-	//アンカーポイント
-	anchorPoint_->Draw();
 }
 
 //デバッグ用
@@ -254,21 +204,8 @@ void Player::Debug() {
 #endif // USE_IMGUI
 }
 
-//終了
-void Player::Finalize() {
-	//3Dオブジェクトの解放
-	delete gameObject_.object3d;
-	//弾の解放
-	delete bullet_;
-	//ヒットボックスの解放
-	delete gameObject_.hitBox;
-	//スプライトの開放
-	delete hpBar_;
-	delete hpOutLine_;
-}
-
 //衝突したら
-void Player::OnCollision(GameObject* other) {
+void Player::OnCollision(ColliderState* other) {
 	if (other->tag == Tag::kEnemy) {
 		//攻撃を受ける
 		Damage();
@@ -277,9 +214,8 @@ void Player::OnCollision(GameObject* other) {
 
 //カメラのセッター
 void Player::SetCamera(Camera* camera) {
-	gameObject_.object3d->SetCamera(camera);
-	gameObject_.hitBox->SetCamera(camera);
-	anchorPoint_->SetCamera(camera);
+	renderObject_.object3d->SetCamera(camera);
+	renderObject_.hitBox->SetCamera(camera);
 }
 
 //位置のセッター
@@ -304,7 +240,7 @@ bool Player::IsOnGround() {
 
 //オブジェクト3dのゲッター
 Vector3 Player::GetWorldPos() const {
-	return gameObject_.object3d->GetWorldPos(0);
+	return renderObject_.object3d->GetWorldPos(0);
 }
 
 //トランスフォームデータのゲッター
@@ -317,14 +253,9 @@ Vector3 Player::GetVelocity() const {
 	return gameObject_.velocity;
 }
 
-//OBBのゲッター
-OBB Player::GetOBB()const {
-	return gameObject_.hitBox->GetOBB(0);
-}
-
 //弾のゲッター
 Bullet* Player::GetBullet()const {
-	return bullet_;
+	return bullet_.get();
 }
 
 //生存フラグのゲッター
@@ -378,8 +309,8 @@ void Player::Move() {
 //攻撃
 void Player::Attack() {
 	//弾の発射
-	bullet_->SetShootingPosition(gameObject_.object3d->GetWorldPos(0));
-	bullet_->SetSourceWorldMatrix(gameObject_.object3d->GetWorldMatrix(0));
+	bullet_->SetShootingPosition(renderObject_.object3d->GetWorldPos(0));
+	bullet_->SetSourceWorldMatrix(renderObject_.object3d->GetWorldMatrix(0));
 	bullet_->Fire(input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kRT));
 	bullet_->Update();
 }
@@ -437,12 +368,12 @@ void Player::Dead() {
 void Player::HeadlightUpdate() {
 	//ライトの位置をプレイヤーの前に設定
 	Vector3 headlightOffset = { 0.0f, 0.0f, 0.5f };
-	headlight_.position = gameObject_.object3d->GetWorldPos(0) + headlightOffset;
+	headlight_.position = renderObject_.object3d->GetWorldPos(0) + headlightOffset;
 	// ローカル空間での“前”の向き
 	Vector3 localForward = { 0.0f, 0.0f, 1.0f };
 
 	//プレイヤーのワールド行列を取得
-	Matrix4x4 world = gameObject_.object3d->GetWorldMatrix(0);
+	Matrix4x4 world = renderObject_.object3d->GetWorldMatrix(0);
 
 	//前方向ベクトルだけをワールド空間に変換
 	Vector3 worldForward = Math::TransformNormal(localForward, world);
@@ -481,5 +412,5 @@ void Player::LookDirection() {
 	if (gameObject_.transformData.rotate.y > twoPi) gameObject_.transformData.rotate.y -= twoPi;
 	if (gameObject_.transformData.rotate.y < 0.0f)  gameObject_.transformData.rotate.y += twoPi;
 
-	gameObject_.object3d->SetRotate(0, gameObject_.transformData.rotate);
+	renderObject_.object3d->SetRotate(0, gameObject_.transformData.rotate);
 }

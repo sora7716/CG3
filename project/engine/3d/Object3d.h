@@ -206,7 +206,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="index">インデックス</param>
 	/// <returns>ワールドマトリックス</returns>
-	Matrix4x4 GetWorldMatrix(uint32_t index);
+	Matrix4x4& GetWorldMatrix(uint32_t index);
 
 	/// <summary>
     /// ワールド座標のゲッター

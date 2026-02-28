@@ -17,7 +17,7 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Bullet() = default;
+	Bullet();
 
 	/// <summary>
 	/// デストラクタ
@@ -52,11 +52,6 @@ public://メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
-
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
 
 	/// <summary>
 	/// 発射地点のセッター

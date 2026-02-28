@@ -55,10 +55,12 @@ void ColliderManager::SyncCollider() {
 		}
 
 		//OBBの値の更新
-		collider->obb.size = collider->owner->hitBox->GetScale(0);
-		collider->obb.rotate = collider->owner->hitBox->GetRotate(0);
+		collider->obb.size = *collider->owner->scalePtr;
+		collider->obb.rotate = *collider->owner->rotatePtr;
 		Rendering::MakeOBBRotateMatrix(collider->obb.orientations, collider->obb.rotate);
-		collider->obb.center = collider->owner->hitBox->GetWorldPos(0);
+		Matrix4x4 worldMat = *collider->owner->worldMatrixPtr;
+		Vector3 worldPos = { worldMat.m[3][0],worldMat.m[3][1],worldMat.m[3][2] };
+		collider->obb.center = worldPos;
 	}
 }
 
@@ -93,7 +95,7 @@ void ColliderManager::CheckCollision() {
 				Resolve(*pairA->owner, *pairB->owner, hitInfo);
 			}
 
-			if (!pairB->isTrigger&&pairA->isTrigger) {
+			if (!pairB->isTrigger && pairA->isTrigger) {
 				//pairBを貫通しないようにする
 				Resolve(*pairB->owner, *pairA->owner, hitInfo);
 			}
@@ -123,12 +125,12 @@ bool ColliderManager::IsActive(Collider* collider) {
 }
 
 //押し出し
-void ColliderManager::Resolve(GameObject& self, const GameObject& other, HitInfo hit) {
-	Vector3 pos = self.transformData.translate;
-	Vector3 vel = self.velocity;
+void ColliderManager::Resolve(ColliderState& self, const ColliderState& other, HitInfo hit) {
+	Vector3 pos = *self.translatePtr;
+	Vector3 vel = *self.velocityPtr;
 
 	// normalを「other→self」方向に揃える
-	Vector3 delta = pos - other.transformData.translate;
+	Vector3 delta = pos - *other.translatePtr;
 	if (delta.Dot(hit.normal) < 0.0f) {
 		hit.normal = -hit.normal;
 	}
@@ -142,13 +144,16 @@ void ColliderManager::Resolve(GameObject& self, const GameObject& other, HitInfo
 		vel -= hit.normal * vn;
 	}
 
+	bool isOnGround = false;
 	//下に地面があるかどうか
 	if (hit.normal.y > 0.5f) {
-		self.isOnGround = true;
-		self.velocity.y = 0.0f;
+		isOnGround = true;
+		vel.y = 0.0f;
 	}
 
 	//位置と速度をを設定
-	self.transformData.translate = pos;
-	self.velocity = vel;
+	*self.translatePtr = pos;
+	*self.velocityPtr = vel;
+	//地面の上にいるか
+	*self.isOnGroundPtr = isOnGround;
 }

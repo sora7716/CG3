@@ -54,7 +54,7 @@ private://メンバ関数
 	/// </summary>
 	/// <param name="gameObject">ゲームオブジェクト</param>
 	/// <param name="hitInfo">衝突情報</param>
-	void Resolve(GameObject& self, const GameObject& other, HitInfo hit);
+	void Resolve(ColliderState& self, const ColliderState& other, HitInfo hit);
 private://メンバ変数
 	std::vector<Collider*>colliders_;
 };

@@ -58,14 +58,10 @@ public://メンバ関数
 	void Debug();
 
 	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
-
-	/// <summary>
 	/// 衝突したら
 	/// </summary>
-	void OnCollision(GameObject*other);
+	/// <param name="other">ColliderState</param>
+	void OnCollision(ColliderState*other);
 
 	/// <summary>
 	/// カメラのセッター
@@ -116,12 +112,6 @@ public://メンバ関数
 	Vector3 GetVelocity()const;
 
 	/// <summary>
-	/// OBBのゲッター
-	/// </summary>
-	/// <returns>OBB</returns>
-	OBB GetOBB()const;
-
-	/// <summary>
 	/// 弾のゲッター
 	/// </summary>
 	/// <returns>弾</returns>
@@ -133,6 +123,10 @@ public://メンバ関数
 	/// <returns>生存フラグ</returns>
 	bool IsAlive();
 
+	/// <summary>
+	/// コライダーのゲッター
+	/// </summary>
+	/// <returns>コライダー</returns>
 	Collider& GetCollider();
 private://定数
 	//カメラの移動速度
@@ -201,17 +195,13 @@ private://メンバ変数
 	//カメラ
 	Camera* camera_ = nullptr;
 
-	//プレイヤーデータ
+	//ゲームオブジェクト
 	GameObject gameObject_ = {};
-
-	//アンカーポイント
-	std::unique_ptr<WireframeObject3d>anchorPoint_ = nullptr;
-	bool isAnchorSet_ = false;
-	bool isMovingToAnchor_ = false;
-	Spring spring_ = {};
+	//描画で使用する
+	RenderObject renderObject_ = {};
 
 	//弾
-	Bullet* bullet_ = nullptr;
+	std::unique_ptr<Bullet> bullet_ = nullptr;
 
 	//ヘッドライト
 	SpotLight headlight_ = {};
@@ -228,16 +218,17 @@ private://メンバ変数
 	//ヒットポイント
 	int32_t hp_ = kMaxHpCount;
 	float hpBarWidth_ = 400.0f;
-	Sprite* hpBar_ = nullptr;
+	std::unique_ptr<Sprite> hpBar_ = nullptr;
 	Vector4 hpColor_ = Vector4::MakeGreenColor();
 	Transform2dData hpBarTransform_ = {};
-	Sprite* hpOutLine_ = nullptr;
+	std::unique_ptr<Sprite> hpOutLine_ = nullptr;
 	Transform2dData hpOutLineTransform_ = {};
 
 	//ダメージのクールタイム
 	float damageCoolTime_ = 0.0f;
 
 	//衝突
+	ColliderState colliderState_ = {};
 	Collider collider_ = {};
 };
 

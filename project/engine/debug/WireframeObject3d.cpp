@@ -135,6 +135,7 @@ void WireframeObject3d::Update() {
 
 //描画
 void WireframeObject3d::Draw() {
+#ifdef _DEBUG
 	//3Dオブジェクトの共通部分
 	wireframeObject3dCommon_->DrawSetting();
 
@@ -157,6 +158,7 @@ void WireframeObject3d::Draw() {
 	if (model_) {
 		model_->Draw(static_cast<uint32_t>(transforms_.size()));
 	}
+#endif // _DEBUG
 }
 
 //モデルのセッター

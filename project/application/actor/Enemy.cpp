@@ -10,28 +10,37 @@
 #include "Bullet.h"
 #include "Score.h"
 
+//コンストラクタ
+Enemy::Enemy() {
+}
+
 //デストラクタ
 Enemy::~Enemy() {
-	Finalize();
 }
 
 //初期化
 void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std::string& modelName) {
 	//3Dモデルの生成と初期化
-	gameObject_.object3d = new Object3d();
-	gameObject_.object3d->Initialize(object3dCommon, camera, 1, Transform3dMode::kNormal);
-	gameObject_.object3d->SetModel(modelName);
+	renderObject_.object3d = std::make_unique<Object3d>();
+	renderObject_.object3d->Initialize(object3dCommon, camera, 1, Transform3dMode::kNormal);
+	renderObject_.object3d->SetModel(modelName);
 	gameObject_.transformData.scale = Vector3::MakeAllOne() / 2.0f;
 	gameObject_.isAlive = true;
-	gameObject_.tag = Tag::kEnemy;
 
-	collider_.owner = &gameObject_;
+	colliderState_.scalePtr = &gameObject_.transformData.scale;
+	colliderState_.rotatePtr = &gameObject_.transformData.rotate;
+	colliderState_.translatePtr = &gameObject_.transformData.translate;
+	colliderState_.velocityPtr = &gameObject_.velocity;
+	colliderState_.worldMatrixPtr = &renderObject_.object3d->GetWorldMatrix(0);
+	colliderState_.isOnGroundPtr = &gameObject_.isOnGround;
+
+	collider_.owner = &colliderState_;
 	collider_.isTrigger = true;
 	collider_.isEnabled = true;
-	collider_.onCollision = [this](GameObject* other) {this->OnCollision(other); };
+	collider_.onCollision = [this](ColliderState* other) {this->OnCollision(other); };
 
 	//弾の生成と初期化
-	bullet_ = new Bullet();
+	bullet_ = std::make_unique<Bullet>();
 	bullet_->Initialize(object3dCommon, camera);
 	bullet_->SetAliveRange(kAliveAreaSize);
 	bullet_->SetSpeed(bulletShotSpeed_);
@@ -39,26 +48,26 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 	bullet_->SetMaxBulletCount(kBulletCount);
 
 	//敵の状態を生成
-	enemyState_ = new EnemyStateChase();
+	enemyState_ = std::make_unique<EnemyStateChase>();
 	enemyState_->SetEnemy(this);
 
 	//ワイヤーフレームの生成
-	sphere_ = new WireframeObject3d();
+	sphere_ = std::make_unique<WireframeObject3d>();
 	sphere_->Initialize(object3dCommon->GetWireframeObject3dCommon(), camera, ModelType::kSphere);
 	sphereRadius_ = 2.0f;
 
-	attackArea = new WireframeObject3d();
+	attackArea = std::make_unique<WireframeObject3d>();
 	attackArea->Initialize(object3dCommon->GetWireframeObject3dCommon(), camera, ModelType::kSphere);
 	attackAreaRadius_ = 3.0f;
 	attackArea->SetTranslate(0, targetPos_);
 	attackArea->Update();
 
-	gameObject_.hitBox = new WireframeObject3d();
-	gameObject_.hitBox->Initialize(object3dCommon->GetWireframeObject3dCommon(), camera, ModelType::kCube);
+	renderObject_.hitBox = std::make_unique<WireframeObject3d>();
+	renderObject_.hitBox->Initialize(object3dCommon->GetWireframeObject3dCommon(), camera, ModelType::kCube);
 	hitBoxScale_ = { 1.5f,1.5f,1.5f };
 
 	//HP
-	hpBar_ = new Object3d();
+	hpBar_ = std::make_unique<Object3d>();
 	hpBar_->Initialize(object3dCommon, camera, 1, Transform3dMode::kBilboard);
 	hpBar_->SetModel("hpBar");
 	hpBar_->SetTexture("playerHpBar.png");
@@ -72,7 +81,7 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 	hpOutLineMaterial.color = Vector4::MakeWhiteColor();
 	hpOutLineMaterial.enableLighting = false;
 
-	hpOutLine_ = new Object3d();
+	hpOutLine_ = std::make_unique<Object3d>();
 	hpOutLine_->Initialize(object3dCommon, camera, 1, Transform3dMode::kBilboard);
 	hpOutLine_->SetModel("hpOutLine");
 	hpOutLine_->SetTexture("playerHpOutLine.png");
@@ -83,8 +92,8 @@ void Enemy::Initialize(Object3dCommon* object3dCommon, Camera* camera, const std
 //更新
 void Enemy::Update() {
 	//オブジェクト3Dの更新
-	gameObject_.object3d->SetTransformData(0, gameObject_.transformData);
-	gameObject_.object3d->Update();
+	renderObject_.object3d->SetTransformData(0, gameObject_.transformData);
+	renderObject_.object3d->Update();
 
 	//ワイヤーフレームの更新
 	//球
@@ -104,13 +113,13 @@ void Enemy::Update() {
 	bullet_->Update();
 
 	//ヒットボックス
-	gameObject_.hitBox->SetTranslate(0, gameObject_.object3d->GetWorldPos(0));
-	gameObject_.hitBox->SetRotate(0, gameObject_.transformData.rotate);
-	gameObject_.hitBox->SetScale(0, hitBoxScale_);
-	gameObject_.hitBox->Update();
+	renderObject_.hitBox->SetTranslate(0, renderObject_.object3d->GetWorldPos(0));
+	renderObject_.hitBox->SetRotate(0, gameObject_.transformData.rotate);
+	renderObject_.hitBox->SetScale(0, hitBoxScale_);
+	renderObject_.hitBox->Update();
 
 	//HP
-	Vector3 worldPos = gameObject_.object3d->GetWorldPos(0);
+	Vector3 worldPos = renderObject_.object3d->GetWorldPos(0);
 	hpOutLineTransform_.translate = { worldPos.x,worldPos.y + 2.0f,worldPos.z };
 	hpOutLine_->SetTransformData(0, hpOutLineTransform_);
 	hpOutLine_->Update();
@@ -138,13 +147,13 @@ void Enemy::Debug() {
 //描画
 void Enemy::Draw() {
 	//敵の描画
-	gameObject_.object3d->Draw();
+	renderObject_.object3d->Draw();
 
 	//弾の描画
 	bullet_->Draw();
 
 	//ヒットボックスの描画
-	gameObject_.hitBox->Draw();
+	renderObject_.hitBox->Draw();
 
 	//ワイヤーフレームの描画
 	//sphere_->Draw();
@@ -155,26 +164,6 @@ void Enemy::Draw() {
 	//HP
 	hpBar_->Draw();
 	hpOutLine_->Draw();
-}
-
-//終了
-void Enemy::Finalize() {
-	delete gameObject_.object3d;
-	gameObject_.object3d = nullptr;
-	delete sphere_;
-	sphere_ = nullptr;
-	delete attackArea;
-	attackArea = nullptr;
-	delete bullet_;
-	bullet_ = nullptr;
-	delete gameObject_.hitBox;
-	gameObject_.hitBox = nullptr;
-	delete hpBar_;
-	hpBar_ = nullptr;
-	delete hpOutLine_;
-	hpOutLine_ = nullptr;
-	delete enemyState_;
-	enemyState_ = nullptr;
 }
 
 //リセット
@@ -192,7 +181,7 @@ void Enemy::Reset() {
 }
 
 //衝突したら
-void Enemy::OnCollision(GameObject* other) {
+void Enemy::OnCollision(ColliderState* other) {
 	if (other->tag == Tag::kPlayer) {
 		hp_--;
 		//描画のHPにも適応
@@ -240,8 +229,8 @@ void Enemy::Attack() {
 	}
 
 	//弾の発射
-	bullet_->SetShootingPosition(gameObject_.object3d->GetWorldPos(0));
-	bullet_->SetSourceWorldMatrix(gameObject_.object3d->GetWorldMatrix(0));
+	bullet_->SetShootingPosition(renderObject_.object3d->GetWorldPos(0));
+	bullet_->SetSourceWorldMatrix(renderObject_.object3d->GetWorldMatrix(0));
 	bullet_->Fire(isAttacking_);
 
 	//攻撃フラグを折る
@@ -250,10 +239,10 @@ void Enemy::Attack() {
 
 //カメラのセッター
 void Enemy::SetCamera(Camera* camera) {
-	gameObject_.object3d->SetCamera(camera);
+	renderObject_.object3d->SetCamera(camera);
 	sphere_->SetCamera(camera);
 	attackArea->SetCamera(camera);
-	gameObject_.hitBox->SetCamera(camera);
+	renderObject_.hitBox->SetCamera(camera);
 	hpBar_->SetCamera(camera);
 	hpOutLine_->SetCamera(camera);
 }
@@ -285,12 +274,7 @@ void Enemy::SetIsAlive(bool isAlive) {
 
 //弾のゲッター
 Bullet* Enemy::GetBullet() const {
-	return bullet_;
-}
-
-//OBBのゲッター
-OBB Enemy::GetOBB()const {
-	return gameObject_.hitBox->GetOBB(0);
+	return bullet_.get();
 }
 
 //生存フラグのゲッター
@@ -305,7 +289,7 @@ Collider& Enemy::GetCollider() {
 //ターゲットの方向を向く
 void Enemy::EnemyToTarget() {
 	//プレイヤーの向きに合わせる
-	Vector3 dir = (gameObject_.object3d->GetWorldPos(0) - targetPos_).Normalize();
+	Vector3 dir = (renderObject_.object3d->GetWorldPos(0) - targetPos_).Normalize();
 	float yaw = std::atan2(dir.x, dir.z);
 	gameObject_.transformData.rotate.y = yaw;
 }
@@ -315,7 +299,7 @@ void Enemy::Behavior() {
 	//当たり判定
 	if (Collision::IsCollision(sphere_->GetSphere(0), attackArea->GetSphere(0))) {
 		//敵の状態を設定
-		enemyState_ = new EnemeyStateAttack();
+		enemyState_ = std::make_unique<EnemeyStateAttack>();
 
 		//ワイヤーフレームの色を変更
 		sphere_->SetColor(Vector4::MakeRedColor());
@@ -330,7 +314,7 @@ void Enemy::Behavior() {
 		//攻撃タイマーが攻撃タイマーのリミット以上になったら
 		if (attackTimer_ >= kAttackTimerLimit) {
 			//敵がプレイヤーを追う
-			enemyState_ = new EnemyStateChase();
+			enemyState_ = std::make_unique<EnemyStateChase>();
 			//攻撃タイマーをリセット
 			attackTimer_ = 0.0f;
 		}

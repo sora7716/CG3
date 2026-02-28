@@ -3,6 +3,7 @@
 #include "ResourceData.h"
 #include "PrimitiveData.h"
 #include <functional>
+#include <memory>
 
 class Object3d;
 class WireframeObject3d;
@@ -22,20 +23,38 @@ struct GameObject {
 	Vector3 velocity;
 	Vector3 acceleration;
 	Vector3 direction;
-	Material material;
-	Object3d* object3d;
-	WireframeObject3d* hitBox;
 	bool isAlive;
 	bool isOnGround;
-	Tag tag;
+};
+
+//描画時に必要な物
+//object3d: オブジェクト3d
+//hitBox: ヒットボックス
+//material: マテリアル
+struct RenderObject {
+	std::unique_ptr<Object3d> object3d;
+	std::unique_ptr<WireframeObject3d> hitBox;
+	Material material;
 };
 
 //弾
 struct BulletData {
 	GameObject gameObject;
+	RenderObject renderObject;
 	Vector3 direction;
 	Vector3 shootingPoint;
 	float aliveRange;
+};
+
+//Colliderの状態　
+struct ColliderState {
+	Vector3* scalePtr;
+	Vector3* rotatePtr;
+	Vector3* translatePtr;
+	Vector3* velocityPtr;
+	Matrix4x4* worldMatrixPtr;
+	bool* isOnGroundPtr;
+	Tag tag;
 };
 
 //Collider
@@ -45,9 +64,9 @@ struct BulletData {
 //isEnabled: 無効化用
 //onCollision: 衝突したときに呼ばれる
 struct Collider {
-	GameObject* owner;
+	ColliderState* owner;
 	OBB obb;
 	bool isTrigger;
 	bool isEnabled;
-	std::function<void(GameObject* other)>onCollision;
+	std::function<void(ColliderState* other)>onCollision;
 };

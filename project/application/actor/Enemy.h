@@ -20,7 +20,7 @@ public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Enemy() = default;
+	Enemy();
 
 	/// <summary>
 	/// デストラクタ
@@ -51,11 +51,6 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
-
-	/// <summary>
 	/// リセット
 	/// </summary>
 	void Reset();
@@ -63,7 +58,8 @@ public://メンバ関数
 	/// <summary>
 	/// 衝突したら
 	/// </summary>
-	void OnCollision(GameObject* other);
+	/// <param name="other">ColliderState</param>
+	void OnCollision(ColliderState* other);
 
 	/// <summary>
 	/// 待機
@@ -123,12 +119,6 @@ public://メンバ関数
 	Bullet* GetBullet()const;
 
 	/// <summary>
-	/// OBBのゲッター
-	/// </summary>
-	/// <returns>OBB</returns>
-	OBB GetOBB()const;
-
-	/// <summary>
 	/// 生存フラグのゲッター
 	/// </summary>
 	/// <returns></returns>
@@ -167,16 +157,18 @@ private://メンバ変数
 	float bulletShotSpeed_ = -8.0f;
 	//ゲームオブジェクト
 	GameObject gameObject_ = {};
+	RenderObject renderObject_ = {};
+	ColliderState colliderState_ = {};
 	Collider collider_ = {};
 
 	//ターゲットの位置
 	Vector3 targetPos_ = {};
 
 	//敵の状態
-	IEnemyState* enemyState_ = nullptr;
+	std::unique_ptr <IEnemyState> enemyState_ = nullptr;
 
 	//弾
-	Bullet* bullet_ = nullptr;
+	std::unique_ptr<Bullet> bullet_ = nullptr;
 	//弾を撃つタイマー
 	float bulletShotTimer_ = 0.0f;
 	//攻撃フラグ
@@ -186,10 +178,10 @@ private://メンバ変数
 
 	//ワイヤーフレーム
 	//球
-	WireframeObject3d* sphere_ = nullptr;
+	std::unique_ptr <WireframeObject3d> sphere_ = nullptr;
 	float sphereRadius_ = 0.0f;
 	//行動が変化するエリア
-	WireframeObject3d* attackArea = nullptr;
+	std::unique_ptr <WireframeObject3d> attackArea = nullptr;
 	float attackAreaRadius_ = 0.0f;
 
 	//ヒットボックス
@@ -197,11 +189,11 @@ private://メンバ変数
 
 	//ヒットポイント
 	int32_t hp_ = kMaxHpCout;
-	Object3d* hpBar_ = nullptr;
+	std::unique_ptr<Object3d> hpBar_ = nullptr;
 	float hpBarPosX_ = 0.0f;
 	float hpBarWidth_ = 2.0f;
 	TransformData hpBarTransform_ = { {1.0f,1.0f,1.0f}, {},{} };
-	Object3d* hpOutLine_ = nullptr;
+	std::unique_ptr <Object3d> hpOutLine_ = nullptr;
 	TransformData hpOutLineTransform_ = { {1.0f,1.0f,1.0f}, {},{} };
 };
 
