@@ -77,10 +77,10 @@ public://メンバ関数
 	void SetScale(uint32_t index, const Vector3& scale);
 
 	/// <summary>
-    /// 半径のセッター
-    /// </summary>
+	/// 半径のセッター
+	/// </summary>
 	/// <param name="index">インデックス</param>
-    /// <param name="radius">半径</param>
+	/// <param name="radius">半径</param>
 	void SetRadius(uint32_t index, float radius);
 
 	/// <summary>
@@ -199,35 +199,39 @@ public://メンバ関数
 	Model* GetModel();
 
 	/// <summary>
-    /// ワールド座標のゲッター
-    /// </summary>
+	/// ワールド座標のゲッター
+	/// </summary>
 	/// <param name="index">インデックス</param>
-    /// <returns>ワールド座標</returns>
+	/// <returns>ワールド座標</returns>
 	Vector3 GetWorldPos(uint32_t index);
 
 	/// <summary>
 	/// スケールのゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>スケール</returns>
-	float GetRadius()const;
+	float GetRadius(uint32_t index)const;
 
 	/// <summary>
-    /// 球のゲッター
-    /// </summary>
-    /// <returns>球</returns>
-	Sphere GetSphere()const;
+	/// 球のゲッター
+	/// </summary>
+	/// <param name="index">インデックス</param>
+	/// <returns>球</returns>
+	Sphere GetSphere(uint32_t index)const;
 
 	/// <summary>
 	/// AABBのゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>AABB</returns>
-	AABB GetAABB()const;
+	AABB GetAABB(uint32_t index)const;
 
 	/// <summary>
 	/// OBBのゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns></returns>
-	OBB GetOBB()const;
+	OBB GetOBB(uint32_t index)const;
 private://メンバ関数
 	/// <summary>
 	/// 座標変換行列リソースの生成
@@ -289,7 +293,7 @@ private://メンバ変数
 	Material material_ = {};
 
 	//衝突判定に使用するプリミティブのデータ
-	Sphere sphere_ = {};//球
-	AABB aabb_ = {};//AABB
-	OBB obb_ = {};//OBB
+	std::vector<Sphere> spheres_ = {};//球
+	std::vector<AABB> aabbs_ = {};//AABB
+	std::vector<OBB> obbs_ = {};//OBB
 };

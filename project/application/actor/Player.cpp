@@ -319,7 +319,7 @@ Vector3 Player::GetVelocity() const {
 
 //OBBのゲッター
 OBB Player::GetOBB()const {
-	return gameObject_.hitBox->GetOBB();
+	return gameObject_.hitBox->GetOBB(0);
 }
 
 //弾のゲッター

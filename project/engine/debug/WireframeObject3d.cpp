@@ -66,6 +66,9 @@ void WireframeObject3d::Initialize(WireframeObject3dCommon* wireframeObject3dCom
 		transform.rotate = {};
 		transform.translate = { 0.0f,0.0f,0.0f };
 	}
+	transforms_[0].translate = {};
+	transforms_[1].translate = { 2.0f,0.0f,0.0f };
+	transforms_[2].translate = { 4.0f,0.0f,0.0f };
 	//wvpデータも初期化
 	wvpData_.resize(instanceCount);
 	for (TransformationMatrix& wvp : wvpData_) {
@@ -73,6 +76,13 @@ void WireframeObject3d::Initialize(WireframeObject3dCommon* wireframeObject3dCom
 		wvp.wvp = Matrix4x4::Identity4x4();
 		wvp.worldInverseTranspose = Matrix4x4::Identity4x4();
 	}
+	//球
+	spheres_.resize(instanceCount);
+	//AABB
+	aabbs_.resize(instanceCount);
+	//OBB
+	obbs_.resize(instanceCount);
+
 	//wvpリソースの初期化
 	CreateTransformationMatrixResource();
 	//座標変換行列リソースのストラクチャバッファの生成
@@ -107,17 +117,23 @@ void WireframeObject3d::Update() {
 	(this->*UpdateTransformTable[static_cast<uint32_t>(transform3dMode_)])();
 
 	//Sphere
-	sphere_.center = WireframeObject3d::GetWorldPos(0);
+	for (Sphere& sphere : spheres_) {
+		sphere.center = WireframeObject3d::GetWorldPos(0);
+	}
 
 	//AABB
-	aabb_.min = WireframeObject3d::GetWorldPos(0) * -transforms_[0].scale;
-	aabb_.max = WireframeObject3d::GetWorldPos(0) * transforms_[0].scale;
+	for (int32_t i = 0; i < static_cast<int32_t>(aabbs_.size()); i++) {
+		aabbs_[i].min = WireframeObject3d::GetWorldPos(0) * -transforms_[i].scale;
+		aabbs_[i].max = WireframeObject3d::GetWorldPos(0) * transforms_[i].scale;
+	}
 
 	//OBB
-	obb_.center = WireframeObject3d::GetWorldPos(0);
-	obb_.rotate = transforms_[0].rotate;
-	Rendering::MakeOBBRotateMatrix(obb_.orientations, obb_.rotate);
-	obb_.size = transforms_[0].scale;
+	for (int32_t i = 0; i < static_cast<int32_t>(obbs_.size()); i++) {
+		obbs_[i].center = WireframeObject3d::GetWorldPos(0);
+		obbs_[i].rotate = transforms_[i].rotate;
+		Rendering::MakeOBBRotateMatrix(obbs_[i].orientations, obbs_[i].rotate);
+		obbs_[i].size = transforms_[i].scale;
+	}
 }
 
 //描画
@@ -164,9 +180,9 @@ void WireframeObject3d::SetScale(uint32_t index, const Vector3& scale) {
 
 //半径のセッター
 void WireframeObject3d::SetRadius(uint32_t index, float radius) {
-	sphere_.radius = radius;
-	Vector3 scale = { sphere_.radius,sphere_.radius,sphere_.radius };
-	SetScale(index, scale);
+	spheres_[index].radius = radius;
+	Vector3 scale = { radius,radius,radius };
+	transforms_[index].scale = scale;
 }
 
 // 回転のセッター
@@ -354,21 +370,21 @@ void WireframeObject3d::UpdateTransformBillboard() {
 }
 
 // 半径のゲッター
-float WireframeObject3d::GetRadius() const {
-	return sphere_.radius;
+float WireframeObject3d::GetRadius(uint32_t index) const {
+	return spheres_[index].radius;
 }
 
 //球のゲッター
-Sphere WireframeObject3d::GetSphere() const {
-	return sphere_;
+Sphere WireframeObject3d::GetSphere(uint32_t index) const {
+	return spheres_[index];
 }
 
 //AABBのゲッター
-AABB WireframeObject3d::GetAABB() const {
-	return aabb_;
+AABB WireframeObject3d::GetAABB(uint32_t index) const {
+	return aabbs_[index];
 }
 
 //OBBのゲッター
-OBB WireframeObject3d::GetOBB() const {
-	return obb_;
+OBB WireframeObject3d::GetOBB(uint32_t index) const {
+	return obbs_[index];
 }

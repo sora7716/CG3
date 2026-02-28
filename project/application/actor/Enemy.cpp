@@ -290,7 +290,7 @@ Bullet* Enemy::GetBullet() const {
 
 //OBBのゲッター
 OBB Enemy::GetOBB()const {
-	return gameObject_.hitBox->GetOBB();
+	return gameObject_.hitBox->GetOBB(0);
 }
 
 //生存フラグのゲッター
@@ -313,7 +313,7 @@ void Enemy::EnemyToTarget() {
 //敵の振る舞い
 void Enemy::Behavior() {
 	//当たり判定
-	if (Collision::IsCollision(sphere_->GetSphere(), attackArea->GetSphere())) {
+	if (Collision::IsCollision(sphere_->GetSphere(0), attackArea->GetSphere(0))) {
 		//敵の状態を設定
 		enemyState_ = new EnemeyStateAttack();
 
