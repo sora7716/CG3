@@ -21,7 +21,6 @@
     <ClCompile Include="application\actor\Field.cpp" />
     <ClCompile Include="application\actor\GameCamera.cpp" />
     <ClCompile Include="application\actor\GameObjectList.cpp" />
-    <ClCompile Include="application\actor\MapChip.cpp" />
     <ClCompile Include="application\actor\Player.cpp" />
     <ClCompile Include="application\actor\RailCamera.cpp" />
     <ClCompile Include="application\actor\Score.cpp" />
@@ -82,7 +81,6 @@
     <ClCompile Include="engine\scene\SceneFactory.cpp" />
     <ClCompile Include="engine\scene\SceneManager.cpp" />
     <ClCompile Include="engine\worldTransform\WorldTransform.cpp" />
-    <ClCompile Include="Object3dVer2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\actor\ActorData.h" />
@@ -96,8 +94,6 @@
     <ClInclude Include="application\actor\Field.h" />
     <ClInclude Include="application\actor\GameCamera.h" />
     <ClInclude Include="application\actor\GameObjectList.h" />
-    <ClInclude Include="application\actor\MapChip.h" />
-    <ClInclude Include="application\actor\MapChipData.h" />
     <ClInclude Include="application\actor\Player.h" />
     <ClInclude Include="application\actor\RailCamera.h" />
     <ClInclude Include="application\actor\Score.h" />
@@ -165,7 +161,6 @@
     <ClInclude Include="engine\scene\SceneFactory.h" />
     <ClInclude Include="engine\scene\SceneManager.h" />
     <ClInclude Include="engine\worldTransform\WorldTransform.h" />
-    <ClInclude Include="Object3dVer2.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="engine\resources\shaders\MapChip.hlsli">

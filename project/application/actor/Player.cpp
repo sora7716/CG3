@@ -107,7 +107,7 @@ void Player::Initialize(Input* input, SpriteCommon* spriteCommon, Object3dCommon
 	//アンカーポイント
 	anchorPoint_ = std::make_unique<WireframeObject3d>();
 	anchorPoint_->Initialize(object3dCommon_->GetWireframeObject3dCommon(), camera_, ModelType::kSphere);
-	anchorPoint_->SetRadius(0.05f);
+	anchorPoint_->SetRadius(0,0.05f);
 	spring_.naturalLength = 2.0f;
 	spring_.stiffness = 40.0f;
 	spring_.dampingCoefficient = 2.0f;
@@ -141,7 +141,7 @@ void Player::Update() {
 		spring_.anchor = playerPos + worldForward;
 
 		// ここが正解
-		anchorPoint_->SetTranslate(spring_.anchor);
+		anchorPoint_->SetTranslate(0,spring_.anchor);
 	}
 
 	if (input_->TriggerXboxPad(xBoxPadNumber_, XboxInput::kLT)) {
@@ -208,9 +208,9 @@ void Player::Update() {
 	gameObject_.object3d->Update();
 
 	//ヒットボックスの更新
-	gameObject_.hitBox->SetTranslate(gameObject_.object3d->GetWorldPos());
-	gameObject_.hitBox->SetRotate(gameObject_.transformData.rotate);
-	gameObject_.hitBox->SetScale(hitBoxScale_);
+	gameObject_.hitBox->SetTranslate(0,gameObject_.object3d->GetWorldPos());
+	gameObject_.hitBox->SetRotate(0,gameObject_.transformData.rotate);
+	gameObject_.hitBox->SetScale(0,hitBoxScale_);
 	gameObject_.hitBox->Update();
 
 	//HP

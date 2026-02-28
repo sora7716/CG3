@@ -2,7 +2,6 @@
 #include "IScene.h"
 #include "RenderingData.h"
 #include "PrimitiveData.h"
-#include "Object3dVer2.h"
 
 //前方宣言
 class Player;
@@ -70,12 +69,12 @@ private://メンバ変数
 
 	//std::unique_ptr<Enemy>enemy_ = nullptr;
 
-	std::unique_ptr<Object3dVer2> object3dVer2_ = nullptr;
-
 	std::unique_ptr<Object3d>object3d_ = nullptr;
 	TransformData transform_0 = {};
 	TransformData transform_1 = {};
 
 	TransformData cameraTransform_ = {};
+
+	std::unique_ptr<WireframeObject3d>wireframeObject3d_ = {};
 };
 

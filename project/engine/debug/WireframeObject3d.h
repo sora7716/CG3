@@ -9,6 +9,7 @@
 #include <d3d12.h>
 //前方宣言
 class DirectXBase;
+class SRVManager;
 class WireframeObject3dCommon;
 class Model;
 class WorldTransform;
@@ -20,16 +21,16 @@ enum class ModelType {
 };
 
 /// <summary>
-/// 3Dオブジェクト
+/// ワイヤーフレームモデル
 /// </summary>
-class WireframeObject3d{
+class WireframeObject3d {
 private://エイリアステンプレート
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public://メンバ関数
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	WireframeObject3d() = default;
+	WireframeObject3d();
 
 	/// <summary>
 	/// デストラクタ
@@ -37,12 +38,14 @@ public://メンバ関数
 	~WireframeObject3d();
 
 	/// <summary>
-    /// 初期化
-    /// </summary>
-    /// <param name="wireframeObject3dCommon">ワイヤーフレームオブジェクトの共通部分</param>
-    /// <param name="camera">カメラ</param>
+	/// 初期化
+	/// </summary>
+	/// <param name="wireframeObject3dCommon">ワイヤーフレームオブジェクトの共通部分</param>
+	/// <param name="camera">カメラ</param>
 	/// <param name="modelType">モデルタイプ</param>
-	void Initialize(WireframeObject3dCommon*wireframeObject3dCommon,Camera* camera,ModelType modelType);
+	/// <param name="instanceCount">Objectを出したい数</param>
+	/// <param name="transform3dMode">座標変換のモード</param>
+	void Initialize(WireframeObject3dCommon* wireframeObject3dCommon, Camera* camera, ModelType modelType, uint32_t instanceCount = 1, Transform3dMode transform3dMode = Transform3dMode::kNormal);
 
 	/// <summary>
 	/// 更新
@@ -55,15 +58,10 @@ public://メンバ関数
 	void Draw();
 
 	/// <summary>
-	/// 親子付け
+	/// モデルのセッター
 	/// </summary>
-	/// <param name="parent">親</param>
-	void Compose(const WorldTransform* parent);
-
-	/// <summary>
-	/// 親子関係を解除
-	/// </summary>
-	void Decompose();
+	/// <param name="name">モデルの名前</param>
+	void SetModel(const std::string& name);
 
 	/// <summary>
 	/// カメラのセッター
@@ -72,28 +70,57 @@ public://メンバ関数
 	void SetCamera(Camera* camera);
 
 	/// <summary>
-	/// 半径のセッター
-	/// </summary>
-	/// <param name="radius">半径</param>
-	void SetRadius(float radius);
-
-	/// <summary>
 	/// スケールのセッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="scale">スケール</param>
-	void SetScale(const Vector3& scale);
+	void SetScale(uint32_t index, const Vector3& scale);
+
+	/// <summary>
+    /// 半径のセッター
+    /// </summary>
+	/// <param name="index">インデックス</param>
+    /// <param name="radius">半径</param>
+	void SetRadius(uint32_t index, float radius);
 
 	/// <summary>
 	/// 回転のセッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="rotate">回転</param>
-	void SetRotate(const Vector3& rotate);
+	void SetRotate(uint32_t index, const Vector3& rotate);
 
 	/// <summary>
 	/// 平行移動のセッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <param name="translate">平行移動</param>
-	void SetTranslate(const Vector3& translate);
+	void SetTranslate(uint32_t index, const Vector3& translate);
+
+	/// <summary>
+	/// トランスフォームのセッター
+	/// </summary>
+	/// <param name="index">インデックス</param>
+	/// <param name="transform">トランスフォーム</param>
+	void SetTransformData(uint32_t index, const TransformData& transform);
+
+	/// <summary>
+	/// uvスケールのセッター
+	/// </summary>
+	/// <param name="uvScale">スケール</param>
+	void SetUVScale(const Vector2& uvScale);
+
+	/// <summary>
+	/// uv回転のセッター
+	/// </summary>
+	/// <param name="uvRotate">回転</param>
+	void SetUVRotate(float uvRotate);
+
+	/// <summary>
+	/// uv平行移動のセッター
+	/// </summary>
+	/// <param name="uvTranslate">平行移動</param>
+	void SetUVTranslate(const Vector2& uvTranslate);
 
 	/// <summary>
 	/// 色のセッター
@@ -102,10 +129,10 @@ public://メンバ関数
 	void SetColor(const Vector4& color);
 
 	/// <summary>
-	/// 親のセッター
+	/// テクスチャの変更
 	/// </summary>
-	/// <param name="parent">親</param>
-	void SetParent(const WorldTransform* parent);
+	/// <param name="filePath">ファイルパス</param>
+	void SetTexture(const std::string& filePath);
 
 	/// <summary>
 	/// ブレンドモードのセッター
@@ -116,49 +143,78 @@ public://メンバ関数
 	/// <summary>
 	/// スケールのゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>スケール</returns>
-	float GetRadius()const;
-
-	/// <summary>
-	/// スケールのゲッター
-	/// </summary>
-	/// <returns></returns>
-	Vector3 GetScale()const;
+	const Vector3& GetScale(uint32_t index)const;
 
 	/// <summary>
 	/// 回転のゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>回転</returns>
-	Vector3 GetRotate()const;
+	const Vector3& GetRotate(uint32_t index)const;
 
 	/// <summary>
 	/// 平行移動のゲッター
 	/// </summary>
+	/// <param name="index">インデックス</param>
 	/// <returns>平行移動</returns>
-	Vector3 GetTranslate()const;
+	const Vector3& GetTranslate(uint32_t index)const;
+
+	/// <summary>
+	/// uvスケールのゲッター
+	/// </summary>
+	/// <returns>uvスケール</returns>
+	const Vector2& GetUVScale()const;
+
+	/// <summary>
+	/// uv回転のゲッター
+	/// </summary>
+	/// <returns>uv回転</returns>
+	const float GetUVRotate()const;
+
+	/// <summary>
+	/// uv平行移動のゲッター
+	/// </summary>
+	/// <returns>uv平行移動</returns>
+	const Vector2& GetUVTranslate()const;
 
 	/// <summary>
 	/// 色のゲッター
 	/// </summary>
 	/// <returns>色</returns>
-	Vector4 GetColor()const;
+	const Vector4& GetColor()const;
 
 	/// <summary>
-	/// ワールドトランスフォームのゲッター
+	/// トランスフォームデータのゲッター
 	/// </summary>
-	/// <returns>ワールドトランスフォーム</returns>
-	WorldTransform* GetWorldTransform()const;
+	/// <param name="index">インデックス</param>
+	/// <returns>トランスフォームデータ</returns>
+	const TransformData& GetTransformData(uint32_t index)const;
 
 	/// <summary>
-	/// ワールド座標のゲッター
+	/// モデルのゲッター
 	/// </summary>
-	/// <returns>ワールド座標</returns>
-	Vector3 GetWorldPos();
+	/// <returns>モデル</returns>
+	Model* GetModel();
 
 	/// <summary>
-	/// 球のゲッター
+    /// ワールド座標のゲッター
+    /// </summary>
+	/// <param name="index">インデックス</param>
+    /// <returns>ワールド座標</returns>
+	Vector3 GetWorldPos(uint32_t index);
+
+	/// <summary>
+	/// スケールのゲッター
 	/// </summary>
-	/// <returns>球</returns>
+	/// <returns>スケール</returns>
+	float GetRadius()const;
+
+	/// <summary>
+    /// 球のゲッター
+    /// </summary>
+    /// <returns>球</returns>
 	Sphere GetSphere()const;
 
 	/// <summary>
@@ -172,9 +228,33 @@ public://メンバ関数
 	/// </summary>
 	/// <returns></returns>
 	OBB GetOBB()const;
+private://メンバ関数
+	/// <summary>
+	/// 座標変換行列リソースの生成
+	/// </summary>
+	void CreateTransformationMatrixResource();
+
+	/// <summary>
+	/// 座標変換行列リソースのストラクチャバッファの生成
+	/// </summary>
+	void CreateStructuredBufferForWvp();
+
+	/// <summary>
+	/// 座標の更新
+	/// </summary>
+	void UpdateTransform();
+
+	/// <summary>
+	/// ビルボード行列での更新
+	/// </summary>
+	void UpdateTransformBillboard();
+private://メンバ関数テーブル
+	//座標の更新をまとめた
+	static void (WireframeObject3d::* UpdateTransformTable[])();
 private://メンバ変数
 	//ワイヤーフレームオブジェクトの共通部分
 	WireframeObject3dCommon* wireframeObject3dCommon_ = nullptr;
+
 	//UV座標
 	Transform2dData uvTransform_ = {
 		.scale = { 1.0f,1.0f },
@@ -183,11 +263,25 @@ private://メンバ変数
 	};
 	//DirectXの基盤部分
 	DirectXBase* directXBase_ = nullptr;
+	//SRVマネージャー
+	SRVManager* srvManager_ = nullptr;
 	//3Dモデル
 	Model* model_ = nullptr;
-	//ワールドトランスフォーム
-	WorldTransform* worldTransform_ = nullptr;
-	float radius_ = 1.0f;
+	//ワールドビュープロジェクションのリソース
+	ComPtr<ID3D12Resource>wvpResource_ = nullptr;
+	//ワールドビュープロジェクションのポインタ
+	TransformationMatrix* wvpPtr_ = nullptr;
+	std::vector<TransformationMatrix> wvpData_ = {};
+	//カメラ
+	Camera* camera_ = nullptr;
+	//ワールド座標
+	std::vector<TransformData> transforms_ = {};
+	Transform3dMode transform3dMode_ = Transform3dMode::kNormal;
+	uint32_t srvIndex_ = 0;
+	//親
+	const WorldTransform* parent_ = nullptr;
+	//ノード
+	Node node_ = {};
 	//ブレンドモード
 	BlendMode blendMode_ = BlendMode::kNone;
 
@@ -199,4 +293,3 @@ private://メンバ変数
 	AABB aabb_ = {};//AABB
 	OBB obb_ = {};//OBB
 };
-

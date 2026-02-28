@@ -1,24 +1,31 @@
 #include "WireframeObject3d.h"
 #include "WireframeObject3dCommon.h"
-#include "engine/camera/Camera.h"
-#include "engine/base/DirectXBase.h"
-#include "engine/math/func/Rendering.h"
-#include "engine/base/SRVManager.h"
-#include "engine/3d/ModelManager.h"
-#include "engine/debug/ImGuiManager.h"
-#include "engine/worldTransform/WorldTransform.h"
-#include "engine/3d/Model.h"
-#include "engine/math/func/Math.h"
-#include "engine/debug/WireframeObject3dCommon.h"
+#include "DirectXBase.h"
+#include "Camera.h"
+#include "func/Math.h"
+#include "ModelManager.h"
+#include "Model.h"
+#include "func/Rendering.h"
+#include "ImGuiManager.h"
+#include "SRVManager.h"
+#include "TextureManager.h"
 #include <cassert>
+//メンバ関数テーブルの初期化
+void(WireframeObject3d::* WireframeObject3d::UpdateTransformTable[])() = {
+	&UpdateTransform,
+	&UpdateTransformBillboard,
+};
+
+//コンストラクタ
+WireframeObject3d::WireframeObject3d() {
+}
 
 //デストラクタ
 WireframeObject3d::~WireframeObject3d() {
-	delete worldTransform_;
 }
 
 //初期化
-void WireframeObject3d::Initialize(WireframeObject3dCommon* wireframeObject3dCommon, Camera* camera, ModelType modelType) {
+void WireframeObject3d::Initialize(WireframeObject3dCommon* wireframeObject3dCommon, Camera* camera, ModelType modelType, uint32_t instanceCount, Transform3dMode transform3dMode) {
 	//ワイヤーフレームオブジェクトの共通部分を記録
 	wireframeObject3dCommon_ = wireframeObject3dCommon;
 #ifdef _DEBUG
@@ -43,51 +50,78 @@ void WireframeObject3d::Initialize(WireframeObject3dCommon* wireframeObject3dCom
 
 	//DirectXの基盤部分を受け取る
 	directXBase_ = wireframeObject3dCommon_->GetDirectXBase();
-	//ワールドトランスフォームの生成、初期化
-	worldTransform_ = new WorldTransform();
-	worldTransform_->Initialize(directXBase_, TransformMode::k3d);
+
+	//uv座標
+	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
+	//DirectXの基盤部分を受け取る
+	directXBase_ = wireframeObject3dCommon->GetDirectXBase();
+	//SRVマネージャーを受け取る
+	srvManager_ = wireframeObject3dCommon->GetSRVManager();
+	//座標変換のモード切替用変数
+	transform3dMode_ = transform3dMode;
+	//トランスフォームのデータ数を決定
+	transforms_.resize(instanceCount);
+	for (TransformData& transform : transforms_) {
+		transform.scale = Vector3::MakeAllOne();
+		transform.rotate = {};
+		transform.translate = { 0.0f,0.0f,0.0f };
+	}
+	//wvpデータも初期化
+	wvpData_.resize(instanceCount);
+	for (TransformationMatrix& wvp : wvpData_) {
+		wvp.world = Matrix4x4::Identity4x4();
+		wvp.wvp = Matrix4x4::Identity4x4();
+		wvp.worldInverseTranspose = Matrix4x4::Identity4x4();
+	}
+	//wvpリソースの初期化
+	CreateTransformationMatrixResource();
+	//座標変換行列リソースのストラクチャバッファの生成
+	CreateStructuredBufferForWvp();
 
 	//uv座標
 	uvTransform_ = { {1.0f,1.0f},0.0f,{0.0f,0.0f} };
 
 	//カメラにデフォルトカメラを代入
-	worldTransform_->SetCamera(camera);
+	camera_ = camera;
 	//カメラをセット
-	wireframeObject3dCommon_->CreateCameraResource(worldTransform_->GetCamera()->GetTranslate());
+	wireframeObject3dCommon->CreateCameraResource(camera_->GetTranslate());
+
+	//マテリアルの初期化
+	material_.color = { 1.0f,1.0f,1.0f,1.0f };
+	material_.enableLighting = true;
+	material_.uvMatrix = Matrix4x4::Identity4x4();
+	material_.shininess = 10.0f;
 }
+
 
 //更新
 void WireframeObject3d::Update() {
-#ifdef _DEBUG
 	//Object3dの共通部分の更新
 	wireframeObject3dCommon_->Update();
-	//UVトランスフォーム更新
-	model_->UVTransform(uvTransform_);
-	//ノードの設定
-	worldTransform_->SetNode(model_->GetModelData().rootNode);
-#endif // _DEBUG
 
-	//ワールドトランスフォーム
-	worldTransform_->Update();
+	if (model_) {
+		node_ = model_->GetModelData().rootNode;
+		model_->UVTransform(uvTransform_);
+	}
+	//トランスフォームの更新
+	(this->*UpdateTransformTable[static_cast<uint32_t>(transform3dMode_)])();
 
 	//Sphere
-	sphere_.center = WireframeObject3d::GetWorldPos();
-	sphere_.radius = radius_;
+	sphere_.center = WireframeObject3d::GetWorldPos(0);
 
 	//AABB
-	aabb_.min = WireframeObject3d::GetWorldPos() * -worldTransform_->GetScale();
-	aabb_.max = WireframeObject3d::GetWorldPos() * worldTransform_->GetScale();
+	aabb_.min = WireframeObject3d::GetWorldPos(0) * -transforms_[0].scale;
+	aabb_.max = WireframeObject3d::GetWorldPos(0) * transforms_[0].scale;
 
 	//OBB
-	obb_.center = WireframeObject3d::GetWorldPos();
-	obb_.rotate = worldTransform_->GetRotate();
+	obb_.center = WireframeObject3d::GetWorldPos(0);
+	obb_.rotate = transforms_[0].rotate;
 	Rendering::MakeOBBRotateMatrix(obb_.orientations, obb_.rotate);
-	obb_.size = worldTransform_->GetScale();
+	obb_.size = transforms_[0].scale;
 }
 
 //描画
 void WireframeObject3d::Draw() {
-#ifdef _DEBUG
 	//3Dオブジェクトの共通部分
 	wireframeObject3dCommon_->DrawSetting();
 
@@ -96,8 +130,8 @@ void WireframeObject3d::Draw() {
 	//グラフィックスパイプラインをセットするコマンド
 	directXBase_->GetCommandList()->SetPipelineState(pso);
 
-	//ワールドトランスフォーム
-	worldTransform_->Draw();
+	//座標変換行列SRVの場所を設定
+	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(srvIndex_));
 
 	//平光源CBufferの場所を設定
 	directXBase_->GetCommandList()->SetGraphicsRootConstantBufferView(3, wireframeObject3dCommon_->GetDirectionalLightResource()->GetGPUVirtualAddress());
@@ -105,47 +139,64 @@ void WireframeObject3d::Draw() {
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(5, wireframeObject3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(wireframeObject3dCommon_->GetSrvIndexPoint()));
 	//スポットライトのStructuredBufferを設定
 	directXBase_->GetCommandList()->SetGraphicsRootDescriptorTable(6, wireframeObject3dCommon_->GetSRVManager()->GetGPUDescriptorHandle(wireframeObject3dCommon_->GetSrvIndexSpot()));
-	//モデルの描画	
-	model_->Draw();
-#endif // _DEBUG
+
+	//3Dモデルが割り当てられていれば描画
+	if (model_) {
+		model_->Draw(static_cast<uint32_t>(transforms_.size()));
+	}
 }
 
-//親子付け
-void WireframeObject3d::Compose(const WorldTransform* parent) {
-	worldTransform_->Compose(parent);
-}
-
-//親子関係を解除
-void WireframeObject3d::Decompose() {
-	worldTransform_->Decompose();
+//モデルのセッター
+void WireframeObject3d::SetModel(const std::string& name) {
+	model_ = wireframeObject3dCommon_->GetModelManager()->FindModel(name);
 }
 
 //カメラのセッター
 void WireframeObject3d::SetCamera(Camera* camera) {
-	worldTransform_->SetCamera(camera);
+	camera_ = camera;
 	wireframeObject3dCommon_->SetCameraForGPU(camera->GetTranslate());
 }
 
-//半径のセッター
-void WireframeObject3d::SetRadius(float radius) {
-	radius_ = radius;
-	Vector3 scale = { radius_,radius_,radius_ };
-	worldTransform_->SetScale(scale);
+// スケールのセッター
+void WireframeObject3d::SetScale(uint32_t index, const Vector3& scale) {
+	transforms_[index].scale = scale;
 }
 
-// スケールのセッター
-void WireframeObject3d::SetScale(const Vector3& scale) {
-	worldTransform_->SetScale(scale);
+//半径のセッター
+void WireframeObject3d::SetRadius(uint32_t index, float radius) {
+	sphere_.radius = radius;
+	Vector3 scale = { sphere_.radius,sphere_.radius,sphere_.radius };
+	SetScale(index, scale);
 }
 
 // 回転のセッター
-void WireframeObject3d::SetRotate(const Vector3& rotate) {
-	worldTransform_->SetRotate(rotate);
+void WireframeObject3d::SetRotate(uint32_t index, const Vector3& rotate) {
+	transforms_[index].rotate = rotate;
 }
 
 // 平行移動のセッター
-void WireframeObject3d::SetTranslate(const Vector3& translate) {
-	worldTransform_->SetTranslate(translate);
+void WireframeObject3d::SetTranslate(uint32_t index, const Vector3& translate) {
+	transforms_[index].translate = translate;
+}
+
+//トランスフォームのセッター
+void WireframeObject3d::SetTransformData(uint32_t index, const TransformData& transform) {
+	transforms_[index] = transform;
+}
+
+// uvスケールのセッター
+void WireframeObject3d::SetUVScale(const Vector2& uvScale) {
+	uvTransform_.scale = uvScale;
+}
+
+// uv回転のセッター
+void WireframeObject3d::SetUVRotate(float uvRotate) {
+	uvTransform_.rotate = uvRotate;
+}
+
+// uv平行移動のセッター
+void WireframeObject3d::SetUVTranslate(const Vector2& uvTranslate) {
+	uvTransform_.translate = uvTranslate;
 }
 
 //色のセッター
@@ -155,9 +206,11 @@ void WireframeObject3d::SetColor(const Vector4& color) {
 	}
 }
 
-//親のセッター
-void WireframeObject3d::SetParent(const WorldTransform* parent) {
-	worldTransform_->SetParent(parent);
+//テクスチャの変更
+void WireframeObject3d::SetTexture(const std::string& filePath) {
+	if (model_) {
+		model_->SetTexture(filePath);
+	}
 }
 
 //ブレンドモードのセッター
@@ -165,42 +218,144 @@ void WireframeObject3d::SetBlendMode(const BlendMode& blendMode) {
 	blendMode_ = blendMode;
 }
 
-// 半径のゲッター
-float WireframeObject3d::GetRadius() const {
-	return radius_;
-}
-
 // スケールのゲッター
-Vector3 WireframeObject3d::GetScale() const {
-	return  worldTransform_->GetScale();
+const Vector3& WireframeObject3d::GetScale(uint32_t index) const {
+	// TODO: return ステートメントをここに挿入します
+	return transforms_[index].scale;
 }
 
 // 回転のゲッター
-Vector3 WireframeObject3d::GetRotate() const {
+const Vector3& WireframeObject3d::GetRotate(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return worldTransform_->GetRotate();
+	return transforms_[index].rotate;
 }
 
 // 平行移動のゲッター
-Vector3 WireframeObject3d::GetTranslate() const {
+const Vector3& WireframeObject3d::GetTranslate(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return worldTransform_->GetTranslate();
+	return transforms_[index].translate;
+}
+
+// uvスケールのゲッター
+const Vector2& WireframeObject3d::GetUVScale() const {
+	// TODO: return ステートメントをここに挿入します
+	return uvTransform_.scale;
+}
+
+// uv回転のゲッター
+const float WireframeObject3d::GetUVRotate() const {
+	// TODO: return ステートメントをここに挿入します
+	return uvTransform_.rotate;
+}
+
+// uv平行移動のゲッター
+const Vector2& WireframeObject3d::GetUVTranslate() const {
+	// TODO: return ステートメントをここに挿入します
+	return uvTransform_.translate;
 }
 
 //色のゲッター
-Vector4 WireframeObject3d::GetColor() const {
-	return model_->GetColor();
+const Vector4& WireframeObject3d::GetColor() const {
+	// TODO: return ステートメントをここに挿入します
+	static const Vector4 defaultColor(0, 0, 0, 0);
+	if (model_) {
+		return model_->GetColor();
+	}
+	return defaultColor;
 }
 
-//ワールド行列のゲッター
-WorldTransform* WireframeObject3d::GetWorldTransform() const {
+//トランスフォームデータのゲッター
+const TransformData& WireframeObject3d::GetTransformData(uint32_t index) const {
 	// TODO: return ステートメントをここに挿入します
-	return worldTransform_;
+	return transforms_[index];
+}
+
+//モデルのゲッター
+Model* WireframeObject3d::GetModel() {
+	if (model_) {
+		return model_;
+	}
+	return nullptr;
 }
 
 //ワールド座標のゲッター
-Vector3 WireframeObject3d::GetWorldPos() {
-	return worldTransform_->GetWorldPos();
+Vector3 WireframeObject3d::GetWorldPos(uint32_t index) {
+	return { wvpData_[index].world.m[3][0],wvpData_[index].world.m[3][1],wvpData_[index].world.m[3][2] };
+}
+
+//座標変換行列リソースの生成
+void WireframeObject3d::CreateTransformationMatrixResource() {
+	// 配列サイズで確保
+	wvpResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * transforms_.size());
+	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
+	//書き込むためのアドレス
+	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpPtr_));
+	//単位行列を書き込んでおく
+	for (uint32_t i = 0; i < static_cast<uint32_t>(transforms_.size()); i++) {
+		wvpPtr_[i].wvp = Matrix4x4::Identity4x4();
+		wvpPtr_[i].world = Matrix4x4::Identity4x4();
+		wvpPtr_[i].worldInverseTranspose = Matrix4x4::Identity4x4();
+	}
+}
+
+//座標変換行列リソースのストラクチャバッファの生成
+void WireframeObject3d::CreateStructuredBufferForWvp() {
+	//ストラクチャバッファを生成
+	srvIndex_ = srvManager_->Allocate() + TextureManager::kSRVIndexTop;
+	srvManager_->CreateSRVForStructuredBuffer(
+		srvIndex_,
+		wvpResource_.Get(),
+		static_cast<uint32_t>(transforms_.size()),
+		sizeof(TransformationMatrix)
+	);
+}
+
+//座標の更新
+void WireframeObject3d::UpdateTransform() {
+	for (uint32_t i = 0; i < static_cast<uint32_t>(transforms_.size()); i++) {
+		wvpData_[i].world = Rendering::MakeAffineMatrix(transforms_[i]);
+		//wvpの書き込み
+		if (camera_) {
+			const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+			wvpData_[i].wvp = node_.localMatrix * wvpData_[i].world * viewProjectionMatrix;
+		} else {
+			wvpData_[i].wvp = wvpData_[i].world;
+		}
+		//ワールド行列を送信
+		wvpData_[i].world = node_.localMatrix * wvpData_[i].world;
+		//逆行列の転置行列を送信
+		wvpData_[i].worldInverseTranspose = wvpData_[i].world.InverseTranspose();
+
+		//ポインタに送信
+		wvpPtr_[i] = wvpData_[i];
+	}
+}
+
+//ビルボード行列での更新
+void WireframeObject3d::UpdateTransformBillboard() {
+	for (uint32_t i = 0; i < static_cast<uint32_t>(transforms_.size()); i++) {
+		//カメラがなかったら
+		if (!camera_) {
+			wvpData_[i].wvp = wvpData_[i].world;
+			return;
+		}
+		wvpData_[i].world = Rendering::MakeBillboardAffineMatrix(camera_->GetWorldMatrix(), transforms_[i]);
+		//wvpの書き込み
+		const Matrix4x4& viewProjectionMatrix = camera_->GetViewProjectionMatrix();
+		wvpData_[i].wvp = wvpData_[i].world * viewProjectionMatrix;
+		//ワールド行列を送信
+		wvpData_[i].world = wvpData_[i].world;
+		//逆行列の転置行列を送信
+		wvpData_[i].worldInverseTranspose = wvpData_[i].world.InverseTranspose();
+
+		//ポインタに送信
+		wvpPtr_[i] = wvpData_[i];
+	}
+}
+
+// 半径のゲッター
+float WireframeObject3d::GetRadius() const {
+	return sphere_.radius;
 }
 
 //球のゲッター

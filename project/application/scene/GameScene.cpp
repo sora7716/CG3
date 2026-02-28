@@ -71,16 +71,17 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 	//colliderManager_->AddCollider(&player_->GetCollider());
 	//colliderManager_->AddCollider(&enemy_->GetCollider());
 
-	object3dVer2_ = std::make_unique<Object3dVer2>();
-	object3dVer2_->Initialize(sceneContext_.object3dCommon, camera_, "player");
-
 	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(sceneContext_.object3dCommon, camera_, Transform3dMode::kNormal);
+	object3d_->Initialize(sceneContext_.object3dCommon, camera_, 2, Transform3dMode::kNormal);
 	object3d_->SetModel("enemy");
 	transform_0.scale = Vector3::MakeAllOne();
 	transform_1.scale = Vector3::MakeAllOne();
 
 	cameraTransform_.scale = Vector3::MakeAllOne();
+	cameraTransform_.translate = { 0.0f,0.0f,-25.0f };
+
+	wireframeObject3d_ = std::make_unique<WireframeObject3d>();
+	wireframeObject3d_->Initialize(sceneContext_.wireframeObject3dCommon, camera_, ModelType::kCube, 3);
 }
 
 //更新
@@ -95,11 +96,12 @@ void GameScene::Update() {
 	//enemyManager_->SetCamera(camera_);
 	//wireframeObject3d_->SetCamera(camera_);
 	//enemy_->SetCamera(camera_);
-	object3dVer2_->SetCamera(camera_);
 	object3d_->SetCamera(camera_);
 
 	camera_->SetRotate(cameraTransform_.rotate);
 	camera_->SetTranslate(cameraTransform_.translate);
+
+	wireframeObject3d_->Update();
 
 	//Vector3 prePlayerPos = player_->GetTransformData().translate;
 
@@ -128,9 +130,8 @@ void GameScene::Update() {
 	//wireframeObject3d_->SetTranslate(wireframeTransformDate_.translate);
 	//wireframeObject3d_->Update();
 
-	object3dVer2_->Update();
-	object3d_->SetTransformData(0,transform_0);
-	object3d_->SetTransformData(1,transform_1);
+	object3d_->SetTransformData(0, transform_0);
+	object3d_->SetTransformData(1, transform_1);
 	object3d_->Update();
 
 	////衝突判定
@@ -249,8 +250,9 @@ void GameScene::Draw() {
 	//敵
 	//enemyManager_->Draw();
 
-	object3dVer2_->Draw();
-	object3d_->Draw();
+	//object3d_->Draw();
+
+	wireframeObject3d_->Draw();
 
 	//スコア
 	//score_->Draw();

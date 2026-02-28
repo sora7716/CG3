@@ -21,18 +21,22 @@ Object3d::~Object3d() {
 }
 
 //初期化
-void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, Transform3dMode transform3dMode) {
+void Object3d::Initialize(Object3dCommon* object3dCommon, Camera* camera, uint32_t instanceCount, Transform3dMode transform3dMode) {
 	//3Dオブジェクトの共通部分
 	object3dCommon_ = object3dCommon;
 	//DirectXの基盤部分を受け取る
 	directXBase_ = object3dCommon_->GetDirectXBase();
 	//SRVマネージャーを受け取る
 	srvManager_ = object3dCommon_->GetSRVManager();
-
+	//座標変換のモード切替用変数
 	transform3dMode_ = transform3dMode;
-	//ワールド座標
-	transforms_[0] = { { 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f } };
-	transforms_[1] = { { 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, { 5.0f,0.0f,0.0f } };
+	//トランスフォームのデータ数を決定
+	transforms_.resize(instanceCount);
+	for (TransformData& transform : transforms_) {
+		transform.scale = Vector3::MakeAllOne();
+		transform.rotate = {};
+		transform.translate = {};
+	}
 	//wvpリソースの初期化
 	CreateTransformationMatrixResource();
 	//座標変換行列リソースのストラクチャバッファの生成
@@ -89,7 +93,7 @@ void Object3d::Draw() {
 
 	//3Dモデルが割り当てられていれば描画
 	if (model_) {
-		model_->Draw(kMaxObjectCount);
+		model_->Draw(static_cast<uint32_t>(transforms_.size()));
 	}
 }
 
@@ -247,12 +251,12 @@ Vector3 Object3d::GetWorldPos() {
 //座標変換行列リソースの生成
 void Object3d::CreateTransformationMatrixResource() {
 	// 配列サイズで確保
-	wvpResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * kMaxObjectCount);
+	wvpResource_ = directXBase_->CreateBufferResource(sizeof(TransformationMatrix) * transforms_.size());
 	//座標変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる
 	//書き込むためのアドレス
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpPtr_));
 	//単位行列を書き込んでおく
-	for (uint32_t i = 0; i < kMaxObjectCount; i++) {
+	for (uint32_t i = 0; i < static_cast<uint32_t>(transforms_.size()); i++) {
 		wvpPtr_[i].wvp = Matrix4x4::Identity4x4();
 		wvpPtr_[i].world = Matrix4x4::Identity4x4();
 		wvpPtr_[i].worldInverseTranspose = Matrix4x4::Identity4x4();
@@ -266,14 +270,14 @@ void Object3d::CreateStructuredBufferForWvp() {
 	srvManager_->CreateSRVForStructuredBuffer(
 		srvIndex_,
 		wvpResource_.Get(),
-		kMaxObjectCount,
+		static_cast<uint32_t>(transforms_.size()),
 		sizeof(TransformationMatrix)
 	);
 }
 
 //座標の更新
 void Object3d::UpdateTransform() {
-	for (uint32_t i = 0; i < kMaxObjectCount; i++) {
+	for (uint32_t i = 0; i < static_cast<uint32_t>(transforms_.size()); i++) {
 		wvpPtr_[i].world = Rendering::MakeAffineMatrix(transforms_[i]);
 		//TransformからWorldMatrixを作る
 		if (parent_) {
@@ -295,7 +299,7 @@ void Object3d::UpdateTransform() {
 
 //ビルボード行列での更新
 void Object3d::UpdateTransformBillboard() {
-	for (uint32_t i = 0; i < kMaxObjectCount; i++) {
+	for (uint32_t i = 0; i < static_cast<uint32_t>(transforms_.size()); i++) {
 		//カメラがなかったら
 		if (!camera_) {
 			wvpPtr_[i].wvp = wvpPtr_[i].world;

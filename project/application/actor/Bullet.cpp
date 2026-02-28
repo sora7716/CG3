@@ -3,7 +3,7 @@
 #include "engine/camera/Camera.h"
 #include "engine/math/func/Math.h"
 #include "engine/debug/ImGuiManager.h"
-#include "engine/debug/WireframeObject3d.h"
+#include "WireframeObject3d.h"
 #include "engine/3d/Object3dCommon.h"
 
 //デストラクタ
@@ -72,9 +72,9 @@ void Bullet::Update() {
 			bulletData.gameObject.object3d->Update();
 
 			//ヒットボックスの更新
-			bulletData.gameObject.hitBox->SetTranslate(bulletData.gameObject.object3d->GetWorldPos());
-			bulletData.gameObject.hitBox->SetRotate(bulletData.gameObject.transformData.rotate);
-			bulletData.gameObject.hitBox->SetScale(hitBoxScale_);
+			bulletData.gameObject.hitBox->SetTranslate(0,bulletData.gameObject.object3d->GetWorldPos());
+			bulletData.gameObject.hitBox->SetRotate(0,bulletData.gameObject.transformData.rotate);
+			bulletData.gameObject.hitBox->SetScale(0,hitBoxScale_);
 			bulletData.gameObject.hitBox->Update();
 		}
 	}

@@ -1,13 +1,12 @@
 #include "Object3dCommon.h"
-#include "engine/base/DirectXBase.h"
-#include "engine/camera/Camera.h"
-#include "engine/base/GraphicsPipeline.h"
-#include "engine/debug/ImGuiManager.h"
-#include "engine/base/SRVManager.h"
-#include "engine/2d/TextureManager.h"
+#include "DirectXBase.h"
+#include "Camera.h"
+#include "GraphicsPipeline.h"
+#include "ImGuiManager.h"
+#include "SRVManager.h"
+#include "TextureManager.h"
 #include <cassert>
-#include "engine/math/func/Math.h"
-#include "engine/debug/GlobalVariables.h"
+#include "func/Math.h"
 using namespace Microsoft::WRL;
 
 //デストラクタ
@@ -110,18 +109,10 @@ void Object3dCommon::Initialize(DirectXBase* directXBase, SRVManager* srvManager
 	CreateSpotLight();
 	spotLightList_.resize(kMaxLightCount);
 	CreateStructuredBufferForSpot();
-
-	//調整項目に設定
-	AddItemForPointLight(pointLightGroupNames_[0].c_str(), pointLightDataList_[0]);
-	//AddItemForSpotLight(spotLightGroupNames_[0].c_str(), spotLightDataList_[0]);
 }
 
 //更新
 void Object3dCommon::Update() {
-	//調整項目を適応
-	//ApplyGlobalVariablesForPointLight(pointLightGroupNames_[0].c_str(), pointLightDataList_[0]);
-	//ApplyGlobalVariablesForSpotLight(spotLightGroupNames_[0].c_str(), spotLightDataList_[0]);
-
 	//ライトデータを転送
 	*directionalLightPtr_ = directionalLightData_;
 
@@ -352,60 +343,4 @@ void Object3dCommon::CreateStructuredBufferForSpot() {
 		kMaxLightCount,
 		sizeof(SpotLight)
 	);
-}
-
-//グローバル変数に追加(PointLight)
-void Object3dCommon::AddItemForPointLight(const char* groupName, const PointLight& pointLight) {
-	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	globalVariables->CreateGroup(groupName);
-	globalVariables->AddItem(groupName, "color", pointLight.color);
-	globalVariables->AddItem(groupName, "position", pointLight.position);
-	globalVariables->AddItem(groupName, "intensity", pointLight.intensity);
-	globalVariables->AddItem(groupName, "distance", pointLight.distance);
-	globalVariables->AddItem(groupName, "decay", pointLight.decay);
-	globalVariables->AddItem(groupName, "isBlinnPhong", pointLight.isBlinnPhong);
-	globalVariables->AddItem(groupName, "enablePointLighting", pointLight.enablePointLighting);
-}
-
-//グローバル変数に追加(SpotLight)
-void Object3dCommon::AddItemForSpotLight(const char* groupName, const SpotLight& spotLight) {
-	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	globalVariables->CreateGroup(groupName);
-	globalVariables->AddItem(groupName, "color", spotLight.color);
-	globalVariables->AddItem(groupName, "cosAngle", spotLight.cosAngle);
-	globalVariables->AddItem(groupName, "cosFolloffStart", spotLight.cosFolloffStart);
-	globalVariables->AddItem(groupName, "decay", spotLight.decay);
-	globalVariables->AddItem(groupName, "direction", spotLight.direction);
-	globalVariables->AddItem(groupName, "distance", spotLight.distance);
-	globalVariables->AddItem(groupName, "enableSpotLighting", spotLight.enableSpotLighting);
-	globalVariables->AddItem(groupName, "intensity", spotLight.intensity);
-	globalVariables->AddItem(groupName, "isBlinnPhong", spotLight.isBlinnPhong);
-	globalVariables->AddItem(groupName, "position", spotLight.position);
-}
-
-//グローバル変数を適用(PointLight)
-void Object3dCommon::ApplyGlobalVariablesForPointLight(const char* groupName, PointLight& pointLight) {
-	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	pointLight.color = globalVariables->GetValue<Vector4>(groupName, "color");
-	pointLight.decay = globalVariables->GetValue<float>(groupName, "decay");
-	pointLight.distance = globalVariables->GetValue<float>(groupName, "distance");
-	pointLight.enablePointLighting = globalVariables->GetValue<int32_t>(groupName, "enablePointLighting");
-	pointLight.intensity = globalVariables->GetValue<float>(groupName, "intensity");
-	pointLight.isBlinnPhong = globalVariables->GetValue<int32_t>(groupName, "isBlinnPhong");
-	pointLight.position = globalVariables->GetValue<Vector3>(groupName, "position");
-}
-
-//グローバル変数を適用(SpotLight)
-void Object3dCommon::ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLight& spotLight) {
-	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	spotLight.color = globalVariables->GetValue<Vector4>(groupName, "color");
-	spotLight.cosAngle = globalVariables->GetValue<float>(groupName, "cosAngle");
-	spotLight.cosFolloffStart = globalVariables->GetValue<float>(groupName, "cosFolloffStart");
-	spotLight.decay = globalVariables->GetValue<float>(groupName, "decay");
-	spotLight.direction = globalVariables->GetValue<Vector3>(groupName, "direction");
-	spotLight.distance = globalVariables->GetValue<float>(groupName, "distance");
-	spotLight.enableSpotLighting = globalVariables->GetValue<int32_t>(groupName, "enableSpotLighting");
-	spotLight.intensity = globalVariables->GetValue<float>(groupName, "intensity");
-	spotLight.isBlinnPhong = globalVariables->GetValue<int32_t>(groupName, "isBlinnPhong");
-	spotLight.position = globalVariables->GetValue<Vector3>(groupName, "position");
 }

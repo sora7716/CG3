@@ -91,3 +91,9 @@ struct RimLight {
 	float softness;//リムライトの柔らかさ
 	int32_t enableRimLighting; //リムライトを有効にするか
 };
+
+//列挙型
+enum class Transform3dMode :uint32_t {
+	kNormal,
+	kBilboard,
+};

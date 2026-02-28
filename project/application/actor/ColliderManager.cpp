@@ -55,11 +55,10 @@ void ColliderManager::SyncCollider() {
 		}
 
 		//OBBの値の更新
-		collider->obb.size = collider->owner->hitBox->GetScale();
-		collider->obb.rotate = collider->owner->hitBox->GetRotate();
+		collider->obb.size = collider->owner->hitBox->GetScale(0);
+		collider->obb.rotate = collider->owner->hitBox->GetRotate(0);
 		Rendering::MakeOBBRotateMatrix(collider->obb.orientations, collider->obb.rotate);
-		collider->obb.center = collider->owner->hitBox->GetWorldPos();
-		collider->obb.center = collider->owner->hitBox->GetWorldPos();
+		collider->obb.center = collider->owner->hitBox->GetWorldPos(0);
 	}
 }
 

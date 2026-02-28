@@ -213,34 +213,6 @@ private://メンバ関数
 	/// スポットライトのストラクチャバッファの生成
 	/// </summary>
 	void CreateStructuredBufferForSpot();
-
-	/// <summary>
-	/// グローバル変数に追加(PointLight)
-	/// </summary>
-	/// <param name="groupName">グループ名</param>
-	/// <param name="pointLight">スポットライト</param>
-	void AddItemForPointLight(const char* groupName, const PointLight& pointLight);
-
-	/// <summary>
-	/// グローバル変数に追加(SpotLight)
-	/// </summary>
-	/// <param name="groupName">グループ名</param>
-	/// <param name="spotLight">スポットライト</param>
-	void AddItemForSpotLight(const char* groupName, const SpotLight& spotLight);
-
-	/// <summary>
-	/// グローバル変数を適用(PointLight)
-	/// </summary>
-	/// <param name="groupName">グループ名</param>
-	/// <param name="pointLight">ポイントライト</param>
-	void ApplyGlobalVariablesForPointLight(const char* groupName, PointLight& pointLight);
-
-	/// <summary>
-	/// グローバル変数を適応(SpotLight)
-	/// </summary>
-	/// <param name="groupName">グループ名</param>
-	/// <param name="spotLight">スポットライト</param>
-	void ApplyGlobalVariablesForSpotLight(const char* groupName, SpotLight& spotLight);
 private://静的メンバ変数
 	//インスタンス
 	static inline Object3dCommon* instance = nullptr;
@@ -300,10 +272,6 @@ private://メンバ変数
 	//SRVインデックス
 	uint32_t srvIndexPoint_ = 0;//PointLight
 	uint32_t srvIndexSpot_ = 0;//SpotLight
-
-	//ライトのグループ名
-	std::string pointLightGroupNames_[kMaxLightCount] = { "pointLightGroup" };
-	std::string spotLightGroupNames_[kMaxLightCount] = { "spotLightGroup" };
 
 	//光源(追従するターゲット)
 	Vector3 pointLightPos_ = {};

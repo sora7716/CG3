@@ -1,9 +1,9 @@
 #pragma once
-#include "engine/3d/Model.h"
-#include "engine/math/ResourceData.h"
-#include "engine/math/RenderingData.h"
-#include "engine/base/BlendMode.h"
-#include "engine/worldTransform/WorldTransform.h"
+#include "Model.h"
+#include "ResourceData.h"
+#include "RenderingData.h"
+#include "BlendMode.h"
+#include "WorldTransform.h"
 #include <vector>
 #include <string>
 #include <wrl.h>
@@ -13,12 +13,6 @@ class DirectXBase;
 class SRVManager;
 class Object3dCommon;
 class Camera;
-
-//列挙型
-enum class Transform3dMode :uint32_t {
-	kNormal,
-	kBilboard,
-};
 
 /// <summary>
 /// 3Dオブジェクト
@@ -42,8 +36,9 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="object3dCommon">3dオブジェクトの共通部分</param>
 	/// <param name="camera">カメラ</param>
+	/// <param name="instanceCount">オブジェクトの表示したい数</param>
 	/// <param name="transformMode">トランスフォームモード</param>
-	void Initialize(Object3dCommon* object3dCommon, Camera* camera, Transform3dMode transform3dMode = Transform3dMode::kNormal);
+	void Initialize(Object3dCommon* object3dCommon, Camera* camera, uint32_t instanceCount = 1, Transform3dMode transform3dMode = Transform3dMode::kNormal);
 
 	/// <summary>
 	/// 更新
@@ -224,8 +219,8 @@ private://メンバ関数
 	void CreateTransformationMatrixResource();
 
 	/// <summary>
-    /// 座標変換行列リソースのストラクチャバッファの生成
-    /// </summary>
+	/// 座標変換行列リソースのストラクチャバッファの生成
+	/// </summary>
 	void CreateStructuredBufferForWvp();
 
 	/// <summary>
@@ -240,9 +235,6 @@ private://メンバ関数
 private://メンバ関数テーブル
 	//座標の更新をまとめた
 	static void (Object3d::* UpdateTransformTable[])();
-private://定数
-	//オブジェクトの表示できる最大数
-	static inline const uint32_t kMaxObjectCount = 2;
 private://メンバ変数
 	//3Dオブジェクトの共通部分
 	Object3dCommon* object3dCommon_ = nullptr;
@@ -268,7 +260,7 @@ private://メンバ変数
 	//カメラ
 	Camera* camera_ = nullptr;
 	//ワールド座標
-	TransformData transforms_[kMaxObjectCount] = {};
+	std::vector<TransformData> transforms_ = {};
 	Transform3dMode transform3dMode_ = Transform3dMode::kNormal;
 	uint32_t srvIndex_ = 0;
 	//親
