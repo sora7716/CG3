@@ -62,6 +62,8 @@ void GameObjectList::LoadModel() {
 	core_->GetModelManager()->LoadModel("spotLight", "plane", "plane.obj");
 	//軸
 	core_->GetModelManager()->LoadModel("test", "base", "axis.obj");
+	//壁
+	core_->GetModelManager()->LoadModel("wall", "cube", "cube.obj");
 }
 
 //カメラの生成

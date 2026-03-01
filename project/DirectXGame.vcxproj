@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="application\actor\ActorData.cpp" />
     <ClCompile Include="application\actor\Bullet.cpp" />
     <ClCompile Include="application\actor\CameraController.cpp" />
     <ClCompile Include="application\actor\ColliderManager.cpp" />
