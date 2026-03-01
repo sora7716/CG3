@@ -8,6 +8,22 @@ class Object3dCommon;
 class Object3d;
 class Camera;
 
+//壁に必要な情報
+struct WallDesc {
+	GameObject gameObject;
+	Vector3 hitBoxScale;
+	ColliderState colliderState;
+	Collider collider;
+};
+
+//壁に必要な情報のまとまり
+struct WallGroup {
+	std::vector<WallDesc>wallDescs;
+	RenderObject renderObject;
+	std::string modelName;
+	int32_t wallCount;
+};
+
 /// <summary>
 /// フィールド
 /// </summary>
@@ -28,7 +44,7 @@ public://メンバ関数
 	/// </summary>
 	/// <param name="object3dCommon">Object3dの共通部分</param>
 	/// <param name="camera">カメラ</param>
-	void Initialize(Object3dCommon*object3dCommon,Camera*camera);
+	void Initialize(Object3dCommon* object3dCommon, Camera* camera);
 
 	/// <summary>
 	/// 更新
@@ -50,17 +66,16 @@ public://メンバ関数
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera">カメラ</param>
-	void SetCamera(Camera*camera);
+	void SetCamera(Camera* camera);
+
+	/// <summary>
+	/// 壁に必要な情報のゲッター
+	/// </summary>
+	/// <returns>我部に必要な情報</returns>
+	std::vector<WallDesc>& GetWallDescs();
 private://メンバ変数
-	//ゲームオブジェクト
-	GameObject gameObject_{};
-	//レンダーオブジェクト
-	RenderObject renderObject_ = {};
-	//モデル名
-	std::string modelName_ = "wall";
-	//コライダー
-	ColliderState colliderState_ = {};
-	Collider collider_ = {};
+	//壁に必要な情報のグループ
+	WallGroup wallGroup_ = {};
 };
 
 

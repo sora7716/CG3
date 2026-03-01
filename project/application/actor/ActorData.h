@@ -113,7 +113,7 @@ struct Collider {
 	/// <param name="colliderState">コライダーの状態</param>
 	/// <returns>コライダー</returns>
 	Collider& SetOwner(ColliderState* colliderState);
-	
+
 	/// <summary>
 	/// OBBの生成
 	/// </summary>

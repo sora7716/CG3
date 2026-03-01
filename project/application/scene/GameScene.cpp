@@ -49,7 +49,7 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 
 	//フィールド
 	field_ = std::make_unique<Field>();
-	field_->Initialize(sceneContext_.object3dCommon,camera_);
+	field_->Initialize(sceneContext_.object3dCommon, camera_);
 
 	//敵の実装
 	//enemyManager_ = EnemyManager::GetInstance();
@@ -61,6 +61,9 @@ void GameScene::Initialize(const SceneContext& sceneContext) {
 
 	//衝突判定
 	colliderManager_->AddCollider(&player_->GetCollider());
+	for (int32_t i = 0; i < 2; i++) {
+		colliderManager_->AddCollider(&field_->GetWallDescs()[i].collider);
+	}
 	//colliderManager_->AddCollider(&enemy_->GetCollider());
 }
 
@@ -176,7 +179,7 @@ void GameScene::Update() {
 	if (debugCamera_->IsDebug()) {
 		camera_ = debugCamera_->GetCamera();
 	} else {
-		//camera_ = gameCamera_->GetCamera();
+		camera_ = gameCamera_->GetCamera();
 	}
 #endif // _DEBUG
 
